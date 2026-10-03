@@ -1,0 +1,186 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/astro/Navbar.astro';
+import Footer from '../components/astro/Footer.astro';
+
+const TIERS = [
+  {
+    name: 'COMMUNITY',
+    badge: 'FREE_TIER',
+    price: '0 EGP',
+    period: 'forever free',
+    desc: 'Instant consumer price intelligence across 12 Egyptian retail giants.',
+    features: [
+      '12 Egyptian retailers indexed',
+      '90-day price velocity history',
+      'Ghost-discount detection badge',
+      'True-cost out-of-pocket calculator',
+      'Community web alerts',
+    ],
+    cta: 'Launch Free Tracker',
+    ctaHref: '/#showcase',
+    highlight: false,
+  },
+  {
+    name: 'PRO TRADER',
+    badge: 'POPULAR_CORRIDOR',
+    price: '490 EGP',
+    period: '/ month',
+    desc: 'Real-time telemetry, flash pricing glitch webhooks, and US import parity.',
+    features: [
+      'Everything in Community',
+      'Sub-200ms WebSocket price stream',
+      'US-to-Egypt landed cost parity engine',
+      'Instant flash glitch & error push alerts',
+      'Customs Code 8517.13 tariff reconciliation',
+      'Unlimited SKU watchlist tracking',
+    ],
+    cta: 'Start Pro Access',
+    ctaHref: '/sign-in',
+    highlight: true,
+  },
+  {
+    name: 'ENTERPRISE MESH',
+    badge: 'DEDICATED_NODES',
+    price: 'Custom',
+    period: 'billed annually',
+    desc: 'Dedicated scraper clusters and high-throughput REST API for institutional desks.',
+    features: [
+      'Dedicated residential proxy network',
+      '10,000+ API requests per minute',
+      'Custom retailer integration pipeline',
+      'Statutory Egyptian Customs & FX feeds',
+      '99.95% scrape uptime SLA',
+      'Direct Telegram & Webhook pipelines',
+    ],
+    cta: 'Contact Engineering',
+    ctaHref: 'mailto:enterprise@cawlix.com',
+    highlight: false,
+  },
+];
+---
+
+<Layout
+  title="Pricing & Institutional Tiers — Cawlix Tracker"
+  description="Transparent pricing for consumer shoppers, cross-border arbitrage traders, and enterprise scraper networks."
+>
+  <Navbar />
+
+  <main style="min-height: 100vh; background-color: #0A0A0A; padding-top: 130px; padding-bottom: 100px;">
+    <div style="max-width: 1160px; margin: 0 auto; padding: 0 24px;">
+      <!-- Header -->
+      <div style="text-align: center; max-width: 760px; margin: 0 auto 64px auto;">
+        <span class="feature-group-label" style="color: #3ECF8E; margin-bottom: 12px;">
+          // INSTITUTIONAL_ACCESS_TIERS
+        </span>
+        <h1
+          class="text-display"
+          style="font-size: clamp(2.25rem, 4.5vw, 3.5rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1.1; margin: 0 0 16px 0;"
+        >
+          <span style="color: #FFFFFF;">Deterministic Intelligence. </span>
+          <span class="text-contrast-tail">Transparent Access.</span>
+        </h1>
+        <p style="font-size: 1.0625rem; color: #888888; line-height: 1.6; margin: 0;">
+          Eliminate artificial pricing markdowns and compare shelf prices against real-time direct US import corridors. No hidden platform surcharges.
+        </p>
+      </div>
+
+      <!-- Pricing Cards Grid -->
+      <div
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; align-items: stretch;"
+      >
+        {TIERS.map((tier) => (
+          <div
+            style={{
+              background: tier.highlight ? '#121212' : '#0E0E0E',
+              border: tier.highlight ? '1px solid #3ECF8E' : '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '14px',
+              padding: '32px 28px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              position: 'relative',
+              boxShadow: tier.highlight ? '0 20px 48px rgba(62, 207, 142, 0.08)' : '0 20px 48px rgba(0, 0, 0, 0.5)',
+            }}
+          >
+            {tier.highlight && (
+              <div
+                style="position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: #3ECF8E; color: #0A0A0A; font-family: var(--font-mono); font-size: 0.625rem; font-weight: 700; padding: 2px 10px; border-radius: 9999px; letter-spacing: 0.06em; text-transform: uppercase;"
+              >
+                RECOMMENDED
+              </div>
+            )}
+
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <span style="font-family: var(--font-mono); font-size: 0.75rem; color: #FFFFFF; font-weight: 600; letter-spacing: 0.04em;">
+                  {tier.name}
+                </span>
+                <span
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.625rem',
+                    color: tier.highlight ? '#3ECF8E' : '#737373',
+                    background: tier.highlight ? 'rgba(62, 207, 142, 0.1)' : 'rgba(255, 255, 255, 0.04)',
+                    padding: '2px 8px',
+                    borderRadius: '4px',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                  }}
+                >
+                  {tier.badge}
+                </span>
+              </div>
+
+              <!-- Price Row -->
+              <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 12px;">
+                <span style="font-size: 2.5rem; font-weight: 700; color: #FFFFFF; letter-spacing: -0.03em;">
+                  {tier.price}
+                </span>
+                <span style="font-family: var(--font-mono); font-size: 0.75rem; color: #737373;">
+                  {tier.period}
+                </span>
+              </div>
+
+              <p style="font-size: 0.875rem; color: #888888; line-height: 1.5; margin-bottom: 24px;">
+                {tier.desc}
+              </p>
+
+              <!-- Feature List -->
+              <div style="border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 20px; display: flex; flexDirection: column; gap: 10px;">
+                {tier.features.map((feat) => (
+                  <div style="display: flex; align-items: center; gap: 10px; font-size: 0.8125rem; color: #D4D4D4;">
+                    <span style="width: 5px; height: 5px; border-radius: 50%; background-color: #3ECF8E; flex-shrink: 0;"></span>
+                    <span>{feat}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <!-- CTA Button -->
+            <a
+              href={tier.ctaHref}
+              style={{
+                marginTop: '32px',
+                padding: '12px 20px',
+                borderRadius: '8px',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                textAlign: 'center',
+                textDecoration: 'none',
+                transition: 'all 140ms ease',
+                background: tier.highlight ? '#3ECF8E' : 'transparent',
+                color: tier.highlight ? '#0A0A0A' : '#EDEDED',
+                border: tier.highlight ? '1px solid #3ECF8E' : '1px solid rgba(255, 255, 255, 0.12)',
+                display: 'block',
+              }}
+            >
+              {tier.cta}
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

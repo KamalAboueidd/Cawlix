@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Activity, Zap, Cpu, Server } from 'lucide-react';
+import { Activity, Zap, Server } from 'lucide-react';
 
 interface RetailerNode {
   name: string;
@@ -31,7 +31,7 @@ export default function PriceStreamMatrix() {
   const [packetCount, setPacketCount] = useState(14820);
   const [avgLatency, setAvgLatency] = useState(98);
 
-  // High-performance laser wave canvas animation
+  // Clean laser wave canvas without decorative drop-shadow glows
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -52,13 +52,12 @@ export default function PriceStreamMatrix() {
     window.addEventListener('resize', resize);
     resize();
 
-    // Particle streams
     const particles = Array.from({ length: 48 }, () => ({
       x: Math.random() * (canvas.width / 2),
       y: Math.random() * (canvas.height / 2),
       speed: 1.5 + Math.random() * 2.5,
-      radius: 1 + Math.random() * 2,
-      opacity: 0.2 + Math.random() * 0.7,
+      radius: 1 + Math.random() * 1.5,
+      opacity: 0.2 + Math.random() * 0.6,
       streamIndex: Math.floor(Math.random() * 4),
     }));
 
@@ -86,18 +85,16 @@ export default function PriceStreamMatrix() {
         ctx.stroke();
       }
 
-      // Draw multi-harmonic laser fiber waves
+      // Draw multi-harmonic laser fiber waves cleanly (no shadowBlur)
       const waveConfigs = [
-        { freq: 0.012, amp: 26, speed: 0.035, color: '#3ECF8E', glow: 'rgba(62, 207, 142, 0.28)', width: 2.2 },
-        { freq: 0.02, amp: 18, speed: 0.028, color: 'rgba(62, 207, 142, 0.55)', glow: 'rgba(62, 207, 142, 0.15)', width: 1.5 },
-        { freq: 0.008, amp: 38, speed: 0.02, color: 'rgba(255, 255, 255, 0.35)', glow: 'rgba(255, 255, 255, 0.1)', width: 1.0 },
+        { freq: 0.012, amp: 24, speed: 0.035, color: '#3ECF8E', width: 1.8 },
+        { freq: 0.02, amp: 16, speed: 0.028, color: 'rgba(62, 207, 142, 0.45)', width: 1.2 },
+        { freq: 0.008, amp: 32, speed: 0.02, color: 'rgba(255, 255, 255, 0.25)', width: 1.0 },
       ];
 
       waveConfigs.forEach((cfg, idx) => {
         ctx.beginPath();
         ctx.strokeStyle = cfg.color;
-        ctx.shadowColor = cfg.glow;
-        ctx.shadowBlur = 12;
         ctx.lineWidth = cfg.width;
 
         const centerY = h * 0.45 + idx * 8;
@@ -109,9 +106,6 @@ export default function PriceStreamMatrix() {
         ctx.stroke();
       });
 
-      // Reset shadow blur
-      ctx.shadowBlur = 0;
-
       // Draw flowing data packets along fiber rails
       particles.forEach((p) => {
         p.x += p.speed;
@@ -120,21 +114,18 @@ export default function PriceStreamMatrix() {
           p.y = h * 0.2 + Math.random() * (h * 0.6);
         }
 
-        const waveY = h * 0.45 + Math.sin(p.x * 0.012 + step * 0.035) * 26;
+        const waveY = h * 0.45 + Math.sin(p.x * 0.012 + step * 0.035) * 24;
         const currentY = (p.y + waveY) / 2;
 
         ctx.beginPath();
         ctx.arc(p.x, currentY, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(62, 207, 142, ${p.opacity})`;
-        ctx.shadowColor = '#3ECF8E';
-        ctx.shadowBlur = 8;
         ctx.fill();
 
-        // Data tail
         ctx.beginPath();
         ctx.moveTo(p.x - p.speed * 4, currentY);
         ctx.lineTo(p.x, currentY);
-        ctx.strokeStyle = `rgba(62, 207, 142, ${p.opacity * 0.4})`;
+        ctx.strokeStyle = `rgba(62, 207, 142, ${p.opacity * 0.35})`;
         ctx.lineWidth = 1;
         ctx.stroke();
       });
@@ -157,7 +148,6 @@ export default function PriceStreamMatrix() {
       setPacketCount((prev) => prev + Math.floor(18 + Math.random() * 24));
       setAvgLatency((prev) => Math.round(92 + (Math.random() * 14 - 7)));
 
-      // Random jitter on a single retailer node
       setNodes((prev) => {
         const copy = [...prev];
         const targetIdx = Math.floor(Math.random() * copy.length);
@@ -174,11 +164,12 @@ export default function PriceStreamMatrix() {
   return (
     <div
       style={{
-        background: '#0B0B0B',
-        borderRadius: '16px',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
+        background: 'transparent',
+        borderRadius: 0,
+        border: 'none',
         overflow: 'hidden',
-        boxShadow: '0 20px 48px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+        boxShadow: 'none',
+        width: '100%',
       }}
     >
       {/* Telemetry Header */}
@@ -187,25 +178,25 @@ export default function PriceStreamMatrix() {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '14px 20px',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-          background: 'rgba(255, 255, 255, 0.015)',
+          padding: '10px 0',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+          background: 'transparent',
           flexWrap: 'wrap',
           gap: '12px',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Activity size={14} color="#3ECF8E" />
           <span
             style={{
               fontFamily: 'var(--font-mono)',
               fontSize: '0.75rem',
-              fontWeight: 600,
+              fontWeight: 500,
               color: '#FFFFFF',
-              letterSpacing: '0.04em',
+              letterSpacing: '0.02em',
             }}
           >
-            PRICE_STREAM_MATRIX // FIBER_WAVE_BUS
+            Price Stream Matrix · Realtime Telemetry
           </span>
           <span
             style={{
@@ -213,29 +204,29 @@ export default function PriceStreamMatrix() {
               fontSize: '0.6875rem',
               color: '#737373',
               borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
-              paddingLeft: '10px',
+              paddingLeft: '8px',
             }}
           >
-            12 EGYPT RETAILERS CONCURRENT
+            12 Egyptian retailers concurrent
           </span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontFamily: 'var(--font-mono)', fontSize: '0.6875rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Zap size={12} color="#3ECF8E" />
-            <span style={{ color: '#737373' }}>THROUGHPUT:</span>
-            <span style={{ color: '#FFFFFF' }}>{packetCount.toLocaleString()} pings</span>
+            <span style={{ color: '#737373' }}>Throughput:</span>
+            <span style={{ color: '#FFFFFF', fontVariantNumeric: 'tabular-nums' }}>{packetCount.toLocaleString()} pings</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Server size={12} color="#3ECF8E" />
-            <span style={{ color: '#737373' }}>AVG_LATENCY:</span>
-            <span style={{ color: '#3ECF8E', fontWeight: 600 }}>{avgLatency}ms</span>
+            <span style={{ color: '#737373' }}>Avg Latency:</span>
+            <span style={{ color: '#3ECF8E', fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>{avgLatency}ms</span>
           </div>
         </div>
       </div>
 
       {/* Fiber Laser Wave Visual Canvas */}
-      <div style={{ position: 'relative', width: '100%', height: '180px', background: '#080808' }}>
+      <div style={{ position: 'relative', width: '100%', height: '160px', background: 'transparent', margin: '12px 0' }}>
         <canvas
           ref={canvasRef}
           style={{ width: '100%', height: '100%', display: 'block' }}
@@ -244,102 +235,47 @@ export default function PriceStreamMatrix() {
         <div
           style={{
             position: 'absolute',
-            bottom: '12px',
-            left: '20px',
+            bottom: '6px',
+            left: '0',
             fontFamily: 'var(--font-mono)',
             fontSize: '0.625rem',
             color: '#737373',
-            background: 'rgba(10, 10, 10, 0.75)',
-            backdropFilter: 'blur(8px)',
-            padding: '4px 8px',
-            borderRadius: '4px',
-            border: '1px solid rgba(255, 255, 255, 0.06)',
             pointerEvents: 'none',
           }}
         >
-          ACTIVE CARRIER: DUAL-POLARIZED WEBSOCKET PIPELINE · ZERO BUFFER BLOAT
+          Active carrier: Dual-polarized WebSocket pipeline
         </div>
       </div>
 
-      {/* 12 Retailer Nodes Grid */}
+      {/* Retailer Nodes Matrix - Borderless Grid */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))',
-          gap: '1px',
-          background: 'rgba(255, 255, 255, 0.05)',
-          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+          gap: '8px',
+          padding: '12px 0',
+          borderTop: '1px solid rgba(255, 255, 255, 0.05)',
         }}
       >
-        {nodes.map((node) => (
+        {nodes.slice(0, 6).map((node) => (
           <div
             key={node.code}
             style={{
-              background: '#0D0D0D',
-              padding: '12px 14px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '6px',
+              padding: '6px 0',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.03)',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.6875rem',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.6875rem',
-                  fontWeight: 600,
-                  color: '#FFFFFF',
-                }}
-              >
-                {node.name}
-              </span>
-              <span
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.625rem',
-                  color: node.latency < 90 ? '#3ECF8E' : node.latency < 130 ? '#EAB308' : '#EF4444',
-                }}
-              >
-                {node.latency}ms
-              </span>
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#D4D4D4' }}>
-                {node.lastPrice}
-              </span>
-              <span
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.6875rem',
-                  fontWeight: 600,
-                  color: node.delta.startsWith('-') ? '#3ECF8E' : node.isSpike ? '#EF4444' : '#737373',
-                }}
-              >
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#FFFFFF', fontWeight: 500 }}>
+              <span>{node.name}</span>
+              <span style={{ color: node.delta.startsWith('-') ? '#3ECF8E' : '#737373' }}>
                 {node.delta}
               </span>
             </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
-              <span
-                style={{
-                  width: '5px',
-                  height: '5px',
-                  borderRadius: '50%',
-                  backgroundColor: node.isSpike ? '#EF4444' : '#3ECF8E',
-                  boxShadow: node.isSpike ? '0 0 6px #EF4444' : '0 0 6px #3ECF8E',
-                }}
-              />
-              <span
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.5625rem',
-                  color: node.isSpike ? '#EF4444' : '#737373',
-                  letterSpacing: '0.04em',
-                }}
-              >
-                {node.isSpike ? 'SPIKE_INTERCEPTED' : 'STREAM_ACTIVE'}
-              </span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#737373', marginTop: '2px', fontSize: '0.625rem' }}>
+              <span>{node.lastPrice}</span>
+              <span>{node.latency}ms</span>
             </div>
           </div>
         ))}

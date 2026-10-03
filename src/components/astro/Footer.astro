@@ -1,24 +1,5 @@
 ---
-// Static Minimalist Institutional Footer in Astro
+import LandingFooter from '../landing/Footer.astro';
 ---
 
-<footer
-  style="border-top: 1px solid rgba(255, 255, 255, 0.08); background: #070707; padding: 48px 24px; font-family: var(--font-mono); font-size: 0.75rem; color: #666666;"
->
-  <div
-    style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;"
-  >
-    <div>
-      <span style="color: #FFFFFF; font-weight: 600;">CAWLIX TRACKER</span>
-      <span style="margin-left: 12px; color: #888888;">
-        Institutional Real-Time Price Intelligence & Arbitrage
-      </span>
-    </div>
-
-    <div style="display: flex; gap: 24px; flex-wrap: wrap;">
-      <span>EGYPT RETAIL MESH: 12 SOURCES</span>
-      <span>US IMPORT CORRIDORS: ACTIVE</span>
-      <span style="color: #3ECF8E;">SYSTEM HEALTH: 100%</span>
-    </div>
-  </div>
-</footer>
+<LandingFooter />

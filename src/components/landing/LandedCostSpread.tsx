@@ -63,31 +63,33 @@ export default function LandedCostSpread() {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '20px',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          gap: '16px',
           alignItems: 'stretch',
+          width: '100%',
+          maxWidth: '100%',
+          overflowX: 'hidden',
         }}
       >
         {/* Left Column: Visual 2 - High-Resolution Global Network Corridor */}
         <div
           style={{
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '12px',
-            overflow: 'hidden',
-            background: '#111111',
+            border: 'none',
+            borderRadius: 0,
+            background: 'transparent',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
             position: 'relative',
-            boxShadow: '0 20px 48px rgba(0, 0, 0, 0.7)',
+            boxShadow: 'none',
           }}
         >
           {/* Top Visual Status Bar */}
           <div
             style={{
-              padding: '12px 16px',
-              background: '#161616',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+              padding: '10px 0',
+              background: 'transparent',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
@@ -99,12 +101,12 @@ export default function LandedCostSpread() {
                 style={{
                   fontFamily: 'var(--font-mono)',
                   fontSize: '0.6875rem',
-                  fontWeight: 600,
+                  fontWeight: 500,
                   color: '#FFFFFF',
-                  letterSpacing: '0.04em',
+                  letterSpacing: '0.02em',
                 }}
               >
-                US_EG_IMPORT_CORRIDOR
+                US-Egypt Import Corridor
               </span>
             </div>
             <span
@@ -112,19 +114,27 @@ export default function LandedCostSpread() {
                 fontFamily: 'var(--font-mono)',
                 fontSize: '0.625rem',
                 color: '#3ECF8E',
-                background: 'rgba(62, 207, 142, 0.1)',
-                padding: '2px 6px',
-                borderRadius: '4px',
               }}
             >
-              DIRECT_AIR_FREIGHT
+              Direct Air Freight
             </span>
           </div>
 
-          {/* High-Resolution Illuminated Network Visual */}
-          <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', overflow: 'hidden' }}>
+          {/* High-Resolution Illuminated Network Visual (.webp) */}
+          <div
+            style={{
+              position: 'relative',
+              width: '100%',
+              aspectRatio: '16 / 9',
+              overflow: 'hidden',
+              background: '#0A0A0A',
+              borderRadius: '4px',
+              marginTop: '10px',
+              marginBottom: '10px',
+            }}
+          >
             <img
-              src="/landing/digital-earth-globe-with-illuminated-city-networks-night.jpg"
+              src="/landing/digital-earth-globe-with-illuminated-city-networks-night.webp"
               alt="Global Freight Corridor & Arbitrage Network"
               width={8736}
               height={4896}
@@ -136,73 +146,71 @@ export default function LandedCostSpread() {
                 aspectRatio: '16 / 9',
                 objectFit: 'cover',
                 display: 'block',
-                filter: 'brightness(0.9) contrast(1.1)',
               }}
             />
-            {/* Gradient Overlay */}
+            {/* Smooth Edge Blend Scrim into #0A0A0A canvas */}
             <div
-              aria-hidden
+              aria-hidden="true"
               style={{
                 position: 'absolute',
                 inset: 0,
-                background: 'linear-gradient(to top, rgba(17, 17, 17, 0.9) 0%, transparent 60%)',
+                background: 'linear-gradient(to top, #0A0A0A 0%, rgba(10, 10, 10, 0.4) 45%, transparent 100%)',
                 pointerEvents: 'none',
               }}
             />
 
-            {/* Floating Freight Metric Ticker */}
+            {/* Freight Metric Ticker Caption */}
             <div
               style={{
                 position: 'absolute',
-                bottom: '12px',
-                left: '14px',
-                right: '14px',
-                background: 'rgba(10, 10, 10, 0.85)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: '8px',
-                padding: '8px 12px',
+                bottom: '8px',
+                left: '8px',
+                right: '8px',
+                background: 'rgba(10, 10, 10, 0.75)',
+                padding: '4px 8px',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 fontFamily: 'var(--font-mono)',
                 fontSize: '0.625rem',
+                flexWrap: 'wrap',
+                gap: '6px',
               }}
             >
-              <span style={{ color: '#D4D4D4' }}>TRANSIT: 3.4d (JFK &rarr; CAI)</span>
-              <span style={{ color: '#3ECF8E' }}>CUSTOMS: 8517.13 RECONCILED</span>
+              <span style={{ color: '#3ECF8E' }}>
+                Amazon US &rarr; Cairo Freight Transit
+              </span>
+              <span style={{ color: '#D4D4D4' }}>Customs: 8517.13 statutory</span>
             </div>
           </div>
 
           {/* Bottom Corridor Specs Bar */}
           <div
             style={{
-              padding: '12px 16px',
-              background: '#0E0E0E',
-              borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+              padding: '8px 0',
+              background: 'transparent',
+              borderTop: '1px solid rgba(255, 255, 255, 0.05)',
               display: 'flex',
               justifyContent: 'space-between',
               fontFamily: 'var(--font-mono)',
               fontSize: '0.6875rem',
-              color: '#888888',
+              color: '#737373',
             }}
           >
-            <span>LIVE FX: 1 USD = {item.fxRate.toFixed(2)} EGP</span>
-            <span style={{ color: '#FFFFFF' }}>VAT: 14% STATUTORY</span>
+            <span>Live FX: 1 USD = {item.fxRate.toFixed(2)} EGP</span>
+            <span style={{ color: '#D4D4D4' }}>VAT: 14% Statutory</span>
           </div>
         </div>
 
         {/* Right Column: Calculations & Breakdown Ledger */}
         <div
           style={{
-            background: '#121212',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '12px',
-            overflow: 'hidden',
+            background: 'transparent',
+            border: 'none',
+            borderRadius: 0,
             fontFamily: 'var(--font-mono)',
             fontSize: '0.75rem',
-            boxShadow: '0 20px 48px rgba(0, 0, 0, 0.6)',
+            boxShadow: 'none',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
@@ -211,9 +219,9 @@ export default function LandedCostSpread() {
           {/* Table Header */}
           <div
             style={{
-              padding: '14px 18px',
-              background: '#161616',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+              padding: '10px 0',
+              background: 'transparent',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
@@ -223,8 +231,8 @@ export default function LandedCostSpread() {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Globe size={15} color="#3ECF8E" />
-              <span style={{ color: '#FFFFFF', fontWeight: 600, fontSize: '0.8125rem' }}>
-                CROSS-BORDER PARITY RECONCILIATION
+              <span style={{ color: '#FFFFFF', fontWeight: 500, fontSize: '0.8125rem' }}>
+                Cross-Border Parity Reconciliation
               </span>
             </div>
 
@@ -234,10 +242,10 @@ export default function LandedCostSpread() {
                   key={c.sku}
                   onClick={() => setSelectedIdx(i)}
                   style={{
-                    background: selectedIdx === i ? '#222222' : 'transparent',
+                    background: selectedIdx === i ? '#1A1A1A' : 'transparent',
                     border: '1px solid',
                     borderColor: selectedIdx === i ? 'rgba(255, 255, 255, 0.16)' : 'rgba(255, 255, 255, 0.06)',
-                    color: selectedIdx === i ? '#FFFFFF' : '#777777',
+                    color: selectedIdx === i ? '#FFFFFF' : '#737373',
                     padding: '3px 8px',
                     borderRadius: '4px',
                     fontSize: '0.6875rem',
@@ -252,45 +260,45 @@ export default function LandedCostSpread() {
           </div>
 
           {/* Target Item Details */}
-          <div style={{ padding: '12px 18px', background: '#0E0E0E', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
-            <div style={{ color: '#FFFFFF', fontWeight: 600, fontSize: '0.875rem' }}>{item.name}</div>
-            <div style={{ color: '#777777', fontSize: '0.6875rem', marginTop: '2px' }}>
+          <div style={{ padding: '10px 0', background: 'transparent', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
+            <div style={{ color: '#FFFFFF', fontWeight: 500, fontSize: '0.875rem' }}>{item.name}</div>
+            <div style={{ color: '#737373', fontSize: '0.6875rem', marginTop: '2px' }}>
               SKU: {item.sku} · Benchmark FX Rate: 1 USD = {item.fxRate.toFixed(2)} EGP
             </div>
           </div>
 
           {/* Breakdown Ledger Table */}
-          <div style={{ padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#888888' }}>
+          <div style={{ padding: '14px 0', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#737373' }}>
               <span>US MSRP (${item.usPriceUsd.toLocaleString()})</span>
               <span style={{ color: '#D4D4D4' }}>EGP {convertedItemCost.toLocaleString()}</span>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#888888' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#737373' }}>
               <span>Air Freight & Cargo Handling (Insured)</span>
               <span style={{ color: '#D4D4D4' }}>+EGP {item.freightEgp.toLocaleString()}</span>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#888888' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#737373' }}>
               <span>Statutory Customs & Development Tariff ({item.customsPct}%)</span>
               <span style={{ color: '#D4D4D4' }}>+EGP {item.customsEgp.toLocaleString()}</span>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#888888' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#737373' }}>
               <span>Egyptian Value Added Tax (14% VAT)</span>
               <span style={{ color: '#D4D4D4' }}>+EGP {item.vatEgp.toLocaleString()}</span>
             </div>
 
-            <div style={{ height: '1px', background: 'rgba(255, 255, 255, 0.06)', margin: '4px 0' }} />
+            <div style={{ height: '1px', background: 'rgba(255, 255, 255, 0.05)', margin: '4px 0' }} />
 
             <div style={{ display: 'flex', justifyContent: 'space-between', color: '#FFFFFF', fontWeight: 600 }}>
               <span>Total Executed Landed Cost</span>
               <span>EGP {item.totalLandedEgp.toLocaleString()}</span>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#888888' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#737373' }}>
               <span>Egyptian Local Shelf Price (Cairo Retail)</span>
-              <span style={{ textDecoration: 'line-through', color: '#777777' }}>
+              <span style={{ textDecoration: 'line-through', color: '#737373' }}>
                 EGP {item.localPriceEgp.toLocaleString()}
               </span>
             </div>
@@ -299,26 +307,26 @@ export default function LandedCostSpread() {
           {/* Spread Advantage Callout Footer */}
           <div
             style={{
-              padding: '14px 18px',
-              background: 'rgba(62, 207, 142, 0.06)',
-              borderTop: '1px solid rgba(62, 207, 142, 0.2)',
+              padding: '12px 0',
+              background: 'transparent',
+              borderTop: '1px solid rgba(255, 255, 255, 0.05)',
               display: 'flex',
               justifyContent: 'space-between',
-              alignItems: 'center',
+              alignItems: 'baseline',
             }}
           >
             <div>
-              <span style={{ color: '#3ECF8E', fontWeight: 600, fontSize: '0.6875rem', display: 'block', textTransform: 'uppercase' }}>
+              <span style={{ color: '#737373', fontSize: '0.6875rem', display: 'block', textTransform: 'uppercase' }}>
                 Direct Import Arbitrage Advantage
               </span>
-              <span style={{ color: '#3ECF8E', fontWeight: 700, fontSize: '1.0625rem' }}>
+              <span style={{ color: '#3ECF8E', fontWeight: 600, fontSize: '1.125rem' }}>
                 +EGP {item.spreadEgp.toLocaleString()} ({spreadPct}% Spread)
               </span>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#3ECF8E', fontSize: '0.6875rem' }}>
               <CheckCircle2 size={13} />
-              CUSTOMS RECONCILED
+              Customs Reconciled
             </div>
           </div>
         </div>

@@ -35,282 +35,290 @@ export default function GhostDiscountVisualizer() {
   return (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '20px',
         width: '100%',
+        background: 'transparent',
+        border: 'none',
+        borderRadius: 0,
+        boxShadow: 'none',
       }}
     >
-      {/* Visual 3: High-Resolution 3D Data Velocity & Telemetry Stream */}
+      {/* Clean Horizontal Layout: Telemetry Visual + Price Spike Auditor */}
       <div
         style={{
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-          borderRadius: '12px',
-          overflow: 'hidden',
-          background: '#111111',
-          position: 'relative',
-          boxShadow: '0 20px 48px rgba(0, 0, 0, 0.7)',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          alignItems: 'stretch',
+          width: '100%',
+          maxWidth: '100%',
+          overflowX: 'hidden',
+          gap: '24px',
         }}
       >
-        {/* Top Hairline Header */}
+        {/* Left Column: Telemetry Radar Scan / 3D Stream Visualization */}
         <div
           style={{
-            padding: '12px 16px',
-            background: '#161616',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
             display: 'flex',
+            flexDirection: 'column',
             justifyContent: 'space-between',
-            alignItems: 'center',
+            borderRight: 'none',
+            background: 'transparent',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Database size={14} color="#3ECF8E" />
+          {/* Top Status Bar */}
+          <div
+            style={{
+              padding: '10px 0',
+              background: 'transparent',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Database size={14} color="#3ECF8E" />
+              <span
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.6875rem',
+                  fontWeight: 500,
+                  color: '#FFFFFF',
+                  letterSpacing: '0.02em',
+                }}
+              >
+                Telemetry Velocity Stream · 90-Day Buffer
+              </span>
+            </div>
             <span
               style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.6875rem',
-                fontWeight: 600,
-                color: '#FFFFFF',
-                letterSpacing: '0.04em',
+                fontSize: '0.625rem',
+                color: '#3ECF8E',
               }}
             >
-              TELEMETRY_VELOCITY_STREAM // 90D_SKU_BUFFER
+              Realtime Ingestion
             </span>
           </div>
 
-          <span
+          {/* 3D Telemetry Visual (.webp) with Zero CLS */}
+          <div
             style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.625rem',
-              color: '#3ECF8E',
-              background: 'rgba(62, 207, 142, 0.1)',
-              padding: '2px 6px',
+              position: 'relative',
+              width: '100%',
+              flex: 1,
+              minHeight: '220px',
+              overflow: 'hidden',
+              background: '#0A0A0A',
               borderRadius: '4px',
+              marginTop: '10px',
+              marginBottom: '10px',
             }}
           >
-            REALTIME_INGESTION
-          </span>
-        </div>
+            <img
+              src="/landing/dynamic-data-visualization-3d.webp"
+              alt="Dynamic 3D Telemetry Price Stream & Velocity Network"
+              width={4096}
+              height={2800}
+              loading="lazy"
+              decoding="async"
+              style={{
+                width: '100%',
+                height: '100%',
+                aspectRatio: '4096 / 2800',
+                objectFit: 'cover',
+                objectPosition: 'center 40%',
+                display: 'block',
+              }}
+            />
+            {/* Subtle Gradient Vignette into #0A0A0A */}
+            <div
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(to top, rgba(10, 10, 10, 0.95) 0%, transparent 60%)',
+                pointerEvents: 'none',
+              }}
+            />
+            {/* Telemetry Caption Bar */}
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '8px',
+                left: '8px',
+                right: '8px',
+                background: 'rgba(10, 10, 10, 0.75)',
+                padding: '4px 8px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.625rem',
+              }}
+            >
+              <span style={{ color: '#D4D4D4' }}>Scan: 90d rolling buffer</span>
+              <span style={{ color: '#3ECF8E' }}>&lt;120ms latency</span>
+            </div>
+          </div>
 
-        {/* 3D Telemetry Visual with 1px hairline framing */}
-        <div style={{ position: 'relative', width: '100%', maxHeight: '220px', overflow: 'hidden' }}>
-          <img
-            src="/landing/dynamic-data-visualization-3d.jpg"
-            alt="Dynamic 3D Telemetry Price Stream & Velocity Network"
-            width={4096}
-            height={2800}
-            loading="lazy"
-            decoding="async"
-            style={{
-              width: '100%',
-              height: '220px',
-              aspectRatio: '4096 / 2800',
-              objectFit: 'cover',
-              objectPosition: 'center 40%',
-              display: 'block',
-              filter: 'brightness(0.85) contrast(1.15)',
-            }}
-          />
-          {/* Subtle gradient scrim */}
+          {/* Bottom Stream Caption */}
           <div
-            aria-hidden
             style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'linear-gradient(to top, rgba(17, 17, 17, 0.85) 0%, transparent 60%)',
-              pointerEvents: 'none',
+              padding: '8px 0',
+              background: 'transparent',
+              borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.6875rem',
+              color: '#737373',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}
-          />
+          >
+            <span>Continuous Polling Mesh</span>
+            <span style={{ color: '#3ECF8E' }}>Verified Baseline</span>
+          </div>
         </div>
 
-        {/* Muted Metadata Caption below visual */}
+        {/* Right Column: Price Spike Detection Logic & 90-Day Audit */}
         <div
           style={{
-            padding: '10px 16px',
-            background: '#0D0D0D',
-            borderTop: '1px solid rgba(255, 255, 255, 0.06)',
-            fontFamily: 'var(--font-mono)',
-            fontSize: '0.6875rem',
-            color: '#737373',
             display: 'flex',
+            flexDirection: 'column',
             justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '8px',
+            background: 'transparent',
           }}
         >
-          <span>// DATA_VELOCITY_STREAM: 90-DAY TIME-SERIES TELEMETRY NODES POLLED CONTINUOUSLY</span>
-          <span style={{ color: '#3ECF8E' }}>VERIFIED_BASELINE</span>
-        </div>
-      </div>
+          {/* Audit Banner Header with Authenticity Score */}
+          <div
+            style={{
+              padding: '10px 0',
+              background: 'transparent',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '10px',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <AlertOctagon size={16} color="#EF4444" />
+              <span style={{ color: '#FFFFFF', fontWeight: 500, fontSize: '0.8125rem', fontFamily: 'var(--font-mono)' }}>
+                SKU Audit: Sony WH-1000XM5
+              </span>
+            </div>
 
-      {/* 90-Day Time-Series Audit Breakdown Card */}
-      <div
-        style={{
-          background: '#121212',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-          borderRadius: '12px',
-          overflow: 'hidden',
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.75rem',
-          boxShadow: '0 20px 48px rgba(0, 0, 0, 0.6)',
-        }}
-      >
-        {/* Audit Banner Header */}
-        <div
-          style={{
-            padding: '14px 18px',
-            background: '#161616',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '10px',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <AlertOctagon size={16} color="#EF4444" />
-            <span style={{ color: '#FFFFFF', fontWeight: 600, fontSize: '0.8125rem' }}>
-              SKU AUDIT: SONY-WH-1000XM5
-            </span>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span
-              style={{
-                padding: '2px 8px',
-                borderRadius: '4px',
-                background: 'rgba(239, 68, 68, 0.12)',
-                color: '#EF4444',
-                border: '1px solid rgba(239, 68, 68, 0.3)',
-                fontSize: '0.6875rem',
-                fontWeight: 600,
-              }}
-            >
-              FRAUD DETECTED
-            </span>
-            <span
-              style={{
-                padding: '2px 8px',
-                borderRadius: '4px',
-                background: 'rgba(255, 255, 255, 0.06)',
-                color: '#D4D4D4',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                fontSize: '0.6875rem',
-              }}
-            >
-              SCORE: 22/100
-            </span>
-            <span
-              style={{
-                padding: '2px 8px',
-                borderRadius: '4px',
-                background: 'rgba(245, 158, 11, 0.1)',
-                color: '#F59E0B',
-                border: '1px solid rgba(245, 158, 11, 0.25)',
-                fontSize: '0.6875rem',
-              }}
-            >
-              ARTIFICIAL_BASELINE
-            </span>
-          </div>
-        </div>
-
-        {/* Chart Canvas */}
-        <div style={{ padding: '20px 18px 10px 10px', height: '220px', background: '#0E0E0E' }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={AUDIT_DATA} margin={{ top: 12, right: 16, left: 10, bottom: 0 }}>
-              <XAxis
-                dataKey="day"
-                stroke="#555555"
-                fontSize={10}
-                tickLine={false}
-                axisLine={{ stroke: 'rgba(255, 255, 255, 0.08)' }}
-              />
-              <YAxis
-                stroke="#555555"
-                fontSize={10}
-                tickLine={false}
-                axisLine={{ stroke: 'rgba(255, 255, 255, 0.08)' }}
-                domain={[20000, 30000]}
-                tickFormatter={(v) => `${v / 1000}k`}
-              />
-              <Tooltip
-                content={({ active, payload }) => {
-                  if (active && payload && payload.length) {
-                    const data = payload[0].payload as DataPoint;
-                    return (
-                      <div
-                        style={{
-                          background: '#1A1A1A',
-                          border: '1px solid rgba(255, 255, 255, 0.12)',
-                          padding: '8px 12px',
-                          borderRadius: '6px',
-                          fontSize: '0.6875rem',
-                          color: '#FFFFFF',
-                          fontFamily: 'var(--font-mono)',
-                        }}
-                      >
-                        <div style={{ color: '#888888', marginBottom: '2px' }}>{data.day}</div>
-                        <div style={{ fontWeight: 600 }}>EGP {data.price.toLocaleString()}</div>
-                        {data.event && (
-                          <div style={{ color: '#EF4444', marginTop: '4px', fontWeight: 600 }}>
-                            {data.event}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  }
-                  return null;
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span
+                style={{
+                  color: '#EF4444',
+                  fontSize: '0.6875rem',
+                  fontWeight: 600,
+                  fontFamily: 'var(--font-mono)',
                 }}
-              />
-              <ReferenceLine
-                y={24000}
-                stroke="#888888"
-                strokeDasharray="4 4"
-                label={{
-                  value: '90D True Baseline (24,000 EGP)',
-                  fill: '#888888',
-                  fontSize: 10,
-                  position: 'insideBottomRight',
-                }}
-              />
-              <Line
-                type="stepAfter"
-                dataKey="price"
-                stroke="#EF4444"
-                strokeWidth={2}
-                dot={{ r: 3, fill: '#EF4444' }}
-                activeDot={{ r: 5, fill: '#FFFFFF' }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+              >
+                22/100 Artificial · Fraud Detected
+              </span>
+            </div>
+          </div>
 
-        {/* Forensic Breakdown Footer */}
-        <div
-          style={{
-            padding: '12px 18px',
-            background: '#0B0B0B',
-            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '12px',
-            textAlign: 'left',
-          }}
-        >
-          <div>
-            <span style={{ color: '#666666', fontSize: '0.6875rem', display: 'block' }}>72H PRE-SALE HIKE</span>
-            <span style={{ color: '#EF4444', fontWeight: 600, fontSize: '0.8125rem' }}>+18.0% (EGP 28,320)</span>
+          {/* Interactive Recharts LineChart */}
+          <div style={{ padding: '16px 10px 8px 0', height: '220px', background: 'transparent' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={AUDIT_DATA} margin={{ top: 12, right: 16, left: 10, bottom: 0 }}>
+                <XAxis
+                  dataKey="day"
+                  stroke="#555555"
+                  fontSize={10}
+                  tickLine={false}
+                  axisLine={{ stroke: 'rgba(255, 255, 255, 0.08)' }}
+                />
+                <YAxis
+                  stroke="#555555"
+                  fontSize={10}
+                  tickLine={false}
+                  axisLine={{ stroke: 'rgba(255, 255, 255, 0.08)' }}
+                  domain={[20000, 30000]}
+                  tickFormatter={(v) => `${v / 1000}k`}
+                />
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      const data = payload[0].payload as DataPoint;
+                      return (
+                        <div
+                          style={{
+                            background: '#1A1A1A',
+                            border: '1px solid rgba(255, 255, 255, 0.12)',
+                            padding: '8px 12px',
+                            borderRadius: '4px',
+                            fontSize: '0.6875rem',
+                            color: '#FFFFFF',
+                            fontFamily: 'var(--font-mono)',
+                          }}
+                        >
+                          <div style={{ color: '#888888', marginBottom: '2px' }}>{data.day}</div>
+                          <div style={{ fontWeight: 600 }}>EGP {data.price.toLocaleString()}</div>
+                          {data.event && (
+                            <div style={{ color: '#EF4444', marginTop: '4px', fontWeight: 600 }}>
+                              {data.event}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <ReferenceLine
+                  y={24000}
+                  stroke="#888888"
+                  strokeDasharray="4 4"
+                  label={{
+                    value: '90D True Baseline (24,000 EGP)',
+                    fill: '#888888',
+                    fontSize: 10,
+                    position: 'insideBottomRight',
+                  }}
+                />
+                <Line
+                  type="stepAfter"
+                  dataKey="price"
+                  stroke="#EF4444"
+                  strokeWidth={2}
+                  dot={{ r: 3, fill: '#EF4444' }}
+                  activeDot={{ r: 5, fill: '#FFFFFF' }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
-          <div>
-            <span style={{ color: '#666666', fontSize: '0.6875rem', display: 'block' }}>ADVERTISED MARKDOWN</span>
-            <span style={{ color: '#F59E0B', fontWeight: 600, fontSize: '0.8125rem' }}>-20% FROM SPIKE</span>
-          </div>
-          <div>
-            <span style={{ color: '#666666', fontSize: '0.6875rem', display: 'block' }}>ACTUAL NET BENEFIT</span>
-            <span style={{ color: '#888888', fontWeight: 600, fontSize: '0.8125rem' }}>ONLY -5.6% REAL</span>
+
+          {/* Forensic Breakdown Footer */}
+          <div
+            style={{
+              padding: '12px 0',
+              background: 'transparent',
+              borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '12px',
+              textAlign: 'left',
+              fontFamily: 'var(--font-mono)',
+            }}
+          >
+            <div>
+              <span style={{ color: '#737373', fontSize: '0.6875rem', display: 'block' }}>72H PRE-SALE HIKE</span>
+              <span style={{ color: '#EF4444', fontWeight: 600, fontSize: '0.8125rem' }}>+18.0% (EGP 28,320)</span>
+            </div>
+            <div>
+              <span style={{ color: '#737373', fontSize: '0.6875rem', display: 'block' }}>ADVERTISED MARKDOWN</span>
+              <span style={{ color: '#F59E0B', fontWeight: 600, fontSize: '0.8125rem' }}>-20% FROM SPIKE</span>
+            </div>
+            <div>
+              <span style={{ color: '#737373', fontSize: '0.6875rem', display: 'block' }}>ACTUAL NET BENEFIT</span>
+              <span style={{ color: '#888888', fontWeight: 600, fontSize: '0.8125rem' }}>ONLY -5.6% REAL</span>
+            </div>
           </div>
         </div>
       </div>

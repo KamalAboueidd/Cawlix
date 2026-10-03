@@ -18,31 +18,31 @@ export default function TrueCostSimulator() {
   return (
     <div
       style={{
-        background: '#121212',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
-        borderRadius: '12px',
-        overflow: 'hidden',
+        background: 'transparent',
+        border: 'none',
+        borderRadius: 0,
         fontFamily: 'var(--font-mono)',
         fontSize: '0.75rem',
-        boxShadow: '0 20px 48px rgba(0, 0, 0, 0.6)',
+        boxShadow: 'none',
+        width: '100%',
       }}
     >
       {/* Receipt Header */}
       <div
         style={{
-          padding: '14px 18px',
-          background: '#161616',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          padding: '12px 0',
+          background: 'transparent',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
         }}
       >
         <div>
-          <span style={{ color: '#888888', fontSize: '0.6875rem', display: 'block', letterSpacing: '0.04em' }}>
+          <span style={{ color: '#737373', fontSize: '0.6875rem', display: 'block', letterSpacing: '0.04em' }}>
             TRANSACTION AUDIT
           </span>
-          <span style={{ color: '#FFFFFF', fontWeight: 600, fontSize: '0.8125rem' }}>
+          <span style={{ color: '#FFFFFF', fontWeight: 500, fontSize: '0.875rem' }}>
             Apple MacBook Pro 14" M3 (16GB / 512GB)
           </span>
         </div>
@@ -52,16 +52,12 @@ export default function TrueCostSimulator() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '4px',
-              padding: '3px 8px',
-              borderRadius: '4px',
-              background: 'rgba(62, 207, 142, 0.1)',
               color: '#3ECF8E',
-              border: '1px solid rgba(62, 207, 142, 0.25)',
               fontSize: '0.6875rem',
             }}
           >
-            <ShieldCheck size={11} />
-            RECONCILED
+            <ShieldCheck size={13} />
+            Verified Clean
           </span>
         </div>
       </div>
@@ -69,8 +65,8 @@ export default function TrueCostSimulator() {
       {/* Interactive Controls */}
       <div
         style={{
-          padding: '12px 18px',
-          background: '#0E0E0E',
+          padding: '12px 0',
+          background: 'transparent',
           borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
           display: 'flex',
           gap: '8px',
@@ -83,12 +79,11 @@ export default function TrueCostSimulator() {
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
-            background: applyVoucher ? 'rgba(62, 207, 142, 0.12)' : '#161616',
-            border: '1px solid',
-            borderColor: applyVoucher ? 'rgba(62, 207, 142, 0.4)' : 'rgba(255, 255, 255, 0.08)',
-            color: applyVoucher ? '#3ECF8E' : '#777777',
-            padding: '4px 10px',
-            borderRadius: '6px',
+            background: applyVoucher ? 'rgba(62, 207, 142, 0.12)' : '#141414',
+            border: 'none',
+            color: applyVoucher ? '#3ECF8E' : '#737373',
+            padding: '5px 10px',
+            borderRadius: '4px',
             fontFamily: 'var(--font-mono)',
             fontSize: '0.6875rem',
             cursor: 'pointer',
@@ -96,7 +91,7 @@ export default function TrueCostSimulator() {
           }}
         >
           <Tag size={11} />
-          PROMO VOUCHER (-4%)
+          Promo Voucher (-4%)
         </button>
 
         <button
@@ -105,12 +100,11 @@ export default function TrueCostSimulator() {
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
-            background: applyCashback ? 'rgba(62, 207, 142, 0.12)' : '#161616',
-            border: '1px solid',
-            borderColor: applyCashback ? 'rgba(62, 207, 142, 0.4)' : 'rgba(255, 255, 255, 0.08)',
-            color: applyCashback ? '#3ECF8E' : '#777777',
-            padding: '4px 10px',
-            borderRadius: '6px',
+            background: applyCashback ? 'rgba(62, 207, 142, 0.12)' : '#141414',
+            border: 'none',
+            color: applyCashback ? '#3ECF8E' : '#737373',
+            padding: '5px 10px',
+            borderRadius: '4px',
             fontFamily: 'var(--font-mono)',
             fontSize: '0.6875rem',
             cursor: 'pointer',
@@ -118,7 +112,7 @@ export default function TrueCostSimulator() {
           }}
         >
           <CreditCard size={11} />
-          NBE VISA CASHBACK (5%)
+          NBE Visa Cashback (5%)
         </button>
 
         <button
@@ -127,38 +121,38 @@ export default function TrueCostSimulator() {
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
-            background: paymentGateway === 'valu' ? '#1E1E1E' : '#161616',
-            border: '1px solid rgba(255, 255, 255, 0.12)',
+            background: paymentGateway === 'valu' ? '#1A1A1A' : '#141414',
+            border: 'none',
             color: '#EDEDED',
-            padding: '4px 10px',
-            borderRadius: '6px',
+            padding: '5px 10px',
+            borderRadius: '4px',
             fontFamily: 'var(--font-mono)',
             fontSize: '0.6875rem',
             cursor: 'pointer',
           }}
         >
-          METHOD: {paymentGateway.toUpperCase()}
+          Method: {paymentGateway.toUpperCase()}
         </button>
       </div>
 
       {/* Ledger Rows */}
-      <div style={{ padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: '9px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', color: '#888888' }}>
+      <div style={{ padding: '14px 0', display: 'flex', flexDirection: 'column', gap: '9px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', color: '#737373' }}>
           <span>Base Shelf Price</span>
           <span style={{ color: '#D4D4D4' }}>EGP {basePrice.toLocaleString()}</span>
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', color: applyVoucher ? '#3ECF8E' : '#555555' }}>
           <span>Applied Voucher Code (-4%)</span>
-          <span>{applyVoucher ? `-EGP ${voucherDiscount.toLocaleString()}` : '— (DISABLED)'}</span>
+          <span>{applyVoucher ? `-EGP ${voucherDiscount.toLocaleString()}` : '— (Disabled)'}</span>
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', color: applyCashback ? '#3ECF8E' : '#555555' }}>
           <span>Card Cashback (NBE Visa Platinum 5%)</span>
-          <span>{applyCashback ? `-EGP ${cashbackDiscount.toLocaleString()}` : '— (DISABLED)'}</span>
+          <span>{applyCashback ? `-EGP ${cashbackDiscount.toLocaleString()}` : '— (Disabled)'}</span>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', color: '#888888' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', color: '#737373' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             <Truck size={12} />
             Mandatory Insured Courier
@@ -166,7 +160,7 @@ export default function TrueCostSimulator() {
           <span style={{ color: '#D4D4D4' }}>+EGP {shippingFee.toLocaleString()}</span>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', color: '#888888' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', color: '#737373' }}>
           <span>ValU 0% Admin Processing Surcharge</span>
           <span style={{ color: '#3ECF8E' }}>+EGP 0</span>
         </div>
@@ -175,29 +169,29 @@ export default function TrueCostSimulator() {
       {/* Execution Summary Footer */}
       <div
         style={{
-          padding: '14px 18px',
-          background: '#0B0B0B',
-          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+          padding: '14px 0',
+          background: 'transparent',
+          borderTop: '1px solid rgba(255, 255, 255, 0.05)',
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center',
+          alignItems: 'baseline',
         }}
       >
         <div>
-          <span style={{ color: '#777777', fontSize: '0.6875rem', display: 'block', textTransform: 'uppercase' }}>
+          <span style={{ color: '#737373', fontSize: '0.6875rem', display: 'block', textTransform: 'uppercase' }}>
             Final Executed Out-of-Pocket
           </span>
-          <span style={{ color: '#FFFFFF', fontWeight: 700, fontSize: '1.0625rem', letterSpacing: '-0.02em' }}>
+          <span style={{ color: '#FFFFFF', fontWeight: 600, fontSize: '1.25rem', letterSpacing: '-0.02em' }}>
             EGP {finalOutOfPocket.toLocaleString()}
           </span>
         </div>
 
         <div style={{ textAlign: 'right' }}>
-          <span style={{ color: '#3ECF8E', fontWeight: 600, fontSize: '0.8125rem' }}>
+          <span style={{ color: '#3ECF8E', fontWeight: 500, fontSize: '0.875rem' }}>
             Net Savings: EGP {netSavings.toLocaleString()}
           </span>
-          <span style={{ color: '#666666', fontSize: '0.625rem', display: 'block', marginTop: '2px' }}>
-            LATENCY: 148MS RECONCILED
+          <span style={{ color: '#666666', fontSize: '0.6875rem', display: 'block', marginTop: '2px' }}>
+            148ms avg response
           </span>
         </div>
       </div>

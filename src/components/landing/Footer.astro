@@ -1,0 +1,332 @@
+---
+import cawlixLogo from '../../assets/ICon.png';
+
+const FOOTER_COLUMNS = [
+  {
+    title: 'Engines',
+    links: [
+      { label: 'True-Cost Matrix', href: '/engines/true-cost' },
+      { label: 'Ghost Auditor', href: '/engines/ghost-auditor' },
+      { label: 'Landed-Cost Corridor', href: '/engines/landed-cost' },
+      { label: 'Glitch Radar', href: '/engines/anomaly-radar' },
+    ],
+  },
+  {
+    title: 'Solutions',
+    links: [
+      { label: 'Power Shoppers', href: '/solutions/power-shoppers' },
+      { label: 'Retailers & Resellers', href: '/solutions/retailers' },
+      { label: 'Arbitrage Traders', href: '/solutions/arbitrage' },
+      { label: 'Enterprise Feeds', href: '/pricing' },
+    ],
+  },
+  {
+    title: 'Platform',
+    links: [
+      { label: 'Coverage Index', href: '/network/coverage' },
+      { label: 'Documentation', href: '/docs' },
+      { label: 'Changelog', href: '/changelog' },
+      { label: 'System Status', href: '/status' },
+    ],
+  },
+  {
+    title: 'Legal & Code',
+    links: [
+      { label: 'Privacy Policy', href: '/privacy' },
+      { label: 'Terms of Service', href: '/terms' },
+      { label: 'Security Architecture', href: '/security' },
+      { label: 'API Sandbox', href: '/docs/api' },
+    ],
+  },
+];
+---
+
+<footer class="cawlix-footer">
+  <div class="footer-container">
+    <!-- Upper Grid (Brand 40% + 4 Columns 60%) -->
+    <div class="footer-upper-grid">
+      <!-- Brand Column (Left, 40% width on desktop) -->
+      <div class="footer-brand-column">
+        <!-- Logo + Name -->
+        <a href="/" class="footer-brand-link">
+          <img
+            src={cawlixLogo.src || cawlixLogo}
+            alt="Cawlix Logo"
+            width="24"
+            height="24"
+            class="footer-brand-logo"
+          />
+          <span class="footer-brand-name">Cawlix</span>
+        </a>
+
+        <!-- Subtitle -->
+        <p class="footer-subtitle">
+          Deterministic price intelligence, fraud auditing, and cross-border landed cost arbitrage for the Egyptian electronics market.
+        </p>
+
+        <!-- System Health Indicator -->
+        <div class="footer-system-health">
+          <span class="health-dot"></span>
+          <span>ALL SYSTEMS OPERATIONAL &middot; 99.98% PROBE ACCURACY</span>
+        </div>
+      </div>
+
+      <!-- Navigation Columns (Right, 60% width, 4 equal columns) -->
+      <div class="footer-nav-grid">
+        {FOOTER_COLUMNS.map((col) => (
+          <div class="footer-col">
+            <span class="footer-col-title">{col.title}</span>
+            <ul class="footer-links-list">
+              {col.links.map((link) => (
+                <li>
+                  <a href={link.href} class="footer-link-item">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Bottom Signature Sub-bar -->
+    <div class="footer-bottom-bar">
+      <!-- Left Side -->
+      <div class="footer-copyright">
+        &copy; 2026 Cawlix Systems. Deterministic Market Truth.
+      </div>
+
+      <!-- Center / Highlight -->
+      <div class="footer-attribution">
+        <span>Engineered &amp; Developed by</span>
+        <span class="author-highlight">Kamal Abou Eid</span>
+      </div>
+
+      <!-- Right Side (Socials: Minimal outline icons, NO background, hover:text-white) -->
+      <div class="footer-socials">
+        <!-- GitHub -->
+        <a
+          href="https://github.com/KamalAboueidd/Cawlix"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub Repository"
+          class="social-icon-link"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/>
+            <path d="M9 18c-4.51 2-5-2-7-2"/>
+          </svg>
+        </a>
+
+        <!-- X (Twitter) -->
+        <a
+          href="https://x.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="X Profile"
+          class="social-icon-link"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4l11.733 16h4.267l-11.733 -16z"/>
+            <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/>
+          </svg>
+        </a>
+
+        <!-- LinkedIn -->
+        <a
+          href="https://linkedin.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="LinkedIn Profile"
+          class="social-icon-link"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+            <rect width="4" height="12" x="2" y="9"/>
+            <circle cx="4" cy="4" r="2"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .cawlix-footer {
+    background: #0A0A0A;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    width: 100%;
+  }
+
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 64px 24px 0 24px;
+  }
+
+  .footer-upper-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 48px;
+  }
+
+  .footer-brand-column {
+    flex: 1 1 340px;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .footer-brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .footer-brand-logo {
+    height: 24px;
+    width: auto;
+    display: block;
+    object-fit: contain;
+  }
+
+  .footer-brand-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: -0.02em;
+    font-family: var(--font-sans);
+  }
+
+  .footer-subtitle {
+    font-size: 0.75rem;
+    color: #888888;
+    line-height: 1.6;
+    margin: 12px 0 0 0;
+    max-width: 380px;
+    font-family: var(--font-sans);
+  }
+
+  .footer-system-health {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #737373;
+    letter-spacing: 0.04em;
+  }
+
+  .health-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #3ECF8E;
+    box-shadow: 0 0 8px rgba(62, 207, 142, 0.6);
+    flex-shrink: 0;
+    display: inline-block;
+  }
+
+  .footer-nav-grid {
+    flex: 2 1 560px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 32px;
+  }
+
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .footer-col-title {
+    color: #FFFFFF;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    font-family: var(--font-sans);
+    letter-spacing: -0.01em;
+  }
+
+  .footer-links-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer-link-item {
+    color: #888888;
+    font-size: 0.75rem;
+    text-decoration: none;
+    transition: color 140ms ease;
+    font-family: var(--font-sans);
+    display: inline-block;
+  }
+
+  .footer-link-item:hover {
+    color: #EDEDED;
+  }
+
+  .footer-bottom-bar {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 48px;
+    padding-top: 28px;
+    padding-bottom: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 0.75rem;
+    color: #666666;
+    font-family: var(--font-sans);
+  }
+
+  .footer-copyright {
+    color: #666666;
+  }
+
+  .footer-attribution {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .author-highlight {
+    color: #EDEDED;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    transition: color 140ms ease;
+    cursor: pointer;
+  }
+
+  .author-highlight:hover {
+    color: #3ECF8E;
+  }
+
+  .footer-socials {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .social-icon-link {
+    color: #737373;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: color 140ms ease;
+  }
+
+  .social-icon-link:hover {
+    color: #FFFFFF;
+  }
+</style>

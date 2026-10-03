@@ -1,0 +1,87 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/astro/Navbar.astro';
+import Footer from '../../components/astro/Footer.astro';
+
+const SECTIONS = [
+  {
+    title: 'Platform Architecture',
+    desc: 'Learn how Cawlix normalizes prices, calculates true-cost out-of-pocket spend, and verifies baselines.',
+    links: [
+      { name: 'Core System Overview', href: '/#engines' },
+      { name: 'Deterministic True-Cost Model', href: '/engines/true-cost' },
+      { name: 'Ghost Discount Detection Engine', href: '/engines/ghost-auditor' },
+    ],
+  },
+  {
+    title: 'Cross-Border Economics',
+    desc: 'Statutory import customs, air freight handling, and currency parallel spread models.',
+    links: [
+      { name: 'Customs Code 8517.13 Ruleset', href: '/engines/landed-cost' },
+      { name: 'US-to-Cairo Air Corridors', href: '/engines/landed-cost' },
+      { name: 'Commercial FX Rate Tracking', href: '/#showcase' },
+    ],
+  },
+  {
+    title: 'Developer Integrations',
+    desc: 'Direct REST endpoints, WebSocket streams, and programmatic alerting webhooks.',
+    links: [
+      { name: 'REST API Sandbox', href: '/docs/api' },
+      { name: 'Live Scraper Cluster Status', href: '/status' },
+      { name: 'Retailer Coverage Matrix', href: '/network/coverage' },
+    ],
+  },
+];
+---
+
+<Layout
+  title="Documentation & Engineering Guides — Cawlix Tracker"
+  description="Comprehensive documentation for the Cawlix price intelligence platform, mathematical models, and API integrations."
+>
+  <Navbar />
+
+  <main style="min-height: 100vh; background-color: #0A0A0A; padding-top: 130px; padding-bottom: 100px;">
+    <div style="max-width: 960px; margin: 0 auto; padding: 0 24px;">
+      <div style="margin-bottom: 56px;">
+        <span class="feature-group-label" style="color: #3ECF8E; margin-bottom: 12px;">
+          // CAWLIX_DOCS
+        </span>
+        <h1
+          class="text-display"
+          style="font-size: clamp(2.25rem, 4.5vw, 3.5rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1.1; margin: 0 0 16px 0;"
+        >
+          Engineering Documentation
+        </h1>
+        <p style="font-size: 1.0625rem; color: #888888; line-height: 1.6; margin: 0;">
+          Everything you need to understand deterministic pricing math, statutory customs reconciliation, and scraper telemetry.
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+        {SECTIONS.map((sec) => (
+          <div style="background: #111111; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 28px;">
+            <h2 style="font-size: 1.125rem; font-weight: 600; color: #FFFFFF; margin: 0 0 10px 0;">
+              {sec.title}
+            </h2>
+            <p style="font-size: 0.8125rem; color: #888888; line-height: 1.5; margin: 0 0 20px 0;">
+              {sec.desc}
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              {sec.links.map((l) => (
+                <a
+                  href={l.href}
+                  style="color: #3ECF8E; font-size: 0.8125rem; text-decoration: none; display: flex; align-items: center; justify-content: space-between;"
+                >
+                  <span>{l.name}</span>
+                  <span style="color: #737373;">&rarr;</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

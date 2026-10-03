@@ -1,26 +1,35 @@
+import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import ShowcaseConsole from './ShowcaseConsole';
+
+const TICKER_ITEMS = [
+  { value: '12', label: 'RETAILERS INDEXED' },
+  { value: '90-DAY', label: 'PRICE VELOCITY' },
+  { value: '<180MS', label: 'PROBE LATENCY' },
+  { value: '0%', label: 'GHOST DEAL TOLERANCE', highlight: true },
+];
 
 export default function Hero() {
   return (
     <section
+      className="page-container hero-section-root"
       style={{
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        paddingTop: '130px',
-        paddingBottom: '90px',
-        paddingLeft: '24px',
-        paddingRight: '24px',
+        paddingTop: '110px',
+        paddingBottom: '60px',
         position: 'relative',
         background: '#0A0A0A',
-        overflow: 'hidden',
+        overflowX: 'hidden',
+        maxWidth: '100vw',
       }}
     >
       {/* Visual 1: Primary Hero Graphic with subtle radial fade mask */}
       <div
         aria-hidden="true"
+        className="hero-globe-graphic"
         style={{
           position: 'absolute',
           top: '30px',
@@ -33,12 +42,13 @@ export default function Hero() {
           pointerEvents: 'none',
           zIndex: 0,
           opacity: 0.38,
+          mixBlendMode: 'screen',
           WebkitMaskImage: 'radial-gradient(circle at 50% 45%, black 40%, rgba(0, 0, 0, 0.4) 65%, transparent 85%)',
           maskImage: 'radial-gradient(circle at 50% 45%, black 40%, rgba(0, 0, 0, 0.4) 65%, transparent 85%)',
         }}
       >
         <img
-          src="/landing/1.png"
+          src="/landing/1.webp"
           alt="Cawlix Institutional Telemetry Infrastructure"
           width={1672}
           height={941}
@@ -51,6 +61,7 @@ export default function Hero() {
             aspectRatio: '1672 / 941',
             objectFit: 'cover',
             display: 'block',
+            mixBlendMode: 'screen',
           }}
         />
       </div>
@@ -58,12 +69,14 @@ export default function Hero() {
       {/* Ultra-subtle ambient radial mask */}
       <div
         aria-hidden
+        className="hero-ambient-glow"
         style={{
           position: 'absolute',
           top: 0,
           left: '50%',
           transform: 'translateX(-50%)',
           width: '1000px',
+          maxWidth: '100vw',
           height: '520px',
           background: 'radial-gradient(ellipse at 50% 0%, rgba(62, 207, 142, 0.05) 0%, transparent 70%)',
           pointerEvents: 'none',
@@ -71,154 +84,375 @@ export default function Hero() {
         }}
       />
 
-      {/* Main Container */}
+      {/* Hero First Fold (takes full 100dvh on mobile) */}
       <div
+        className="hero-first-fold"
         style={{
           maxWidth: '1040px',
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '32px',
+          gap: '24px',
           position: 'relative',
           zIndex: 1,
           textAlign: 'center',
         }}
       >
-        {/* Confident, Razor-Sharp Headline with Vercel Multi-tone Narrative Contrast */}
-        <h1
-          className="text-display"
-          style={{
-            fontSize: 'clamp(2.5rem, 5.5vw, 4.5rem)',
-            fontWeight: 500,
-            letterSpacing: '-0.04em',
-            lineHeight: 1.08,
-            maxWidth: '920px',
-            margin: '0 auto',
-          }}
-        >
-          <span style={{ color: '#FFFFFF', fontWeight: 500 }}>Institutional Price Intelligence. </span>
-          <span className="text-contrast-tail">Engineered for absolute accuracy.</span>
-        </h1>
-
-        {/* Concise 2-line Subtitle */}
-        <p
-          style={{
-            fontSize: '1.0625rem',
-            color: '#888888',
-            lineHeight: 1.6,
-            maxWidth: '660px',
-            margin: '0 auto',
-            letterSpacing: '-0.01em',
-          }}
-        >
-          Stop paying ghost-inflated prices. Cawlix computes deterministic out-of-pocket costs
-          across 12 Egyptian retailers and direct US import corridors in real-time.
-        </p>
-
-        {/* Action Area: High-Conviction Buttons */}
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', justifyContent: 'center' }}>
-          <a
-            href="#showcase"
-            className="btn btn-primary"
+        {/* Central Content Cluster: Title + Subtitle + Compact Actions */}
+        <div className="hero-content-cluster">
+          {/* Confident, Razor-Sharp Headline with Vercel Multi-tone Narrative Contrast */}
+          <h1
+            className="text-display hero-title-responsive"
             style={{
-              padding: '10px 20px',
-              fontSize: '0.875rem',
-              fontWeight: 500,
-              borderRadius: '8px',
-              color: '#0A0A0A',
-              background: '#3ECF8E',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
+              maxWidth: '920px',
+              margin: '0 auto',
             }}
           >
-            Launch Tracker
-            <ArrowRight size={15} strokeWidth={2} />
-          </a>
-          <a
-            href="#showcase"
-            className="btn btn-secondary"
+            <span style={{ color: '#FFFFFF', fontWeight: 500 }}>Institutional Price Intelligence. </span>
+            <span className="text-contrast-tail">Engineered for absolute accuracy.</span>
+          </h1>
+
+          {/* Concise 2-line Subtitle */}
+          <p
+            className="hero-sub-responsive"
             style={{
-              padding: '10px 20px',
-              fontSize: '0.875rem',
-              fontWeight: 500,
-              borderRadius: '8px',
-              color: '#EDEDED',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              background: 'transparent',
+              fontSize: '1rem',
+              color: '#888888',
+              lineHeight: 1.6,
+              maxWidth: '660px',
+              margin: '0 auto',
+              letterSpacing: '-0.01em',
             }}
           >
-            Explore Intelligence Console
-          </a>
-        </div>
+            Stop paying ghost-inflated prices. Cawlix computes deterministic out-of-pocket costs
+            across 12 Egyptian retailers and direct US import corridors in real-time.
+          </p>
 
-        {/* Borderless Horizontal Telemetry Ticker */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '28px',
-            flexWrap: 'wrap',
-            padding: '16px 0',
-            fontFamily: 'var(--font-mono)',
-            fontSize: '0.75rem',
-            color: '#888888',
-            letterSpacing: '0.04em',
-            borderTop: '1px solid rgba(255, 255, 255, 0.06)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-            width: '100%',
-            maxWidth: '860px',
-            marginTop: '8px',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ color: '#FFFFFF', fontWeight: 600 }}>12</span>
-            <span>RETAILERS INDEXED</span>
-          </div>
-          <span style={{ color: 'rgba(255, 255, 255, 0.15)' }}>·</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ color: '#FFFFFF', fontWeight: 600 }}>90-DAY</span>
-            <span>PRICE VELOCITY</span>
-          </div>
-          <span style={{ color: 'rgba(255, 255, 255, 0.15)' }}>·</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ color: '#FFFFFF', fontWeight: 600 }}>&lt;180MS</span>
-            <span>PROBE LATENCY</span>
-          </div>
-          <span style={{ color: 'rgba(255, 255, 255, 0.15)' }}>·</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ color: '#3ECF8E', fontWeight: 600 }}>0%</span>
-            <span>GHOST DEAL TOLERANCE</span>
+          {/* Action Area: High-Conviction Side-by-Side Sleek Compact Buttons */}
+          <div className="hero-actions-wrapper">
+            <a
+              href="#showcase"
+              className="hero-action-btn hero-btn-primary"
+              style={{ height: '32px' }}
+            >
+              <span>Launch Tracker</span>
+              <ArrowRight size={11} strokeWidth={2.2} />
+            </a>
+            <a
+              href="#engines"
+              className="hero-action-btn hero-btn-secondary"
+              style={{ height: '32px' }}
+            >
+              <span>Docs</span>
+            </a>
           </div>
         </div>
 
-        {/* Institutional Feature Showcase Header */}
-        <div style={{ width: '100%', marginTop: '40px', textAlign: 'center' }}>
-          <span className="feature-group-label" style={{ marginBottom: '12px' }}>
-            // INTERACTIVE_FEATURE_SHOWCASE
-          </span>
-          <h2
-            className="text-display"
-            style={{
-              fontSize: 'clamp(1.875rem, 3.8vw, 3rem)',
-              fontWeight: 500,
-              letterSpacing: '-0.04em',
-              lineHeight: 1.08,
-              marginBottom: '16px',
-            }}
-          >
-            <span style={{ color: '#FFFFFF', fontWeight: 500 }}>Live Telemetry Feeds & Market Probes </span>
-            <span className="text-contrast-tail">across 12 Egyptian retailers.</span>
-          </h2>
-        </div>
+        {/* Borderless Horizontal Telemetry Ticker (Marquee on mobile, static centered on desktop) */}
+        <div className="ticker-wrapper">
+          <div className="ticker-track">
+            {/* Primary group */}
+            <div className="ticker-group">
+              {TICKER_ITEMS.map((item, idx) => (
+                <React.Fragment key={`ticker-1-${idx}`}>
+                  <div className="ticker-item">
+                    <span style={{ color: item.highlight ? '#3ECF8E' : '#FFFFFF', fontWeight: 600 }}>
+                      {item.value}
+                    </span>
+                    <span>{item.label}</span>
+                  </div>
+                  <span className="ticker-dot">·</span>
+                </React.Fragment>
+              ))}
+            </div>
 
-        {/* Institutional Interactive Showcase Console */}
-        <div style={{ width: '100%', marginTop: '12px' }}>
-          <ShowcaseConsole />
+            {/* Seamless duplicate group for continuous looping marquee on mobile */}
+            <div className="ticker-group ticker-group-duplicate" aria-hidden="true">
+              {TICKER_ITEMS.map((item, idx) => (
+                <React.Fragment key={`ticker-2-${idx}`}>
+                  <div className="ticker-item">
+                    <span style={{ color: item.highlight ? '#3ECF8E' : '#FFFFFF', fontWeight: 600 }}>
+                      {item.value}
+                    </span>
+                    <span>{item.label}</span>
+                  </div>
+                  <span className="ticker-dot">·</span>
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Institutional Feature Showcase Header */}
+      <div style={{ width: '100%', marginTop: '36px', textAlign: 'center' }}>
+        <span className="feature-group-label" style={{ marginBottom: '10px' }}>
+          Interactive Intelligence Console
+        </span>
+        <h2
+          className="text-display"
+          style={{
+            fontSize: 'clamp(1.5rem, 3.8vw, 3rem)',
+            fontWeight: 500,
+            letterSpacing: -0.04,
+            lineHeight: 1.15,
+            marginBottom: '12px',
+          }}
+        >
+          <span style={{ color: '#FFFFFF', fontWeight: 500 }}>Live Telemetry Feeds & Market Probes </span>
+          <span className="text-contrast-tail">across 12 Egyptian retailers.</span>
+        </h2>
+      </div>
+
+      {/* Institutional Interactive Showcase Console */}
+      <div style={{ width: '100%', maxWidth: '100%', marginTop: '12px', overflowX: 'hidden' }}>
+        <ShowcaseConsole />
+      </div>
+
+      <style>{`
+        /* Hero Actions: Always side by side with equal 50/50 balance */
+        .hero-actions-wrapper {
+          display: flex !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 8px !important;
+          width: 100% !important;
+          max-width: 250px !important;
+          margin: 0 auto !important;
+        }
+
+        .hero-action-btn {
+          flex: 1 1 0px !important;
+          min-width: 0 !important;
+          height: 32px !important;
+          max-height: 32px !important;
+          line-height: 32px !important;
+          padding: 0 10px !important;
+          font-size: 0.70rem !important;
+          font-weight: 600 !important;
+          border-radius: 6px !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 4px !important;
+          text-decoration: none !important;
+          white-space: nowrap !important;
+          box-sizing: border-box !important;
+          transition: all 140ms ease !important;
+        }
+
+        .hero-btn-primary {
+          color: #0A0A0A !important;
+          background-color: #3ECF8E !important;
+          border: 1px solid #3ECF8E !important;
+        }
+        .hero-btn-primary:hover {
+          background-color: #34B77B !important;
+          border-color: #34B77B !important;
+        }
+
+        .hero-btn-secondary {
+          color: #EDEDED !important;
+          background-color: rgba(255, 255, 255, 0.03) !important;
+          border: 1px solid rgba(255, 255, 255, 0.14) !important;
+        }
+        .hero-btn-secondary:hover {
+          background-color: rgba(255, 255, 255, 0.07) !important;
+          border-color: rgba(255, 255, 255, 0.25) !important;
+          color: #FFFFFF !important;
+        }
+
+        /* Telemetry Ticker Marquee styles */
+        .ticker-wrapper {
+          width: 100%;
+          max-width: 860px;
+          margin: 0 auto;
+          position: relative;
+          overflow: hidden;
+          border-top: 1px solid rgba(255, 255, 255, 0.06);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+          padding: 14px 0;
+        }
+
+        .ticker-track {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+        }
+
+        .ticker-group {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 24px;
+          font-family: var(--font-mono);
+          font-size: 0.75rem;
+          color: #888888;
+          letter-spacing: 0.04em;
+          white-space: nowrap;
+        }
+
+        .ticker-item {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .ticker-dot {
+          color: rgba(255, 255, 255, 0.15);
+          user-select: none;
+        }
+
+        .ticker-group-duplicate {
+          display: none;
+        }
+
+        @media (max-width: 768px) {
+          .hero-section-root {
+            padding-top: 56px !important;
+            padding-bottom: 12px !important;
+            background: #0A0A0A !important;
+          }
+
+          .hero-ambient-glow {
+            display: none !important;
+          }
+
+          /* Mobile 100vh / 100dvh Exact Fit First Fold */
+          .hero-first-fold {
+            min-height: calc(100dvh - 56px) !important;
+            min-height: calc(100vh - 56px);
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            padding: 14px 16px 16px 16px !important;
+            box-sizing: border-box !important;
+            position: relative !important;
+            background: transparent !important;
+          }
+
+          /* Central cluster over the globe */
+          .hero-content-cluster {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            gap: 12px !important;
+            text-align: center !important;
+            margin: auto 0 !important;
+            position: relative !important;
+            z-index: 2 !important;
+            background: transparent !important;
+          }
+
+          /* Globe enlarged, centered behind text, and pure screen blend */
+          .hero-globe-graphic {
+            top: 55px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            width: 140% !important;
+            max-width: 580px !important;
+            height: 440px !important;
+            opacity: 0.55 !important;
+            overflow: hidden !important;
+            mix-blend-mode: screen !important;
+            background: transparent !important;
+            pointer-events: none !important;
+            -webkit-mask-image: radial-gradient(circle at 50% 50%, black 55%, rgba(0, 0, 0, 0.4) 80%, transparent 100%) !important;
+            mask-image: radial-gradient(circle at 50% 50%, black 55%, rgba(0, 0, 0, 0.4) 80%, transparent 100%) !important;
+          }
+
+          .hero-globe-graphic img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain !important;
+            object-position: center !important;
+            mix-blend-mode: screen !important;
+            background: transparent !important;
+          }
+
+          .hero-title-responsive {
+            font-size: clamp(1.65rem, 6.8vw, 2.15rem) !important;
+            line-height: 1.12 !important;
+            letter-spacing: -0.035em !important;
+            margin: 0 auto !important;
+            max-width: 320px !important;
+          }
+
+          /* Pushed down so it sits lower in the globe */
+          .hero-sub-responsive {
+            font-size: 0.78125rem !important;
+            line-height: 1.5 !important;
+            max-width: 300px !important;
+            margin: 20px auto 6px auto !important;
+            color: #888888 !important;
+          }
+
+          .hero-actions-wrapper {
+            max-width: 240px !important;
+            gap: 8px !important;
+            margin: 0 auto !important;
+          }
+
+          .hero-action-btn {
+            height: 31px !important;
+            max-height: 31px !important;
+            line-height: 31px !important;
+            font-size: 0.70rem !important;
+            padding: 0 10px !important;
+            border-radius: 6px !important;
+            gap: 4px !important;
+          }
+
+          /* Auto-marquee ticker on mobile (lifted up to eliminate bottom dead space) */
+          .ticker-wrapper {
+            padding: 6px 0 !important;
+            max-width: 100% !important;
+            margin-top: auto !important;
+            margin-bottom: 50px !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+            -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 1) 8%, rgba(0, 0, 0, 1) 92%, transparent 100%) !important;
+            mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 1) 8%, rgba(0, 0, 0, 1) 92%, transparent 100%) !important;
+          }
+
+          .ticker-track {
+            justify-content: flex-start !important;
+            width: max-content !important;
+            animation: cawlixTickerMarquee 16s linear infinite !important;
+            will-change: transform;
+          }
+
+          .ticker-track:hover,
+          .ticker-track:active {
+            animation-play-state: paused !important;
+          }
+
+          .ticker-group {
+            gap: 14px !important;
+            padding-right: 14px !important;
+            font-size: 9.5px !important;
+            letter-spacing: 0.05em !important;
+            flex-shrink: 0 !important;
+          }
+
+          .ticker-group-duplicate {
+            display: flex !important;
+          }
+        }
+
+        @keyframes cawlixTickerMarquee {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+      `}</style>
     </section>
   );
 }

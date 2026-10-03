@@ -45,12 +45,11 @@ function TelemetryRow({ event, isNew }: TelemetryRowProps) {
       initial={isNew ? { opacity: 0, y: -6 } : false}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.18, ease: 'easeOut' }}
+      className="telemetry-log-row"
       style={{
         display: 'grid',
-        gridTemplateColumns: '72px 80px 1fr',
-        gap: '8px',
+        gap: '6px',
         alignItems: 'start',
-        padding: '5px 16px',
         borderBottom: '1px solid var(--border-subtle)',
         background: isNew ? cfg.bgColor : 'transparent',
         transition: 'background 600ms ease',
@@ -78,6 +77,7 @@ function TelemetryRow({ event, isNew }: TelemetryRowProps) {
           fontWeight: 500,
           letterSpacing: '0.02em',
           paddingTop: '1px',
+          whiteSpace: 'nowrap',
         }}
       >
         {cfg.prefix}
@@ -89,7 +89,7 @@ function TelemetryRow({ event, isNew }: TelemetryRowProps) {
           fontFamily: 'var(--font-mono)',
           fontSize: '0.6875rem',
           color: 'var(--text-secondary)',
-          lineHeight: 1.55,
+          lineHeight: 1.45,
           wordBreak: 'break-word',
         }}
       >
@@ -156,8 +156,14 @@ export default function TelemetryConsole() {
 
   return (
     <div
-      className="card"
-      style={{ display: 'flex', flexDirection: 'column', height: '420px' }}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '420px',
+        background: 'transparent',
+        border: 'none',
+        borderRadius: 0,
+      }}
     >
       {/* Header bar */}
       <div
@@ -165,14 +171,14 @@ export default function TelemetryConsole() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '10px 16px',
-          borderBottom: '1px solid var(--border)',
+          padding: '10px 0',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
           flexShrink: 0,
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <Terminal size={13} strokeWidth={1.5} style={{ color: 'var(--text-muted)' }} />
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-secondary)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-secondary)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
             Telemetry Feed
           </span>
           <span className={clsx('badge', 'badge-neutral')} style={{ fontSize: '0.55rem' }}>
@@ -189,10 +195,10 @@ export default function TelemetryConsole() {
               <WifiOff size={11} strokeWidth={1.5} style={{ color: 'var(--danger)' }} />
             )}
             <div
-              className={`dot dot-${isConnected ? 'success' : 'danger'}${isConnected && !isPaused ? ' dot-pulse' : ''}`}
+              className={`dot dot-${isConnected ? 'success' : 'danger'}`}
             />
             <span className="mono-label">
-              {isConnected ? (isPaused ? 'PAUSED' : 'LIVE') : 'OFFLINE'}
+              {isConnected ? (isPaused ? 'Paused' : '142ms avg response') : 'Offline'}
             </span>
           </div>
 
@@ -263,8 +269,8 @@ export default function TelemetryConsole() {
           display: 'flex',
           alignItems: 'center',
           gap: '12px',
-          padding: '7px 16px',
-          borderTop: '1px solid var(--border)',
+          padding: '8px 0',
+          borderTop: '1px solid rgba(255, 255, 255, 0.05)',
           flexShrink: 0,
           flexWrap: 'wrap',
         }}
@@ -278,6 +284,19 @@ export default function TelemetryConsole() {
           </div>
         ))}
       </div>
+      <style>{`
+        .telemetry-log-row {
+          grid-template-columns: 72px 80px 1fr;
+          padding: 5px 16px;
+        }
+        @media (max-width: 640px) {
+          .telemetry-log-row {
+            grid-template-columns: 58px 64px 1fr !important;
+            padding: 4px 10px !important;
+            font-size: 10px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

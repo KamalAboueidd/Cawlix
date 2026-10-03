@@ -29,34 +29,33 @@ function EngineRow({
   specs,
   primaryView,
   secondaryView,
-  primaryLabel = 'EXECUTION_VIEW',
-  secondaryLabel = 'TELEMETRY_STREAM',
+  primaryLabel = 'Execution View',
+  secondaryLabel = 'Telemetry Stream',
   reversed = false,
 }: EngineRowProps) {
   const [activeTab, setActiveTab] = useState<'primary' | 'secondary'>('primary');
 
   return (
     <div
+      className="engine-row-grid"
       style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-        gap: '56px',
-        alignItems: 'center',
-        padding: '72px 0',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+        width: '100%',
+        maxWidth: '100%',
+        overflowX: 'hidden',
       }}
     >
       {/* Text Breakdown Column */}
       <div
+        className="engine-text-col"
         style={{
           order: reversed ? 2 : 1,
           display: 'flex',
           flexDirection: 'column',
-          gap: '20px',
+          gap: '16px',
           textAlign: 'left',
         }}
       >
-        <span className="feature-group-label" style={{ color: '#3ECF8E' }}>
+        <span className="feature-group-label" style={{ color: '#3ECF8E', marginBottom: '4px' }}>
           {label}
         </span>
 
@@ -64,10 +63,10 @@ function EngineRow({
         <h3
           className="text-display"
           style={{
-            fontSize: 'clamp(1.875rem, 3.2vw, 2.5rem)',
+            fontSize: 'clamp(1.5rem, 3.2vw, 2.5rem)',
             fontWeight: 500,
             letterSpacing: '-0.04em',
-            lineHeight: 1.12,
+            lineHeight: 1.15,
             margin: 0,
           }}
         >
@@ -77,9 +76,9 @@ function EngineRow({
 
         <p
           style={{
-            fontSize: '0.9375rem',
+            fontSize: '0.875rem',
             color: '#888888',
-            lineHeight: 1.65,
+            lineHeight: 1.6,
             letterSpacing: '-0.01em',
             margin: 0,
           }}
@@ -88,17 +87,17 @@ function EngineRow({
         </p>
 
         {/* Technical Metadata & Feature Stacks */}
-        <div style={{ marginTop: '8px' }}>
-          <span className="feature-group-label" style={{ marginBottom: '8px' }}>
-            // ARCHITECTURE_SPECIFICATIONS
+        <div style={{ marginTop: '4px' }}>
+          <span className="feature-group-label" style={{ marginBottom: '6px' }}>
+            Specifications & Verification
           </span>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
             {specs.map((spec) => (
-              <div key={spec} className="feature-item-row" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div key={spec} className="feature-item-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8125rem' }}>
                 <span
                   style={{
-                    width: '6px',
-                    height: '6px',
+                    width: '5px',
+                    height: '5px',
                     borderRadius: '50%',
                     backgroundColor: '#3ECF8E',
                     display: 'inline-block',
@@ -113,23 +112,23 @@ function EngineRow({
 
         {/* View Switcher if secondary visual is provided */}
         {secondaryView && (
-          <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+          <div style={{ display: 'flex', gap: '8px', marginTop: '8px', flexWrap: 'wrap' }}>
             <button
               type="button"
               onClick={() => setActiveTab('primary')}
               style={{
                 fontFamily: 'var(--font-mono)',
                 fontSize: '0.6875rem',
-                padding: '6px 12px',
-                borderRadius: '6px',
-                border: activeTab === 'primary' ? '1px solid #3ECF8E' : '1px solid rgba(255, 255, 255, 0.08)',
-                background: activeTab === 'primary' ? 'rgba(62, 207, 142, 0.1)' : '#111111',
-                color: activeTab === 'primary' ? '#3ECF8E' : '#737373',
+                padding: '4px 10px',
+                borderRadius: '4px',
+                border: 'none',
+                background: activeTab === 'primary' ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
+                color: activeTab === 'primary' ? '#FFFFFF' : '#737373',
                 cursor: 'pointer',
-                transition: 'all 150ms ease',
+                transition: 'all 120ms ease',
               }}
             >
-              [{primaryLabel}]
+              {primaryLabel}
             </button>
             <button
               type="button"
@@ -137,16 +136,16 @@ function EngineRow({
               style={{
                 fontFamily: 'var(--font-mono)',
                 fontSize: '0.6875rem',
-                padding: '6px 12px',
-                borderRadius: '6px',
-                border: activeTab === 'secondary' ? '1px solid #3ECF8E' : '1px solid rgba(255, 255, 255, 0.08)',
-                background: activeTab === 'secondary' ? 'rgba(62, 207, 142, 0.1)' : '#111111',
-                color: activeTab === 'secondary' ? '#3ECF8E' : '#737373',
+                padding: '4px 10px',
+                borderRadius: '4px',
+                border: 'none',
+                background: activeTab === 'secondary' ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
+                color: activeTab === 'secondary' ? '#FFFFFF' : '#737373',
                 cursor: 'pointer',
-                transition: 'all 150ms ease',
+                transition: 'all 120ms ease',
               }}
             >
-              [{secondaryLabel}]
+              {secondaryLabel}
             </button>
           </div>
         )}
@@ -154,9 +153,12 @@ function EngineRow({
 
       {/* Interactive Visual Stage Column */}
       <div
+        className="engine-visual-col"
         style={{
           order: reversed ? 1 : 2,
           width: '100%',
+          maxWidth: '100%',
+          overflowX: 'hidden',
         }}
       >
         {activeTab === 'primary' ? primaryView : secondaryView}
@@ -169,12 +171,15 @@ export default function CoreEnginesDeepDive() {
   return (
     <section
       id="engines"
+      className="page-container"
       style={{
         width: '100%',
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: '80px 24px 120px 24px',
+        paddingTop: '60px',
+        paddingBottom: '80px',
         background: '#0A0A0A',
+        overflowX: 'hidden',
       }}
     >
       {/* Section Header with Vercel Display Grade Typography */}
@@ -190,7 +195,7 @@ export default function CoreEnginesDeepDive() {
         }}
       >
         <span className="feature-group-label" style={{ color: '#3ECF8E' }}>
-          // CORE_SYSTEM_ARCHITECTURE
+          Core Architecture
         </span>
 
         <h2
@@ -224,7 +229,7 @@ export default function CoreEnginesDeepDive() {
 
       {/* ── Engine 01: True-Cost Execution Matrix & Price Stream Matrix ── */}
       <EngineRow
-        label="// ENGINE_01: EXECUTION_RECONCILIATION"
+        label="Engine 01 · True-Cost Execution"
         leadHeading="Unmask the exact out-of-pocket figure"
         tailHeading="before checkout."
         body="MSRPs lie. Retailers layer checkout fees, hidden shipping tiers, and promo coupon exclusions. Cawlix calculates deterministic net cost across all 12 Egyptian retailers, factoring in active bank cashback and zero-interest installment penalties."
@@ -233,8 +238,8 @@ export default function CoreEnginesDeepDive() {
           '12 Store Rulesets & Gateway Surcharge Mapping',
           'Live Price Stream Fiber Wave Mesh',
         ]}
-        primaryLabel="CALCULATOR_CONSOLE"
-        secondaryLabel="FIBER_STREAM_MESH"
+        primaryLabel="Calculator Console"
+        secondaryLabel="Price Stream Mesh"
         primaryView={<TrueCostSimulator />}
         secondaryView={<PriceStreamMatrix />}
       />
@@ -242,7 +247,7 @@ export default function CoreEnginesDeepDive() {
       {/* ── Engine 02: Ghost-Discount Auditor & 90-Day Radar Core ── */}
       <EngineRow
         reversed
-        label="// ENGINE_02: TIME-SERIES_AUDIT"
+        label="Engine 02 · Time-Series Audit"
         leadHeading="Eliminate fake discounts"
         tailHeading="with 90-day price velocity."
         body="Our scrapers poll SKU pricing multiple times daily. If a retailer spikes a price before announcing a 'mega markdown', Cawlix tags the listing, recalculates the true baseline, and assigns a mathematical authenticity score."
@@ -251,15 +256,15 @@ export default function CoreEnginesDeepDive() {
           '360° Geometric Radar Scanning Nodes',
           'Zero-Tolerance for Pre-Sale Price Inflation',
         ]}
-        primaryLabel="RADAR_SCANNER"
-        secondaryLabel="TIME_SERIES_CHART"
+        primaryLabel="Radar Scanner"
+        secondaryLabel="Time-Series Chart"
         primaryView={<RadarScanCore />}
         secondaryView={<GhostDiscountVisualizer />}
       />
 
       {/* ── Engine 03: Landed-Cost Matrix & 3D Wireframe Globe ── */}
       <EngineRow
-        label="// ENGINE_03: GLOBAL_ARBITRAGE"
+        label="Engine 03 · Global Arbitrage Corridor"
         leadHeading="Calculate exact US-to-Egypt"
         tailHeading="import landed parity."
         body="Compare Egyptian shelf prices against Amazon US, Newegg, and B&H in real-time. Automated reconciliation of live parallel exchange rates, freight tariffs, Egyptian Customs codes, 14% VAT, and bank clearance margins."
@@ -268,8 +273,8 @@ export default function CoreEnginesDeepDive() {
           'Lightweight WebGL Wireframe Earth (Cobe)',
           'JFK, DE & LAX Direct Freight Corridors',
         ]}
-        primaryLabel="3D_ARBITRAGE_GLOBE"
-        secondaryLabel="PARITY_COMPARISON"
+        primaryLabel="Arbitrage Globe"
+        secondaryLabel="Parity Comparison"
         primaryView={<GlobalArbitrageGlobe />}
         secondaryView={<LandedCostSpread />}
       />
@@ -277,7 +282,7 @@ export default function CoreEnginesDeepDive() {
       {/* ── Engine 04: Flash Glitch & Anomaly Radar ── */}
       <EngineRow
         reversed
-        label="// ENGINE_04: ANOMALY_RADAR"
+        label="Engine 04 · Anomaly Detection Radar"
         leadHeading="Catch pricing errors"
         tailHeading="before retailers fix their databases."
         body="When scrapers detect statistically anomalous price deviations (>35% below rolling market baseline), our anomaly engine fires webhook alerts directly to subscribers within milliseconds."
@@ -286,8 +291,8 @@ export default function CoreEnginesDeepDive() {
           'Dynamic Status Flipping & Real-Time Sparkline',
           'Sub-3s Push Notification & Webhook Pipeline',
         ]}
-        primaryLabel="3D_TELEMETRY_VIEWPORT"
-        secondaryLabel="LIVE_FEED_ALERTS"
+        primaryLabel="Telemetry Viewport"
+        secondaryLabel="Live Feed Alerts"
         primaryView={<LiveDashboardPreview />}
         secondaryView={<GlitchFeedCard />}
       />

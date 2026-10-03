@@ -1,0 +1,131 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/astro/Navbar.astro';
+import Footer from '../components/astro/Footer.astro';
+
+const RELEASES = [
+  {
+    version: 'v2.4.0',
+    date: 'October 2026',
+    tag: 'LATEST_DEPLOY',
+    title: 'Deterministic Landed-Cost Matrix & Modern WebP Engine',
+    desc: 'High-throughput cross-border parity engine comparing Amazon US, Newegg, and B&H directly against Cairo shelf retail.',
+    highlights: [
+      'Statutory Egyptian Customs reconciliation (Tariff Code 8517.13 & 14% statutory VAT).',
+      'Air cargo freight rates from JFK, DE, and LAX direct dispatch hubs.',
+      '100% Zero CLS visual delivery with modern WebP asset optimization.',
+      'Institutional Mega-Menu navigation with instant sub-route scaffolding.',
+    ],
+  },
+  {
+    version: 'v2.3.0',
+    date: 'September 2026',
+    tag: 'RADAR_ENGINE',
+    title: '90-Day Geometric Price Radar & Synthetic Markup Detection',
+    desc: 'Mathematical verification of retailer price-history velocity to intercept pre-sale price pumping.',
+    highlights: [
+      'Automated detection of 72-hour pre-sale price hikes with synthetic baseline scoring.',
+      '360° concentric radar scan visualization monitoring 30d, 60d, and 90d buffers.',
+      'Store rule-engines for B.TECH, TradeLine, Amazon Egypt, Noon EG, and 2B.',
+    ],
+  },
+  {
+    version: 'v2.2.0',
+    date: 'August 2026',
+    tag: 'ANOMALY_CORE',
+    title: 'Sub-Second Anomaly Radar & Flash Error Telemetry',
+    desc: 'Low-latency pricing discrepancy auditor detecting algorithmic glitches before retailer rollback.',
+    highlights: [
+      'Real-time webhook pipelines broadcasting statistical price deviations (>35% below rolling mean).',
+      '3D telemetry perspective viewport and interactive inspection workbench.',
+      'Commercial bank installment surcharge calculation engine.',
+    ],
+  },
+];
+---
+
+<Layout
+  title="Changelog & System Releases — Cawlix Tracker"
+  description="Chronological record of Cawlix telemetry engine updates, protocol releases, and statutory customs models."
+>
+  <Navbar />
+
+  <main style="min-height: 100vh; background-color: #0A0A0A; padding-top: 130px; padding-bottom: 100px;">
+    <div style="max-width: 920px; margin: 0 auto; padding: 0 24px;">
+      <!-- Header -->
+      <div style="margin-bottom: 60px;">
+        <span class="feature-group-label" style="color: #3ECF8E; margin-bottom: 12px;">
+          // SYSTEM_CHANGELOG
+        </span>
+        <h1
+          class="text-display"
+          style="font-size: clamp(2.25rem, 4.5vw, 3.5rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1.1; margin: 0 0 16px 0;"
+        >
+          <span style="color: #FFFFFF;">Release Notes &amp; </span>
+          <span class="text-contrast-tail">Telemetry Updates.</span>
+        </h1>
+        <p style="font-size: 1.0625rem; color: #888888; line-height: 1.6; margin: 0;">
+          A deterministic log of platform capabilities, scraping engine improvements, and statutory calculation releases.
+        </p>
+      </div>
+
+      <!-- Release Timeline List -->
+      <div style="display: flex; flex-direction: column; gap: 48px;">
+        {RELEASES.map((release) => (
+          <article
+            style="border-left: 2px solid rgba(255, 255, 255, 0.08); padding-left: 28px; position: relative;"
+          >
+            <!-- Timeline Pin -->
+            <div
+              style="position: absolute; left: -6px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background-color: #3ECF8E; box-shadow: 0 0 12px #3ECF8E;"
+            ></div>
+
+            <!-- Version Meta Header -->
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap;">
+              <span style="font-family: var(--font-mono); font-size: 1.125rem; font-weight: 700; color: #FFFFFF;">
+                {release.version}
+              </span>
+              <span style="font-family: var(--font-mono); font-size: 0.75rem; color: #737373;">
+                {release.date}
+              </span>
+              <span
+                style="font-family: var(--font-mono); font-size: 0.625rem; color: #3ECF8E; background: rgba(62, 207, 142, 0.1); border: none; padding: 2px 6px; border-radius: 4px;"
+              >
+                {release.tag}
+              </span>
+            </div>
+
+            <h2
+              style="font-size: 1.375rem; font-weight: 600; color: #FFFFFF; margin: 0 0 12px 0; letter-spacing: -0.02em;"
+            >
+              {release.title}
+            </h2>
+
+            <p style="font-size: 0.9375rem; color: #888888; line-height: 1.6; margin: 0 0 20px 0;">
+              {release.desc}
+            </p>
+
+            <!-- Highlights Box -->
+            <div
+              style="background: #111111; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 20px;"
+            >
+              <div style="font-family: var(--font-mono); font-size: 0.6875rem; color: #737373; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.04em;">
+                // KEY_CAPABILITIES_SHIPPED
+              </div>
+              <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px;">
+                {release.highlights.map((h) => (
+                  <li style="display: flex; align-items: baseline; gap: 10px; font-size: 0.8125rem; color: #D4D4D4; line-height: 1.5;">
+                    <span style="color: #3ECF8E; font-family: var(--font-mono); font-size: 0.75rem;">+</span>
+                    <span>{h}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

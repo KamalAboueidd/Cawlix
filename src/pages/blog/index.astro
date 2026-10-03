@@ -1,0 +1,108 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/astro/Navbar.astro';
+import Footer from '../../components/astro/Footer.astro';
+
+const POSTS = [
+  {
+    title: 'How Egyptian Retailers Engineer Fake "50% Off" Flash Sales: A 90-Day Forensic Audit',
+    desc: 'An empirical analysis of 45,000 SKUs across major Cairo electronics sellers, exposing the 72-hour pre-sale price spike mechanism.',
+    date: 'Oct 02, 2026',
+    readTime: '6 min read',
+    category: 'GHOST_DEAL_AUDIT',
+    author: 'Cawlix Intelligence Desk',
+    slug: 'forensic-audit-fake-discounts-egypt',
+  },
+  {
+    title: 'Statutory Landed Parity: The Mathematical Formula for US-to-Cairo Arbitrage',
+    desc: 'Deconstructing Egyptian Customs Code 8517.13, statutory 14% VAT, parallel commercial FX margins, and air cargo handling.',
+    date: 'Sep 24, 2026',
+    readTime: '8 min read',
+    category: 'IMPORT_ARBITRAGE',
+    author: 'Cross-Border Economics Team',
+    slug: 'statutory-landed-parity-us-cairo',
+  },
+  {
+    title: 'Sub-200ms Scraper Telemetry: Building Zero-False-Positive Price Verification',
+    desc: 'Inside our distributed worker cluster: browser automation, anti-bot mitigation, and deterministic net checkout reconciliation.',
+    date: 'Sep 15, 2026',
+    readTime: '5 min read',
+    category: 'SYSTEM_ARCHITECTURE',
+    author: 'Platform Engineering',
+    slug: 'sub-200ms-scraper-telemetry-architecture',
+  },
+];
+---
+
+<Layout
+  title="Intelligence Blog & Engineering Dispatches — Cawlix Tracker"
+  description="Technical deep dives on retail pricing algorithms, statutory customs mathematics, and automated price scraping architecture."
+>
+  <Navbar />
+
+  <main style="min-height: 100vh; background-color: #0A0A0A; padding-top: 130px; padding-bottom: 100px;">
+    <div style="max-width: 1040px; margin: 0 auto; padding: 0 24px;">
+      <!-- Header -->
+      <div style="max-width: 760px; margin-bottom: 56px;">
+        <span class="feature-group-label" style="color: #3ECF8E; margin-bottom: 12px;">
+          // RESEARCH_&_ENGINEERING_DISPATCHES
+        </span>
+        <h1
+          class="text-display"
+          style="font-size: clamp(2.25rem, 4.5vw, 3.5rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1.1; margin: 0 0 16px 0;"
+        >
+          <span style="color: #FFFFFF;">Market Intelligence &amp; </span>
+          <span class="text-contrast-tail">Systems Engineering.</span>
+        </h1>
+        <p style="font-size: 1.0625rem; color: #888888; line-height: 1.6; margin: 0;">
+          Field research, technical teardowns of e-commerce manipulation, and statutory customs reconciliation guides.
+        </p>
+      </div>
+
+      <!-- Articles Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+        {POSTS.map((post) => (
+          <article
+            style="background: #111111; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 28px; display: flex; flex-direction: column; justify-content: space-between; transition: border-color 150ms ease; box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);"
+          >
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <span
+                  style="font-family: var(--font-mono); font-size: 0.625rem; color: #3ECF8E; background: rgba(62, 207, 142, 0.1); border: none; padding: 2px 6px; border-radius: 4px;"
+                >
+                  {post.category}
+                </span>
+                <span style="font-family: var(--font-mono); font-size: 0.6875rem; color: #737373;">
+                  {post.readTime}
+                </span>
+              </div>
+
+              <h2
+                style="font-size: 1.125rem; font-weight: 600; color: #FFFFFF; line-height: 1.35; margin: 0 0 12px 0; letter-spacing: -0.01em;"
+              >
+                {post.title}
+              </h2>
+
+              <p style="font-size: 0.875rem; color: #888888; line-height: 1.6; margin: 0 0 20px 0;">
+                {post.desc}
+              </p>
+            </div>
+
+            <div
+              style="padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.06); display: flex; justify-content: space-between; align-items: center;"
+            >
+              <div style="font-family: var(--font-mono); font-size: 0.6875rem; color: #737373;">
+                <span>{post.author}</span> · <span>{post.date}</span>
+              </div>
+              <span style="color: #3ECF8E; font-size: 0.8125rem; font-weight: 600;">
+                Read dispatch &rarr;
+              </span>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

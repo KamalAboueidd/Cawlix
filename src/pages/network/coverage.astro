@@ -1,0 +1,77 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/astro/Navbar.astro';
+import Footer from '../../components/astro/Footer.astro';
+
+const STORES = [
+  { name: 'Amazon Egypt', type: 'Marketplace & 1P', skus: '180,000+', cadence: '15 mins', status: 'ACTIVE' },
+  { name: 'Noon Egypt', type: 'Marketplace & 1P', skus: '140,000+', cadence: '20 mins', status: 'ACTIVE' },
+  { name: 'B.TECH', type: 'Electronics Retailer', skus: '42,000+', cadence: '30 mins', status: 'ACTIVE' },
+  { name: 'TradeLine Stores', type: 'Apple Authorized Reseller', skus: '8,500+', cadence: '10 mins', status: 'ACTIVE' },
+  { name: '2B Egypt', type: 'Consumer Electronics', skus: '18,000+', cadence: '25 mins', status: 'ACTIVE' },
+  { name: 'Dream 2000', type: 'Mobile & Audio Chain', skus: '12,000+', cadence: '30 mins', status: 'ACTIVE' },
+  { name: 'Raya Shop', type: 'Electronics & Appliances', skus: '22,000+', cadence: '35 mins', status: 'ACTIVE' },
+  { name: 'Sharaf DG Egypt', type: 'Megastore Chain', skus: '15,000+', cadence: '45 mins', status: 'ACTIVE' },
+  { name: 'Dubai Phone', type: 'Mobile Devices', skus: '9,200+', cadence: '30 mins', status: 'ACTIVE' },
+  { name: 'El-Shennawy', type: 'Smartphones & Laptops', skus: '6,400+', cadence: '40 mins', status: 'ACTIVE' },
+  { name: 'Jumia Egypt', type: 'General Marketplace', skus: '95,000+', cadence: '30 mins', status: 'ACTIVE' },
+  { name: 'Carrefour Egypt', type: 'Hypermarket Tech', skus: '14,000+', cadence: '60 mins', status: 'ACTIVE' },
+];
+---
+
+<Layout
+  title="Retail Store Coverage Matrix — Cawlix Tracker"
+  description="Comprehensive index of the 12 Egyptian retail platforms monitored continuously by Cawlix telemetry scrapers."
+>
+  <Navbar />
+
+  <main style="min-height: 100vh; background-color: #0A0A0A; padding-top: 130px; padding-bottom: 100px;">
+    <div style="max-width: 1040px; margin: 0 auto; padding: 0 24px;">
+      <div style="margin-bottom: 48px;">
+        <span class="feature-group-label" style="color: #3ECF8E; margin-bottom: 12px;">
+          // INGESTION_GRID_COVERAGE
+        </span>
+        <h1
+          class="text-display"
+          style="font-size: clamp(2.25rem, 4.5vw, 3.5rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1.1; margin: 0 0 16px 0;"
+        >
+          12 Egyptian Retail Platforms. Polled Continuously.
+        </h1>
+        <p style="font-size: 1.0625rem; color: #888888; line-height: 1.6; margin: 0;">
+          Direct headless probe workers ingesting pricing, stock availability, and promotional markdowns in real-time.
+        </p>
+      </div>
+
+      <div style="background: #111111; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-family: var(--font-mono); font-size: 0.75rem;">
+          <thead>
+            <tr style="background: #161616; border-bottom: 1px solid rgba(255, 255, 255, 0.08); color: #737373;">
+              <th style="padding: 14px 20px; font-weight: 500;">PLATFORM</th>
+              <th style="padding: 14px 20px; font-weight: 500;">TYPE</th>
+              <th style="padding: 14px 20px; font-weight: 500;">SKUs TRACKED</th>
+              <th style="padding: 14px 20px; font-weight: 500;">POLL CADENCE</th>
+              <th style="padding: 14px 20px; font-weight: 500;">STATUS</th>
+            </tr>
+          </thead>
+          <tbody>
+            {STORES.map((s) => (
+              <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.04);">
+                <td style="padding: 14px 20px; color: #FFFFFF; font-weight: 600;">{s.name}</td>
+                <td style="padding: 14px 20px; color: #888888;">{s.type}</td>
+                <td style="padding: 14px 20px; color: #D4D4D4;">{s.skus}</td>
+                <td style="padding: 14px 20px; color: #888888;">{s.cadence}</td>
+                <td style="padding: 14px 20px;">
+                  <span style="color: #3ECF8E; background: rgba(62, 207, 142, 0.1); padding: 2px 6px; border-radius: 4px;">
+                    {s.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

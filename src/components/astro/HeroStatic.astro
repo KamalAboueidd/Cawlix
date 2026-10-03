@@ -1,17 +1,25 @@
 ---
 // Static hero section in Astro with Zero CLS and eager visual
+const TICKER_ITEMS = [
+  { value: '12', label: 'RETAILERS INDEXED' },
+  { value: '90-DAY', label: 'PRICE VELOCITY' },
+  { value: '<180MS', label: 'PROBE LATENCY' },
+  { value: '0%', label: 'GHOST DEAL TOLERANCE', highlight: true },
+];
 ---
 
 <section
-  style="display: flex; flex-direction: column; align-items: center; padding-top: 140px; padding-bottom: 40px; padding-left: 24px; padding-right: 24px; position: relative; background: #0A0A0A; overflow: hidden; text-align: center;"
+  class="hero-section-root"
+  style="display: flex; flex-direction: column; align-items: center; padding-top: 110px; padding-bottom: 40px; padding-left: 24px; padding-right: 24px; position: relative; background: #0A0A0A; overflow: hidden; text-align: center;"
 >
   {/* Visual 1: Primary Hero Graphic with subtle radial fade mask */}
   <div
     aria-hidden="true"
+    class="hero-globe-graphic"
     style="position: absolute; top: 30px; left: 50%; transform: translateX(-50%); width: 100%; max-width: 1240px; height: auto; aspect-ratio: 1672 / 941; pointer-events: none; z-index: 0; opacity: 0.38; -webkit-mask-image: radial-gradient(circle at 50% 45%, black 40%, rgba(0, 0, 0, 0.4) 65%, transparent 85%); mask-image: radial-gradient(circle at 50% 45%, black 40%, rgba(0, 0, 0, 0.4) 65%, transparent 85%);"
   >
     <img
-      src="/landing/1.png"
+      src="/landing/1.webp"
       alt="Cawlix Institutional Telemetry Infrastructure"
       width={1672}
       height={941}
@@ -27,12 +35,14 @@
     style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 1000px; height: 520px; background: radial-gradient(ellipse at 50% 0%, rgba(62, 207, 142, 0.05) 0%, transparent 70%); pointer-events: none; z-index: 1;"
   ></div>
 
+  {/* Hero First Fold */}
   <div
-    style="max-width: 1040px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 32px; position: relative; z-index: 1;"
+    class="hero-first-fold"
+    style="max-width: 1040px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 24px; position: relative; z-index: 1;"
   >
     {/* Vercel Display Grade Headline with Multi-tone Narrative Contrast */}
     <h1
-      class="text-display"
+      class="text-display hero-title-responsive"
       style="font-size: clamp(2.5rem, 5.5vw, 4.5rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1.08; max-width: 920px; margin: 0 auto;"
     >
       <span style="color: #FFFFFF; font-weight: 500;">Institutional Price Intelligence. </span>
@@ -41,65 +51,313 @@
 
     {/* Concise 2-line Subtitle */}
     <p
+      class="hero-sub-responsive"
       style="font-size: 1.0625rem; color: #888888; line-height: 1.6; max-width: 660px; margin: 0 auto; letter-spacing: -0.01em;"
     >
       Stop paying ghost-inflated prices. Cawlix computes deterministic out-of-pocket costs
       across 12 Egyptian retailers and direct US import corridors in real-time.
     </p>
 
-    {/* Action Area */}
-    <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap;">
+    {/* Action Area: Side by Side Buttons */}
+    <div class="hero-actions-wrapper">
       <a
         href="#engines"
-        style="padding: 10px 20px; font-size: 0.875rem; font-weight: 500; border-radius: 8px; color: #0A0A0A; background: #3ECF8E; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"
+        class="hero-action-btn hero-btn-primary"
       >
-        Launch Tracker &rarr;
+        <span>Launch Tracker</span>
+        <span>&rarr;</span>
       </a>
       <a
         href="#engines"
-        style="padding: 10px 20px; font-size: 0.875rem; font-weight: 500; border-radius: 8px; color: #EDEDED; border: 1px solid rgba(255, 255, 255, 0.12); background: transparent; text-decoration: none;"
+        class="hero-action-btn hero-btn-secondary"
       >
-        Explore Intelligence Console
+        <span>Docs</span>
       </a>
     </div>
 
-    {/* Borderless Horizontal Telemetry Ticker */}
-    <div
-      style="display: flex; align-items: center; justify-content: center; gap: 28px; flex-wrap: wrap; padding: 16px 0; font-family: var(--font-mono); font-size: 0.75rem; color: #888888; letter-spacing: 0.04em; border-top: 1px solid rgba(255, 255, 255, 0.06); border-bottom: 1px solid rgba(255, 255, 255, 0.06); width: 100%; max-width: 860px; margin-top: 8px;"
-    >
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="color: #FFFFFF; font-weight: 600;">12</span>
-        <span>RETAILERS INDEXED</span>
-      </div>
-      <span style="color: rgba(255, 255, 255, 0.15);">&middot;</span>
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="color: #FFFFFF; font-weight: 600;">90-DAY</span>
-        <span>PRICE VELOCITY</span>
-      </div>
-      <span style="color: rgba(255, 255, 255, 0.15);">&middot;</span>
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="color: #FFFFFF; font-weight: 600;">&lt;180MS</span>
-        <span>PROBE LATENCY</span>
-      </div>
-      <span style="color: rgba(255, 255, 255, 0.15);">&middot;</span>
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="color: #3ECF8E; font-weight: 600;">0%</span>
-        <span>GHOST DEAL TOLERANCE</span>
-      </div>
-    </div>
+    {/* Borderless Horizontal Telemetry Ticker (Marquee on mobile) */}
+    <div class="ticker-wrapper">
+      <div class="ticker-track">
+        <div class="ticker-group">
+          {TICKER_ITEMS.map((item) => (
+            <div class="ticker-item">
+              <span style={{ color: item.highlight ? '#3ECF8E' : '#FFFFFF', fontWeight: 600 }}>
+                {item.value}
+              </span>
+              <span>{item.label}</span>
+            </div>
+            <span class="ticker-dot">&middot;</span>
+          ))}
+        </div>
 
-    {/* Institutional Feature Showcase Header */}
-    <div style="width: 100%; margin-top: 40px; text-align: center;">
-      <span class="feature-group-label" style="margin-bottom: 12px;">
-        // INTERACTIVE_FEATURE_SHOWCASE
-      </span>
-      <h2
-        class="text-display"
-        style="font-size: clamp(1.875rem, 3.8vw, 3rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1.08; margin-bottom: 16px;"
-      >
-        <span style="color: #FFFFFF; font-weight: 500;">Live Telemetry Feeds & Market Probes </span>
-        <span class="text-contrast-tail">across 12 Egyptian retailers.</span>
-      </h2>
+        {/* Duplicate group for continuous loop on mobile */}
+        <div class="ticker-group ticker-group-duplicate" aria-hidden="true">
+          {TICKER_ITEMS.map((item) => (
+            <div class="ticker-item">
+              <span style={{ color: item.highlight ? '#3ECF8E' : '#FFFFFF', fontWeight: 600 }}>
+                {item.value}
+              </span>
+              <span>{item.label}</span>
+            </div>
+            <span class="ticker-dot">&middot;</span>
+          ))}
+        </div>
+      </div>
     </div>
   </div>
+
+  {/* Institutional Feature Showcase Header */}
+  <div style="width: 100%; margin-top: 40px; text-align: center;">
+    <span class="feature-group-label" style="margin-bottom: 12px;">
+      Interactive Intelligence Console
+    </span>
+    <h2
+      class="text-display"
+      style="font-size: clamp(1.875rem, 3.8vw, 3rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1.08; margin-bottom: 16px;"
+    >
+      <span style="color: #FFFFFF; font-weight: 500;">Live Telemetry Feeds & Market Probes </span>
+      <span class="text-contrast-tail">across 12 Egyptian retailers.</span>
+    </h2>
+  </div>
 </section>
+
+<style>
+  .hero-actions-wrapper {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    max-width: 270px !important;
+    margin: 0 auto !important;
+  }
+
+  .hero-action-btn {
+    flex: 1 1 0px !important;
+    min-width: 0 !important;
+    height: 35px !important;
+    padding: 0 10px !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    text-decoration: none !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+    transition: all 140ms ease !important;
+  }
+
+  .hero-btn-primary {
+    color: #0A0A0A !important;
+    background-color: #3ECF8E !important;
+    border: 1px solid #3ECF8E !important;
+  }
+  .hero-btn-primary:hover {
+    background-color: #34B77B !important;
+    border-color: #34B77B !important;
+  }
+
+  .hero-btn-secondary {
+    color: #EDEDED !important;
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  }
+  .hero-btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.07) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    color: #FFFFFF !important;
+  }
+
+  /* Telemetry Ticker Marquee */
+  .ticker-wrapper {
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 14px 0;
+  }
+
+  .ticker-track {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .ticker-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: #888888;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ticker-dot {
+    color: rgba(255, 255, 255, 0.15);
+    user-select: none;
+  }
+
+  .ticker-group-duplicate {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .hero-section-root {
+      padding-top: 56px !important;
+      padding-bottom: 12px !important;
+      background: #0A0A0A !important;
+    }
+
+    .hero-ambient-glow {
+      display: none !important;
+    }
+
+    /* Mobile 100vh / 100dvh Exact Fit First Fold */
+    .hero-first-fold {
+      min-height: calc(100dvh - 56px) !important;
+      min-height: calc(100vh - 56px);
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      padding: 14px 16px 16px 16px !important;
+      box-sizing: border-box !important;
+      position: relative !important;
+      background: transparent !important;
+    }
+
+    /* Central cluster over the globe */
+    .hero-content-cluster {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      gap: 12px !important;
+      text-align: center !important;
+      margin: auto 0 !important;
+      position: relative !important;
+      z-index: 2 !important;
+      background: transparent !important;
+    }
+
+    /* Globe enlarged, centered behind text, and pure screen blend */
+    .hero-globe-graphic {
+      top: 55px !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      width: 140% !important;
+      max-width: 580px !important;
+      height: 440px !important;
+      opacity: 0.55 !important;
+      overflow: hidden !important;
+      mix-blend-mode: screen !important;
+      background: transparent !important;
+      pointer-events: none !important;
+      -webkit-mask-image: radial-gradient(circle at 50% 50%, black 55%, rgba(0, 0, 0, 0.4) 80%, transparent 100%) !important;
+      mask-image: radial-gradient(circle at 50% 50%, black 55%, rgba(0, 0, 0, 0.4) 80%, transparent 100%) !important;
+    }
+
+    .hero-globe-graphic img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+      object-position: center !important;
+      mix-blend-mode: screen !important;
+      background: transparent !important;
+    }
+
+    .hero-title-responsive {
+      font-size: clamp(1.65rem, 6.8vw, 2.15rem) !important;
+      line-height: 1.12 !important;
+      letter-spacing: -0.035em !important;
+      margin: 0 auto !important;
+      max-width: 320px !important;
+    }
+
+    /* Pushed down so it sits lower in the globe */
+    .hero-sub-responsive {
+      font-size: 0.78125rem !important;
+      line-height: 1.5 !important;
+      max-width: 300px !important;
+      margin: 20px auto 6px auto !important;
+      color: #888888 !important;
+    }
+
+    .hero-actions-wrapper {
+      max-width: 240px !important;
+      gap: 8px !important;
+      margin: 0 auto !important;
+    }
+
+    .hero-action-btn {
+      height: 31px !important;
+      max-height: 31px !important;
+      line-height: 31px !important;
+      font-size: 0.70rem !important;
+      padding: 0 10px !important;
+      border-radius: 6px !important;
+      gap: 4px !important;
+    }
+
+    /* Auto-marquee ticker on mobile (lifted up to eliminate bottom dead space) */
+    .ticker-wrapper {
+      padding: 6px 0 !important;
+      max-width: 100% !important;
+      margin-top: auto !important;
+      margin-bottom: 50px !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 1) 8%, rgba(0, 0, 0, 1) 92%, transparent 100%) !important;
+      mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 1) 8%, rgba(0, 0, 0, 1) 92%, transparent 100%) !important;
+    }
+
+    .ticker-track {
+      justify-content: flex-start !important;
+      width: max-content !important;
+      animation: cawlixTickerMarquee 16s linear infinite !important;
+      will-change: transform;
+    }
+
+    .ticker-track:hover,
+    .ticker-track:active {
+      animation-play-state: paused !important;
+    }
+
+    .ticker-group {
+      gap: 14px !important;
+      padding-right: 14px !important;
+      font-size: 9.5px !important;
+      letter-spacing: 0.05em !important;
+      flex-shrink: 0 !important;
+    }
+
+    .ticker-group-duplicate {
+      display: flex !important;
+    }
+  }
+
+  @keyframes cawlixTickerMarquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+</style>

@@ -300,11 +300,8 @@ export default function ShowcaseConsole() {
         width: '100%',
         maxWidth: '1040px',
         margin: '0 auto',
-        borderRadius: '12px',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
-        background: '#0B0B0B',
-        overflow: 'hidden',
-        boxShadow: '0 24px 64px -12px rgba(0, 0, 0, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.06)',
+        background: 'transparent',
+        border: 'none',
       }}
     >
       {/* ── Header: Vercel-Style Segmented Tab Group & Minimal Status Indicator ── */}
@@ -313,28 +310,21 @@ export default function ShowcaseConsole() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '10px 16px',
-          background: '#101010',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          padding: '12px 0',
+          background: 'transparent',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
           userSelect: 'none',
           flexWrap: 'wrap',
           gap: '12px',
         }}
       >
-        {/* Left: Window Dots & Vercel Segmented Tabs */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ display: 'flex', gap: '6px' }}>
-            <div style={{ width: '9px', height: '9px', borderRadius: '50%', background: 'rgba(255, 255, 255, 0.15)' }} />
-            <div style={{ width: '9px', height: '9px', borderRadius: '50%', background: 'rgba(255, 255, 255, 0.15)' }} />
-            <div style={{ width: '9px', height: '9px', borderRadius: '50%', background: 'rgba(255, 255, 255, 0.15)' }} />
-          </div>
-
-          {/* Minimal Clean Tabs (No Border, No Background) */}
+        {/* Left: Clean Segmented Tabs (No dots, no cards) */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
           <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '18px',
+              gap: '6px',
               background: 'transparent',
               border: 'none',
               padding: 0,
@@ -344,74 +334,83 @@ export default function ShowcaseConsole() {
             <button
               type="button"
               onClick={() => setActiveTab('telemetry')}
+              className="showcase-tab-btn"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
-                background: 'transparent',
-                color: activeTab === 'telemetry' ? '#FFFFFF' : '#777777',
+                gap: '5px',
+                background: activeTab === 'telemetry' ? 'rgba(255, 255, 255, 0.06)' : 'transparent',
+                color: activeTab === 'telemetry' ? '#FFFFFF' : '#737373',
                 fontWeight: activeTab === 'telemetry' ? 600 : 400,
-                padding: '4px 0',
+                padding: '4px 10px',
+                borderRadius: '6px',
                 border: 'none',
                 boxShadow: 'none',
                 cursor: 'pointer',
-                transition: 'color 150ms ease',
+                transition: 'all 120ms ease',
+                whiteSpace: 'nowrap',
               }}
             >
-              <Activity size={13} strokeWidth={1.5} color={activeTab === 'telemetry' ? '#3ECF8E' : '#777777'} />
-              Live Network Feed
+              <Activity size={12} strokeWidth={1.5} color={activeTab === 'telemetry' ? '#3ECF8E' : '#777777'} />
+              <span>Live Feed</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab('probe')}
+              className="showcase-tab-btn"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
-                background: 'transparent',
+                gap: '5px',
+                background: activeTab === 'probe' ? 'rgba(255, 255, 255, 0.06)' : 'transparent',
                 color: activeTab === 'probe' ? '#FFFFFF' : '#777777',
                 fontWeight: activeTab === 'probe' ? 600 : 400,
-                padding: '4px 0',
+                padding: '4px 10px',
+                borderRadius: '6px',
                 border: 'none',
                 boxShadow: 'none',
                 cursor: 'pointer',
-                transition: 'color 150ms ease',
+                transition: 'all 120ms ease',
+                whiteSpace: 'nowrap',
               }}
             >
-              <Search size={13} strokeWidth={1.5} color={activeTab === 'probe' ? '#3ECF8E' : '#777777'} />
-              On-Demand Probes
+              <Search size={12} strokeWidth={1.5} color={activeTab === 'probe' ? '#3ECF8E' : '#777777'} />
+              <span>Probes</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab('landed-cost')}
+              className="showcase-tab-btn"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
-                background: 'transparent',
+                gap: '5px',
+                background: activeTab === 'landed-cost' ? 'rgba(255, 255, 255, 0.06)' : 'transparent',
                 color: activeTab === 'landed-cost' ? '#FFFFFF' : '#777777',
                 fontWeight: activeTab === 'landed-cost' ? 600 : 400,
-                padding: '4px 0',
+                padding: '4px 10px',
+                borderRadius: '6px',
                 border: 'none',
                 boxShadow: 'none',
                 cursor: 'pointer',
-                transition: 'color 150ms ease',
+                transition: 'all 120ms ease',
+                whiteSpace: 'nowrap',
               }}
             >
-              <Globe size={13} strokeWidth={1.5} color={activeTab === 'landed-cost' ? '#3ECF8E' : '#777777'} />
-              US-EG Arbitrage Matrix
+              <Globe size={12} strokeWidth={1.5} color={activeTab === 'landed-cost' ? '#3ECF8E' : '#777777'} />
+              <span>Arbitrage Matrix</span>
             </button>
           </div>
         </div>
 
-        {/* Right Status Indicator: Minimal Static Green Dot */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {/* Right Status Indicator: Clean static micro-text (no pulse, no fluff) */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <span
             style={{
-              width: '6px',
-              height: '6px',
+              width: '5px',
+              height: '5px',
               borderRadius: '50%',
               backgroundColor: '#3ECF8E',
               display: 'inline-block',
@@ -421,31 +420,34 @@ export default function ShowcaseConsole() {
             style={{
               fontFamily: 'var(--font-mono)',
               fontSize: '0.6875rem',
-              color: '#888888',
-              letterSpacing: '0.04em',
+              color: '#737373',
+              letterSpacing: '0.02em',
             }}
           >
-            REALTIME ENGINE ONLINE · 142MS AVG
+            142ms avg response
           </span>
         </div>
       </div>
 
       {/* ── Tab 1: Live Network Feed (Institutional Supabase / Vercel Data Grid) ── */}
       {activeTab === 'telemetry' && (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '460px', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', height: '360px', maxHeight: '360px', overflow: 'hidden' }}>
           {/* Subheader / Filter Controls Bar */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              padding: '8px 16px',
+              padding: '6px 12px',
               background: '#0D0D0D',
               borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+              overflowX: 'auto',
+              whiteSpace: 'nowrap',
+              gap: '8px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: '#666666', marginRight: '6px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+              <span className="hidden-mobile" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: '#666666', marginRight: '4px' }}>
                 FILTER:
               </span>
               {(['ALL', 'DROP', 'GHOST', 'ARBITRAGE'] as const).map((mode) => (
@@ -455,10 +457,9 @@ export default function ShowcaseConsole() {
                   onClick={() => setLogFilter(mode)}
                   style={{
                     background: logFilter === mode ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
-                    border: '1px solid',
-                    borderColor: logFilter === mode ? 'rgba(255, 255, 255, 0.14)' : 'transparent',
+                    border: 'none',
                     color: logFilter === mode ? '#FFFFFF' : '#777777',
-                    padding: '2px 8px',
+                    padding: '2px 6px',
                     borderRadius: '4px',
                     fontFamily: 'var(--font-mono)',
                     fontSize: '0.625rem',
@@ -466,12 +467,12 @@ export default function ShowcaseConsole() {
                     transition: 'all 120ms ease',
                   }}
                 >
-                  {mode}
+                  {mode === 'ARBITRAGE' ? 'ARB' : mode}
                 </button>
               ))}
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
               <button
                 type="button"
                 onClick={() => setIsPaused((p) => !p)}
@@ -482,7 +483,7 @@ export default function ShowcaseConsole() {
                   background: 'transparent',
                   border: '1px solid rgba(255, 255, 255, 0.08)',
                   color: isPaused ? '#F59E0B' : '#888888',
-                  padding: '3px 8px',
+                  padding: '2px 6px',
                   borderRadius: '4px',
                   fontFamily: 'var(--font-mono)',
                   fontSize: '0.625rem',
@@ -502,7 +503,7 @@ export default function ShowcaseConsole() {
                   background: 'transparent',
                   border: '1px solid rgba(255, 255, 255, 0.08)',
                   color: '#888888',
-                  padding: '3px 8px',
+                  padding: '2px 6px',
                   borderRadius: '4px',
                   fontFamily: 'var(--font-mono)',
                   fontSize: '0.625rem',
@@ -515,14 +516,15 @@ export default function ShowcaseConsole() {
             </div>
           </div>
 
-          {/* Table Header Row (Column Names) */}
+          {/* Table Header Row (Column Names) - Desktop only */}
           <div
+            className="showcase-desktop-table"
             style={{
               display: 'flex',
               alignItems: 'center',
               padding: '8px 16px',
-              background: '#090909',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'transparent',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
               fontFamily: 'var(--font-mono)',
               fontSize: '0.6875rem',
               color: '#666666',
@@ -543,7 +545,7 @@ export default function ShowcaseConsole() {
             style={{
               flex: 1,
               overflowY: 'auto',
-              background: '#0B0B0B',
+              background: 'transparent',
             }}
           >
             {filteredLogs.length === 0 ? (
@@ -557,133 +559,163 @@ export default function ShowcaseConsole() {
                 const isDrop = log.verdictType === 'DROP';
 
                 return (
-                  <div
-                    key={log.id}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      padding: '8px 16px',
-                      borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
-                      transition: 'background-color 120ms ease',
-                      background: 'transparent',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.025)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                    }}
-                  >
-                    {/* Col 1: Time (11px Monospace, muted #666666, fixed width 85px) */}
+                  <div key={log.id}>
+                    {/* Desktop 6-col Row */}
                     <div
+                      className="showcase-desktop-table"
                       style={{
-                        width: '85px',
-                        flexShrink: 0,
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '11px',
-                        color: '#666666',
-                        letterSpacing: '-0.02em',
-                      }}
-                    >
-                      {log.timestamp}
-                    </div>
-
-                    {/* Col 2: Store Origin with micro Lucide outline icon (width 110px) */}
-                    <div
-                      style={{
-                        width: '110px',
-                        flexShrink: 0,
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '6px',
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '0.6875rem',
-                        color: '#A3A3A3',
+                        padding: '8px 16px',
+                        borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+                        transition: 'background-color 120ms ease',
+                        background: 'transparent',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.025)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
                       }}
                     >
-                      <Store size={12} strokeWidth={1.2} color="#737373" />
-                      <span>{log.store}</span>
-                    </div>
-
-                    {/* Col 3: SKU Item & Telemetry (High-contrast pure white #EDEDED, truncated with ellipsis, flex-1) */}
-                    <div
-                      style={{
-                        flex: 1,
-                        minWidth: 0,
-                        paddingRight: '16px',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      <span style={{ color: '#EDEDED', fontWeight: 500, fontSize: '0.8125rem' }}>
-                        {log.sku}
-                      </span>
-                      <span
+                      {/* Col 1: Time */}
+                      <div
                         style={{
-                          color: '#737373',
-                          fontSize: '0.75rem',
-                          marginLeft: '8px',
-                          fontFamily: 'var(--font-sans)',
+                          width: '85px',
+                          flexShrink: 0,
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '11px',
+                          color: '#666666',
+                          letterSpacing: '-0.02em',
                         }}
                       >
-                        · {log.details}
-                      </span>
-                    </div>
+                        {log.timestamp}
+                      </div>
 
-                    {/* Col 4: Status & Intelligence Verdict (Clean text: NO border, NO background) */}
-                    <div style={{ width: '150px', flexShrink: 0 }}>
-                      <span
+                      {/* Col 2: Store Origin */}
+                      <div
                         style={{
-                          display: 'inline-block',
+                          width: '110px',
+                          flexShrink: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
                           fontFamily: 'var(--font-mono)',
                           fontSize: '0.6875rem',
-                          fontWeight: 600,
-                          letterSpacing: '0.02em',
-                          color: isDrop
-                            ? '#3ECF8E'
-                            : isGhost
-                            ? '#F87171'
-                            : isArb
-                            ? '#38BDF8'
-                            : '#A3A3A3',
-                          background: 'transparent',
-                          border: 'none',
-                          padding: 0,
+                          color: '#A3A3A3',
                         }}
                       >
-                        {log.verdictLabel}
-                      </span>
+                        <Store size={12} strokeWidth={1.2} color="#737373" />
+                        <span>{log.store}</span>
+                      </div>
+
+                      {/* Col 3: SKU Item */}
+                      <div
+                        style={{
+                          flex: 1,
+                          minWidth: 0,
+                          paddingRight: '16px',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        <span style={{ color: '#EDEDED', fontWeight: 500, fontSize: '0.8125rem' }}>
+                          {log.sku}
+                        </span>
+                        <span
+                          style={{
+                            color: '#737373',
+                            fontSize: '0.75rem',
+                            marginLeft: '8px',
+                            fontFamily: 'var(--font-sans)',
+                          }}
+                        >
+                          · {log.details}
+                        </span>
+                      </div>
+
+                      {/* Col 4: Status */}
+                      <div style={{ width: '150px', flexShrink: 0 }}>
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '0.6875rem',
+                            fontWeight: 600,
+                            letterSpacing: '0.02em',
+                            color: isDrop
+                              ? '#3ECF8E'
+                              : isGhost
+                              ? '#F87171'
+                              : isArb
+                              ? '#38BDF8'
+                              : '#A3A3A3',
+                            background: 'transparent',
+                            border: 'none',
+                            padding: 0,
+                          }}
+                        >
+                          {log.verdictLabel}
+                        </span>
+                      </div>
+
+                      {/* Col 5: Price */}
+                      <div
+                        style={{
+                          width: '120px',
+                          flexShrink: 0,
+                          textAlign: 'right',
+                          fontFamily: 'var(--font-mono)',
+                          fontVariantNumeric: 'tabular-nums',
+                          fontSize: '0.8125rem',
+                          fontWeight: 700,
+                          color: '#FFFFFF',
+                        }}
+                      >
+                        {log.price}
+                      </div>
+
+                      {/* Col 6: Latency */}
+                      <div
+                        style={{
+                          width: '65px',
+                          flexShrink: 0,
+                          textAlign: 'right',
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '0.6875rem',
+                          color: '#555555',
+                        }}
+                      >
+                        {log.latencyMs}ms
+                      </div>
                     </div>
 
-                    {/* Col 5: Net Executed Price: Bold tabular monospace number #FFFFFF, right-aligned, width 120px */}
+                    {/* Mobile 3-part High-Density Row */}
                     <div
+                      className="showcase-mobile-feed"
                       style={{
-                        width: '120px',
-                        flexShrink: 0,
-                        textAlign: 'right',
-                        fontFamily: 'var(--font-mono)',
-                        fontVariantNumeric: 'tabular-nums',
-                        fontSize: '0.8125rem',
-                        fontWeight: 700,
-                        color: '#FFFFFF',
+                        padding: '8px 12px',
+                        borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+                        background: 'transparent',
                       }}
                     >
-                      {log.price}
-                    </div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', width: '100%' }}>
+                        {/* 1. Time + Store on left */}
+                        <div style={{ flexShrink: 0, fontSize: '10px', color: '#737373', fontFamily: 'var(--font-mono)' }}>
+                          {log.timestamp} · {log.store}
+                        </div>
 
-                    {/* Col 6: Latency: Micro-badge showing exact probe speed (width 65px) */}
-                    <div
-                      style={{
-                        width: '65px',
-                        flexShrink: 0,
-                        textAlign: 'right',
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '0.6875rem',
-                        color: '#555555',
-                      }}
-                    >
-                      {log.latencyMs}ms
+                        {/* 2. SKU Title in middle (truncated) */}
+                        <div style={{ flex: 1, minWidth: 0, padding: '0 4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.75rem', color: '#FFFFFF', fontWeight: 500 }}>
+                          {log.sku}
+                        </div>
+
+                        {/* 3. Signal & Price on right */}
+                        <div style={{ flexShrink: 0, textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', fontWeight: 700, color: isDrop ? '#3ECF8E' : isGhost ? '#EF4444' : '#3ECF8E' }}>
+                          {log.price}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 );
@@ -710,9 +742,8 @@ export default function ShowcaseConsole() {
                   setProbeInput(p.name);
                 }}
                 style={{
-                  background: probeIndex === idx ? 'rgba(62, 207, 142, 0.10)' : '#141414',
-                  border: '1px solid',
-                  borderColor: probeIndex === idx ? 'rgba(62, 207, 142, 0.35)' : 'rgba(255, 255, 255, 0.08)',
+                  background: probeIndex === idx ? 'rgba(62, 207, 142, 0.12)' : '#141414',
+                  border: 'none',
                   color: probeIndex === idx ? '#3ECF8E' : '#888888',
                   padding: '5px 12px',
                   borderRadius: '6px',
@@ -732,10 +763,9 @@ export default function ShowcaseConsole() {
             style={{
               display: 'flex',
               alignItems: 'center',
-              background: '#121212',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '8px',
-              padding: '4px 12px',
+              background: 'transparent',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+              padding: '6px 0',
               gap: '10px',
             }}
           >
@@ -764,15 +794,14 @@ export default function ShowcaseConsole() {
           {/* Probe Results Table */}
           <div
             style={{
-              borderRadius: '8px',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
-              background: '#090909',
-              overflow: 'hidden',
+              background: 'transparent',
+              overflowX: 'auto',
+              WebkitOverflowScrolling: 'touch',
             }}
           >
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
               <thead>
-                <tr style={{ background: '#121212', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', color: '#777777' }}>
+                <tr style={{ background: 'transparent', borderBottom: '1px solid rgba(255, 255, 255, 0.06)', color: '#777777' }}>
                   <th style={{ padding: '10px 14px', fontWeight: 500 }}>RETAILER / CHANNEL</th>
                   <th style={{ padding: '10px 14px', fontWeight: 500 }}>LISTED PRICE</th>
                   <th style={{ padding: '10px 14px', fontWeight: 500 }}>TRUE NET COST</th>
@@ -895,8 +924,7 @@ export default function ShowcaseConsole() {
                     onClick={() => setCategory(cat)}
                     style={{
                       background: category === cat ? 'rgba(62, 207, 142, 0.12)' : '#141414',
-                      border: '1px solid',
-                      borderColor: category === cat ? 'rgba(62, 207, 142, 0.35)' : 'rgba(255, 255, 255, 0.08)',
+                      border: 'none',
                       color: category === cat ? '#3ECF8E' : '#777777',
                       padding: '6px',
                       borderRadius: '6px',
@@ -913,20 +941,20 @@ export default function ShowcaseConsole() {
             </div>
           </div>
 
-          {/* Results Summary Card */}
+          {/* Results Summary */}
           <div
             style={{
-              background: '#111111',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '8px',
-              padding: '20px',
+              background: 'transparent',
+              border: 'none',
+              borderRadius: 0,
+              padding: '8px 0',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
             }}
           >
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', paddingBottom: '10px' }}>
                 <span className="feature-group-label" style={{ marginBottom: 0 }}>
                   STATUTORY LANDED BREAKDOWN
                 </span>

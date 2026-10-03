@@ -1,0 +1,106 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/astro/Navbar.astro';
+import Footer from '../../components/astro/Footer.astro';
+
+export function getStaticPaths() {
+  return [
+    {
+      params: { slug: 'power-shoppers' },
+      props: {
+        solution: {
+          title: 'For Power Shoppers & Tech Consumers',
+          tag: 'CONSUMER_INTELLIGENCE',
+          subtitle: 'Never overpay for tech, electronics, or imported hardware in Egypt.',
+          highlights: [
+            'Instant true out-of-pocket net computation factoring in bank card promotions.',
+            'Automatic fraud alerts for fake pre-sale markdowns and inflated baselines.',
+            'Direct US import comparison showing exact EGP landed savings.',
+          ],
+        },
+      },
+    },
+    {
+      params: { slug: 'retailers' },
+      props: {
+        solution: {
+          title: 'For Retailers & Market Resellers',
+          tag: 'COMPETITIVE_MONITORING',
+          subtitle: 'Real-time telemetry and margin analysis across the Egyptian retail ecosystem.',
+          highlights: [
+            'Continuous competitor SKU price monitoring with sub-200ms probe intervals.',
+            'Instant inventory stock alerts and flash discount notifications.',
+            'Commercial margin benchmarking against parallel market exchange rates.',
+          ],
+        },
+      },
+    },
+    {
+      params: { slug: 'arbitrage' },
+      props: {
+        solution: {
+          title: 'For Global Arbitrage Traders',
+          tag: 'IMPORT_ARBITRAGE',
+          subtitle: 'Reconcile cross-border price spreads between US electronics hubs and Cairo.',
+          highlights: [
+            'Statutory Egyptian Customs tariff calculation (Customs code 8517.13 at 0% tariff).',
+            'Live parallel FX rate feeds and bank clearance margin adjustments.',
+            'JFK, DE, and LAX direct air freight cargo corridor metrics.',
+          ],
+        },
+      },
+    },
+  ];
+}
+
+const { solution } = Astro.props;
+---
+
+<Layout
+  title={`${solution.title} — Cawlix Tracker`}
+  description={solution.subtitle}
+>
+  <Navbar />
+
+  <main style="min-height: 100vh; background-color: #0A0A0A; padding-top: 130px; padding-bottom: 100px;">
+    <div style="max-width: 920px; margin: 0 auto; padding: 0 24px;">
+      <div style="margin-bottom: 48px;">
+        <span class="feature-group-label" style="color: #3ECF8E; margin-bottom: 12px;">
+          {solution.tag}
+        </span>
+        <h1
+          class="text-display"
+          style="font-size: clamp(2.25rem, 4.5vw, 3.5rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1.1; margin: 0 0 16px 0;"
+        >
+          <span style="color: #FFFFFF;">{solution.title}</span>
+        </h1>
+        <p style="font-size: 1.125rem; color: #888888; line-height: 1.6; margin: 0;">
+          {solution.subtitle}
+        </p>
+      </div>
+
+      <div style="background: transparent; border: none; border-radius: 0; padding: 24px 0; border-top: 1px solid rgba(255, 255, 255, 0.05); margin-bottom: 40px;">
+        <div style="font-family: var(--font-mono); font-size: 0.6875rem; color: #737373; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 0.06em;">
+          Platform Advantages
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          {solution.highlights.map((item) => (
+            <div style="display: flex; align-items: baseline; gap: 12px; font-size: 0.875rem; color: #EDEDED; line-height: 1.5;">
+              <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #3ECF8E; flex-shrink: 0;"></span>
+              <span>{item}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <a
+        href="/#showcase"
+        style="background: #3ECF8E; color: #0A0A0A; font-weight: 700; font-size: 0.875rem; padding: 12px 24px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"
+      >
+        Launch Tracker &rarr;
+      </a>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
