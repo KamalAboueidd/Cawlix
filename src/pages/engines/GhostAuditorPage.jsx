@@ -1,8 +1,8 @@
-import React from 'react';
+import clsx from 'clsx';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/landing/Footer';
 
-const ILLARS = [
+const PILLARS = [
   {
     num: '01',
     title: 'Historical Baseline Computation',

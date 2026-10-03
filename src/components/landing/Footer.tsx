@@ -19,8 +19,8 @@ const FOOTER_COLUMNS: FooterColumn[] = [
   {
     title: 'Solutions',
     links: [
-      { label: 'Power Shoppers', href: '/solutions/power-shoppers' },
-      { label: 'Retailers & Resellers', href: '/solutions/retailers' },
+      { label: 'Smart Consumers', href: '/solutions/consumers' },
+      { label: 'Retailers & Resellers', href: '/solutions/merchants' },
       { label: 'Arbitrage Traders', href: '/solutions/arbitrage' },
       { label: 'Enterprise Feeds', href: '/pricing' },
     ],

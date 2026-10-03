@@ -7,10 +7,6 @@ import {
   Zap,
   ShoppingBag,
   Store,
-  ArrowRightLeft,
-  Activity,
-  Grid,
-  Terminal,
   Menu,
   X,
 } from 'lucide-react';
@@ -21,83 +17,53 @@ interface DropdownItem {
   title: string;
   desc: string;
   href: string;
-  icon: React.ComponentType<{ size: number; className?: string; color?: string; strokeWidth?: number; style?: React.CSSProperties }>;
-  badge?: string;
+  icon: React.ComponentType<{ size: number; color?: string; strokeWidth?: number; className?: string }>;
 }
 
 const ENGINES_ITEMS: DropdownItem[] = [
   {
     title: 'True-Cost Engine',
-    desc: 'Deterministic net checkout cost computation',
+    desc: 'Deterministic out-of-pocket checkout calculation',
     href: '/engines/true-cost',
     icon: Layers,
   },
   {
     title: 'Ghost-Discount Auditor',
-    desc: '90-day time-series markdown validation',
+    desc: '90-day baseline time-series fraud detection',
     href: '/engines/ghost-auditor',
     icon: ShieldAlert,
-    badge: 'ZERO-DAY',
   },
   {
-    title: 'Landed-Cost Matrix',
-    desc: 'US-to-Egypt import customs & FX calculation',
+    title: 'Landed-Cost Arbitrage',
+    desc: 'End-to-end US/EU to Egypt import modeling',
     href: '/engines/landed-cost',
     icon: Globe,
   },
   {
-    title: 'Anomaly Glitch Radar',
-    desc: 'Sub-second error-pricing detection',
+    title: 'Anomaly Radar',
+    desc: 'Sub-second pricing glitch & decimal error telemetry',
     href: '/engines/anomaly-radar',
     icon: Zap,
-    badge: 'LIVE',
   },
 ];
 
 const SOLUTIONS_ITEMS: DropdownItem[] = [
   {
-    title: 'For Consumers',
-    desc: 'Find genuine price drops, bank cashback, & coupons',
-    href: '/solutions/power-shoppers',
+    title: 'For Smart Shoppers',
+    desc: 'Flagship electronics audits & cashback stacking',
+    href: '/solutions/consumers',
     icon: ShoppingBag,
   },
   {
-    title: 'For Retailers & Resellers',
-    desc: 'Competitive dynamic pricing & margin monitoring',
-    href: '/solutions/retailers',
+    title: 'For Merchants & Resellers',
+    desc: 'Real-time competitor tracking & ERP feeds',
+    href: '/solutions/merchants',
     icon: Store,
-  },
-  {
-    title: 'Global Arbitrage Traders',
-    desc: 'Cross-border import spread & customs arbitrage',
-    href: '/solutions/arbitrage',
-    icon: ArrowRightLeft,
-  },
-];
-
-const DEVELOPERS_ITEMS: DropdownItem[] = [
-  {
-    title: 'Scraper Network Status',
-    desc: 'Live telemetry nodes, health & probe latency',
-    href: '/status',
-    icon: Activity,
-    badge: '100%',
-  },
-  {
-    title: 'Coverage Matrix',
-    desc: '12 Egyptian stores & direct US freight corridors',
-    href: '/network/coverage',
-    icon: Grid,
-  },
-  {
-    title: 'API Sandbox',
-    desc: 'REST endpoints, webhooks & SDK integrations',
-    href: '/docs/api',
-    icon: Terminal,
   },
 ];
 
 const DIRECT_LINKS = [
+  { label: 'Network Coverage', href: '/network/coverage' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'Changelog', href: '/changelog' },
   { label: 'Blog', href: '/blog' },
@@ -119,6 +85,17 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileOpen]);
+
   const handleMouseEnter = (menuKey: string) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     setActiveMenu(menuKey);
@@ -130,189 +107,65 @@ export default function Navbar() {
     }, 120);
   };
 
-  const isTransparent = !scrolled && !mobileOpen;
-
   return (
-    <header
-      className={`navbar-header ${!isTransparent ? 'scrolled' : ''}`}
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 50,
-        backgroundColor: isTransparent ? 'transparent' : 'rgba(10, 10, 10, 0.90)',
-        backdropFilter: isTransparent ? 'none' : 'blur(16px)',
-        WebkitBackdropFilter: isTransparent ? 'none' : 'blur(16px)',
-        borderBottom: isTransparent ? '1px solid transparent' : '1px solid rgba(255, 255, 255, 0.08)',
-        transition: 'background-color 200ms ease, border-color 200ms ease, backdrop-filter 200ms ease',
-        width: '100%',
-        maxWidth: '100vw',
-      }}
-    >
-      <div
-        className="navbar-inner"
-        style={{
-          maxWidth: '1280px',
-          height: '100%',
-          margin: '0 auto',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
+    <header className={`navbar-header ${scrolled || mobileOpen ? 'scrolled' : ''}`}>
+      <div className="navbar-inner">
         {/* Brand Group */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <a
-            href="/"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              textDecoration: 'none',
-              flexShrink: 0,
-            }}
-          >
+        <div className="navbar-brand-group">
+          <a href="/" className="navbar-brand-link">
             <img
               src={cawlixLogo}
               alt="Cawlix Logo"
               className="navbar-logo"
-              style={{
-                width: 'auto',
-                display: 'block',
-                objectFit: 'contain',
-              }}
             />
-            <span
-              style={{
-                fontSize: '0.9375rem',
-                fontWeight: 700,
-                color: '#FFFFFF',
-                letterSpacing: '-0.02em',
-                fontFamily: 'var(--font-sans)',
-              }}
-            >
-              Cawlix
-            </span>
+            <span className="navbar-brand-text">Cawlix</span>
           </a>
 
-          {/* Desktop Navigation Links */}
-          <nav
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '2px',
-            }}
-            className="hidden-mobile"
-          >
+          {/* Desktop Navigation Links (>= 768px) */}
+          <nav className="desktop-nav">
             {/* 1. Engines Dropdown */}
             <div
-              style={{ position: 'relative' }}
+              className="dropdown-wrapper"
               onMouseEnter={() => handleMouseEnter('engines')}
               onMouseLeave={handleMouseLeave}
             >
               <button
                 type="button"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  padding: '6px 12px',
-                  borderRadius: '6px',
-                  background: activeMenu === 'engines' ? 'rgba(255, 255, 255, 0.06)' : 'transparent',
-                  border: 'none',
-                  color: activeMenu === 'engines' ? '#FFFFFF' : '#888888',
-                  fontSize: '0.8125rem',
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                  transition: 'all 140ms ease',
-                  fontFamily: 'var(--font-sans)',
-                }}
+                className={`nav-btn ${activeMenu === 'engines' ? 'nav-btn-active' : ''}`}
+                onClick={() => setActiveMenu(activeMenu === 'engines' ? null : 'engines')}
               >
-                Engines
+                <span>Engines</span>
                 <ChevronDown
-                  size={13}
-                  style={{
-                    transform: activeMenu === 'engines' ? 'rotate(180deg)' : 'rotate(0deg)',
-                    transition: 'transform 150ms ease',
-                    color: activeMenu === 'engines' ? '#3ECF8E' : '#737373',
-                  }}
+                  size={12}
+                  className={`chevron-icon ${activeMenu === 'engines' ? 'rotated' : ''}`}
                 />
               </button>
 
               <AnimatePresence>
                 {activeMenu === 'engines' && (
                   <motion.div
-                    initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                    initial={{ opacity: 0, y: 6, scale: 0.99 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 6, scale: 0.98 }}
-                    transition={{ duration: 0.15, ease: 'easeOut' }}
-                    style={{
-                      position: 'absolute',
-                      top: 'calc(100% + 8px)',
-                      left: 0,
-                      width: '480px',
-                      background: 'rgba(14, 14, 14, 0.96)',
-                      backdropFilter: 'blur(20px)',
-                      WebkitBackdropFilter: 'blur(20px)',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: '10px',
-                      padding: '8px 10px',
-                      boxShadow: '0 24px 64px rgba(0, 0, 0, 0.85)',
-                      zIndex: 100,
-                    }}
+                    exit={{ opacity: 0, y: 4, scale: 0.99 }}
+                    transition={{ duration: 0.12, ease: 'easeOut' }}
+                    className="flyout-menu flyout-engines"
                   >
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(2, 1fr)',
-                        gap: '3px 8px',
-                      }}
-                    >
+                    <div className="flyout-grid">
                       {ENGINES_ITEMS.map((item) => {
                         const Icon = item.icon;
                         return (
                           <a
                             key={item.title}
                             href={item.href}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'flex-start',
-                              gap: '9px',
-                              padding: '6px 8px',
-                              borderRadius: '6px',
-                              textDecoration: 'none',
-                              background: 'transparent',
-                            }}
+                            className="flyout-item"
+                            onClick={() => setActiveMenu(null)}
                           >
-                            <Icon
-                              size={14}
-                              color="#3ECF8E"
-                              strokeWidth={1.6}
-                              style={{ flexShrink: 0, marginTop: '2px' }}
-                            />
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0, flex: 1 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}>
-                                <span style={{ color: '#FFFFFF', fontSize: '0.75rem', fontWeight: 500 }}>
-                                  {item.title}
-                                </span>
-                                {item.badge && (
-                                  <span
-                                    style={{
-                                      fontFamily: 'var(--font-mono)',
-                                      fontSize: '0.5625rem',
-                                      color: '#3ECF8E',
-                                      fontWeight: 600,
-                                      letterSpacing: '0.04em',
-                                    }}
-                                  >
-                                    {item.badge}
-                                  </span>
-                                )}
-                              </div>
-                              <span style={{ color: '#737373', fontSize: '0.6875rem', lineHeight: 1.35 }}>
-                                {item.desc}
-                              </span>
+                            <div className="flyout-icon-box">
+                              <Icon size={14} color="#3ECF8E" strokeWidth={1.75} />
+                            </div>
+                            <div className="flyout-item-body">
+                              <span className="flyout-item-title">{item.title}</span>
+                              <span className="flyout-item-desc">{item.desc}</span>
                             </div>
                           </a>
                         );
@@ -325,91 +178,47 @@ export default function Navbar() {
 
             {/* 2. Solutions Dropdown */}
             <div
-              style={{ position: 'relative' }}
+              className="dropdown-wrapper"
               onMouseEnter={() => handleMouseEnter('solutions')}
               onMouseLeave={handleMouseLeave}
             >
               <button
                 type="button"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  padding: '6px 12px',
-                  borderRadius: '6px',
-                  background: activeMenu === 'solutions' ? 'rgba(255, 255, 255, 0.06)' : 'transparent',
-                  border: 'none',
-                  color: activeMenu === 'solutions' ? '#FFFFFF' : '#888888',
-                  fontSize: '0.8125rem',
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                  transition: 'all 140ms ease',
-                  fontFamily: 'var(--font-sans)',
-                }}
+                className={`nav-btn ${activeMenu === 'solutions' ? 'nav-btn-active' : ''}`}
+                onClick={() => setActiveMenu(activeMenu === 'solutions' ? null : 'solutions')}
               >
-                Solutions
+                <span>Solutions</span>
                 <ChevronDown
-                  size={13}
-                  style={{
-                    transform: activeMenu === 'solutions' ? 'rotate(180deg)' : 'rotate(0deg)',
-                    transition: 'transform 150ms ease',
-                    color: activeMenu === 'solutions' ? '#3ECF8E' : '#737373',
-                  }}
+                  size={12}
+                  className={`chevron-icon ${activeMenu === 'solutions' ? 'rotated' : ''}`}
                 />
               </button>
 
               <AnimatePresence>
                 {activeMenu === 'solutions' && (
                   <motion.div
-                    initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                    initial={{ opacity: 0, y: 6, scale: 0.99 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 6, scale: 0.98 }}
-                    transition={{ duration: 0.15, ease: 'easeOut' }}
-                    style={{
-                      position: 'absolute',
-                      top: 'calc(100% + 8px)',
-                      left: 0,
-                      width: '300px',
-                      background: 'rgba(14, 14, 14, 0.96)',
-                      backdropFilter: 'blur(20px)',
-                      WebkitBackdropFilter: 'blur(20px)',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: '10px',
-                      padding: '8px 10px',
-                      boxShadow: '0 24px 64px rgba(0, 0, 0, 0.85)',
-                      zIndex: 100,
-                    }}
+                    exit={{ opacity: 0, y: 4, scale: 0.99 }}
+                    transition={{ duration: 0.12, ease: 'easeOut' }}
+                    className="flyout-menu flyout-solutions"
                   >
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                    <div className="flyout-stack">
                       {SOLUTIONS_ITEMS.map((item) => {
                         const Icon = item.icon;
                         return (
                           <a
                             key={item.title}
                             href={item.href}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'flex-start',
-                              gap: '9px',
-                              padding: '6px 8px',
-                              borderRadius: '6px',
-                              textDecoration: 'none',
-                              background: 'transparent',
-                            }}
+                            className="flyout-item"
+                            onClick={() => setActiveMenu(null)}
                           >
-                            <Icon
-                              size={14}
-                              color="#3ECF8E"
-                              strokeWidth={1.6}
-                              style={{ flexShrink: 0, marginTop: '2px' }}
-                            />
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0, flex: 1 }}>
-                              <span style={{ color: '#FFFFFF', fontSize: '0.75rem', fontWeight: 500, whiteSpace: 'nowrap' }}>
-                                {item.title}
-                              </span>
-                              <span style={{ color: '#737373', fontSize: '0.6875rem', lineHeight: 1.35 }}>
-                                {item.desc}
-                              </span>
+                            <div className="flyout-icon-box">
+                              <Icon size={14} color="#3ECF8E" strokeWidth={1.75} />
+                            </div>
+                            <div className="flyout-item-body">
+                              <span className="flyout-item-title">{item.title}</span>
+                              <span className="flyout-item-desc">{item.desc}</span>
                             </div>
                           </a>
                         );
@@ -420,135 +229,12 @@ export default function Navbar() {
               </AnimatePresence>
             </div>
 
-            {/* 3. Developers Dropdown */}
-            <div
-              style={{ position: 'relative' }}
-              onMouseEnter={() => handleMouseEnter('developers')}
-              onMouseLeave={handleMouseLeave}
-            >
-              <button
-                type="button"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  padding: '6px 12px',
-                  borderRadius: '6px',
-                  background: activeMenu === 'developers' ? 'rgba(255, 255, 255, 0.06)' : 'transparent',
-                  border: 'none',
-                  color: activeMenu === 'developers' ? '#FFFFFF' : '#888888',
-                  fontSize: '0.8125rem',
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                  transition: 'all 140ms ease',
-                  fontFamily: 'var(--font-sans)',
-                }}
-              >
-                Developers
-                <ChevronDown
-                  size={13}
-                  style={{
-                    transform: activeMenu === 'developers' ? 'rotate(180deg)' : 'rotate(0deg)',
-                    transition: 'transform 150ms ease',
-                    color: activeMenu === 'developers' ? '#3ECF8E' : '#737373',
-                  }}
-                />
-              </button>
-
-              <AnimatePresence>
-                {activeMenu === 'developers' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8, scale: 0.98 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 6, scale: 0.98 }}
-                    transition={{ duration: 0.15, ease: 'easeOut' }}
-                    style={{
-                      position: 'absolute',
-                      top: 'calc(100% + 8px)',
-                      left: 0,
-                      width: '310px',
-                      background: 'rgba(14, 14, 14, 0.96)',
-                      backdropFilter: 'blur(20px)',
-                      WebkitBackdropFilter: 'blur(20px)',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: '10px',
-                      padding: '8px 10px',
-                      boxShadow: '0 24px 64px rgba(0, 0, 0, 0.85)',
-                      zIndex: 100,
-                    }}
-                  >
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                      {DEVELOPERS_ITEMS.map((item) => {
-                        const Icon = item.icon;
-                        return (
-                          <a
-                            key={item.title}
-                            href={item.href}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'flex-start',
-                              gap: '9px',
-                              padding: '6px 8px',
-                              borderRadius: '6px',
-                              textDecoration: 'none',
-                              background: 'transparent',
-                            }}
-                          >
-                            <Icon
-                              size={14}
-                              color="#3ECF8E"
-                              strokeWidth={1.6}
-                              style={{ flexShrink: 0, marginTop: '2px' }}
-                            />
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0, flex: 1 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}>
-                                <span style={{ color: '#FFFFFF', fontSize: '0.75rem', fontWeight: 500 }}>
-                                  {item.title}
-                                </span>
-                                {item.badge && (
-                                  <span
-                                    style={{
-                                      fontFamily: 'var(--font-mono)',
-                                      fontSize: '0.5625rem',
-                                      color: '#3ECF8E',
-                                      fontWeight: 600,
-                                      letterSpacing: '0.04em',
-                                    }}
-                                  >
-                                    {item.badge}
-                                  </span>
-                                )}
-                              </div>
-                              <span style={{ color: '#737373', fontSize: '0.6875rem', lineHeight: 1.35 }}>
-                                {item.desc}
-                              </span>
-                            </div>
-                          </a>
-                        );
-                      })}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* 4. Direct Links */}
+            {/* 3. Direct Header Links */}
             {DIRECT_LINKS.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: '6px',
-                  color: '#888888',
-                  fontSize: '0.8125rem',
-                  fontWeight: 500,
-                  textDecoration: 'none',
-                  transition: 'color 140ms ease',
-                  fontFamily: 'var(--font-sans)',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#FFFFFF')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = '#888888')}
+                className="nav-direct-link"
               >
                 {link.label}
               </a>
@@ -557,160 +243,105 @@ export default function Navbar() {
         </div>
 
         {/* Action CTA Group */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <a
-            href="/sign-in"
-            className="hidden-mobile"
-            style={{
-              fontSize: '0.875rem',
-              fontWeight: 600,
-              color: '#888888',
-              textDecoration: 'none',
-              transition: 'color 140ms ease',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#FFFFFF')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = '#888888')}
-          >
-            Sign In
-          </a>
-
+        <div className="navbar-action-group">
           <a
             href="/#showcase"
-            className="navbar-launch-btn"
-            style={{
-              backgroundColor: '#3ECF8E',
-              color: '#0A0A0A',
-              fontWeight: 700,
-              fontSize: '0.875rem',
-              padding: '8px 16px',
-              borderRadius: '8px',
-              textDecoration: 'none',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              lineHeight: 1,
-              transition: 'background-color 140ms ease',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#34B27B')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#3ECF8E')}
+            className="navbar-cta-btn"
           >
             Launch Tracker
           </a>
 
-          {/* Mobile hamburger */}
+          {/* Mobile Hamburger Toggle (< 768px) */}
           <button
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
-            style={{
-              display: 'none',
-              padding: '6px',
-              background: 'transparent',
-              border: 'none',
-              color: '#888888',
-              cursor: 'pointer',
-            }}
-            className="show-mobile"
-            aria-label="Toggle navigation"
+            className="mobile-hamburger-btn"
+            aria-label="Toggle navigation menu"
+            aria-expanded={mobileOpen}
           >
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Navigation Drawer / Fullscreen Slide-Over (< 768px) */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            style={{
-              background: '#0A0A0A',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-              padding: '16px 20px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-              overflow: 'hidden',
-            }}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            className="mobile-drawer-overlay"
           >
-            {/* Engines Links */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: '#737373', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-                Engines
-              </span>
-              {ENGINES_ITEMS.map((item) => (
+            <div className="mobile-drawer-content">
+              {/* Engines Section */}
+              <div className="mobile-section">
+                <span className="mobile-section-label">ENGINES</span>
+                <div className="mobile-links-list">
+                  {ENGINES_ITEMS.map((item) => (
+                    <a
+                      key={item.title}
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="mobile-nav-link"
+                    >
+                      <div className="mobile-nav-item-body">
+                        <span className="mobile-nav-item-title">{item.title}</span>
+                        <span className="mobile-nav-item-desc">{item.desc}</span>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              {/* Solutions Section */}
+              <div className="mobile-section">
+                <span className="mobile-section-label">SOLUTIONS</span>
+                <div className="mobile-links-list">
+                  {SOLUTIONS_ITEMS.map((item) => (
+                    <a
+                      key={item.title}
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="mobile-nav-link"
+                    >
+                      <div className="mobile-nav-item-body">
+                        <span className="mobile-nav-item-title">{item.title}</span>
+                        <span className="mobile-nav-item-desc">{item.desc}</span>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              {/* Direct Links Section */}
+              <div className="mobile-section">
+                <span className="mobile-section-label">PLATFORM &amp; DOCS</span>
+                <div className="mobile-direct-grid">
+                  {DIRECT_LINKS.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="mobile-direct-link"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              {/* Mobile CTA */}
+              <div className="mobile-cta-wrap">
                 <a
-                  key={item.title}
-                  href={item.href}
+                  href="/#showcase"
                   onClick={() => setMobileOpen(false)}
-                  style={{
-                    color: '#FFFFFF',
-                    textDecoration: 'none',
-                    fontSize: '0.8125rem',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '2px 0',
-                  }}
+                  className="mobile-launch-btn"
                 >
-                  <span>{item.title}</span>
-                  {item.badge && (
-                    <span style={{ color: '#3ECF8E', fontFamily: 'var(--font-mono)', fontSize: '0.5625rem', fontWeight: 600 }}>
-                      {item.badge}
-                    </span>
-                  )}
+                  Launch Tracker
                 </a>
-              ))}
-            </div>
-
-            <div style={{ height: '1px', background: 'rgba(255, 255, 255, 0.06)', margin: '4px 0' }} />
-
-            {/* Solutions & Dev Links */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.625rem', color: '#737373', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-                Solutions &amp; Network
-              </span>
-              {SOLUTIONS_ITEMS.concat(DEVELOPERS_ITEMS).map((item) => (
-                <a
-                  key={item.title}
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  style={{
-                    color: '#D4D4D4',
-                    textDecoration: 'none',
-                    fontSize: '0.8125rem',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '2px 0',
-                  }}
-                >
-                  <span>{item.title}</span>
-                  <span style={{ color: '#666666', fontSize: '0.6875rem' }}>&rarr;</span>
-                </a>
-              ))}
-            </div>
-
-            <div style={{ height: '1px', background: 'rgba(255, 255, 255, 0.06)', margin: '4px 0' }} />
-
-            <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', paddingTop: '4px' }}>
-              {DIRECT_LINKS.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  style={{ color: '#888888', textDecoration: 'none', fontSize: '0.75rem' }}
-                >
-                  {link.label}
-                </a>
-              ))}
-              <a
-                href="/sign-in"
-                onClick={() => setMobileOpen(false)}
-                style={{ color: '#3ECF8E', textDecoration: 'none', fontSize: '0.75rem', fontWeight: 600 }}
-              >
-                Sign In
-              </a>
+              </div>
             </div>
           </motion.div>
         )}
@@ -718,36 +349,374 @@ export default function Navbar() {
 
       <style>{`
         .navbar-header {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 50;
           height: 60px;
+          width: 100%;
+          background-color: rgba(10, 10, 10, 0.90);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+          transition: background-color 200ms ease, border-color 200ms ease;
         }
+
         .navbar-inner {
+          max-width: 1280px;
+          height: 100%;
+          margin: 0 auto;
           padding: 0 24px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          box-sizing: border-box;
         }
+
+        .navbar-brand-group {
+          display: flex;
+          align-items: center;
+          gap: 28px;
+        }
+
+        .navbar-brand-link {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          text-decoration: none;
+          flex-shrink: 0;
+        }
+
         .navbar-logo {
           height: 24px;
+          width: auto;
+          display: block;
+          object-fit: contain;
         }
+
+        .navbar-brand-text {
+          font-family: var(--font-sans, system-ui, sans-serif);
+          font-size: 0.9375rem;
+          font-weight: 700;
+          color: #FFFFFF;
+          letter-spacing: -0.02em;
+        }
+
+        /* ── Desktop Navigation ─────────────────────────────────────────────────── */
+        .desktop-nav {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+
+        .dropdown-wrapper {
+          position: relative;
+        }
+
+        .nav-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 6px 12px;
+          border-radius: 6px;
+          background: transparent;
+          border: none;
+          color: #888888;
+          font-family: var(--font-sans, system-ui, sans-serif);
+          font-size: 0.8125rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: color 140ms ease, background-color 140ms ease;
+        }
+
+        .nav-btn:hover,
+        .nav-btn-active {
+          color: #FFFFFF;
+          background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .chevron-icon {
+          color: #737373;
+          transition: transform 150ms ease, color 150ms ease;
+        }
+
+        .chevron-icon.rotated {
+          transform: rotate(180deg);
+          color: #3ECF8E;
+        }
+
+        /* ── Flyout Dropdowns (Institutional Zero-Card Surface) ─────────────────── */
+        .flyout-menu {
+          position: absolute;
+          top: calc(100% + 8px);
+          left: 0;
+          background: #0A0A0A;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          box-shadow: 0 24px 64px rgba(0, 0, 0, 0.95);
+          padding: 16px;
+          border-radius: 8px;
+          z-index: 100;
+        }
+
+        .flyout-engines {
+          width: 540px;
+        }
+
+        .flyout-solutions {
+          width: 380px;
+        }
+
+        .flyout-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 6px;
+        }
+
+        .flyout-stack {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .flyout-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+          padding: 10px 12px;
+          border-radius: 6px;
+          text-decoration: none;
+          background: transparent;
+          transition: background-color 140ms ease;
+        }
+
+        .flyout-item:hover {
+          background-color: rgba(255, 255, 255, 0.04);
+        }
+
+        .flyout-icon-box {
+          flex-shrink: 0;
+          margin-top: 2px;
+        }
+
+        .flyout-item-body {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+          min-width: 0;
+        }
+
+        .flyout-item-title {
+          font-family: var(--font-sans, system-ui, sans-serif);
+          color: #FFFFFF;
+          font-size: 0.8125rem;
+          font-weight: 600;
+          letter-spacing: -0.01em;
+        }
+
+        .flyout-item-desc {
+          color: #888888;
+          font-size: 0.75rem;
+          line-height: 1.4;
+        }
+
+        .nav-direct-link {
+          padding: 6px 12px;
+          border-radius: 6px;
+          color: #888888;
+          font-family: var(--font-sans, system-ui, sans-serif);
+          font-size: 0.8125rem;
+          font-weight: 500;
+          text-decoration: none;
+          transition: color 140ms ease, background-color 140ms ease;
+        }
+
+        .nav-direct-link:hover {
+          color: #FFFFFF;
+          background-color: rgba(255, 255, 255, 0.04);
+        }
+
+        /* ── Action CTA Group ───────────────────────────────────────────────────── */
+        .navbar-action-group {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .navbar-cta-btn {
+          background-color: #3ECF8E;
+          color: #0A0A0A;
+          font-family: var(--font-sans, system-ui, sans-serif);
+          font-size: 0.75rem;
+          font-weight: 700;
+          padding: 8px 16px;
+          border-radius: 8px;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          transition: background-color 140ms ease;
+        }
+
+        .navbar-cta-btn:hover {
+          background-color: #34B27B;
+        }
+
+        .mobile-hamburger-btn {
+          display: none;
+          padding: 6px;
+          background: transparent;
+          border: none;
+          color: #888888;
+          cursor: pointer;
+          transition: color 140ms ease;
+        }
+
+        .mobile-hamburger-btn:hover {
+          color: #FFFFFF;
+        }
+
+        /* ── Mobile Fullscreen Slide-Over Drawer (< 768px) ─────────────────────── */
+        .mobile-drawer-overlay {
+          display: none;
+        }
+
         @media (max-width: 900px) {
-          .hidden-mobile {
+          .desktop-nav {
             display: none !important;
           }
-          .show-mobile {
+
+          .mobile-hamburger-btn {
             display: block !important;
           }
         }
+
         @media (max-width: 768px) {
           .navbar-header {
             height: 56px !important;
           }
+
           .navbar-inner {
             padding: 0 16px !important;
           }
+
           .navbar-logo {
             height: 22px !important;
           }
-          .navbar-launch-btn {
-            font-size: 0.75rem !important;
-            padding: 6px 12px !important;
-            font-weight: 700 !important;
+
+          .navbar-cta-btn {
+            display: none;
+          }
+
+          .mobile-drawer-overlay {
+            display: block !important;
+            position: fixed;
+            top: 56px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 49;
+            background: #0A0A0A;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+          }
+
+          .mobile-drawer-content {
+            padding: 24px 20px 48px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            max-width: 520px;
+            margin: 0 auto;
+          }
+
+          .mobile-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+          }
+
+          .mobile-section-label {
+            font-family: var(--font-mono, monospace);
+            font-size: 0.6875rem;
+            font-weight: 600;
+            color: #737373;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+          }
+
+          .mobile-links-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+          }
+
+          .mobile-nav-link {
+            text-decoration: none;
+            display: block;
+            padding: 6px 0;
+          }
+
+          .mobile-nav-item-body {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+          }
+
+          .mobile-nav-item-title {
+            font-family: var(--font-sans, system-ui, sans-serif);
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: #FFFFFF;
+          }
+
+          .mobile-nav-item-desc {
+            font-size: 0.75rem;
+            color: #888888;
+            line-height: 1.4;
+          }
+
+          .mobile-direct-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+          }
+
+          .mobile-direct-link {
+            font-family: var(--font-sans, system-ui, sans-serif);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #A3A3A3;
+            text-decoration: none;
+            padding: 6px 0;
+            transition: color 140ms ease;
+          }
+
+          .mobile-direct-link:hover {
+            color: #3ECF8E;
+          }
+
+          .mobile-cta-wrap {
+            margin-top: 8px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+          }
+
+          .mobile-launch-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            background-color: #3ECF8E;
+            color: #0A0A0A;
+            font-family: var(--font-sans, system-ui, sans-serif);
+            font-size: 0.875rem;
+            font-weight: 700;
+            padding: 12px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            box-sizing: border-box;
           }
         }
       `}</style>

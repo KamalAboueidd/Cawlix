@@ -9,7 +9,7 @@ const FEATURED_ARTICLE = {
   title: 'The Anatomy of a White Friday Fake Discount: Auditing 2,400 TV Listings Across Egypt',
   excerpt:
     'How local retailers artificially inflated baseline prices by up to 38% throughout October to advertise deceptive 40% markdowns in November. A 90-day time-series audit exposing algorithmic consumer deception.',
-  slug: 'white-friday-fake-discount-audit',
+  slug: 'white-friday-fake-discounts',
 };
 
 const ARTICLES = [

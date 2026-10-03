@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/landing/Footer';
 
@@ -167,9 +168,65 @@ function CopyButton({ text }) {
 }
 
 export default function DocsPage() {
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('Architecture Overview');
+
   return (
     <div className="docs-wrapper">
       <Navbar />
+
+      {/* Mobile Sticky Sub-Navigation Bar (< 768px) */}
+      <div className="mobile-subnav-bar">
+        <div className="mobile-subnav-breadcrumb">
+          <span className="mobile-breadcrumb-root">Docs</span>
+          <span className="mobile-breadcrumb-sep">/</span>
+          <span className="mobile-breadcrumb-curr">{activeSection}</span>
+        </div>
+        <button
+          onClick={() => setMobileNavOpen(!mobileNavOpen)}
+          type="button"
+          className="mobile-drawer-toggle-btn"
+          aria-expanded={mobileNavOpen}
+          aria-label="Toggle Documentation Navigation"
+        >
+          <span>On this page</span>
+          <ChevronDown className={`mobile-toggle-chevron ${mobileNavOpen ? 'rotated' : ''}`} size={13} />
+        </button>
+      </div>
+
+      {/* Mobile Navigation Drawer / Popover (< 768px) */}
+      {mobileNavOpen && (
+        <div className="mobile-docs-drawer">
+          <div className="mobile-drawer-inner">
+            {SIDEBAR_NAV.map((group) => (
+              <div key={group.category} className="mobile-drawer-group">
+                <span className="mobile-drawer-group-title">{group.category}</span>
+                <ul className="mobile-drawer-link-list">
+                  {group.links.map((link) => (
+                    <li key={link.label} className="mobile-drawer-link-item">
+                      <a
+                        href={link.href}
+                        onClick={() => {
+                          setActiveSection(link.label.replace(/^(GET|POST)\s+/, ''));
+                          setMobileNavOpen(false);
+                        }}
+                        className="mobile-drawer-link"
+                      >
+                        {link.method && (
+                          <span className={`method-prefix ${link.method === 'GET' ? 'method-get' : 'method-post'}`}>
+                            {link.method}
+                          </span>
+                        )}
+                        <span className="mobile-drawer-link-text">{link.label.replace(/^(GET|POST)\s+/, '')}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <main className="docs-main">
         <div className="docs-container">
@@ -1129,6 +1186,15 @@ export default function DocsPage() {
           color: #3ECF8E;
         }
 
+        /* ── Mobile Sub-Navigation Bar (< 768px) ─────────────────────────────────── */
+        .mobile-subnav-bar {
+          display: none;
+        }
+
+        .mobile-docs-drawer {
+          display: none;
+        }
+
         /* ── Responsive Adjustments ──────────────────────────────────────────────── */
         @media (max-width: 900px) {
           .docs-layout {
@@ -1157,13 +1223,164 @@ export default function DocsPage() {
         }
 
         @media (max-width: 768px) {
+          /* Sticky sub-navigation bar directly underneath main navbar */
+          .mobile-subnav-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 56px;
+            z-index: 45;
+            height: 44px;
+            padding: 0 16px;
+            background: rgba(10, 10, 10, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+          }
+
+          .mobile-subnav-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: #888888;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            padding-right: 8px;
+          }
+
+          .mobile-breadcrumb-root {
+            color: #525252;
+          }
+
+          .mobile-breadcrumb-sep {
+            color: #525252;
+          }
+
+          .mobile-breadcrumb-curr {
+            color: #EDEDED;
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          .mobile-drawer-toggle-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: transparent;
+            border: none;
+            padding: 6px 0;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: #EDEDED;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: color 150ms ease;
+          }
+
+          .mobile-drawer-toggle-btn:hover {
+            color: #3ECF8E;
+          }
+
+          .mobile-toggle-chevron {
+            transition: transform 200ms ease;
+            color: #888888;
+          }
+
+          .mobile-toggle-chevron.rotated {
+            transform: rotate(180deg);
+            color: #3ECF8E;
+          }
+
+          /* Mobile Navigation Drawer / Popover */
+          .mobile-docs-drawer {
+            display: block;
+            position: fixed;
+            top: 100px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 44;
+            background: rgba(10, 10, 10, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+          }
+
+          .mobile-drawer-inner {
+            padding: 24px 20px 48px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            max-width: 540px;
+            margin: 0 auto;
+          }
+
+          .mobile-drawer-group-title {
+            font-family: var(--font-mono);
+            font-size: 0.6875rem;
+            font-weight: 600;
+            color: #737373;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 10px;
+          }
+
+          .mobile-drawer-link-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+          }
+
+          .mobile-drawer-link {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            font-size: 0.875rem;
+            color: #A3A3A3;
+            text-decoration: none;
+            transition: color 140ms ease;
+          }
+
+          .mobile-drawer-link:hover,
+          .mobile-drawer-link:active {
+            color: #3ECF8E;
+          }
+
+          .mobile-drawer-link-text {
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+          }
+
+          /* HIDE inline static sidebar list completely on mobile (< 768px) */
+          .docs-sidebar {
+            display: none !important;
+          }
+
+          .docs-layout {
+            grid-template-columns: 1fr;
+            gap: 0;
+          }
+
+          /* Immediate Content Access: Header is visible right under sticky subnav */
           .docs-main {
-            padding-top: 100px;
+            padding-top: 24px !important;
             padding-bottom: 64px;
           }
 
-          .sidebar-nav {
-            flex-direction: column;
+          .docs-header {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
           }
         }
       `}</style>

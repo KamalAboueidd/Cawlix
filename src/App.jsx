@@ -8,6 +8,10 @@ import AnomalyRadarPage from './pages/engines/AnomalyRadarPage';
 import CoveragePage from './pages/network/CoveragePage';
 import BlogIndexPage from './pages/blog/BlogIndexPage';
 import DocsPage from './pages/docs/DocsPage';
+import WhiteFridayFakeDiscountsPage from './pages/blog/WhiteFridayFakeDiscountsPage';
+import ConsumersPage from './pages/solutions/ConsumersPage';
+import MerchantsPage from './pages/solutions/MerchantsPage';
+import ChangelogPage from './pages/ChangelogPage';
 
 export default function App() {
   const [route, setRoute] = useState(window.location.pathname);
@@ -44,6 +48,22 @@ export default function App() {
 
   if (route === '/blog') {
     return <BlogIndexPage />;
+  }
+
+  if (route === '/blog/white-friday-fake-discounts') {
+    return <WhiteFridayFakeDiscountsPage />;
+  }
+
+  if (route === '/solutions/consumers' || route === '/solutions/power-shoppers') {
+    return <ConsumersPage />;
+  }
+
+  if (route === '/solutions/merchants' || route === '/solutions/retailers' || route === '/solutions/arbitrage') {
+    return <MerchantsPage />;
+  }
+
+  if (route === '/changelog') {
+    return <ChangelogPage />;
   }
 
   if (route === '/docs') {

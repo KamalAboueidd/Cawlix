@@ -4,76 +4,47 @@ import cawlixLogo from '../../assets/ICon.png';
 const ENGINES = [
   {
     title: 'True-Cost Engine',
-    desc: 'Deterministic net checkout cost computation',
+    desc: 'Deterministic out-of-pocket checkout calculation',
     href: '/engines/true-cost',
     icon: 'layers',
   },
   {
     title: 'Ghost-Discount Auditor',
-    desc: '90-day time-series markdown validation',
+    desc: '90-day baseline time-series fraud detection',
     href: '/engines/ghost-auditor',
-    badge: 'ZERO-DAY',
     icon: 'shield-alert',
   },
   {
-    title: 'Landed-Cost Matrix',
-    desc: 'US-to-Egypt import customs & FX calculation',
+    title: 'Landed-Cost Arbitrage',
+    desc: 'End-to-end US/EU to Egypt import modeling',
     href: '/engines/landed-cost',
     icon: 'globe',
   },
   {
-    title: 'Anomaly Glitch Radar',
-    desc: 'Sub-second error-pricing detection',
+    title: 'Anomaly Radar',
+    desc: 'Sub-second pricing glitch & decimal error telemetry',
     href: '/engines/anomaly-radar',
-    badge: 'LIVE',
     icon: 'zap',
   },
 ];
 
 const SOLUTIONS = [
   {
-    title: 'For Consumers',
-    desc: 'Find genuine price drops, bank cashback, & coupons',
-    href: '/solutions/power-shoppers',
+    title: 'For Smart Shoppers',
+    desc: 'Flagship electronics audits & cashback stacking',
+    href: '/solutions/consumers',
     icon: 'shopping-bag',
   },
   {
-    title: 'For Retailers & Resellers',
-    desc: 'Competitive dynamic pricing & margin monitoring',
-    href: '/solutions/retailers',
+    title: 'For Merchants & Resellers',
+    desc: 'Real-time competitor tracking & ERP feeds',
+    href: '/solutions/merchants',
     icon: 'store',
-  },
-  {
-    title: 'Global Arbitrage Traders',
-    desc: 'Cross-border import spread & customs arbitrage',
-    href: '/solutions/arbitrage',
-    icon: 'arrow-right-left',
-  },
-];
-
-const DEVELOPERS = [
-  {
-    title: 'Scraper Network Status',
-    desc: 'Live telemetry nodes, health & probe latency',
-    href: '/status',
-    badge: '100%',
-    icon: 'activity',
-  },
-  {
-    title: 'Coverage Matrix',
-    desc: '12 Egyptian stores & direct US freight corridors',
-    href: '/network/coverage',
-    icon: 'grid',
-  },
-  {
-    title: 'API Sandbox',
-    desc: 'REST endpoints, webhooks & SDK integrations',
-    href: '/docs/api',
-    icon: 'terminal',
   },
 ];
 
 const DIRECT_LINKS = [
+  { label: 'Network Coverage', href: '/network/coverage' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'Changelog', href: '/changelog' },
   { label: 'Blog', href: '/blog' },
@@ -89,14 +60,14 @@ const DIRECT_LINKS = [
         <img
           src={cawlixLogo.src || cawlixLogo}
           alt="Cawlix Logo"
-          width="26"
-          height="26"
+          width="24"
+          height="24"
           class="brand-icon"
         />
         <span class="brand-name">Cawlix</span>
       </a>
 
-      <!-- Desktop Navigation Links -->
+      <!-- Desktop Navigation Links (>= 768px) -->
       <nav class="desktop-nav">
         <!-- 1. Engines Dropdown -->
         <div class="nav-dropdown-wrapper">
@@ -113,37 +84,34 @@ const DIRECT_LINKS = [
                 <a href={item.href} class="dropdown-item">
                   <div class="clean-icon-wrapper">
                     {item.icon === 'layers' && (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                         <path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/>
                         <path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/>
                         <path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>
                       </svg>
                     )}
                     {item.icon === 'shield-alert' && (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
                         <path d="M12 8v4"/>
                         <path d="M12 16h.01"/>
                       </svg>
                     )}
                     {item.icon === 'globe' && (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"/>
                         <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
                         <path d="M2 12h20"/>
                       </svg>
                     )}
                     {item.icon === 'zap' && (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>
                       </svg>
                     )}
                   </div>
                   <div class="dropdown-text-group">
-                    <div class="dropdown-title-row">
-                      <span class="dropdown-title">{item.title}</span>
-                      {item.badge && <span class="dropdown-badge">{item.badge}</span>}
-                    </div>
+                    <span class="dropdown-title">{item.title}</span>
                     <span class="dropdown-desc">{item.desc}</span>
                   </div>
                 </a>
@@ -167,26 +135,18 @@ const DIRECT_LINKS = [
                 <a href={item.href} class="dropdown-item">
                   <div class="clean-icon-wrapper">
                     {item.icon === 'shopping-bag' && (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
                         <path d="M3 6h18"/>
                         <path d="M16 10a4 4 0 0 1-8 0"/>
                       </svg>
                     )}
                     {item.icon === 'store' && (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                         <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/>
                         <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
                         <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/>
                         <path d="M2 7h20"/>
-                      </svg>
-                    )}
-                    {item.icon === 'arrow-right-left' && (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m16 3 4 4-4 4"/>
-                        <path d="M20 7H4"/>
-                        <path d="m8 21-4-4 4-4"/>
-                        <path d="M4 17h16"/>
                       </svg>
                     )}
                   </div>
@@ -200,54 +160,7 @@ const DIRECT_LINKS = [
           </div>
         </div>
 
-        <!-- 3. Developers Dropdown -->
-        <div class="nav-dropdown-wrapper">
-          <button type="button" class="nav-trigger-btn">
-            <span>Developers</span>
-            <svg class="chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="m6 9 6 6 6-6"/>
-            </svg>
-          </button>
-
-          <div class="dropdown-menu mega-developers">
-            <div class="dropdown-list-1col">
-              {DEVELOPERS.map((item) => (
-                <a href={item.href} class="dropdown-item">
-                  <div class="clean-icon-wrapper">
-                    {item.icon === 'activity' && (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.48 12H2"/>
-                      </svg>
-                    )}
-                    {item.icon === 'grid' && (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                        <rect width="7" height="7" x="3" y="3" rx="1"/>
-                        <rect width="7" height="7" x="14" y="3" rx="1"/>
-                        <rect width="7" height="7" x="14" y="14" rx="1"/>
-                        <rect width="7" height="7" x="3" y="14" rx="1"/>
-                      </svg>
-                    )}
-                    {item.icon === 'terminal' && (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m4 17 6-6-6-6"/>
-                        <path d="M12 19h8"/>
-                      </svg>
-                    )}
-                  </div>
-                  <div class="dropdown-text-group">
-                    <div class="dropdown-title-row">
-                      <span class="dropdown-title">{item.title}</span>
-                      {item.badge && <span class="dropdown-badge">{item.badge}</span>}
-                    </div>
-                    <span class="dropdown-desc">{item.desc}</span>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <!-- 4. Direct Links -->
+        <!-- 3. Direct Header Links -->
         {DIRECT_LINKS.map((link) => (
           <a href={link.href} class="direct-nav-link">
             {link.label}
@@ -258,12 +171,82 @@ const DIRECT_LINKS = [
 
     <!-- Action CTA Group -->
     <div class="cta-group">
-      <a href="/sign-in" class="cta-signin">
-        Sign In
-      </a>
       <a href="/#showcase" class="cta-launch">
         Launch Tracker
       </a>
+
+      <!-- Mobile Hamburger Toggle (< 768px) -->
+      <button
+        type="button"
+        id="astro-mobile-toggle-btn"
+        class="mobile-hamburger-btn"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false"
+      >
+        <svg class="hamburger-open-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        <svg class="hamburger-close-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation Drawer / Fullscreen Slide-Over (< 768px) -->
+  <div id="astro-mobile-drawer" class="mobile-drawer-overlay" style="display: none;">
+    <div class="mobile-drawer-content">
+      <!-- Engines Section -->
+      <div class="mobile-section">
+        <span class="mobile-section-label">ENGINES</span>
+        <div class="mobile-links-list">
+          {ENGINES.map((item) => (
+            <a href={item.href} class="mobile-nav-link">
+              <div class="mobile-nav-item-body">
+                <span class="mobile-nav-item-title">{item.title}</span>
+                <span class="mobile-nav-item-desc">{item.desc}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Solutions Section -->
+      <div class="mobile-section">
+        <span class="mobile-section-label">SOLUTIONS</span>
+        <div class="mobile-links-list">
+          {SOLUTIONS.map((item) => (
+            <a href={item.href} class="mobile-nav-link">
+              <div class="mobile-nav-item-body">
+                <span class="mobile-nav-item-title">{item.title}</span>
+                <span class="mobile-nav-item-desc">{item.desc}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Direct Links Section -->
+      <div class="mobile-section">
+        <span class="mobile-section-label">PLATFORM &amp; DOCS</span>
+        <div class="mobile-direct-grid">
+          {DIRECT_LINKS.map((link) => (
+            <a href={link.href} class="mobile-direct-link">
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Mobile CTA -->
+      <div class="mobile-cta-wrap">
+        <a href="/#showcase" class="mobile-launch-btn">
+          Launch Tracker
+        </a>
+      </div>
     </div>
   </div>
 </header>
@@ -276,16 +259,12 @@ const DIRECT_LINKS = [
     right: 0;
     z-index: 50;
     height: 60px;
-    background-color: transparent;
-    border-bottom: 1px solid transparent;
-    transition: background-color 200ms ease, border-color 200ms ease, backdrop-filter 200ms ease;
-  }
-
-  .navbar-header.scrolled {
-    background-color: rgba(10, 10, 10, 0.85);
+    width: 100%;
+    background-color: rgba(10, 10, 10, 0.90);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    transition: background-color 200ms ease, border-color 200ms ease;
   }
 
   .navbar-inner {
@@ -296,24 +275,25 @@ const DIRECT_LINKS = [
     display: flex;
     align-items: center;
     justify-content: space-between;
+    box-sizing: border-box;
   }
 
   .brand-group {
     display: flex;
     align-items: center;
-    gap: 32px;
+    gap: 28px;
   }
 
   .brand-link {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     text-decoration: none;
     flex-shrink: 0;
   }
 
   .brand-icon {
-    height: 26px;
+    height: 24px;
     width: auto;
     display: block;
     object-fit: contain;
@@ -324,13 +304,14 @@ const DIRECT_LINKS = [
     font-weight: 700;
     color: #FFFFFF;
     letter-spacing: -0.02em;
-    font-family: var(--font-sans);
+    font-family: var(--font-sans, system-ui, sans-serif);
   }
 
+  /* ── Desktop Navigation ─────────────────────────────────────────────────── */
   .desktop-nav {
     display: flex;
     align-items: center;
-    gap: 2px;
+    gap: 4px;
   }
 
   .nav-dropdown-wrapper {
@@ -350,13 +331,13 @@ const DIRECT_LINKS = [
     font-size: 0.8125rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 140ms ease;
-    font-family: var(--font-sans);
+    transition: color 140ms ease, background-color 140ms ease;
+    font-family: var(--font-sans, system-ui, sans-serif);
   }
 
   .nav-dropdown-wrapper:hover .nav-trigger-btn {
     color: #FFFFFF;
-    background: rgba(255, 255, 255, 0.06);
+    background-color: rgba(255, 255, 255, 0.05);
   }
 
   .nav-dropdown-wrapper:hover .chevron-icon {
@@ -369,23 +350,21 @@ const DIRECT_LINKS = [
     color: #737373;
   }
 
-  /* Mega Menu Container */
+  /* ── Flyout Dropdowns (Institutional Minimalist Surface) ────────────────── */
   .dropdown-menu {
     position: absolute;
     top: calc(100% - 2px);
     left: 0;
-    background: rgba(14, 14, 14, 0.96);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: #0A0A0A;
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
-    padding: 8px 10px;
-    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.95);
+    padding: 16px;
+    border-radius: 8px;
     z-index: 100;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(8px);
-    transition: opacity 140ms ease, transform 140ms ease, visibility 140ms;
+    transform: translateY(6px);
+    transition: opacity 120ms ease, transform 120ms ease, visibility 120ms;
     pointer-events: none;
   }
 
@@ -397,45 +376,43 @@ const DIRECT_LINKS = [
   }
 
   .mega-engines {
-    width: 480px;
+    width: 540px;
   }
 
   .mega-solutions {
-    width: 300px;
-  }
-
-  .mega-developers {
-    width: 310px;
+    width: 380px;
   }
 
   .dropdown-grid-2col {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 3px 8px;
+    gap: 6px;
   }
 
   .dropdown-list-1col {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 6px;
   }
 
   .dropdown-item {
     display: flex;
     align-items: flex-start;
-    gap: 9px;
-    padding: 6px 8px;
+    gap: 12px;
+    padding: 10px 12px;
     border-radius: 6px;
     text-decoration: none;
     background: transparent;
+    transition: background-color 140ms ease;
+  }
+
+  .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.04);
   }
 
   .clean-icon-wrapper {
     flex-shrink: 0;
     margin-top: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
   .dropdown-text-group {
@@ -443,37 +420,20 @@ const DIRECT_LINKS = [
     flex-direction: column;
     gap: 2px;
     min-width: 0;
-    flex: 1;
-  }
-
-  .dropdown-title-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    white-space: nowrap;
   }
 
   .dropdown-title {
+    font-family: var(--font-sans, system-ui, sans-serif);
     color: #FFFFFF;
-    font-size: 0.75rem;
-    font-weight: 500;
-  }
-
-  .dropdown-badge {
-    font-family: var(--font-mono);
-    font-size: 0.5625rem;
-    color: #3ECF8E;
+    font-size: 0.8125rem;
     font-weight: 600;
-    letter-spacing: 0.04em;
-    background: transparent;
-    border: none;
-    padding: 0;
+    letter-spacing: -0.01em;
   }
 
   .dropdown-desc {
-    color: #737373;
-    font-size: 0.6875rem;
-    line-height: 1.35;
+    color: #888888;
+    font-size: 0.75rem;
+    line-height: 1.4;
   }
 
   .direct-nav-link {
@@ -483,38 +443,28 @@ const DIRECT_LINKS = [
     font-size: 0.8125rem;
     font-weight: 500;
     text-decoration: none;
-    transition: color 140ms ease;
-    font-family: var(--font-sans);
+    transition: color 140ms ease, background-color 140ms ease;
+    font-family: var(--font-sans, system-ui, sans-serif);
   }
 
   .direct-nav-link:hover {
     color: #FFFFFF;
+    background-color: rgba(255, 255, 255, 0.04);
   }
 
-  /* Action CTA Group */
+  /* ── Action CTA Group ───────────────────────────────────────────────────── */
   .cta-group {
     display: flex;
     align-items: center;
-    gap: 14px;
-  }
-
-  .cta-signin {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #888888;
-    text-decoration: none;
-    transition: color 140ms ease;
-  }
-
-  .cta-signin:hover {
-    color: #FFFFFF;
+    gap: 12px;
   }
 
   .cta-launch {
     background-color: #3ECF8E;
     color: #0A0A0A;
+    font-family: var(--font-sans, system-ui, sans-serif);
     font-weight: 700;
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     padding: 8px 16px;
     border-radius: 8px;
     text-decoration: none;
@@ -529,24 +479,204 @@ const DIRECT_LINKS = [
     background-color: #34B27B;
   }
 
+  .mobile-hamburger-btn {
+    display: none;
+    padding: 6px;
+    background: transparent;
+    border: none;
+    color: #888888;
+    cursor: pointer;
+    transition: color 140ms ease;
+  }
+
+  .mobile-hamburger-btn:hover {
+    color: #FFFFFF;
+  }
+
+  /* ── Mobile Fullscreen Slide-Over Drawer (< 768px) ─────────────────────── */
+  .mobile-drawer-overlay {
+    display: none;
+  }
+
   @media (max-width: 900px) {
     .desktop-nav {
       display: none !important;
+    }
+
+    .mobile-hamburger-btn {
+      display: block !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .navbar-header {
+      height: 56px !important;
+    }
+
+    .navbar-inner {
+      padding: 0 16px !important;
+    }
+
+    .brand-icon {
+      height: 22px !important;
+    }
+
+    .cta-launch {
+      display: none;
+    }
+
+    .mobile-drawer-overlay {
+      display: block;
+      position: fixed;
+      top: 56px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 49;
+      background: #0A0A0A;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .mobile-drawer-content {
+      padding: 24px 20px 48px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .mobile-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mobile-section-label {
+      font-family: var(--font-mono, monospace);
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: #737373;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .mobile-links-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .mobile-nav-link {
+      text-decoration: none;
+      display: block;
+      padding: 6px 0;
+    }
+
+    .mobile-nav-item-body {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .mobile-nav-item-title {
+      font-family: var(--font-sans, system-ui, sans-serif);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: #FFFFFF;
+    }
+
+    .mobile-nav-item-desc {
+      font-size: 0.75rem;
+      color: #888888;
+      line-height: 1.4;
+    }
+
+    .mobile-direct-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .mobile-direct-link {
+      font-family: var(--font-sans, system-ui, sans-serif);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #A3A3A3;
+      text-decoration: none;
+      padding: 6px 0;
+      transition: color 140ms ease;
+    }
+
+    .mobile-direct-link:hover {
+      color: #3ECF8E;
+    }
+
+    .mobile-cta-wrap {
+      margin-top: 8px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .mobile-launch-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      background-color: #3ECF8E;
+      color: #0A0A0A;
+      font-family: var(--font-sans, system-ui, sans-serif);
+      font-size: 0.875rem;
+      font-weight: 700;
+      padding: 12px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      box-sizing: border-box;
     }
   }
 </style>
 
 <script>
-  const nav = document.querySelector('.navbar-header');
-  if (nav) {
-    const handleScroll = () => {
-      if (window.scrollY > 15) {
-        nav.classList.add('scrolled');
-      } else {
-        nav.classList.remove('scrolled');
-      }
-    };
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
+  // Mobile drawer toggle logic
+  const toggleBtn = document.getElementById('astro-mobile-toggle-btn');
+  const drawer = document.getElementById('astro-mobile-drawer');
+  const openIcon = toggleBtn?.querySelector('.hamburger-open-icon') as HTMLElement;
+  const closeIcon = toggleBtn?.querySelector('.hamburger-close-icon') as HTMLElement;
+
+  let isOpen = false;
+
+  function setDrawerState(open: boolean) {
+    isOpen = open;
+    if (drawer) {
+      drawer.style.display = isOpen ? 'block' : 'none';
+    }
+    if (openIcon && closeIcon) {
+      openIcon.style.display = isOpen ? 'none' : 'block';
+      closeIcon.style.display = isOpen ? 'block' : 'none';
+    }
+    if (toggleBtn) {
+      toggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+    document.body.style.overflow = isOpen ? 'hidden' : '';
   }
+
+  toggleBtn?.addEventListener('click', () => {
+    setDrawerState(!isOpen);
+  });
+
+  // Auto-close on link click
+  drawer?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      setDrawerState(false);
+    });
+  });
+
+  // Auto-close on escape key
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isOpen) {
+      setDrawerState(false);
+    }
+  });
 </script>

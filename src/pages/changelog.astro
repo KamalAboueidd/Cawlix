@@ -6,124 +6,132 @@ import Footer from '../components/astro/Footer.astro';
 const RELEASES = [
   {
     version: 'v2.4.0',
-    date: 'October 2026',
-    tag: 'LATEST_DEPLOY',
-    title: 'Deterministic Landed-Cost Matrix & Modern WebP Engine',
-    desc: 'High-throughput cross-border parity engine comparing Amazon US, Newegg, and B&H directly against Cairo shelf retail.',
-    highlights: [
-      'Statutory Egyptian Customs reconciliation (Tariff Code 8517.13 & 14% statutory VAT).',
-      'Air cargo freight rates from JFK, DE, and LAX direct dispatch hubs.',
-      '100% Zero CLS visual delivery with modern WebP asset optimization.',
-      'Institutional Mega-Menu navigation with instant sub-route scaffolding.',
+    date: 'OCTOBER 2, 2026',
+    isLatest: true,
+    headline: 'Sub-Second Anomaly Webhook Dispatch & iPhone 16 Customs Index',
+    deliverables: [
+      'Indexed Egyptian Customs HS Code 8517.13 tariff calculations for new flagship mobile imports.',
+      'Reduced anomaly radar webhook dispatch latency from 1.8s down to 850ms.',
+      'Added automated cache-busting for B.TECH installment pricing schemas.',
     ],
   },
   {
-    version: 'v2.3.0',
-    date: 'September 2026',
-    tag: 'RADAR_ENGINE',
-    title: '90-Day Geometric Price Radar & Synthetic Markup Detection',
-    desc: 'Mathematical verification of retailer price-history velocity to intercept pre-sale price pumping.',
-    highlights: [
-      'Automated detection of 72-hour pre-sale price hikes with synthetic baseline scoring.',
-      '360° concentric radar scan visualization monitoring 30d, 60d, and 90d buffers.',
-      'Store rule-engines for B.TECH, TradeLine, Amazon Egypt, Noon EG, and 2B.',
+    version: 'v2.3.1',
+    date: 'SEPTEMBER 18, 2026',
+    isLatest: false,
+    headline: 'Real-Time Parallel FX Stream & Checkout Surcharge Detection',
+    deliverables: [
+      'Connected direct commercial bank FX clearing feeds (CIB / NBE) for live USD-to-EGP conversion.',
+      'Integrated detection of administrative fee surcharges on 0% interest BNPL plans.',
+      'Mitigated hydration lag on Noon Egypt dynamic catalog endpoints.',
     ],
   },
   {
     version: 'v2.2.0',
-    date: 'August 2026',
-    tag: 'ANOMALY_CORE',
-    title: 'Sub-Second Anomaly Radar & Flash Error Telemetry',
-    desc: 'Low-latency pricing discrepancy auditor detecting algorithmic glitches before retailer rollback.',
-    highlights: [
-      'Real-time webhook pipelines broadcasting statistical price deviations (>35% below rolling mean).',
-      '3D telemetry perspective viewport and interactive inspection workbench.',
-      'Commercial bank installment surcharge calculation engine.',
+    date: 'SEPTEMBER 04, 2026',
+    isLatest: false,
+    headline: 'Ghost-Discount 90-Day Baseline Engine Launch',
+    deliverables: [
+      'Deployed rolling 90-day time-series telemetry to detect pre-sale artificial price spikes.',
+      'Introduced the 0–100 Authenticity Rating algorithm for consumer electronics.',
+      'Added dedicated tracking nodes for 2B Egypt and Tradeline authorized stock.',
     ],
   },
 ];
 ---
 
 <Layout
-  title="Changelog & System Releases — Cawlix Tracker"
-  description="Chronological record of Cawlix telemetry engine updates, protocol releases, and statutory customs models."
+  title="Platform Changelog — Cawlix Tracker"
+  description="Continuous telemetry deployment ledger. Tracking parser releases, statutory tariff index updates, and probe latency optimizations across 12 indexed retailers."
 >
   <Navbar />
 
-  <main style="min-height: 100vh; background-color: #0A0A0A; padding-top: 130px; padding-bottom: 100px;">
-    <div style="max-width: 920px; margin: 0 auto; padding: 0 24px;">
-      <!-- Header -->
-      <div style="margin-bottom: 60px;">
-        <span class="feature-group-label" style="color: #3ECF8E; margin-bottom: 12px;">
-          // SYSTEM_CHANGELOG
-        </span>
-        <h1
-          class="text-display"
-          style="font-size: clamp(2.25rem, 4.5vw, 3.5rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1.1; margin: 0 0 16px 0;"
-        >
-          <span style="color: #FFFFFF;">Release Notes &amp; </span>
-          <span class="text-contrast-tail">Telemetry Updates.</span>
+  <main style="min-height: 100vh; background-color: #0A0A0A; padding-top: 140px; padding-bottom: 120px; overflow-x: hidden;">
+    <div style="max-width: 860px; margin: 0 auto; padding: 0 24px;">
+      
+      <!-- A. Header Module -->
+      <header style="margin-bottom: 56px; border-b: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 40px;">
+        <div style="font-family: var(--font-mono, monospace); font-size: 0.75rem; color: #3ECF8E; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px;">
+          SYSTEM LOG // PRODUCTION RELEASES
+        </div>
+        
+        <h1 style="font-size: clamp(2rem, 4vw, 3rem); font-weight: 600; color: #FFFFFF; letter-spacing: -0.03em; line-height: 1.15; margin: 0 0 16px 0;">
+          Platform Changelog
         </h1>
-        <p style="font-size: 1.0625rem; color: #888888; line-height: 1.6; margin: 0;">
-          A deterministic log of platform capabilities, scraping engine improvements, and statutory calculation releases.
+        
+        <p style="font-size: 1.0625rem; color: #888888; line-height: 1.6; max-width: 680px; margin: 0 0 24px 0;">
+          Continuous telemetry deployment ledger. Tracking parser releases, statutory tariff index updates, and probe latency optimizations across 12 indexed retailers.
         </p>
-      </div>
 
-      <!-- Release Timeline List -->
-      <div style="display: flex; flex-direction: column; gap: 48px;">
-        {RELEASES.map((release) => (
-          <article
-            style="border-left: 2px solid rgba(255, 255, 255, 0.08); padding-left: 28px; position: relative;"
-          >
-            <!-- Timeline Pin -->
-            <div
-              style="position: absolute; left: -6px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background-color: #3ECF8E; box-shadow: 0 0 12px #3ECF8E;"
-            ></div>
+        <div style="font-family: var(--font-mono, monospace); font-size: 11px; color: #737373; letter-spacing: 0.06em; text-transform: uppercase;">
+          WEEKLY SHIP CADENCE • ZERO DOWNTIME ROLLING DEPLOYS • SEMVER DISCIPLINE
+        </div>
+      </header>
 
-            <!-- Version Meta Header -->
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap;">
-              <span style="font-family: var(--font-mono); font-size: 1.125rem; font-weight: 700; color: #FFFFFF;">
-                {release.version}
-              </span>
-              <span style="font-family: var(--font-mono); font-size: 0.75rem; color: #737373;">
-                {release.date}
-              </span>
-              <span
-                style="font-family: var(--font-mono); font-size: 0.625rem; color: #3ECF8E; background: rgba(62, 207, 142, 0.1); border: none; padding: 2px 6px; border-radius: 4px;"
-              >
-                {release.tag}
-              </span>
-            </div>
+      <!-- B. The Release Log Feed (Chronological Open Entries) -->
+      <section aria-label="Release Log Feed" style="position: relative; margin-bottom: 64px;">
+        <!-- Hairline Guide -->
+        <div style="position: absolute; left: 0; top: 8px; bottom: 8px; width: 1px; background-color: rgba(255, 255, 255, 0.08);"></div>
 
-            <h2
-              style="font-size: 1.375rem; font-weight: 600; color: #FFFFFF; margin: 0 0 12px 0; letter-spacing: -0.02em;"
-            >
-              {release.title}
-            </h2>
-
-            <p style="font-size: 0.9375rem; color: #888888; line-height: 1.6; margin: 0 0 20px 0;">
-              {release.desc}
-            </p>
-
-            <!-- Highlights Box -->
-            <div
-              style="background: #111111; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 20px;"
-            >
-              <div style="font-family: var(--font-mono); font-size: 0.6875rem; color: #737373; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.04em;">
-                // KEY_CAPABILITIES_SHIPPED
+        <div style="display: flex; flex-direction: column; gap: 48px;">
+          {RELEASES.map((entry) => (
+            <article style="padding-left: 28px; position: relative;">
+              <!-- Borderless Monospace Version & Timestamp Marker -->
+              <div style="display: flex; align-items: center; gap: 8px; font-family: var(--font-mono, monospace); font-size: 0.75rem; margin-bottom: 10px; flex-wrap: wrap;">
+                <span style={`font-weight: 600; ${entry.isLatest ? 'color: #3ECF8E;' : 'color: #888888;'}`}>
+                  {entry.version}
+                </span>
+                <span style="color: #737373;">•</span>
+                <span style={`${entry.isLatest ? 'color: #3ECF8E;' : 'color: #888888;'}`}>
+                  {entry.date}
+                </span>
               </div>
-              <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px;">
-                {release.highlights.map((h) => (
-                  <li style="display: flex; align-items: baseline; gap: 10px; font-size: 0.8125rem; color: #D4D4D4; line-height: 1.5;">
-                    <span style="color: #3ECF8E; font-family: var(--font-mono); font-size: 0.75rem;">+</span>
-                    <span>{h}</span>
+
+              <!-- Headline -->
+              <h2 style="font-size: 1.25rem; font-weight: 600; color: #FFFFFF; line-height: 1.35; letter-spacing: -0.02em; margin: 0 0 16px 0;">
+                {entry.headline}
+              </h2>
+
+              <!-- Deliverables (Clean flat bullet points directly on background) -->
+              <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px;">
+                {entry.deliverables.map((item) => (
+                  <li style="display: flex; align-items: baseline; gap: 12px; font-size: 0.875rem; color: #D4D4D4; line-height: 1.6;">
+                    <span style="display: inline-block; width: 4px; height: 4px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.4); flex-shrink: 0; transform: translateY(-2px);"></span>
+                    <span>{item}</span>
                   </li>
                 ))}
               </ul>
-            </div>
-          </article>
-        ))}
-      </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <!-- C. Minimal Subscription Bar -->
+      <section style="border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 40px;">
+        <div style="display: flex; flex-direction: column; gap: 16px; max-width: 580px;">
+          <p style="font-size: 0.875rem; color: #888888; margin: 0; line-height: 1.5;">
+            Receive deployment notices via developer webhook or RSS.
+          </p>
+
+          <form onsubmit="event.preventDefault();" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <input
+              type="email"
+              placeholder="developer@enterprise.com"
+              aria-label="Email address for release notices"
+              style="flex: 1; min-width: 220px; background: transparent; border: 1px solid rgba(255, 255, 255, 0.12); color: #FFFFFF; font-family: var(--font-mono, monospace); font-size: 0.75rem; padding: 9px 12px; border-radius: 6px; outline: none;"
+            />
+            <button
+              type="submit"
+              style="background-color: #3ECF8E; color: #0A0A0A; font-weight: 700; font-size: 0.75rem; padding: 9px 16px; border-radius: 6px; border: none; cursor: pointer; transition: background-color 0.15s ease;"
+              onmouseover="this.style.backgroundColor='#34B27B'"
+              onmouseout="this.style.backgroundColor='#3ECF8E'"
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
+      </section>
+
     </div>
   </main>
 

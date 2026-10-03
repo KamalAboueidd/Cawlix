@@ -1,0 +1,559 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/astro/Navbar.astro';
+import Footer from '../../components/astro/Footer.astro';
+
+const AUDIT_SPEC = {
+  sku: 'Samsung 65" QLED 4K Smart TV (QA65Q60CAUXEG)',
+  baselineMedian: 'EGP 28,500',
+  octoberSpike: 'EGP 39,900',
+  spikePct: '+40.0%',
+  salePrice: 'EGP 29,400',
+  advertisedDiscount: '-26.3%',
+  netDelta: '+EGP 900 Over Baseline',
+};
+
+const SECTOR_METRICS = [
+  { sector: 'Televisions & Home Audio', skus: '2,400 SKUs', rate: '68.4%', impact: 'CRITICAL INFLATION' },
+  { sector: 'Major Home Appliances', skus: '1,850 SKUs', rate: '42.7%', impact: 'MODERATE INFLATION' },
+  { sector: 'Laptops & Portable Computing', skus: '3,100 SKUs', rate: '24.1%', impact: 'HIGH ELASTICITY' },
+  { sector: 'Smartphones & Mobile Flagships', skus: '1,420 SKUs', rate: '19.8%', impact: 'LOW MANIPULATION' },
+];
+---
+
+<Layout
+  title="The Anatomy of a White Friday Fake Discount — Cawlix Forensic Audit"
+  description="How Egyptian electronics retailers artificially inflated baseline prices by up to 38% throughout October to advertise deceptive 40% markdowns in November. A 90-day time-series audit."
+>
+  <Navbar />
+
+  <main class="article-main">
+    <article class="article-container">
+      <!-- Article Header -->
+      <header class="article-header">
+        <div class="article-meta-top">
+          <span class="meta-tag">CASE STUDY · FORENSIC AUDIT</span>
+          <span class="meta-separator">·</span>
+          <span class="meta-time">OCTOBER 2026 · 6 MIN READ</span>
+        </div>
+
+        <h1 class="article-title">
+          The Anatomy of a White Friday Fake Discount: Auditing 2,400 TV Listings Across Egypt
+        </h1>
+
+        <p class="article-subtitle">
+          How local consumer electronics retailers artificially inflated baseline prices by up to 38% throughout October to advertise deceptive 40% markdowns in November. A 90-day time-series audit exposing algorithmic retail deception.
+        </p>
+
+        <div class="article-byline">
+          <span class="author-text">Engineered &amp; Audited by Cawlix Telemetry Core · Kamal</span>
+          <span class="telemetry-stamp">CBE OFFICIAL FX BENCHMARK · 12 RETAILER PROBES</span>
+        </div>
+      </header>
+
+      <!-- Article Body Content -->
+      <div class="article-body">
+        <!-- Section 1 -->
+        <section class="prose-section">
+          <h2 class="section-heading">1. The Investigation Scope &amp; Methodology</h2>
+          <p class="prose-paragraph">
+            Between August 1 and November 30, the Cawlix Telemetry Engine monitored headless storefront APIs and public SKU endpoints for <strong>2,400 unique television models</strong> across Egypt's primary consumer commerce infrastructure—including Amazon Egypt, Noon Egypt, B.TECH, RayaShop, and 2B Egypt.
+          </p>
+          <p class="prose-paragraph">
+            Rather than relying on periodic manual spot-checks or post-purchase crowdsourced receipts, our scraping nodes dispatched probes on a deterministic <strong>45-second polling cadence</strong>. Every probe recorded:
+          </p>
+          <ul class="prose-list">
+            <li>The live, checkout-ready shelf price (inclusive of statutory 14% VAT).</li>
+            <li>The merchant-defined strike-through "original" reference price (MSRP).</li>
+            <li>Stock availability state and 1P vs. 3P marketplace merchant accreditation.</li>
+            <li>Payment gateway checkout surcharges and mandatory administrative installment fees.</li>
+          </ul>
+        </section>
+
+        <!-- Section 2 -->
+        <section class="prose-section">
+          <h2 class="section-heading">2. The 38% Pre-Sale Price Inflation Playbook</h2>
+          <p class="prose-paragraph">
+            The empirical dataset reveals an orchestrated price inflation cycle beginning exactly 42 days prior to the November "White Friday" retail period. On average, <strong>68.4% of tracked television SKUs</strong> exhibited a deliberate upward price shift starting October 12, reaching maximum artificial valuation by October 28.
+          </p>
+          <p class="prose-paragraph">
+            By synthetically raising the reference shelf price several weeks in advance, merchants established an artificially elevated baseline. When promotional campaigns launched in late November, advertised discounts of 25% to 40% actually represented prices higher than the product's regular August–September median.
+          </p>
+
+          <!-- Case Study Table -->
+          <div class="audit-ledger-wrap">
+            <span class="ledger-kicker">EMPIRICAL FORENSIC CASE: 65-INCH TELEVISION SKU</span>
+            <table class="audit-table">
+              <thead>
+                <tr>
+                  <th>AUDIT STAGE</th>
+                  <th>TIMELINE</th>
+                  <th>RECORDED PRICE</th>
+                  <th>VARIANCE</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Normal Autumn Baseline</td>
+                  <td class="font-mono text-muted">Aug 01 – Sep 30</td>
+                  <td class="font-mono text-white">EGP 28,500</td>
+                  <td class="font-mono text-brand">Rolling Median</td>
+                </tr>
+                <tr>
+                  <td>Injected Pre-Sale Inflation</td>
+                  <td class="font-mono text-muted">Oct 12 – Oct 28</td>
+                  <td class="font-mono text-danger">EGP 39,900</td>
+                  <td class="font-mono text-danger">+40.0% Artificial Spike</td>
+                </tr>
+                <tr>
+                  <td>Advertised "Flash Sale"</td>
+                  <td class="font-mono text-muted">Nov 24 (White Friday)</td>
+                  <td class="font-mono text-warn">EGP 29,400</td>
+                  <td class="font-mono text-warn">-26.3% Advertised Promo</td>
+                </tr>
+                <tr class="ledger-summary-row">
+                  <td colspan="2"><strong>Real Economic Arbitrage Delta</strong></td>
+                  <td colspan="2" class="font-mono text-danger text-right">
+                    <strong>Consumer paid EGP 900 MORE than normal baseline</strong>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Section 3 -->
+        <section class="prose-section">
+          <h2 class="section-heading">3. Algorithmic Detection: The Rolling 90-Day Median Equation</h2>
+          <p class="prose-paragraph">
+            To decouple genuine market promotions from artificial markdown schemes, Cawlix developed the <strong>Deterministic Truth Index (DTI)</strong>. This model compares the current listed shelf price against the statistically trimmed 90-day rolling median:
+          </p>
+
+          <!-- Equation Block -->
+          <div class="equation-block">
+            <span class="equation-code">Truth_Index = ((Current_Shelf_Price - Median_90D) / Median_90D) * 100</span>
+          </div>
+
+          <p class="prose-paragraph">
+            Under this evaluation ruleset:
+          </p>
+          <ul class="prose-list">
+            <li><strong>Truth_Index &lt; -10%:</strong> Confirmed genuine promotional discount. The product is settling significantly below its 90-day historic median.</li>
+            <li><strong>-5% &lt;= Truth_Index &lt;= 0%:</strong> Neutral promotional parity. The merchant has applied a nominal discount that matches regular seasonal equilibrium.</li>
+            <li><strong>Truth_Index &gt; 0%:</strong> <span class="text-danger font-mono font-bold">CRITICAL_GHOST_MARKUP</span>. Despite promotional banner advertising, the buyer is paying an inflated premium relative to historical valuation.</li>
+          </ul>
+        </section>
+
+        <!-- Section 4 -->
+        <section class="prose-section">
+          <h2 class="section-heading">4. Retailer Manipulation Heatmap across Categories</h2>
+          <p class="prose-paragraph">
+            Price volatility and baseline manipulation varied significantly by hardware category and retail inventory velocity. Categories characterized by lower technical price transparency exhibited the highest vulnerability to artificial inflation:
+          </p>
+
+          <div class="metrics-grid">
+            {SECTOR_METRICS.map((metric) => (
+              <div class="metric-row">
+                <div class="metric-info">
+                  <span class="metric-sector">{metric.sector}</span>
+                  <span class="metric-skus">{metric.skus}</span>
+                </div>
+                <div class="metric-values">
+                  <span class="metric-rate">{metric.rate}</span>
+                  <span class="metric-impact">{metric.impact}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Section 5 -->
+        <section class="prose-section">
+          <h2 class="section-heading">5. Mitigating Merchant Deception</h2>
+          <p class="prose-paragraph">
+            Institutional buyers and analytical consumers can insulate checkout capital against ghost markdowns by adhering to three programmatic principles:
+          </p>
+          <ol class="prose-ordered-list">
+            <li>
+              <strong>Disregard strike-through reference prices:</strong> In unregulated e-commerce markdowns, the strike-through "original" MSRP is arbitrarily assigned by merchant CMS operators without statutory verification.
+            </li>
+            <li>
+              <strong>Compute net out-of-pocket settlement:</strong> Stacking verified promo vouchers, banking credit card cashback (typically 5%–10% capped), and debit clearance fees provides the only true comparison metric.
+            </li>
+            <li>
+              <strong>Query historical 90-day telemetry:</strong> Always verify price velocity via the Cawlix Ghost-Auditor API (<code class="inline-code">GET /api/v1/audit/ghost-discount</code>) prior to completing checkout.
+            </li>
+          </ol>
+        </section>
+      </div>
+
+      <!-- Article Footer / Navigation -->
+      <footer class="article-footer">
+        <div class="footer-nav-row">
+          <a href="/blog" class="nav-back-link">
+            &larr; Back to all research
+          </a>
+          <a href="/engines/ghost-auditor" class="nav-engine-link">
+            Inspect 90-Day Auditor Engine &rarr;
+          </a>
+        </div>
+      </footer>
+    </article>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  /* ── Canvas & Core Architecture ────────────────────────────────────────────── */
+  .article-main {
+    min-height: 100vh;
+    background-color: #0A0A0A;
+    color: #EDEDED;
+    padding-top: 130px;
+    padding-bottom: 96px;
+    overflow-x: hidden;
+  }
+
+  .article-container {
+    max-width: 768px;
+    margin: 0 auto;
+    padding: 0 24px;
+    box-sizing: border-box;
+  }
+
+  /* ── Article Header ────────────────────────────────────────────────────────── */
+  .article-header {
+    margin-bottom: 48px;
+    padding-bottom: 36px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .article-meta-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+
+  .meta-tag {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #3ECF8E;
+    letter-spacing: 0.06em;
+  }
+
+  .meta-separator {
+    color: rgba(255, 255, 255, 0.2);
+  }
+
+  .meta-time {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: #737373;
+    letter-spacing: 0.04em;
+  }
+
+  .article-title {
+    font-family: var(--font-sans);
+    font-size: clamp(2rem, 4.5vw, 2.75rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.035em;
+    color: #FFFFFF;
+    margin: 0 0 18px 0;
+  }
+
+  .article-subtitle {
+    font-size: 1.0625rem;
+    color: #888888;
+    line-height: 1.65;
+    margin: 0 0 24px 0;
+  }
+
+  .article-byline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .author-text {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: #737373;
+  }
+
+  .telemetry-stamp {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    color: #525252;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── Prose Styling ─────────────────────────────────────────────────────────── */
+  .article-body {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  .prose-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .section-heading {
+    font-family: var(--font-sans);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #FFFFFF;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  .prose-paragraph {
+    font-size: 0.9375rem;
+    color: #A1A1AA;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .prose-paragraph strong {
+    color: #FFFFFF;
+    font-weight: 600;
+  }
+
+  .prose-list,
+  .prose-ordered-list {
+    margin: 0;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 0.9375rem;
+    color: #A1A1AA;
+    line-height: 1.65;
+  }
+
+  .prose-list li::marker {
+    color: #3ECF8E;
+  }
+
+  .prose-ordered-list li::marker {
+    color: #737373;
+    font-family: var(--font-mono);
+  }
+
+  .inline-code {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: #3ECF8E;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ── Equation Block ────────────────────────────────────────────────────────── */
+  .equation-block {
+    background: rgba(255, 255, 255, 0.015);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 16px 20px;
+    margin: 12px 0;
+    overflow-x: auto;
+  }
+
+  .equation-code {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: #3ECF8E;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  /* ── Audit Table ───────────────────────────────────────────────────────────── */
+  .audit-ledger-wrap {
+    margin: 20px 0;
+  }
+
+  .ledger-kicker {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: #737373;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .audit-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .audit-table th {
+    padding: 12px 14px;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #737373;
+    letter-spacing: 0.06em;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .audit-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    color: #A1A1AA;
+  }
+
+  .ledger-summary-row {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .ledger-summary-row td {
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  /* ── Sector Metrics ────────────────────────────────────────────────────────── */
+  .metrics-grid {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin: 8px 0;
+  }
+
+  .metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  }
+
+  .metric-row:last-child {
+    border-bottom: none;
+  }
+
+  .metric-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .metric-sector {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #EDEDED;
+  }
+
+  .metric-skus {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: #737373;
+  }
+
+  .metric-values {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+  }
+
+  .metric-rate {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 700;
+    color: #EF4444;
+  }
+
+  .metric-impact {
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    color: #737373;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── Typography & Colors ───────────────────────────────────────────────────── */
+  .font-mono { font-family: var(--font-mono); }
+  .text-white { color: #FFFFFF; }
+  .text-brand { color: #3ECF8E; }
+  .text-danger { color: #EF4444; }
+  .text-warn { color: #F59E0B; }
+  .text-muted { color: #737373; }
+  .text-right { text-align: right; }
+
+  /* ── Article Footer ────────────────────────────────────────────────────────── */
+  .article-footer {
+    margin-top: 64px;
+    padding-top: 36px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .footer-nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .nav-back-link {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: #888888;
+    text-decoration: none;
+    transition: color 140ms ease;
+  }
+
+  .nav-back-link:hover {
+    color: #FFFFFF;
+  }
+
+  .nav-engine-link {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #3ECF8E;
+    text-decoration: none;
+    transition: opacity 140ms ease;
+  }
+
+  .nav-engine-link:hover {
+    opacity: 0.8;
+  }
+
+  /* ── Mobile Queries ────────────────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .article-main {
+      padding-top: 100px;
+      padding-bottom: 64px;
+    }
+
+    .article-byline {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .footer-nav-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+  }
+</style>

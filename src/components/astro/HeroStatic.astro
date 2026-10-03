@@ -256,14 +256,15 @@ const TICKER_ITEMS = [
       background: transparent !important;
     }
 
-    /* Globe enlarged, centered behind text, and pure screen blend */
+    /* Globe enlarged, shifted down into the bottom half, and scaled up to frame mobile viewport */
     .hero-globe-graphic {
-      top: 55px !important;
+      top: 85px !important;
       left: 50% !important;
-      transform: translateX(-50%) !important;
-      width: 140% !important;
-      max-width: 580px !important;
-      height: 440px !important;
+      transform: translateX(-50%) scale(1.14) !important;
+      transform-origin: center center !important;
+      width: 145% !important;
+      max-width: 640px !important;
+      height: 460px !important;
       opacity: 0.55 !important;
       overflow: hidden !important;
       mix-blend-mode: screen !important;
