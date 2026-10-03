@@ -4,33 +4,9 @@ import Navbar from '../../components/astro/Navbar.astro';
 import Footer from '../../components/astro/Footer.astro';
 
 export function getStaticPaths() {
-  return [
-    {
-      params: { slug: 'anomaly-radar' },
-      props: {
-        engine: {
-          id: 'ENGINE_04',
-          slug: 'anomaly-radar',
-          title: 'Anomaly Glitch Radar',
-          tag: 'ERROR-PRICING_DETECTOR',
-          summary: 'Sub-second pricing discrepancy detection and instant webhook dispatch.',
-          description: 'E-commerce pricing engines occasionally commit human or algorithmic errors—such as misplaced decimal points, currency calculation glitches, or misapplied promotional discounts. The Anomaly Glitch Radar detects statistical deviations (>35% below rolling baseline) and dispatches instant webhook alerts within milliseconds.',
-          specs: [
-            { label: 'DETECTION LATENCY', value: '< 2.4 Seconds' },
-            { label: 'ANOMALY THRESHOLD', value: '> 35% Price Plunge' },
-            { label: 'NOTIFICATION DISPATCH', value: 'Sub-3s Webhook/Push' },
-            { label: 'VERIFICATION LEVEL', value: 'Cart Checkout Tested' },
-          ],
-          logicSteps: [
-            'Monitors high-velocity price probe telemetry stream across 12 retailers.',
-            'Flags statistical deviations falling drastically below standard market volatility.',
-            'Simulates instant cart add to confirm listing is orderable (not an out-of-stock ghost).',
-            'Broadcasts verified glitch alert to active subscriber desks and Telegram feeds.',
-          ],
-        },
-      },
-    },
-  ];
+  // All 4 institutional engines now have dedicated static pages:
+  // true-cost.astro, ghost-auditor.astro, landed-cost.astro, anomaly-radar.astro
+  return [];
 }
 
 const { engine } = Astro.props;

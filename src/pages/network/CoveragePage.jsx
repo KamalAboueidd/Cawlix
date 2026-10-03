@@ -1,0 +1,782 @@
+import React from 'react';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/landing/Footer';
+
+const RETAILER_NODES = [
+  {
+    name: 'Amazon Egypt',
+    code: 'AMZN_EG',
+    scope: 'Domestic Electronics',
+    cadence: 'Continuous (30s)',
+    cadenceShort: '30s',
+    latency: '118ms',
+    status: 'ACTIVE',
+  },
+  {
+    name: 'Noon Egypt',
+    code: 'NOON_EG',
+    scope: 'Consumer Tech & Appliances',
+    cadence: 'Continuous (45s)',
+    cadenceShort: '45s',
+    latency: '134ms',
+    status: 'ACTIVE',
+  },
+  {
+    name: 'B.TECH',
+    code: 'BTECH_EG',
+    scope: 'Installments & Large Appliances',
+    cadence: '2 Minutes',
+    cadenceShort: '2m',
+    latency: '162ms',
+    status: 'ACTIVE',
+  },
+  {
+    name: 'RayaShop',
+    code: 'RAYA_EG',
+    scope: 'Mobile & Computing',
+    cadence: '3 Minutes',
+    cadenceShort: '3m',
+    latency: '185ms',
+    status: 'ACTIVE',
+  },
+  {
+    name: '2B Egypt',
+    code: '2B_EG',
+    scope: 'PC Hardware & Gaming',
+    cadence: '5 Minutes',
+    cadenceShort: '5m',
+    latency: '140ms',
+    status: 'ACTIVE',
+  },
+  {
+    name: 'Dream 2000',
+    code: 'DREAM_EG',
+    scope: 'Smart Devices & Handhelds',
+    cadence: '5 Minutes',
+    cadenceShort: '5m',
+    latency: '192ms',
+    status: 'ACTIVE',
+  },
+  {
+    name: 'El Shennawy',
+    code: 'SHENNAWY_EG',
+    scope: 'Flagship Smart Devices',
+    cadence: '10 Minutes',
+    cadenceShort: '10m',
+    latency: '210ms',
+    status: 'ACTIVE',
+  },
+  {
+    name: 'Dubai Phone',
+    code: 'DUBAI_EG',
+    scope: 'Mobile Hardware',
+    cadence: '10 Minutes',
+    cadenceShort: '10m',
+    latency: '204ms',
+    status: 'ACTIVE',
+  },
+  {
+    name: 'Tradeline',
+    code: 'TRADE_EG',
+    scope: 'Authorized Apple Infrastructure',
+    cadence: '15 Minutes',
+    cadenceShort: '15m',
+    latency: '176ms',
+    status: 'ACTIVE',
+  },
+  {
+    name: 'Mi Home Egypt',
+    code: 'MI_EG',
+    scope: 'Xiaomi Ecosystem',
+    cadence: '15 Minutes',
+    cadenceShort: '15m',
+    latency: '189ms',
+    status: 'ACTIVE',
+  },
+  {
+    name: 'Amazon US Air Freight',
+    code: 'AMZN_US',
+    scope: 'Cross-Border Arbitrage Hub',
+    cadence: '30 Minutes',
+    cadenceShort: '30m',
+    latency: '240ms',
+    status: 'ACTIVE',
+  },
+  {
+    name: 'B&H Photo Video',
+    code: 'BH_US',
+    scope: 'Professional Gear & Computing',
+    cadence: '30 Minutes',
+    cadenceShort: '30m',
+    latency: '255ms',
+    status: 'ACTIVE',
+  },
+];
+
+const METHODOLOGIES = [
+  {
+    step: '01',
+    code: 'DOM_REHYDRATE',
+    title: 'Headless DOM Rehydration',
+    desc: 'Parsing modern Single Page Applications (Next.js/React storefronts) by executing localized virtual DOM rehydration without running bloated third-party tracking scripts.',
+    badge: 'ZERO HEADLESS OVERHEAD',
+  },
+  {
+    step: '02',
+    code: 'SURCHARGE_INTERCEPT',
+    title: 'Dynamic Surcharge Interception',
+    desc: 'Monitoring the checkout cart payload directly to catch hidden processing, payment gateway surcharges, or cash-on-delivery fees before final customer transaction.',
+    badge: 'PAYLOAD CART AUDIT',
+  },
+  {
+    step: '03',
+    code: 'PROXY_SHIELD',
+    title: 'Proxy Rotation & Rate-Limit Shield',
+    desc: 'Utilizing distributed residential egress pools across Cairo and Alexandria internet exchanges to prevent IP rate-limiting, WAF throttling, and geo-blocking.',
+    badge: 'RESIDENTIAL EGRESS POOL',
+  },
+];
+
+export default function CoveragePage() {
+  return (
+    <div className="network-wrapper">
+      <Navbar />
+
+      <main className="network-main">
+        <div className="network-container">
+          {/* Hero Header */}
+          <header className="network-hero">
+            <div className="metrics-strip">
+              <span className="metrics-strip-text">
+                12 NODES MONITORED · 142MS AVG PROBE LATENCY · 99.98% PIPELINE UPTIME
+              </span>
+            </div>
+
+            <h1 className="network-title">
+              12-Retailer Telemetry Coverage &amp; <span className="network-title-muted">Probe Matrix.</span>
+            </h1>
+
+            <p className="network-subtitle">
+              Real-time visibility across Egypt's primary consumer electronics and cross-border commerce infrastructure. We parse public SKU endpoints and headless inventory channels with zero synthetic caching.
+            </p>
+          </header>
+
+          {/* The 12-Retailer Real-Time Index (High-Density Tabular Ledger) */}
+          <section className="ledger-section">
+            <div className="section-meta-header">
+              <span className="section-kicker">INFRASTRUCTURE INGESTION GRID</span>
+              <h2 className="section-title">The 12-Retailer Real-Time Index</h2>
+              <p className="section-subtitle">
+                Autonomous scraper nodes tracking shelf availability, baseline prices, and promotional coupons across Egypt and transatlantic conduits.
+              </p>
+            </div>
+
+            {/* Desktop Ledger Table */}
+            <div className="ledger-desktop-wrap">
+              <table className="ledger-table">
+                <thead>
+                  <tr>
+                    <th className="col-retailer">RETAILER NODE</th>
+                    <th className="col-scope">MARKET SCOPE</th>
+                    <th className="col-cadence">PROBE CADENCE</th>
+                    <th className="col-latency">PARSER LATENCY</th>
+                    <th className="col-status">PIPELINE STATUS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {RETAILER_NODES.map((node) => (
+                    <tr key={node.code} className="ledger-row">
+                      <td className="col-retailer">
+                        <div className="retailer-cell">
+                          <span className="retailer-name">{node.name}</span>
+                          <span className="retailer-code">{node.code}</span>
+                        </div>
+                      </td>
+                      <td className="col-scope">
+                        <span className="scope-text">{node.scope}</span>
+                      </td>
+                      <td className="col-cadence">
+                        <span className="cadence-text">{node.cadence}</span>
+                      </td>
+                      <td className="col-latency">
+                        <span className="latency-text">{node.latency}</span>
+                      </td>
+                      <td className="col-status">
+                        <span className="status-clean">{node.status}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile High-Density Ledger (< 768px) */}
+            <div className="ledger-mobile-wrap">
+              {RETAILER_NODES.map((node) => (
+                <div key={node.code} className="ledger-mobile-card">
+                  <div className="mobile-row-primary">
+                    <div className="mobile-name-col">
+                      <span className="mobile-name">{node.name}</span>
+                      <span className="mobile-code">{node.code} · {node.scope}</span>
+                    </div>
+                    <span className="mobile-status-clean">{node.status}</span>
+                  </div>
+                  <div className="mobile-row-secondary">
+                    <div className="mobile-stat">
+                      <span className="mobile-stat-kicker">CADENCE</span>
+                      <span className="mobile-stat-val">{node.cadenceShort}</span>
+                    </div>
+                    <div className="mobile-stat">
+                      <span className="mobile-stat-kicker">LATENCY</span>
+                      <span className="mobile-stat-val">{node.latency}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Extraction Methodology & Anti-Bot Resilience (3 Open Blocks) */}
+          <section className="methodology-section">
+            <div className="section-meta-header">
+              <span className="section-kicker">EXTRACTION ARCHITECTURE</span>
+              <h2 className="section-title">Telemetry Methodology &amp; Anti-Bot Resilience</h2>
+              <p className="section-subtitle">
+                Zero-card structural pipeline engineering designed to bypass volatile merchant anti-bot protections without compromising parsing cadence.
+              </p>
+            </div>
+
+            <div className="methodology-grid">
+              {METHODOLOGIES.map((item) => (
+                <div key={item.step} className="methodology-col">
+                  <div className="methodology-top-meta">
+                    <span className="methodology-step">{item.step}</span>
+                    <span className="methodology-code">{item.code}</span>
+                  </div>
+                  <h3 className="methodology-col-title">{item.title}</h3>
+                  <p className="methodology-col-desc">{item.desc}</p>
+                  <div className="methodology-col-footer">
+                    <span className="methodology-badge-clean">{item.badge}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Bottom Action Bar */}
+          <section className="network-cta-section">
+            <div className="cta-inner">
+              <div className="cta-actions">
+                <a href="mailto:engineering@cawlix.com?subject=Custom%20Retailer%20Node%20Request" className="cta-btn-brand">
+                  Request Custom Retailer Node
+                </a>
+                <a href="/pricing" className="cta-btn-ghost">
+                  Inspect Pricing Tiers
+                </a>
+              </div>
+              <span className="cta-disclaimer">
+                NETWORK INGESTION HEALTH: 12 CONCURRENT SCRAPER ENGINES · DISTRIBUTED RESIDENTIAL WORKERS · 99.98% AUDITED ACCURACY
+              </span>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <Footer />
+
+      <style>{`
+        /* ── Canvas & Core Architecture ────────────────────────────────────────────── */
+        .network-wrapper {
+          min-height: 100vh;
+          background-color: #0A0A0A;
+          color: #EDEDED;
+        }
+
+        .network-main {
+          min-height: 100vh;
+          background-color: #0A0A0A;
+          padding-top: 130px;
+          padding-bottom: 96px;
+          overflow-x: hidden;
+        }
+
+        .network-container {
+          max-width: 1040px;
+          margin: 0 auto;
+          padding: 0 24px;
+          box-sizing: border-box;
+        }
+
+        /* ── Hero Header ───────────────────────────────────────────────────────────── */
+        .network-hero {
+          margin-bottom: 72px;
+          padding-bottom: 48px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .metrics-strip {
+          margin-bottom: 20px;
+        }
+
+        .metrics-strip-text {
+          font-family: var(--font-mono);
+          font-size: 0.6875rem;
+          font-weight: 500;
+          letter-spacing: 0.08em;
+          color: #737373;
+          text-transform: uppercase;
+        }
+
+        .network-title {
+          font-family: var(--font-sans);
+          font-size: clamp(2.25rem, 5vw, 3.25rem);
+          font-weight: 600;
+          line-height: 1.1;
+          letter-spacing: -0.04em;
+          color: #EDEDED;
+          margin: 0 0 16px 0;
+        }
+
+        .network-title-muted {
+          color: #737373;
+          font-weight: 400;
+        }
+
+        .network-subtitle {
+          font-size: 1.0625rem;
+          color: #888888;
+          line-height: 1.6;
+          max-width: 840px;
+          margin: 0;
+        }
+
+        /* ── Section Meta Header ──────────────────────────────────────────────────── */
+        .section-meta-header {
+          margin-bottom: 28px;
+        }
+
+        .section-kicker {
+          font-family: var(--font-mono);
+          font-size: 0.6875rem;
+          font-weight: 600;
+          color: #3ECF8E;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          display: block;
+          margin-bottom: 8px;
+        }
+
+        .section-title {
+          font-family: var(--font-sans);
+          font-size: 1.625rem;
+          font-weight: 500;
+          letter-spacing: -0.03em;
+          color: #FFFFFF;
+          margin: 0 0 8px 0;
+        }
+
+        .section-subtitle {
+          font-size: 0.9375rem;
+          color: #888888;
+          line-height: 1.55;
+          margin: 0;
+          max-width: 780px;
+        }
+
+        /* ── Tabular Ledger (Desktop) ──────────────────────────────────────────────── */
+        .ledger-section {
+          margin-bottom: 84px;
+        }
+
+        .ledger-desktop-wrap {
+          width: 100%;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          border-top: 1px solid rgba(255, 255, 255, 0.05);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .ledger-table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 0.8125rem;
+          text-align: left;
+        }
+
+        .ledger-table th {
+          padding: 16px 20px;
+          font-family: var(--font-mono);
+          font-size: 0.6875rem;
+          font-weight: 600;
+          color: #737373;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+          background: #0A0A0A;
+          white-space: nowrap;
+        }
+
+        .ledger-table th.col-latency,
+        .ledger-table th.col-status {
+          text-align: right;
+        }
+
+        .ledger-row {
+          border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+          transition: background-color 120ms ease;
+        }
+
+        .ledger-row:last-child {
+          border-bottom: none;
+        }
+
+        .ledger-row:hover {
+          background-color: rgba(255, 255, 255, 0.015);
+        }
+
+        .ledger-table td {
+          padding: 18px 20px;
+          vertical-align: middle;
+        }
+
+        .col-retailer {
+          width: 28%;
+        }
+
+        .retailer-cell {
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+        }
+
+        .retailer-name {
+          font-size: 0.9375rem;
+          font-weight: 600;
+          color: #EDEDED;
+          letter-spacing: -0.01em;
+        }
+
+        .retailer-code {
+          font-family: var(--font-mono);
+          font-size: 0.625rem;
+          color: #525252;
+          letter-spacing: 0.04em;
+        }
+
+        .col-scope {
+          width: 28%;
+        }
+
+        .scope-text {
+          font-size: 0.8125rem;
+          color: #888888;
+        }
+
+        .col-cadence {
+          width: 18%;
+        }
+
+        .cadence-text {
+          font-family: var(--font-mono);
+          font-size: 0.8125rem;
+          color: #D4D4D8;
+          letter-spacing: 0.02em;
+        }
+
+        .col-latency {
+          width: 13%;
+          text-align: right;
+        }
+
+        .latency-text {
+          font-family: var(--font-mono);
+          font-size: 0.8125rem;
+          color: #EDEDED;
+          font-variant-numeric: tabular-nums;
+        }
+
+        .col-status {
+          width: 13%;
+          text-align: right;
+        }
+
+        .status-clean {
+          font-family: var(--font-mono);
+          font-size: 0.6875rem;
+          font-weight: 700;
+          color: #3ECF8E;
+          letter-spacing: 0.04em;
+          border: none;
+          background: transparent;
+          padding: 0;
+        }
+
+        /* ── Mobile Ledger Cards (< 768px) ─────────────────────────────────────────── */
+        .ledger-mobile-wrap {
+          display: none;
+          flex-direction: column;
+          border-top: 1px solid rgba(255, 255, 255, 0.05);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .ledger-mobile-card {
+          padding: 16px 0;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .ledger-mobile-card:last-child {
+          border-bottom: none;
+        }
+
+        .mobile-row-primary {
+          display: flex;
+          justify-content: space-between;
+          align-items: baseline;
+          gap: 12px;
+        }
+
+        .mobile-name-col {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+
+        .mobile-name {
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #EDEDED;
+        }
+
+        .mobile-code {
+          font-family: var(--font-mono);
+          font-size: 0.625rem;
+          color: #737373;
+        }
+
+        .mobile-status-clean {
+          font-family: var(--font-mono);
+          font-size: 0.6875rem;
+          font-weight: 700;
+          color: #3ECF8E;
+          border: none;
+          background: transparent;
+          padding: 0;
+        }
+
+        .mobile-row-secondary {
+          display: flex;
+          gap: 20px;
+        }
+
+        .mobile-stat {
+          display: flex;
+          align-items: baseline;
+          gap: 6px;
+        }
+
+        .mobile-stat-kicker {
+          font-family: var(--font-mono);
+          font-size: 0.5625rem;
+          color: #525252;
+          letter-spacing: 0.06em;
+        }
+
+        .mobile-stat-val {
+          font-family: var(--font-mono);
+          font-size: 0.75rem;
+          color: #D4D4D8;
+          font-variant-numeric: tabular-nums;
+        }
+
+        /* ── Extraction Methodology (3 Open Blocks) ─────────────────────────────────── */
+        .methodology-section {
+          margin-bottom: 84px;
+        }
+
+        .methodology-grid {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          border-top: 1px solid rgba(255, 255, 255, 0.05);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .methodology-col {
+          padding: 32px 24px;
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .methodology-col:not(:last-child) {
+          border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .methodology-top-meta {
+          display: flex;
+          justify-content: space-between;
+          align-items: baseline;
+          margin-bottom: 16px;
+        }
+
+        .methodology-step {
+          font-family: var(--font-mono);
+          font-size: 0.75rem;
+          font-weight: 700;
+          color: #3ECF8E;
+          letter-spacing: 0.04em;
+        }
+
+        .methodology-code {
+          font-family: var(--font-mono);
+          font-size: 0.625rem;
+          color: #525252;
+          letter-spacing: 0.06em;
+        }
+
+        .methodology-col-title {
+          font-family: var(--font-sans);
+          font-size: 1.0625rem;
+          font-weight: 600;
+          color: #FFFFFF;
+          margin: 0 0 10px 0;
+          letter-spacing: -0.01em;
+        }
+
+        .methodology-col-desc {
+          font-size: 0.8125rem;
+          color: #888888;
+          line-height: 1.6;
+          margin: 0 0 20px 0;
+          flex-grow: 1;
+        }
+
+        .methodology-col-footer {
+          margin-top: auto;
+        }
+
+        .methodology-badge-clean {
+          font-family: var(--font-mono);
+          font-size: 0.625rem;
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          color: #3ECF8E;
+          border: none;
+          background: transparent;
+          padding: 0;
+        }
+
+        /* ── Bottom Action Bar ─────────────────────────────────────────────────────── */
+        .network-cta-section {
+          padding: 32px 0;
+          border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .cta-inner {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          align-items: flex-start;
+        }
+
+        .cta-actions {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          flex-wrap: wrap;
+        }
+
+        .cta-btn-brand {
+          background-color: #3ECF8E;
+          color: #0A0A0A;
+          font-family: var(--font-sans);
+          font-size: 0.875rem;
+          font-weight: 700;
+          padding: 12px 24px;
+          border-radius: 8px;
+          text-decoration: none;
+          line-height: 1;
+          transition: background-color 150ms ease;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .cta-btn-brand:hover {
+          background-color: #34B27B;
+        }
+
+        .cta-btn-ghost {
+          background: transparent;
+          color: #EDEDED;
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          font-family: var(--font-sans);
+          font-size: 0.875rem;
+          font-weight: 700;
+          padding: 12px 24px;
+          border-radius: 8px;
+          text-decoration: none;
+          line-height: 1;
+          transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .cta-btn-ghost:hover {
+          background: rgba(255, 255, 255, 0.05);
+          border-color: rgba(255, 255, 255, 0.24);
+          color: #FFFFFF;
+        }
+
+        .cta-disclaimer {
+          font-family: var(--font-mono);
+          font-size: 0.625rem;
+          color: #525252;
+          letter-spacing: 0.05em;
+        }
+
+        /* ── Responsive Queries ────────────────────────────────────────────────────── */
+        @media (max-width: 900px) {
+          .methodology-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .methodology-col:not(:last-child) {
+            border-right: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+          }
+        }
+
+        @media (max-width: 768px) {
+          .network-main {
+            padding-top: 100px;
+            padding-bottom: 64px;
+          }
+
+          .ledger-desktop-wrap {
+            display: none;
+          }
+
+          .ledger-mobile-wrap {
+            display: flex;
+          }
+
+          .cta-actions {
+            width: 100%;
+            flex-direction: column;
+            align-items: stretch;
+          }
+
+          .cta-btn-brand,
+          .cta-btn-ghost {
+            width: 100%;
+            box-sizing: border-box;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}

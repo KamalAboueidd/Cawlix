@@ -429,11 +429,11 @@ export default function TrueCostPage() {
           font-size: 0.625rem;
           font-weight: 600;
           color: #3ECF8E;
-          border: 1px solid rgba(62, 207, 142, 0.28);
-          padding: 3px 8px;
-          border-radius: 4px;
+          border: none;
+          padding: 0;
           letter-spacing: 0.06em;
           white-space: nowrap;
+          background: transparent;
         }
 
         .receipt-lines {

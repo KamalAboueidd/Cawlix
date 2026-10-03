@@ -3,106 +3,591 @@ import Layout from '../../layouts/Layout.astro';
 import Navbar from '../../components/astro/Navbar.astro';
 import Footer from '../../components/astro/Footer.astro';
 
-const POSTS = [
+const FEATURED_ARTICLE = {
+  tag: 'CASE STUDY · FORENSIC AUDIT',
+  date: 'October 2026',
+  readTime: '6 min read',
+  title: 'The Anatomy of a White Friday Fake Discount: Auditing 2,400 TV Listings Across Egypt',
+  excerpt:
+    'How local retailers artificially inflated baseline prices by up to 38% throughout October to advertise deceptive 40% markdowns in November. A 90-day time-series audit exposing algorithmic consumer deception.',
+  slug: 'white-friday-fake-discount-audit',
+};
+
+const ARTICLES = [
   {
-    title: 'How Egyptian Retailers Engineer Fake "50% Off" Flash Sales: A 90-Day Forensic Audit',
-    desc: 'An empirical analysis of 45,000 SKUs across major Cairo electronics sellers, exposing the 72-hour pre-sale price spike mechanism.',
-    date: 'Oct 02, 2026',
-    readTime: '6 min read',
-    category: 'GHOST_DEAL_AUDIT',
-    author: 'Cawlix Intelligence Desk',
-    slug: 'forensic-audit-fake-discounts-egypt',
+    metadata: 'ARBITRAGE MECHANICS · SEPTEMBER 2026',
+    readTime: '7 min read',
+    headline: 'US-to-Egypt Electronics Arbitrage: True CIF vs Authorized Local Warranty',
+    brief:
+      'Dissecting statutory customs duties (HS 8471 vs 8517), international freight surcharges, and the tipping point where domestic retail purchases beat personal imports.',
+    slug: 'us-egypt-electronics-arbitrage-cif-warranty',
   },
   {
-    title: 'Statutory Landed Parity: The Mathematical Formula for US-to-Cairo Arbitrage',
-    desc: 'Deconstructing Egyptian Customs Code 8517.13, statutory 14% VAT, parallel commercial FX margins, and air cargo handling.',
-    date: 'Sep 24, 2026',
-    readTime: '8 min read',
-    category: 'IMPORT_ARBITRAGE',
-    author: 'Cross-Border Economics Team',
-    slug: 'statutory-landed-parity-us-cairo',
-  },
-  {
-    title: 'Sub-200ms Scraper Telemetry: Building Zero-False-Positive Price Verification',
-    desc: 'Inside our distributed worker cluster: browser automation, anti-bot mitigation, and deterministic net checkout reconciliation.',
-    date: 'Sep 15, 2026',
+    metadata: 'INFRASTRUCTURE · SEPTEMBER 2026',
     readTime: '5 min read',
-    category: 'SYSTEM_ARCHITECTURE',
-    author: 'Platform Engineering',
-    slug: 'sub-200ms-scraper-telemetry-architecture',
+    headline: 'Sub-Second Scraping: Intercepting Single-Page Storefront APIs Without Headless Browser Overhead',
+    brief:
+      'Why traditional Selenium/Playwright clusters fail at price drop arbitrage, and how we engineered our C++ and WASM scrapers to hit 142ms probe latency.',
+    slug: 'sub-second-scraping-storefront-apis-zero-overhead',
+  },
+  {
+    metadata: 'FINANCIAL TIERS · AUGUST 2026',
+    readTime: '4 min read',
+    headline: 'Stacking BNPL Surcharges: The Hidden 12% Cost of 0% Interest Promotions',
+    brief:
+      'An audit of administrative fee structures across ValU, Souhoola, and banking installment programs during electronics checkout.',
+    slug: 'bnpl-surcharges-hidden-cost-zero-interest',
   },
 ];
 ---
 
 <Layout
-  title="Intelligence Blog & Engineering Dispatches — Cawlix Tracker"
-  description="Technical deep dives on retail pricing algorithms, statutory customs mathematics, and automated price scraping architecture."
+  title="Cawlix Research & Market Dissections — Cawlix Tracker"
+  description="Technical investigations into retail algorithmic pricing, customs valuation dynamics, and forensic analysis of artificial e-commerce discount schemes."
 >
   <Navbar />
 
-  <main style="min-height: 100vh; background-color: #0A0A0A; padding-top: 130px; padding-bottom: 100px;">
-    <div style="max-width: 1040px; margin: 0 auto; padding: 0 24px;">
-      <!-- Header -->
-      <div style="max-width: 760px; margin-bottom: 56px;">
-        <span class="feature-group-label" style="color: #3ECF8E; margin-bottom: 12px;">
-          // RESEARCH_&_ENGINEERING_DISPATCHES
-        </span>
-        <h1
-          class="text-display"
-          style="font-size: clamp(2.25rem, 4.5vw, 3.5rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1.1; margin: 0 0 16px 0;"
-        >
-          <span style="color: #FFFFFF;">Market Intelligence &amp; </span>
-          <span class="text-contrast-tail">Systems Engineering.</span>
+  <main class="blog-main">
+    <div class="blog-container">
+      <!-- Hero Header -->
+      <header class="blog-hero">
+        <div class="editorial-strip">
+          <span class="editorial-strip-text">
+            DATA-BACKED CASE STUDIES · ZERO SPONSORED BIAS · RAW TELEMETRY
+          </span>
+        </div>
+
+        <h1 class="blog-title">
+          Cawlix Research &amp; <span class="blog-title-muted">Market Dissections.</span>
         </h1>
-        <p style="font-size: 1.0625rem; color: #888888; line-height: 1.6; margin: 0;">
-          Field research, technical teardowns of e-commerce manipulation, and statutory customs reconciliation guides.
+
+        <p class="blog-subtitle">
+          Technical investigations into retail algorithmic pricing, customs valuation dynamics, and forensic analysis of artificial e-commerce discount schemes.
         </p>
-      </div>
+      </header>
 
-      <!-- Articles Grid -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
-        {POSTS.map((post) => (
-          <article
-            style="background: #111111; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 28px; display: flex; flex-direction: column; justify-content: space-between; transition: border-color 150ms ease; box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);"
-          >
-            <div>
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <span
-                  style="font-family: var(--font-mono); font-size: 0.625rem; color: #3ECF8E; background: rgba(62, 207, 142, 0.1); border: none; padding: 2px 6px; border-radius: 4px;"
-                >
-                  {post.category}
-                </span>
-                <span style="font-family: var(--font-mono); font-size: 0.6875rem; color: #737373;">
-                  {post.readTime}
-                </span>
+      <!-- Featured Deep-Dive Audit (Open Layout / Top Item) -->
+      <section class="featured-section">
+        <div class="featured-top-meta">
+          <span class="featured-tag">{FEATURED_ARTICLE.tag}</span>
+          <span class="featured-date-meta">
+            {FEATURED_ARTICLE.date} · {FEATURED_ARTICLE.readTime}
+          </span>
+        </div>
+
+        <h2 class="featured-title">
+          <a href={`/blog/${FEATURED_ARTICLE.slug}`} class="featured-title-link">
+            {FEATURED_ARTICLE.title}
+          </a>
+        </h2>
+
+        <p class="featured-excerpt">
+          {FEATURED_ARTICLE.excerpt}
+        </p>
+
+        <div class="featured-action">
+          <a href={`/blog/${FEATURED_ARTICLE.slug}`} class="featured-read-link">
+            Read Forensic Investigation &rarr;
+          </a>
+        </div>
+      </section>
+
+      <!-- Article Feed (High-Density List Layout) -->
+      <section class="feed-section">
+        <div class="section-meta-header">
+          <span class="section-kicker">INVESTIGATIVE ARCHIVE</span>
+          <h2 class="section-title">Technical Reports &amp; Dispatches</h2>
+          <p class="section-subtitle">
+            Empirical telemetry teardowns and algorithmic price analysis authored by Cawlix engineers and economists.
+          </p>
+        </div>
+
+        <div class="article-list">
+          {ARTICLES.map((article) => (
+            <article class="article-row">
+              <div class="article-row-content">
+                <div class="article-meta-row">
+                  <span class="article-meta-badge">{article.metadata}</span>
+                  <span class="article-read-time">{article.readTime}</span>
+                </div>
+
+                <h3 class="article-headline">
+                  <a href={`/blog/${article.slug}`} class="article-headline-link">
+                    {article.headline}
+                  </a>
+                </h3>
+
+                <p class="article-brief">
+                  {article.brief}
+                </p>
               </div>
 
-              <h2
-                style="font-size: 1.125rem; font-weight: 600; color: #FFFFFF; line-height: 1.35; margin: 0 0 12px 0; letter-spacing: -0.01em;"
-              >
-                {post.title}
-              </h2>
-
-              <p style="font-size: 0.875rem; color: #888888; line-height: 1.6; margin: 0 0 20px 0;">
-                {post.desc}
-              </p>
-            </div>
-
-            <div
-              style="padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.06); display: flex; justify-content: space-between; align-items: center;"
-            >
-              <div style="font-family: var(--font-mono); font-size: 0.6875rem; color: #737373;">
-                <span>{post.author}</span> · <span>{post.date}</span>
+              <div class="article-action-col">
+                <a href={`/blog/${article.slug}`} class="article-dispatch-link">
+                  Read dispatch &rarr;
+                </a>
               </div>
-              <span style="color: #3ECF8E; font-size: 0.8125rem; font-weight: 600;">
-                Read dispatch &rarr;
-              </span>
-            </div>
-          </article>
-        ))}
-      </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <!-- Bottom Newsletter / RSS Bar -->
+      <section class="blog-subscribe-section">
+        <div class="subscribe-inner">
+          <div class="subscribe-copy">
+            <span class="subscribe-kicker">INDEPENDENT TELEMETRY DISPATCHES</span>
+            <p class="subscribe-prompt">
+              Deliver raw market reports directly to your inbox or RSS reader.
+            </p>
+          </div>
+
+          <div class="subscribe-form-wrap">
+            <form class="subscribe-form" onsubmit="event.preventDefault(); alert('Subscribed to Cawlix Research Dispatches.');">
+              <input
+                type="email"
+                placeholder="engineering@firm.com"
+                required
+                class="subscribe-input"
+              />
+              <button type="submit" class="subscribe-btn">
+                Subscribe
+              </button>
+            </form>
+            <span class="subscribe-rss-note">
+              or subscribe via <a href="/rss.xml" class="rss-link">RSS Feed (/rss.xml)</a>
+            </span>
+          </div>
+        </div>
+      </section>
     </div>
   </main>
 
   <Footer />
 </Layout>
+
+<style>
+  /* ── Canvas & Core Architecture ────────────────────────────────────────────── */
+  .blog-main {
+    min-height: 100vh;
+    background-color: #0A0A0A;
+    color: #EDEDED;
+    padding-top: 130px;
+    padding-bottom: 96px;
+    overflow-x: hidden;
+  }
+
+  .blog-container {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 24px;
+    box-sizing: border-box;
+  }
+
+  /* ── Hero Header ───────────────────────────────────────────────────────────── */
+  .blog-hero {
+    margin-bottom: 64px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .editorial-strip {
+    margin-bottom: 20px;
+  }
+
+  .editorial-strip-text {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: #737373;
+    text-transform: uppercase;
+  }
+
+  .blog-title {
+    font-family: var(--font-sans);
+    font-size: clamp(2.25rem, 5vw, 3.25rem);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    color: #EDEDED;
+    margin: 0 0 16px 0;
+  }
+
+  .blog-title-muted {
+    color: #737373;
+    font-weight: 400;
+  }
+
+  .blog-subtitle {
+    font-size: 1.0625rem;
+    color: #888888;
+    line-height: 1.6;
+    max-width: 840px;
+    margin: 0;
+  }
+
+  /* ── Featured Deep-Dive Audit ──────────────────────────────────────────────── */
+  .featured-section {
+    padding: 36px 0 48px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 72px;
+  }
+
+  .featured-top-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 18px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .featured-tag {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #3ECF8E;
+    letter-spacing: 0.06em;
+    border: none;
+    background: transparent;
+    padding: 0;
+    text-transform: uppercase;
+  }
+
+  .featured-date-meta {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: #737373;
+    letter-spacing: 0.02em;
+  }
+
+  .featured-title {
+    font-family: var(--font-sans);
+    font-size: clamp(1.5rem, 3.5vw, 2.125rem);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin: 0 0 16px 0;
+  }
+
+  .featured-title-link {
+    color: #FFFFFF;
+    text-decoration: none;
+    transition: color 140ms ease;
+  }
+
+  .featured-title-link:hover {
+    color: #3ECF8E;
+  }
+
+  .featured-excerpt {
+    font-size: 0.9375rem;
+    color: #888888;
+    line-height: 1.65;
+    max-width: 860px;
+    margin: 0 0 24px 0;
+  }
+
+  .featured-action {
+    display: flex;
+    align-items: center;
+  }
+
+  .featured-read-link {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #FFFFFF;
+    text-decoration: none;
+    transition: color 140ms ease;
+  }
+
+  .featured-read-link:hover {
+    color: #3ECF8E;
+  }
+
+  /* ── Article Feed (High-Density List Layout) ────────────────────────────────── */
+  .feed-section {
+    margin-bottom: 84px;
+  }
+
+  .section-meta-header {
+    margin-bottom: 32px;
+  }
+
+  .section-kicker {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #3ECF8E;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .section-title {
+    font-family: var(--font-sans);
+    font-size: 1.625rem;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    color: #FFFFFF;
+    margin: 0 0 8px 0;
+  }
+
+  .section-subtitle {
+    font-size: 0.9375rem;
+    color: #888888;
+    line-height: 1.55;
+    margin: 0;
+    max-width: 780px;
+  }
+
+  .article-list {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .article-row {
+    padding: 32px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 32px;
+    transition: background-color 120ms ease;
+  }
+
+  .article-row:hover {
+    background-color: rgba(255, 255, 255, 0.01);
+  }
+
+  .article-row-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .article-meta-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .article-meta-badge {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: #737373;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: none;
+    background: transparent;
+    padding: 0;
+  }
+
+  .article-read-time {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    color: #525252;
+    letter-spacing: 0.02em;
+  }
+
+  .article-headline {
+    font-family: var(--font-sans);
+    font-size: 1.1875rem;
+    font-weight: 600;
+    color: #EDEDED;
+    letter-spacing: -0.015em;
+    line-height: 1.35;
+    margin: 0;
+  }
+
+  .article-headline-link {
+    color: #EDEDED;
+    text-decoration: none;
+    transition: color 140ms ease;
+  }
+
+  .article-headline-link:hover {
+    color: #3ECF8E;
+  }
+
+  .article-brief {
+    font-size: 0.875rem;
+    color: #888888;
+    line-height: 1.6;
+    margin: 4px 0 0 0;
+    max-width: 820px;
+  }
+
+  .article-action-col {
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  .article-dispatch-link {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #3ECF8E;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity 140ms ease;
+  }
+
+  .article-dispatch-link:hover {
+    opacity: 0.8;
+  }
+
+  /* ── Bottom Newsletter / RSS Bar ───────────────────────────────────────────── */
+  .blog-subscribe-section {
+    padding: 40px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .subscribe-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .subscribe-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 480px;
+  }
+
+  .subscribe-kicker {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #3ECF8E;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .subscribe-prompt {
+    font-size: 0.9375rem;
+    color: #EDEDED;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .subscribe-form-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
+  }
+
+  .subscribe-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .subscribe-input {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: #EDEDED;
+    width: 260px;
+    outline: none;
+    transition: border-color 150ms ease, background-color 150ms ease;
+  }
+
+  .subscribe-input:focus {
+    border-color: rgba(62, 207, 142, 0.5);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .subscribe-input::placeholder {
+    color: #525252;
+  }
+
+  .subscribe-btn {
+    background-color: #3ECF8E;
+    color: #0A0A0A;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    line-height: 1;
+    transition: background-color 150ms ease;
+    white-space: nowrap;
+  }
+
+  .subscribe-btn:hover {
+    background-color: #34B27B;
+  }
+
+  .subscribe-rss-note {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: #737373;
+  }
+
+  .rss-link {
+    color: #888888;
+    text-decoration: underline;
+    transition: color 140ms ease;
+  }
+
+  .rss-link:hover {
+    color: #3ECF8E;
+  }
+
+  /* ── Responsive Queries ────────────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .blog-main {
+      padding-top: 100px;
+      padding-bottom: 64px;
+    }
+
+    .article-row {
+      flex-direction: column;
+      gap: 16px;
+      padding: 24px 0;
+    }
+
+    .article-action-col {
+      align-self: flex-start;
+    }
+
+    .subscribe-inner {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 24px;
+    }
+
+    .subscribe-form-wrap {
+      align-items: stretch;
+    }
+
+    .subscribe-form {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .subscribe-input {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .subscribe-btn {
+      width: 100%;
+      box-sizing: border-box;
+    }
+  }
+</style>

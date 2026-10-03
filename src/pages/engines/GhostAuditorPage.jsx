@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/landing/Footer';
 
-const PILLARS = [
+const ILLARS = [
   {
     num: '01',
     title: 'Historical Baseline Computation',
@@ -138,15 +138,15 @@ export default function GhostAuditorPage() {
               {/* Comparison Columns */}
               <div className="comparison-cols">
                 {/* Merchant Claim */}
-                <div className="comp-col comp-col-merchant">
+                <div className={clsx('comp-col', 'comp-col-merchant')}>
                   <div className="comp-col-header">
                     <span className="comp-col-title">MERCHANT PROMOTIONAL CLAIM</span>
-                    <span className="comp-col-badge badge-claim">ADVERTISED BADGE: 35% OFF FLASH SALE</span>
+                    <span className={clsx('comp-col-badge', 'badge-claim')}>ADVERTISED BADGE: 35% OFF FLASH SALE</span>
                   </div>
                   <div className="comp-lines">
                     <div className="comp-line">
                       <span className="comp-label">Claimed Original Price</span>
-                      <span className="comp-val val-strikethrough">EGP 46,000</span>
+                      <span className={clsx('comp-val', 'val-strikethrough')}>EGP 46,000</span>
                     </div>
                     <div className="comp-line">
                       <span className="comp-label">Advertised Sale Price</span>
@@ -154,29 +154,29 @@ export default function GhostAuditorPage() {
                     </div>
                     <div className="comp-line">
                       <span className="comp-label">Advertised Savings</span>
-                      <span className="comp-val text-brand-dim">EGP 16,100 (35.0%)</span>
+                      <span className={clsx('comp-val', 'text-brand-dim')}>EGP 16,100 (35.0%)</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Cawlix Telemetry Audit */}
-                <div className="comp-col comp-col-audit">
+                <div className={clsx('comp-col', 'comp-col-audit')}>
                   <div className="comp-col-header">
                     <span className="comp-col-title">CAWLIX ENGINE TELEMETRY</span>
-                    <span className="comp-col-badge badge-audit">VERDICT: MANIPULATED MARKDOWN</span>
+                    <span className={clsx('comp-col-badge', 'badge-audit')}>VERDICT: MANIPULATED MARKDOWN</span>
                   </div>
                   <div className="comp-lines">
                     <div className="comp-line">
                       <span className="comp-label">90-Day Rolling Median Price</span>
-                      <span className="comp-val text-neutral-bright">EGP 28,500</span>
+                      <span className={clsx('comp-val', 'text-neutral-bright')}>EGP 28,500</span>
                     </div>
                     <div className="comp-line">
                       <span className="comp-label">Pre-Sale Spike Identified</span>
-                      <span className="comp-val text-danger">+EGP 16,100 (+56.5% 48h prior)</span>
+                      <span className={clsx('comp-val', 'text-danger')}>+EGP 16,100 (+56.5% 48h prior)</span>
                     </div>
                     <div className="comp-line">
                       <span className="comp-label">Real Price Delta vs Baseline</span>
-                      <span className="comp-val text-danger">+EGP 1,400 ABOVE Median</span>
+                      <span className={clsx('comp-val', 'text-danger')}>+EGP 1,400 ABOVE Median</span>
                     </div>
                   </div>
                 </div>
@@ -187,9 +187,9 @@ export default function GhostAuditorPage() {
                 <div className="chart-header">
                   <span className="chart-title">90-DAY PRICE VELOCITY TIMELINE (EGP)</span>
                   <span className="chart-legend">
-                    <span className="legend-item"><span className="legend-line line-gray"></span> 90d Median (28,500)</span>
-                    <span className="legend-item"><span className="legend-line line-red"></span> Artificial Pre-Sale Spike (46,000)</span>
-                    <span className="legend-item"><span className="legend-line line-amber"></span> "Sale" Execution (29,900)</span>
+                    <span className="legend-item"><span className={clsx('legend-line', 'line-gray')}></span> 90d Median (28,500)</span>
+                    <span className="legend-item"><span className={clsx('legend-line', 'line-red')}></span> Artificial Pre-Sale Spike (46,000)</span>
+                    <span className="legend-item"><span className={clsx('legend-line', 'line-amber')}></span> "Sale" Execution (29,900)</span>
                   </span>
                 </div>
 

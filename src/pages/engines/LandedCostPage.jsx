@@ -442,22 +442,23 @@ export default function LandedCostPage() {
           font-family: var(--font-mono);
           font-size: 0.6875rem;
           font-weight: 700;
-          padding: 4px 10px;
-          border-radius: 4px;
+          padding: 0;
           letter-spacing: 0.06em;
           white-space: nowrap;
+          border: none;
+          background: transparent;
         }
 
         .verdict-local {
           color: #F59E0B;
-          border: 1px solid rgba(245, 158, 11, 0.28);
-          background: rgba(245, 158, 11, 0.04);
+          border: none;
+          background: transparent;
         }
 
         .verdict-import {
           color: #3ECF8E;
-          border: 1px solid rgba(62, 207, 142, 0.28);
-          background: rgba(62, 207, 142, 0.04);
+          border: none;
+          background: transparent;
         }
 
         .ledger-content-grid {
@@ -495,23 +496,27 @@ export default function LandedCostPage() {
           font-size: 0.5625rem;
           font-weight: 600;
           letter-spacing: 0.04em;
-          padding: 2px 6px;
-          border-radius: 4px;
+          padding: 0;
+          border: none;
+          background: transparent;
         }
 
         .badge-neutral {
           color: #888888;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: none;
+          background: transparent;
         }
 
         .badge-import {
           color: #F59E0B;
-          border: 1px solid rgba(245, 158, 11, 0.28);
+          border: none;
+          background: transparent;
         }
 
         .badge-brand {
           color: #3ECF8E;
-          border: 1px solid rgba(62, 207, 142, 0.28);
+          border: none;
+          background: transparent;
         }
 
         .col-body-single {
