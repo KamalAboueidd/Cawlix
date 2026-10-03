@@ -191,13 +191,14 @@ code, pre, kbd, samp {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 8px 16px;
+  padding: 10px 20px;
   border-radius: 8px;
   font-family: var(--font-sans);
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   cursor: pointer;
-  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, opacity 140ms ease;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, opacity 150ms ease;
   border: 1px solid transparent;
   line-height: 1;
   white-space: nowrap;
@@ -206,24 +207,25 @@ code, pre, kbd, samp {
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .btn-primary {
-  background: var(--brand);
+  background: #3ECF8E;
   color: #0A0A0A;
-  border-color: var(--brand);
-  font-weight: 500;
+  border-color: #3ECF8E;
+  font-weight: 700;
 }
 .btn-primary:hover:not(:disabled) {
-  background: var(--brand-hover);
-  border-color: var(--brand-hover);
+  background: #34B27B;
+  border-color: #34B27B;
 }
 
 .btn-secondary {
   background: transparent;
   color: #EDEDED;
   border: 1px solid rgba(255, 255, 255, 0.12);
+  font-weight: 700;
 }
 .btn-secondary:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.20);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.24);
   color: #FFFFFF;
 }
 

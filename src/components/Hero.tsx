@@ -1,5 +1,6 @@
 import { ArrowRight } from 'lucide-react';
 import ShowcaseConsole from './ShowcaseConsole';
+import heroGraphic from '../assets/Landing/1.png';
 
 export default function Hero() {
   return (
@@ -18,7 +19,44 @@ export default function Hero() {
         overflow: 'hidden',
       }}
     >
-      {/* Ultra-subtle, near-invisible ambient radial mask */}
+      {/* Visual 1: Primary Hero Graphic with subtle radial fade mask */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          top: '30px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '100%',
+          maxWidth: '1240px',
+          height: 'auto',
+          aspectRatio: '1672 / 941',
+          pointerEvents: 'none',
+          zIndex: 0,
+          opacity: 0.38,
+          WebkitMaskImage: 'radial-gradient(circle at 50% 45%, black 40%, rgba(0, 0, 0, 0.4) 65%, transparent 85%)',
+          maskImage: 'radial-gradient(circle at 50% 45%, black 40%, rgba(0, 0, 0, 0.4) 65%, transparent 85%)',
+        }}
+      >
+        <img
+          src={heroGraphic}
+          alt="Cawlix Institutional Telemetry Infrastructure"
+          width={1672}
+          height={941}
+          loading="eager"
+          // @ts-ignore
+          fetchPriority="high"
+          style={{
+            width: '100%',
+            height: 'auto',
+            aspectRatio: '1672 / 941',
+            objectFit: 'cover',
+            display: 'block',
+          }}
+        />
+      </div>
+
+      {/* Ultra-subtle ambient radial mask */}
       <div
         aria-hidden
         style={{
@@ -28,8 +66,9 @@ export default function Hero() {
           transform: 'translateX(-50%)',
           width: '1000px',
           height: '520px',
-          background: 'radial-gradient(ellipse at 50% 0%, rgba(62, 207, 142, 0.04) 0%, transparent 70%)',
+          background: 'radial-gradient(ellipse at 50% 0%, rgba(62, 207, 142, 0.05) 0%, transparent 70%)',
           pointerEvents: 'none',
+          zIndex: 1,
         }}
       />
 

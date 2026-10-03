@@ -1,14 +1,30 @@
 ---
-// Pure static hero section in Astro for Zero-JS baseline and 0 CLS
+import heroGraphic from '../../assets/Landing/1.png';
 ---
 
 <section
   style="display: flex; flex-direction: column; align-items: center; padding-top: 140px; padding-bottom: 40px; padding-left: 24px; padding-right: 24px; position: relative; background: #0A0A0A; overflow: hidden; text-align: center;"
 >
+  {/* Visual 1: Primary Hero Graphic with subtle radial fade mask */}
+  <div
+    aria-hidden="true"
+    style="position: absolute; top: 30px; left: 50%; transform: translateX(-50%); width: 100%; max-width: 1240px; height: auto; aspect-ratio: 1672 / 941; pointer-events: none; z-index: 0; opacity: 0.38; -webkit-mask-image: radial-gradient(circle at 50% 45%, black 40%, rgba(0, 0, 0, 0.4) 65%, transparent 85%); mask-image: radial-gradient(circle at 50% 45%, black 40%, rgba(0, 0, 0, 0.4) 65%, transparent 85%);"
+  >
+    <img
+      src={heroGraphic.src || heroGraphic}
+      alt="Cawlix Institutional Telemetry Infrastructure"
+      width={1672}
+      height={941}
+      loading="eager"
+      fetchpriority="high"
+      style="width: 100%; height: auto; aspect-ratio: 1672 / 941; object-fit: cover; display: block;"
+    />
+  </div>
+
   {/* Ambient radial glow */}
   <div
     aria-hidden="true"
-    style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 1000px; height: 520px; background: radial-gradient(ellipse at 50% 0%, rgba(62, 207, 142, 0.05) 0%, transparent 70%); pointer-events: none;"
+    style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 1000px; height: 520px; background: radial-gradient(ellipse at 50% 0%, rgba(62, 207, 142, 0.05) 0%, transparent 70%); pointer-events: none; z-index: 1;"
   ></div>
 
   <div
