@@ -1,0 +1,89 @@
+---
+// Pure static hero section in Astro for Zero-JS baseline and 0 CLS
+---
+
+<section
+  style="display: flex; flex-direction: column; align-items: center; padding-top: 140px; padding-bottom: 40px; padding-left: 24px; padding-right: 24px; position: relative; background: #0A0A0A; overflow: hidden; text-align: center;"
+>
+  {/* Ambient radial glow */}
+  <div
+    aria-hidden="true"
+    style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 1000px; height: 520px; background: radial-gradient(ellipse at 50% 0%, rgba(62, 207, 142, 0.05) 0%, transparent 70%); pointer-events: none;"
+  ></div>
+
+  <div
+    style="max-width: 1040px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 32px; position: relative; z-index: 1;"
+  >
+    {/* Vercel Display Grade Headline with Multi-tone Narrative Contrast */}
+    <h1
+      class="text-display"
+      style="font-size: clamp(2.5rem, 5.5vw, 4.5rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1.08; max-width: 920px; margin: 0 auto;"
+    >
+      <span style="color: #FFFFFF; font-weight: 500;">Institutional Price Intelligence. </span>
+      <span class="text-contrast-tail">Engineered for absolute accuracy.</span>
+    </h1>
+
+    {/* Concise 2-line Subtitle */}
+    <p
+      style="font-size: 1.0625rem; color: #888888; line-height: 1.6; max-width: 660px; margin: 0 auto; letter-spacing: -0.01em;"
+    >
+      Stop paying ghost-inflated prices. Cawlix computes deterministic out-of-pocket costs
+      across 12 Egyptian retailers and direct US import corridors in real-time.
+    </p>
+
+    {/* Action Area */}
+    <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap;">
+      <a
+        href="#engines"
+        style="padding: 10px 20px; font-size: 0.875rem; font-weight: 500; border-radius: 8px; color: #0A0A0A; background: #3ECF8E; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;"
+      >
+        Launch Tracker &rarr;
+      </a>
+      <a
+        href="#engines"
+        style="padding: 10px 20px; font-size: 0.875rem; font-weight: 500; border-radius: 8px; color: #EDEDED; border: 1px solid rgba(255, 255, 255, 0.12); background: transparent; text-decoration: none;"
+      >
+        Explore Intelligence Console
+      </a>
+    </div>
+
+    {/* Borderless Horizontal Telemetry Ticker */}
+    <div
+      style="display: flex; align-items: center; justify-content: center; gap: 28px; flex-wrap: wrap; padding: 16px 0; font-family: var(--font-mono); font-size: 0.75rem; color: #888888; letter-spacing: 0.04em; border-top: 1px solid rgba(255, 255, 255, 0.06); border-bottom: 1px solid rgba(255, 255, 255, 0.06); width: 100%; max-width: 860px; margin-top: 8px;"
+    >
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="color: #FFFFFF; font-weight: 600;">12</span>
+        <span>RETAILERS INDEXED</span>
+      </div>
+      <span style="color: rgba(255, 255, 255, 0.15);">&middot;</span>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="color: #FFFFFF; font-weight: 600;">90-DAY</span>
+        <span>PRICE VELOCITY</span>
+      </div>
+      <span style="color: rgba(255, 255, 255, 0.15);">&middot;</span>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="color: #FFFFFF; font-weight: 600;">&lt;180MS</span>
+        <span>PROBE LATENCY</span>
+      </div>
+      <span style="color: rgba(255, 255, 255, 0.15);">&middot;</span>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="color: #3ECF8E; font-weight: 600;">0%</span>
+        <span>GHOST DEAL TOLERANCE</span>
+      </div>
+    </div>
+
+    {/* Institutional Feature Showcase Header */}
+    <div style="width: 100%; margin-top: 40px; text-align: center;">
+      <span class="feature-group-label" style="margin-bottom: 12px;">
+        // INTERACTIVE_FEATURE_SHOWCASE
+      </span>
+      <h2
+        class="text-display"
+        style="font-size: clamp(1.875rem, 3.8vw, 3rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1.08; margin-bottom: 16px;"
+      >
+        <span style="color: #FFFFFF; font-weight: 500;">Live Telemetry Feeds & Market Probes </span>
+        <span class="text-contrast-tail">across 12 Egyptian retailers.</span>
+      </h2>
+    </div>
+  </div>
+</section>

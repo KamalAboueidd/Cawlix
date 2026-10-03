@@ -1,0 +1,77 @@
+---
+import cawlixLogo from '../../assets/ICon.png';
+
+const NAV_ITEMS = [
+  { label: 'True-Cost Engine', href: '#engines' },
+  { label: 'Ghost Auditor', href: '#engines' },
+  { label: 'Landed-Cost Matrix', href: '#engines' },
+  { label: 'Anomaly Radar', href: '#engines' },
+];
+---
+
+<header
+  style="position: fixed; top: 0; left: 0; right: 0; z-index: 50; height: 60px; background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; padding: 0 24px;"
+>
+  <div
+    style="display: flex; align-items: center; justify-content: space-between; width: 100%; maxWidth: 1280px; margin: 0 auto;"
+  >
+    {/* Brand Logo */}
+    <div style="display: flex; align-items: center; gap: 32px;">
+      <a
+        href="/"
+        style="display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0;"
+      >
+        <img
+          src={cawlixLogo.src || cawlixLogo}
+          alt="Cawlix Logo"
+          style="height: 26px; width: auto; display: block; object-fit: contain;"
+        />
+        <span
+          style="font-weight: 600; font-size: 0.9375rem; color: #FFFFFF; letter-spacing: -0.02em;"
+        >
+          Cawlix
+        </span>
+      </a>
+
+      {/* Static Nav Links */}
+      <nav style="display: flex; align-items: center; gap: 4px;" class="desktop-nav">
+        {NAV_ITEMS.map((item) => (
+          <a
+            href={item.href}
+            style="color: #A3A3A3; font-size: 0.8125rem; font-weight: 500; text-decoration: none; padding: 6px 12px; border-radius: 6px; transition: color 150ms ease;"
+            class="nav-link"
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
+    </div>
+
+    {/* Right Meta & CTA */}
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <div style="display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.6875rem;">
+        <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #3ECF8E; display: inline-block;"></span>
+        <span style="color: #737373;">12_NODES:</span>
+        <span style="color: #3ECF8E;">ONLINE</span>
+      </div>
+
+      <a
+        href="#engines"
+        style="background: #3ECF8E; color: #0A0A0A; font-size: 0.8125rem; font-weight: 600; padding: 6px 14px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center;"
+      >
+        Launch Tracker
+      </a>
+    </div>
+  </div>
+</header>
+
+<style>
+  @media (max-width: 768px) {
+    .desktop-nav {
+      display: none !important;
+    }
+  }
+  .nav-link:hover {
+    color: #FFFFFF !important;
+  }
+</style>

@@ -1,0 +1,37 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/astro/Navbar.astro';
+import HeroStatic from '../components/astro/HeroStatic.astro';
+import Footer from '../components/astro/Footer.astro';
+
+// Interactive React Islands
+import ShowcaseConsole from '../components/ShowcaseConsole';
+import CoreEnginesDeepDive from '../components/landing/CoreEnginesDeepDive';
+import TelemetryConsole from '../components/TelemetryConsole';
+---
+
+<Layout>
+  <!-- Pure static navigation bar -->
+  <Navbar />
+
+  <main style="min-height: 100vh; background-color: #0A0A0A;">
+    <!-- Pure static hero headline, copy, CTA, and ticker -->
+    <HeroStatic />
+
+    <!-- Interactive Showcase Console Island -->
+    <section style="max-width: 1040px; margin: 0 auto; padding: 0 24px 60px 24px;">
+      <ShowcaseConsole client:idle />
+    </section>
+
+    <!-- Core Engines Deep Dive with 3D Globe, Fiber Wave, Radar Core & 3D Dashboard -->
+    <CoreEnginesDeepDive client:visible />
+
+    <!-- Live Telemetry Stream Island -->
+    <section style="max-width: 1200px; margin: 0 auto; padding: 40px 24px 80px 24px;">
+      <TelemetryConsole client:idle />
+    </section>
+  </main>
+
+  <!-- Pure static footer -->
+  <Footer />
+</Layout>
