@@ -9,7 +9,6 @@ import {
   ReferenceLine,
 } from 'recharts';
 import { AlertOctagon, TrendingUp, Info, Activity, Database } from 'lucide-react';
-import data3dVisual from '../../assets/Landing/dynamic-data-visualization-3d.jpg';
 
 interface DataPoint {
   day: string;
@@ -96,7 +95,7 @@ export default function GhostDiscountVisualizer() {
         {/* 3D Telemetry Visual with 1px hairline framing */}
         <div style={{ position: 'relative', width: '100%', maxHeight: '220px', overflow: 'hidden' }}>
           <img
-            src={data3dVisual}
+            src="/landing/dynamic-data-visualization-3d.jpg"
             alt="Dynamic 3D Telemetry Price Stream & Velocity Network"
             width={4096}
             height={2800}

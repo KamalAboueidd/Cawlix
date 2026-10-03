@@ -1,5 +1,5 @@
 ---
-import heroGraphic from '../../assets/Landing/1.png';
+// Static hero section in Astro with Zero CLS and eager visual
 ---
 
 <section
@@ -11,7 +11,7 @@ import heroGraphic from '../../assets/Landing/1.png';
     style="position: absolute; top: 30px; left: 50%; transform: translateX(-50%); width: 100%; max-width: 1240px; height: auto; aspect-ratio: 1672 / 941; pointer-events: none; z-index: 0; opacity: 0.38; -webkit-mask-image: radial-gradient(circle at 50% 45%, black 40%, rgba(0, 0, 0, 0.4) 65%, transparent 85%); mask-image: radial-gradient(circle at 50% 45%, black 40%, rgba(0, 0, 0, 0.4) 65%, transparent 85%);"
   >
     <img
-      src={heroGraphic.src || heroGraphic}
+      src="/landing/1.png"
       alt="Cawlix Institutional Telemetry Infrastructure"
       width={1672}
       height={941}

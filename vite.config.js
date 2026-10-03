@@ -21,7 +21,8 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',
-    sourcemap: true,
+    sourcemap: false,
+    assetsInlineLimit: 4096,
   },
   server: {
     port: 5173,

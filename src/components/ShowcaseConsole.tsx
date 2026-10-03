@@ -1,87 +1,189 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Trash2, Search, ArrowRight, RefreshCw, CheckCircle2, AlertTriangle, ExternalLink } from 'lucide-react';
-import clsx from 'clsx';
+import {
+  Activity,
+  Search,
+  Globe,
+  Store,
+  ShoppingBag,
+  Play,
+  Pause,
+  Trash2,
+  AlertTriangle,
+  CheckCircle2,
+  ArrowUpRight,
+  TrendingDown,
+  ShieldAlert,
+  Zap,
+} from 'lucide-react';
 
 type Tab = 'telemetry' | 'probe' | 'landed-cost';
 
 interface TelemetryRow {
   id: string;
   timestamp: string;
-  statusCode: number;
-  statusText: string;
-  retailer: string;
+  store: string;
   sku: string;
-  type: 'DROP' | 'SPIKE' | 'GHOST' | 'ARBITRAGE' | 'RESTOCK' | 'NORMAL';
-  message: string;
+  verdictType: 'DROP' | 'GHOST' | 'ARBITRAGE' | 'VERIFIED';
+  verdictLabel: string;
+  details: string;
+  price: string;
   latencyMs: number;
 }
 
 const INITIAL_TELEMETRY_LOGS: TelemetryRow[] = [
   {
-    id: 'tl-1',
-    timestamp: '10:24:19.412',
-    statusCode: 200,
-    statusText: 'OK',
-    retailer: 'AMZN_EG',
-    sku: 'SKU#APL-15PM-256',
-    type: 'DROP',
-    message: 'iPhone 15 Pro Max 256GB Natural Titanium · EGP 61,490 (-4.2%) · True-Cost: 60,875 EGP with CIB 10% promo',
-    latencyMs: 142,
+    id: 't-1',
+    timestamp: '11:24:19.412',
+    store: 'B.TECH',
+    sku: 'MacBook Pro M3 Max 1TB',
+    verdictType: 'GHOST',
+    verdictLabel: 'GHOST_FLAGGED',
+    details: 'Ghost markup rejected (-14% invalid baseline recalculated)',
+    price: 'EGP 142,000',
+    latencyMs: 112,
   },
   {
-    id: 'tl-2',
-    timestamp: '10:24:18.890',
-    statusCode: 200,
-    statusText: 'GHOST_FLAG',
-    retailer: 'NOON_EG',
-    sku: 'SKU#SNY-PS5-SLM',
-    type: 'GHOST',
-    message: 'PS5 Slim Digital listed 24,999 EGP (marked "35% OFF from 38,499"). Synthetic baseline audit: 90d median was 26,000 EGP. Ghost deal score: 94/100.',
-    latencyMs: 168,
-  },
-  {
-    id: 'tl-3',
-    timestamp: '10:24:17.204',
-    statusCode: 200,
-    statusText: 'ARB_SIGNAL',
-    retailer: 'AMZN_US',
-    sku: 'SKU#APL-MBP-M3P',
-    type: 'ARBITRAGE',
-    message: 'MacBook Pro 14" M3 Pro 18GB · USD 1,799 (Landed: 91,480 EGP all-inclusive vs Local EG: 108,000 EGP). Net arbitrage spread: +16,520 EGP.',
+    id: 't-2',
+    timestamp: '11:24:18.890',
+    store: 'B&H_US',
+    sku: 'Sony A7 IV Mirrorless',
+    verdictType: 'ARBITRAGE',
+    verdictLabel: 'ARBITRAGE_PARITY',
+    details: 'Direct import arbitrage (+EGP 21,600 margin vs Cairo retail)',
+    price: 'EGP 122,400',
     latencyMs: 210,
   },
   {
-    id: 'tl-4',
-    timestamp: '10:24:16.031',
-    statusCode: 304,
-    statusText: 'NOT_MODIFIED',
-    retailer: 'BTECH',
-    sku: 'SKU#SNY-WH-1000XM5',
-    type: 'NORMAL',
-    message: 'Sony WH-1000XM5 ANC · EGP 18,900 · 0.0% variance over 24h · Stock: IN_STOCK (14 units)',
-    latencyMs: 98,
+    id: 't-3',
+    timestamp: '11:24:17.204',
+    store: 'AMZN_EG',
+    sku: 'iPhone 16 Pro 256GB',
+    verdictType: 'DROP',
+    verdictLabel: 'VOUCHER_DROP',
+    details: 'Flash voucher applied via CIB card (-4.2% verified checkout)',
+    price: 'EGP 64,899',
+    latencyMs: 138,
   },
   {
-    id: 'tl-5',
-    timestamp: '10:24:14.770',
-    statusCode: 200,
-    statusText: 'OK',
-    retailer: 'TRADELINE',
-    sku: 'SKU#APL-MBA-M2',
-    type: 'RESTOCK',
-    message: 'MacBook Air 13" M2 8GB/256GB Space Gray · EGP 48,500 · Restocked (6 units confirmed)',
-    latencyMs: 115,
+    id: 't-4',
+    timestamp: '11:24:16.031',
+    store: 'NOON_EG',
+    sku: 'Dell Alienware M16',
+    verdictType: 'DROP',
+    verdictLabel: 'GLITCH_DETECTED',
+    details: 'Glitch discount verified (-38% below 90-day baseline)',
+    price: 'EGP 74,500',
+    latencyMs: 94,
   },
   {
-    id: 'tl-6',
-    timestamp: '10:24:13.112',
-    statusCode: 200,
-    statusText: 'SPIKE',
-    retailer: '2B_EG',
-    sku: 'SKU#NV-RTX4080-OC',
-    type: 'SPIKE',
-    message: 'ASUS ROG Strix RTX 4080 Super · EGP 67,200 (+8.4% overnight adjustment) · Supply allocation tight',
-    latencyMs: 133,
+    id: 't-5',
+    timestamp: '11:24:14.770',
+    store: 'TRADELINE',
+    sku: 'PlayStation 5 Pro Digital',
+    verdictType: 'VERIFIED',
+    verdictLabel: 'AUTHENTIC_MSRP',
+    details: 'Restock allocation confirmed at authentic Egyptian MSRP',
+    price: 'EGP 46,900',
+    latencyMs: 78,
+  },
+  {
+    id: 't-6',
+    timestamp: '11:24:13.112',
+    store: '2B_EG',
+    sku: 'iPad Pro 11" M4 OLED',
+    verdictType: 'VERIFIED',
+    verdictLabel: 'PRICE_VERIFIED',
+    details: 'Pre-sale price velocity verified baseline with 0% inflation',
+    price: 'EGP 54,200',
+    latencyMs: 125,
+  },
+  {
+    id: 't-7',
+    timestamp: '11:24:11.984',
+    store: 'SHARAF_DG',
+    sku: 'Samsung S24 Ultra 512GB',
+    verdictType: 'ARBITRAGE',
+    verdictLabel: 'ARBITRAGE_PARITY',
+    details: 'Parallel customs spread evaluated (-6.1% direct corridor)',
+    price: 'EGP 52,499',
+    latencyMs: 164,
+  },
+  {
+    id: 't-8',
+    timestamp: '11:24:10.552',
+    store: 'AMZN_US',
+    sku: 'Bose QC Ultra Headphones',
+    verdictType: 'ARBITRAGE',
+    verdictLabel: 'ARBITRAGE_PARITY',
+    details: 'Direct US customs landed clearance parity (+EGP 4,200 spread)',
+    price: 'EGP 18,750',
+    latencyMs: 195,
+  },
+];
+
+const TELEMETRY_SIMULATION_POOL: Array<Omit<TelemetryRow, 'id' | 'timestamp'>> = [
+  {
+    store: 'B.TECH',
+    sku: 'MacBook Pro M3 Max 1TB',
+    verdictType: 'GHOST',
+    verdictLabel: 'GHOST_FLAGGED',
+    details: 'Ghost markup rejected (-14% invalid baseline recalculated)',
+    price: 'EGP 142,000',
+    latencyMs: 112,
+  },
+  {
+    store: 'B&H_US',
+    sku: 'Sony A7 IV Mirrorless',
+    verdictType: 'ARBITRAGE',
+    verdictLabel: 'ARBITRAGE_PARITY',
+    details: 'Direct import arbitrage (+EGP 21,600 margin vs local Cairo)',
+    price: 'EGP 122,400',
+    latencyMs: 210,
+  },
+  {
+    store: 'AMZN_EG',
+    sku: 'iPhone 16 Pro 256GB',
+    verdictType: 'DROP',
+    verdictLabel: 'VOUCHER_DROP',
+    details: 'Flash voucher applied via CIB card (-4.2% verified checkout)',
+    price: 'EGP 64,899',
+    latencyMs: 138,
+  },
+  {
+    store: 'NOON_EG',
+    sku: 'Dell Alienware M16',
+    verdictType: 'DROP',
+    verdictLabel: 'GLITCH_DETECTED',
+    details: 'Glitch discount verified (-38% below 90-day baseline)',
+    price: 'EGP 74,500',
+    latencyMs: 94,
+  },
+  {
+    store: 'TRADELINE',
+    sku: 'Apple Watch Ultra 2',
+    verdictType: 'VERIFIED',
+    verdictLabel: 'AUTHENTIC_MSRP',
+    details: 'Official authorized channel stock confirmed with warranty',
+    price: 'EGP 43,900',
+    latencyMs: 82,
+  },
+  {
+    store: 'DREAM_2000',
+    sku: 'LG C3 55" OLED 4K',
+    verdictType: 'GHOST',
+    verdictLabel: 'GHOST_FLAGGED',
+    details: 'Synthetic +22% pre-sale price spike rejected by Ghost Auditor',
+    price: 'EGP 42,999',
+    latencyMs: 156,
+  },
+  {
+    store: 'COMPU_ME',
+    sku: 'Asus ROG Zephyrus G16',
+    verdictType: 'DROP',
+    verdictLabel: 'VOUCHER_DROP',
+    details: 'Zero-interest installment admin surcharge waived at checkout',
+    price: 'EGP 89,900',
+    latencyMs: 118,
   },
 ];
 
@@ -127,24 +229,21 @@ const PROBE_PRESETS = [
 
 export default function ShowcaseConsole() {
   const [activeTab, setActiveTab] = useState<Tab>('telemetry');
-
-  // Telemetry Stream State
   const [logs, setLogs] = useState<TelemetryRow[]>(INITIAL_TELEMETRY_LOGS);
   const [isPaused, setIsPaused] = useState(false);
   const [logFilter, setLogFilter] = useState<'ALL' | 'DROP' | 'GHOST' | 'ARBITRAGE'>('ALL');
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const poolIndexRef = useRef(0);
 
-  // Probe State
+  // Probe Tab State
   const [probeIndex, setProbeIndex] = useState(0);
   const [probeInput, setProbeInput] = useState(PROBE_PRESETS[0].name);
-  const [isProbing, setIsProbing] = useState(false);
   const currentProbe = PROBE_PRESETS[probeIndex];
 
-  // Landed Cost State
-  const [usPrice, setUsPrice] = useState(1199);
-  const [fxRate, setFxRate] = useState(49.20);
-  const [category, setCategory] = useState<'phone' | 'laptop' | 'audio' | 'general'>('phone');
-  const [localPriceEGP, setLocalPriceEGP] = useState(65000);
+  // Landed Cost Tab State
+  const [usPrice, setUsPrice] = useState(1799);
+  const [fxRate, setFxRate] = useState(50.48);
+  const [category, setCategory] = useState<'phone' | 'laptop' | 'audio' | 'general'>('laptop');
+  const [localPriceEGP, setLocalPriceEGP] = useState(122000);
 
   // Periodic Telemetry Simulator
   useEffect(() => {
@@ -155,59 +254,23 @@ export default function ShowcaseConsole() {
       const ms = String(now.getMilliseconds()).padStart(3, '0');
       const timeStr = now.toTimeString().split(' ')[0] + '.' + ms;
 
-      const randomEvents: Array<Omit<TelemetryRow, 'id' | 'timestamp'>> = [
-        {
-          statusCode: 200,
-          statusText: 'OK',
-          retailer: 'AMZN_EG',
-          sku: 'SKU#APL-15P-128',
-          type: 'DROP',
-          message: 'iPhone 15 Pro 128GB Black Titanium · EGP 52,999 (-3.8%) · In stock (8 units)',
-          latencyMs: 138,
-        },
-        {
-          statusCode: 200,
-          statusText: 'GHOST_ALERT',
-          retailer: 'NOON_EG',
-          sku: 'SKU#SAM-S24U-512',
-          type: 'GHOST',
-          message: 'Galaxy S24 Ultra artificial markdown detected. Original price marked up 18% 3 hours prior to promo start.',
-          latencyMs: 154,
-        },
-        {
-          statusCode: 200,
-          statusText: 'ARB_SIGNAL',
-          retailer: 'AMZN_US',
-          sku: 'SKU#SNY-A7IV',
-          type: 'ARBITRAGE',
-          message: 'Sony Alpha 7 IV Mirrorless · USD 2,298 Landed: 122,400 EGP vs Local: 144,000 EGP · Arbitrage margin: +21,600 EGP',
-          latencyMs: 220,
-        },
-        {
-          statusCode: 304,
-          statusText: 'NOT_MODIFIED',
-          retailer: 'CARREFOUR',
-          sku: 'SKU#LG-C3-55',
-          type: 'NORMAL',
-          message: 'LG OLED 55" C3 4K HDR · EGP 49,999 · Probe confirmed identical parity with yesterday',
-          latencyMs: 105,
-        },
-      ];
+      const template = TELEMETRY_SIMULATION_POOL[poolIndexRef.current % TELEMETRY_SIMULATION_POOL.length];
+      poolIndexRef.current += 1;
 
-      const pick = randomEvents[Math.floor(Math.random() * randomEvents.length)];
-      const newEntry: TelemetryRow = {
-        id: `tl-${Date.now()}-${Math.random().toString(36).substring(2, 5)}`,
+      const newRow: TelemetryRow = {
+        id: `row-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
         timestamp: timeStr,
-        ...pick,
+        ...template,
+        latencyMs: Math.max(58, Math.min(220, template.latencyMs + Math.floor(Math.random() * 15 - 7))),
       };
 
-      setLogs((prev) => [newEntry, ...prev.slice(0, 49)]);
+      setLogs((prev) => [newRow, ...prev.slice(0, 39)]);
     }, 2800);
 
     return () => clearInterval(interval);
   }, [isPaused]);
 
-  // Landed Cost Deterministic Calculation
+  // Landed Cost Calculations
   const tariffPct = category === 'laptop' ? 0 : category === 'phone' ? 10 : category === 'audio' ? 20 : 15;
   const devFeePct = category === 'phone' ? 5 : 0;
   const vatPct = 14;
@@ -219,7 +282,7 @@ export default function ShowcaseConsole() {
   const customsDutyEGP = (cifEGP * tariffPct) / 100;
   const devFeeEGP = (cifEGP * devFeePct) / 100;
   const vatEGP = ((cifEGP + customsDutyEGP + devFeeEGP) * vatPct) / 100;
-  const clearanceAdminEGP = 1100;
+  const clearanceAdminEGP = 1200;
 
   const totalLandedEGP = Math.round(cifEGP + customsDutyEGP + devFeeEGP + vatEGP + clearanceAdminEGP);
   const netArbitrageEGP = localPriceEGP - totalLandedEGP;
@@ -227,15 +290,8 @@ export default function ShowcaseConsole() {
 
   const filteredLogs = logs.filter((l) => {
     if (logFilter === 'ALL') return true;
-    return l.type === logFilter;
+    return l.verdictType === logFilter;
   });
-
-  const handlePresetClick = (idx: number) => {
-    setIsProbing(true);
-    setProbeIndex(idx);
-    setProbeInput(PROBE_PRESETS[idx].name);
-    setTimeout(() => setIsProbing(false), 350);
-  };
 
   return (
     <div
@@ -246,133 +302,168 @@ export default function ShowcaseConsole() {
         margin: '0 auto',
         borderRadius: '12px',
         border: '1px solid rgba(255, 255, 255, 0.08)',
-        background: '#0E0E0E',
+        background: '#0B0B0B',
         overflow: 'hidden',
-        boxShadow: '0 24px 64px -12px rgba(0, 0, 0, 0.85)',
+        boxShadow: '0 24px 64px -12px rgba(0, 0, 0, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.06)',
       }}
     >
-      {/* ── Console Header Bar & Mock Tabs ── */}
+      {/* ── Header: Vercel-Style Segmented Tab Group & Minimal Status Indicator ── */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 16px',
-          height: '46px',
-          background: '#121212',
+          padding: '10px 16px',
+          background: '#101010',
           borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
           userSelect: 'none',
+          flexWrap: 'wrap',
+          gap: '12px',
         }}
       >
-        {/* Left: Window Dots & Tabs */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        {/* Left: Window Dots & Vercel Segmented Tabs */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           <div style={{ display: 'flex', gap: '6px' }}>
-            <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'rgba(255, 255, 255, 0.15)' }} />
-            <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'rgba(255, 255, 255, 0.15)' }} />
-            <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'rgba(255, 255, 255, 0.15)' }} />
+            <div style={{ width: '9px', height: '9px', borderRadius: '50%', background: 'rgba(255, 255, 255, 0.15)' }} />
+            <div style={{ width: '9px', height: '9px', borderRadius: '50%', background: 'rgba(255, 255, 255, 0.15)' }} />
+            <div style={{ width: '9px', height: '9px', borderRadius: '50%', background: 'rgba(255, 255, 255, 0.15)' }} />
           </div>
 
-          <div style={{ display: 'flex', gap: '2px', marginLeft: '6px' }}>
+          {/* Minimal Clean Tabs (No Border, No Background) */}
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '18px',
+              background: 'transparent',
+              border: 'none',
+              padding: 0,
+              fontSize: '0.75rem',
+            }}
+          >
             <button
+              type="button"
               onClick={() => setActiveTab('telemetry')}
               style={{
-                background: activeTab === 'telemetry' ? '#181818' : 'transparent',
-                border: '1px solid',
-                borderColor: activeTab === 'telemetry' ? 'rgba(255, 255, 255, 0.10)' : 'transparent',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: 'transparent',
                 color: activeTab === 'telemetry' ? '#FFFFFF' : '#777777',
-                padding: '5px 12px',
-                borderRadius: '6px',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.75rem',
-                fontWeight: 500,
+                fontWeight: activeTab === 'telemetry' ? 600 : 400,
+                padding: '4px 0',
+                border: 'none',
+                boxShadow: 'none',
                 cursor: 'pointer',
-                transition: 'all 120ms ease',
+                transition: 'color 150ms ease',
               }}
             >
-              [Live Telemetry Feed]
+              <Activity size={13} strokeWidth={1.5} color={activeTab === 'telemetry' ? '#3ECF8E' : '#777777'} />
+              Live Network Feed
             </button>
+
             <button
+              type="button"
               onClick={() => setActiveTab('probe')}
               style={{
-                background: activeTab === 'probe' ? '#181818' : 'transparent',
-                border: '1px solid',
-                borderColor: activeTab === 'probe' ? 'rgba(255, 255, 255, 0.10)' : 'transparent',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: 'transparent',
                 color: activeTab === 'probe' ? '#FFFFFF' : '#777777',
-                padding: '5px 12px',
-                borderRadius: '6px',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.75rem',
-                fontWeight: 500,
+                fontWeight: activeTab === 'probe' ? 600 : 400,
+                padding: '4px 0',
+                border: 'none',
+                boxShadow: 'none',
                 cursor: 'pointer',
-                transition: 'all 120ms ease',
+                transition: 'color 150ms ease',
               }}
             >
-              [On-Demand Probe]
+              <Search size={13} strokeWidth={1.5} color={activeTab === 'probe' ? '#3ECF8E' : '#777777'} />
+              On-Demand Probes
             </button>
+
             <button
+              type="button"
               onClick={() => setActiveTab('landed-cost')}
               style={{
-                background: activeTab === 'landed-cost' ? '#181818' : 'transparent',
-                border: '1px solid',
-                borderColor: activeTab === 'landed-cost' ? 'rgba(255, 255, 255, 0.10)' : 'transparent',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: 'transparent',
                 color: activeTab === 'landed-cost' ? '#FFFFFF' : '#777777',
-                padding: '5px 12px',
-                borderRadius: '6px',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.75rem',
-                fontWeight: 500,
+                fontWeight: activeTab === 'landed-cost' ? 600 : 400,
+                padding: '4px 0',
+                border: 'none',
+                boxShadow: 'none',
                 cursor: 'pointer',
-                transition: 'all 120ms ease',
+                transition: 'color 150ms ease',
               }}
             >
-              [Landed-Cost Calculator]
+              <Globe size={13} strokeWidth={1.5} color={activeTab === 'landed-cost' ? '#3ECF8E' : '#777777'} />
+              US-EG Arbitrage Matrix
             </button>
           </div>
         </div>
 
-        {/* Right Status Indicators */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#3ECF8E' }} />
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: '#888888', letterSpacing: '0.04em' }}>
-              ONLINE · 142MS
-            </span>
-          </div>
+        {/* Right Status Indicator: Minimal Static Green Dot */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span
+            style={{
+              width: '6px',
+              height: '6px',
+              borderRadius: '50%',
+              backgroundColor: '#3ECF8E',
+              display: 'inline-block',
+            }}
+          />
+          <span
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.6875rem',
+              color: '#888888',
+              letterSpacing: '0.04em',
+            }}
+          >
+            REALTIME ENGINE ONLINE · 142MS AVG
+          </span>
         </div>
       </div>
 
-      {/* ── Tab 1: Live Telemetry Feed ── */}
+      {/* ── Tab 1: Live Network Feed (Institutional Supabase / Vercel Data Grid) ── */}
       {activeTab === 'telemetry' && (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '440px' }}>
-          {/* Subheader / Filter Bar */}
+        <div style={{ display: 'flex', flexDirection: 'column', height: '460px', overflow: 'hidden' }}>
+          {/* Subheader / Filter Controls Bar */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '8px 16px',
-              background: '#0B0B0B',
+              background: '#0D0D0D',
               borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: '#666666', textTransform: 'uppercase' }}>
-                Filter:
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: '#666666', marginRight: '6px' }}>
+                FILTER:
               </span>
               {(['ALL', 'DROP', 'GHOST', 'ARBITRAGE'] as const).map((mode) => (
                 <button
                   key={mode}
+                  type="button"
                   onClick={() => setLogFilter(mode)}
                   style={{
                     background: logFilter === mode ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
                     border: '1px solid',
-                    borderColor: logFilter === mode ? 'rgba(255, 255, 255, 0.12)' : 'transparent',
+                    borderColor: logFilter === mode ? 'rgba(255, 255, 255, 0.14)' : 'transparent',
                     color: logFilter === mode ? '#FFFFFF' : '#777777',
                     padding: '2px 8px',
                     borderRadius: '4px',
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.6875rem',
+                    fontSize: '0.625rem',
                     cursor: 'pointer',
+                    transition: 'all 120ms ease',
                   }}
                 >
                   {mode}
@@ -382,6 +473,7 @@ export default function ShowcaseConsole() {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <button
+                type="button"
                 onClick={() => setIsPaused((p) => !p)}
                 style={{
                   display: 'flex',
@@ -393,7 +485,7 @@ export default function ShowcaseConsole() {
                   padding: '3px 8px',
                   borderRadius: '4px',
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '0.6875rem',
+                  fontSize: '0.625rem',
                   cursor: 'pointer',
                 }}
               >
@@ -401,6 +493,7 @@ export default function ShowcaseConsole() {
                 {isPaused ? 'RESUME' : 'PAUSE'}
               </button>
               <button
+                type="button"
                 onClick={() => setLogs([])}
                 style={{
                   display: 'flex',
@@ -412,7 +505,7 @@ export default function ShowcaseConsole() {
                   padding: '3px 8px',
                   borderRadius: '4px',
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '0.6875rem',
+                  fontSize: '0.625rem',
                   cursor: 'pointer',
                 }}
               >
@@ -422,75 +515,176 @@ export default function ShowcaseConsole() {
             </div>
           </div>
 
-          {/* Log Stream */}
+          {/* Table Header Row (Column Names) */}
           <div
-            ref={scrollRef}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              padding: '8px 16px',
+              background: '#090909',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.6875rem',
+              color: '#666666',
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
+            }}
+          >
+            <div style={{ width: '85px', flexShrink: 0 }}>TIME</div>
+            <div style={{ width: '110px', flexShrink: 0 }}>ORIGIN</div>
+            <div style={{ flex: 1, minWidth: 0, paddingRight: '16px' }}>SKU ITEM &amp; TELEMETRY</div>
+            <div style={{ width: '150px', flexShrink: 0 }}>INTELLIGENCE VERDICT</div>
+            <div style={{ width: '120px', flexShrink: 0, textAlign: 'right' }}>NET EXECUTED</div>
+            <div style={{ width: '65px', flexShrink: 0, textAlign: 'right' }}>SPEED</div>
+          </div>
+
+          {/* Table Body: Smooth Vertical Stream without CLS */}
+          <div
             style={{
               flex: 1,
               overflowY: 'auto',
-              padding: '8px 0',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.75rem',
-              lineHeight: 1.6,
+              background: '#0B0B0B',
             }}
           >
             {filteredLogs.length === 0 ? (
-              <div style={{ padding: '32px', textAlign: 'center', color: '#555555' }}>
+              <div style={{ padding: '48px', textAlign: 'center', color: '#555555', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
                 — Stream buffer empty —
               </div>
             ) : (
               filteredLogs.map((log) => {
-                const isGhost = log.type === 'GHOST';
-                const isArb = log.type === 'ARBITRAGE';
-                const isDrop = log.type === 'DROP';
-                const isSpike = log.type === 'SPIKE';
+                const isGhost = log.verdictType === 'GHOST';
+                const isArb = log.verdictType === 'ARBITRAGE';
+                const isDrop = log.verdictType === 'DROP';
 
                 return (
                   <div
                     key={log.id}
                     style={{
-                      display: 'grid',
-                      gridTemplateColumns: '100px 70px 84px 1fr 58px',
-                      alignItems: 'baseline',
-                      gap: '12px',
-                      padding: '4px 16px',
-                      borderBottom: '1px solid rgba(255, 255, 255, 0.03)',
-                      background: isGhost
-                        ? 'rgba(239, 68, 68, 0.04)'
-                        : isArb
-                        ? 'rgba(62, 207, 142, 0.04)'
-                        : 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: '8px 16px',
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+                      transition: 'background-color 120ms ease',
+                      background: 'transparent',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.025)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
                     }}
                   >
-                    {/* Timestamp */}
-                    <span style={{ color: '#555555', letterSpacing: '-0.02em' }}>
-                      {log.timestamp}
-                    </span>
-
-                    {/* HTTP Status Code */}
-                    <span
+                    {/* Col 1: Time (11px Monospace, muted #666666, fixed width 85px) */}
+                    <div
                       style={{
-                        color: isGhost ? '#EF4444' : isArb ? '#3ECF8E' : isDrop ? '#3ECF8E' : isSpike ? '#F59E0B' : '#777777',
-                        fontWeight: 500,
+                        width: '85px',
+                        flexShrink: 0,
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '11px',
+                        color: '#666666',
+                        letterSpacing: '-0.02em',
                       }}
                     >
-                      [{log.statusCode}]
-                    </span>
+                      {log.timestamp}
+                    </div>
 
-                    {/* Retailer Name */}
-                    <span style={{ color: '#AAAAAA', fontWeight: 500 }}>
-                      {log.retailer}
-                    </span>
+                    {/* Col 2: Store Origin with micro Lucide outline icon (width 110px) */}
+                    <div
+                      style={{
+                        width: '110px',
+                        flexShrink: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.6875rem',
+                        color: '#A3A3A3',
+                      }}
+                    >
+                      <Store size={12} strokeWidth={1.2} color="#737373" />
+                      <span>{log.store}</span>
+                    </div>
 
-                    {/* Structured Message */}
-                    <span style={{ color: isGhost ? '#FFA2A2' : isArb ? '#D1FAE5' : '#D4D4D4', wordBreak: 'break-word' }}>
-                      {log.message}
-                    </span>
+                    {/* Col 3: SKU Item & Telemetry (High-contrast pure white #EDEDED, truncated with ellipsis, flex-1) */}
+                    <div
+                      style={{
+                        flex: 1,
+                        minWidth: 0,
+                        paddingRight: '16px',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      <span style={{ color: '#EDEDED', fontWeight: 500, fontSize: '0.8125rem' }}>
+                        {log.sku}
+                      </span>
+                      <span
+                        style={{
+                          color: '#737373',
+                          fontSize: '0.75rem',
+                          marginLeft: '8px',
+                          fontFamily: 'var(--font-sans)',
+                        }}
+                      >
+                        · {log.details}
+                      </span>
+                    </div>
 
-                    {/* Latency */}
-                    <span style={{ color: '#555555', textAlign: 'right' }}>
+                    {/* Col 4: Status & Intelligence Verdict (Clean text: NO border, NO background) */}
+                    <div style={{ width: '150px', flexShrink: 0 }}>
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '0.6875rem',
+                          fontWeight: 600,
+                          letterSpacing: '0.02em',
+                          color: isDrop
+                            ? '#3ECF8E'
+                            : isGhost
+                            ? '#F87171'
+                            : isArb
+                            ? '#38BDF8'
+                            : '#A3A3A3',
+                          background: 'transparent',
+                          border: 'none',
+                          padding: 0,
+                        }}
+                      >
+                        {log.verdictLabel}
+                      </span>
+                    </div>
+
+                    {/* Col 5: Net Executed Price: Bold tabular monospace number #FFFFFF, right-aligned, width 120px */}
+                    <div
+                      style={{
+                        width: '120px',
+                        flexShrink: 0,
+                        textAlign: 'right',
+                        fontFamily: 'var(--font-mono)',
+                        fontVariantNumeric: 'tabular-nums',
+                        fontSize: '0.8125rem',
+                        fontWeight: 700,
+                        color: '#FFFFFF',
+                      }}
+                    >
+                      {log.price}
+                    </div>
+
+                    {/* Col 6: Latency: Micro-badge showing exact probe speed (width 65px) */}
+                    <div
+                      style={{
+                        width: '65px',
+                        flexShrink: 0,
+                        textAlign: 'right',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.6875rem',
+                        color: '#555555',
+                      }}
+                    >
                       {log.latencyMs}ms
-                    </span>
+                    </div>
                   </div>
                 );
               })
@@ -499,7 +693,7 @@ export default function ShowcaseConsole() {
         </div>
       )}
 
-      {/* ── Tab 2: On-Demand Probe ── */}
+      {/* ── Tab 2: On-Demand Probes ── */}
       {activeTab === 'probe' && (
         <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {/* Preset Buttons */}
@@ -510,12 +704,16 @@ export default function ShowcaseConsole() {
             {PROBE_PRESETS.map((p, idx) => (
               <button
                 key={p.sku}
-                onClick={() => handlePresetClick(idx)}
+                type="button"
+                onClick={() => {
+                  setProbeIndex(idx);
+                  setProbeInput(p.name);
+                }}
                 style={{
-                  background: probeIndex === idx ? 'rgba(62, 207, 142, 0.10)' : '#161616',
+                  background: probeIndex === idx ? 'rgba(62, 207, 142, 0.10)' : '#141414',
                   border: '1px solid',
                   borderColor: probeIndex === idx ? 'rgba(62, 207, 142, 0.35)' : 'rgba(255, 255, 255, 0.08)',
-                  color: probeIndex === idx ? '#3ECF8E' : '#999999',
+                  color: probeIndex === idx ? '#3ECF8E' : '#888888',
                   padding: '5px 12px',
                   borderRadius: '6px',
                   fontFamily: 'var(--font-mono)',
@@ -534,14 +732,14 @@ export default function ShowcaseConsole() {
             style={{
               display: 'flex',
               alignItems: 'center',
-              background: '#141414',
-              border: '1px solid rgba(255, 255, 255, 0.10)',
+              background: '#121212',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
               borderRadius: '8px',
               padding: '4px 12px',
               gap: '10px',
             }}
           >
-            <Search size={15} color="#666666" />
+            <Search size={14} color="#666666" />
             <input
               type="text"
               value={probeInput}
@@ -568,13 +766,13 @@ export default function ShowcaseConsole() {
             style={{
               borderRadius: '8px',
               border: '1px solid rgba(255, 255, 255, 0.06)',
-              background: '#0B0B0B',
+              background: '#090909',
               overflow: 'hidden',
             }}
           >
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
               <thead>
-                <tr style={{ background: '#141414', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', color: '#777777' }}>
+                <tr style={{ background: '#121212', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', color: '#777777' }}>
                   <th style={{ padding: '10px 14px', fontWeight: 500 }}>RETAILER / CHANNEL</th>
                   <th style={{ padding: '10px 14px', fontWeight: 500 }}>LISTED PRICE</th>
                   <th style={{ padding: '10px 14px', fontWeight: 500 }}>TRUE NET COST</th>
@@ -637,170 +835,153 @@ export default function ShowcaseConsole() {
         </div>
       )}
 
-      {/* ── Tab 3: Landed-Cost Calculator ── */}
+      {/* ── Tab 3: US-EG Arbitrage Matrix ── */}
       {activeTab === 'landed-cost' && (
-        <div style={{ padding: '24px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+        <div style={{ padding: '24px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
           {/* Controls Column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#888888', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-              US → Egypt Corridor Parameters
+              US &rarr; Egypt Corridor Parameters
             </span>
 
             {/* US MSRP Input */}
             <div>
-              <label style={{ display: 'block', fontSize: '0.75rem', color: '#888888', marginBottom: '6px', fontFamily: 'var(--font-mono)' }}>
-                US RETAIL PRICE (USD $)
-              </label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <label style={{ fontSize: '0.8125rem', color: '#D4D4D4' }}>US Shelf Price (USD)</label>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem', color: '#3ECF8E' }}>
+                  ${usPrice.toLocaleString()}
+                </span>
+              </div>
               <input
-                type="number"
+                type="range"
+                min={200}
+                max={4000}
+                step={50}
                 value={usPrice}
-                onChange={(e) => setUsPrice(Number(e.target.value) || 0)}
-                style={{
-                  width: '100%',
-                  background: '#141414',
-                  border: '1px solid rgba(255, 255, 255, 0.10)',
-                  borderRadius: '6px',
-                  padding: '9px 12px',
-                  color: '#FFFFFF',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.875rem',
-                  outline: 'none',
-                }}
+                onChange={(e) => setUsPrice(Number(e.target.value))}
+                style={{ width: '100%', accentColor: '#3ECF8E' }}
               />
             </div>
 
-            {/* Category Select */}
+            {/* Benchmark FX Rate */}
             <div>
-              <label style={{ display: 'block', fontSize: '0.75rem', color: '#888888', marginBottom: '6px', fontFamily: 'var(--font-mono)' }}>
-                HS TARIFF CLASSIFICATION
-              </label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value as any)}
-                style={{
-                  width: '100%',
-                  background: '#141414',
-                  border: '1px solid rgba(255, 255, 255, 0.10)',
-                  borderRadius: '6px',
-                  padding: '9px 12px',
-                  color: '#FFFFFF',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.875rem',
-                  outline: 'none',
-                }}
-              >
-                <option value="phone">Smartphones (10% Customs + 5% Dev Fee + 14% VAT)</option>
-                <option value="laptop">Laptops & Compute (0% Customs IT Agreement + 14% VAT)</option>
-                <option value="audio">Audio & ANC (20% Customs + 14% VAT)</option>
-                <option value="general">Consumer Electronics (15% Customs + 14% VAT)</option>
-              </select>
-            </div>
-
-            {/* Egypt Domestic Benchmark */}
-            <div>
-              <label style={{ display: 'block', fontSize: '0.75rem', color: '#888888', marginBottom: '6px', fontFamily: 'var(--font-mono)' }}>
-                DOMESTIC EGYPTIAN RETAIL PRICE (EGP)
-              </label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <label style={{ fontSize: '0.8125rem', color: '#D4D4D4' }}>Live Parallel FX Rate</label>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem', color: '#FFFFFF' }}>
+                  {fxRate.toFixed(2)} EGP / USD
+                </span>
+              </div>
               <input
-                type="number"
-                value={localPriceEGP}
-                onChange={(e) => setLocalPriceEGP(Number(e.target.value) || 0)}
-                style={{
-                  width: '100%',
-                  background: '#141414',
-                  border: '1px solid rgba(255, 255, 255, 0.10)',
-                  borderRadius: '6px',
-                  padding: '9px 12px',
-                  color: '#FFFFFF',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.875rem',
-                  outline: 'none',
-                }}
+                type="range"
+                min={45}
+                max={60}
+                step={0.1}
+                value={fxRate}
+                onChange={(e) => setFxRate(Number(e.target.value))}
+                style={{ width: '100%', accentColor: '#3ECF8E' }}
               />
+            </div>
+
+            {/* Category Custom Tariff Selector */}
+            <div>
+              <label style={{ fontSize: '0.8125rem', color: '#D4D4D4', display: 'block', marginBottom: '6px' }}>
+                Statutory Product Category
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                {(['laptop', 'phone', 'audio', 'general'] as const).map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setCategory(cat)}
+                    style={{
+                      background: category === cat ? 'rgba(62, 207, 142, 0.12)' : '#141414',
+                      border: '1px solid',
+                      borderColor: category === cat ? 'rgba(62, 207, 142, 0.35)' : 'rgba(255, 255, 255, 0.08)',
+                      color: category === cat ? '#3ECF8E' : '#777777',
+                      padding: '6px',
+                      borderRadius: '6px',
+                      fontSize: '0.6875rem',
+                      fontFamily: 'var(--font-mono)',
+                      textTransform: 'uppercase',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Breakdown Ledger Column */}
+          {/* Results Summary Card */}
           <div
             style={{
-              background: '#0B0B0B',
+              background: '#111111',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
               borderRadius: '8px',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
-              padding: '18px 20px',
+              padding: '20px',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.75rem',
             }}
           >
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '8px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', marginBottom: '10px' }}>
-                <span style={{ color: '#888888' }}>FX Benchmark</span>
-                <span style={{ color: '#EDEDED' }}>1 USD = {fxRate.toFixed(2)} EGP</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                <span className="feature-group-label" style={{ marginBottom: 0 }}>
+                  STATUTORY LANDED BREAKDOWN
+                </span>
+                <span
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.625rem',
+                    color: '#3ECF8E',
+                    background: 'rgba(62, 207, 142, 0.1)',
+                    padding: '2px 6px',
+                    borderRadius: '4px',
+                  }}
+                >
+                  TARIFF: {tariffPct}% + 14% VAT
+                </span>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', margin: '6px 0', color: '#A1A1A1' }}>
-                <span>Converted Item Cost</span>
-                <span>EGP {Math.round(itemCostEGP).toLocaleString()}</span>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', margin: '6px 0', color: '#A1A1A1' }}>
-                <span>Air Freight & Courier (${freightUsd})</span>
-                <span>EGP {Math.round(freightEGP).toLocaleString()}</span>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', margin: '6px 0', color: '#A1A1A1' }}>
-                <span>Customs Tariff ({tariffPct}%)</span>
-                <span>EGP {Math.round(customsDutyEGP).toLocaleString()}</span>
-              </div>
-
-              {devFeePct > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', margin: '6px 0', color: '#A1A1A1' }}>
-                  <span>State Dev Fee ({devFeePct}%)</span>
-                  <span>EGP {Math.round(devFeeEGP).toLocaleString()}</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#888888' }}>
+                  <span>Base CIF (Item + Cargo Air Freight)</span>
+                  <span style={{ color: '#D4D4D4' }}>EGP {Math.round(cifEGP).toLocaleString()}</span>
                 </div>
-              )}
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', margin: '6px 0', color: '#A1A1A1' }}>
-                <span>Statutory VAT (14%)</span>
-                <span>EGP {Math.round(vatEGP).toLocaleString()}</span>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', margin: '6px 0', color: '#A1A1A1' }}>
-                <span>Clearance Administration</span>
-                <span>EGP {clearanceAdminEGP.toLocaleString()}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#888888' }}>
+                  <span>Customs &amp; Dev Fee ({tariffPct + devFeePct}%)</span>
+                  <span style={{ color: '#D4D4D4' }}>+EGP {Math.round(customsDutyEGP + devFeeEGP).toLocaleString()}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#888888' }}>
+                  <span>Egyptian VAT (14%)</span>
+                  <span style={{ color: '#D4D4D4' }}>+EGP {Math.round(vatEGP).toLocaleString()}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#888888' }}>
+                  <span>Brokerage &amp; Terminal Admin</span>
+                  <span style={{ color: '#D4D4D4' }}>+EGP {clearanceAdminEGP.toLocaleString()}</span>
+                </div>
               </div>
             </div>
 
-            {/* Total Landed & Net Spread */}
-            <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <span style={{ color: '#FFFFFF', fontWeight: 600 }}>DETERMINISTIC LANDED COST</span>
-                <span style={{ color: '#FFFFFF', fontWeight: 700, fontSize: '0.9375rem' }}>
+            <div
+              style={{
+                marginTop: '18px',
+                paddingTop: '14px',
+                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#888888' }}>
+                  TOTAL EXECUTED LANDED COST:
+                </span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '1.25rem', fontWeight: 700, color: '#3ECF8E' }}>
                   EGP {totalLandedEGP.toLocaleString()}
                 </span>
               </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  background: netArbitrageEGP > 0 ? 'rgba(62, 207, 142, 0.08)' : 'rgba(239, 68, 68, 0.08)',
-                  border: '1px solid',
-                  borderColor: netArbitrageEGP > 0 ? 'rgba(62, 207, 142, 0.25)' : 'rgba(239, 68, 68, 0.25)',
-                  borderRadius: '6px',
-                  padding: '8px 12px',
-                  marginTop: '10px',
-                }}
-              >
-                <span style={{ color: netArbitrageEGP > 0 ? '#3ECF8E' : '#EF4444', fontWeight: 500 }}>
-                  {netArbitrageEGP > 0 ? 'NET IMPORT ARBITRAGE' : 'DOMESTIC PURCHASE ADVANTAGE'}
-                </span>
-                <span style={{ color: netArbitrageEGP > 0 ? '#3ECF8E' : '#EF4444', fontWeight: 700 }}>
-                  {netArbitrageEGP > 0 ? `+EGP ${netArbitrageEGP.toLocaleString()} (${netArbitragePct}%)` : `-EGP ${Math.abs(netArbitrageEGP).toLocaleString()}`}
-                </span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px', fontSize: '0.6875rem', color: '#737373', fontFamily: 'var(--font-mono)' }}>
+                <span>LOCAL CAIRO COMPARISON:</span>
+                <span>EGP {localPriceEGP.toLocaleString()}</span>
               </div>
             </div>
           </div>

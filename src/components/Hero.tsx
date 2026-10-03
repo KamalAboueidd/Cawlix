@@ -1,6 +1,5 @@
 import { ArrowRight } from 'lucide-react';
 import ShowcaseConsole from './ShowcaseConsole';
-import heroGraphic from '../assets/Landing/1.png';
 
 export default function Hero() {
   return (
@@ -39,7 +38,7 @@ export default function Hero() {
         }}
       >
         <img
-          src={heroGraphic}
+          src="/landing/1.png"
           alt="Cawlix Institutional Telemetry Infrastructure"
           width={1672}
           height={941}

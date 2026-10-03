@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { ArrowUpRight, Globe, Layers, CheckCircle2, Plane, ShieldCheck } from 'lucide-react';
-import globalNetworkImg from '../../assets/Landing/digital-earth-globe-with-illuminated-city-networks-night.jpg';
 
 interface SKUComparison {
   name: string;
@@ -125,7 +124,7 @@ export default function LandedCostSpread() {
           {/* High-Resolution Illuminated Network Visual */}
           <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', overflow: 'hidden' }}>
             <img
-              src={globalNetworkImg}
+              src="/landing/digital-earth-globe-with-illuminated-city-networks-night.jpg"
               alt="Global Freight Corridor & Arbitrage Network"
               width={8736}
               height={4896}
