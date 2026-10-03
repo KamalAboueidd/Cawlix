@@ -5,57 +5,157 @@ import Footer from '../components/astro/Footer.astro';
 
 const TIERS = [
   {
+    id: 'community',
     name: 'COMMUNITY',
-    badge: 'FREE_TIER',
-    price: '0 EGP',
-    period: 'forever free',
-    desc: 'Instant consumer price intelligence across 12 Egyptian retail giants.',
-    features: [
-      '12 Egyptian retailers indexed',
-      '90-day price velocity history',
-      'Ghost-discount detection badge',
-      'True-cost out-of-pocket calculator',
-      'Community web alerts',
-    ],
-    cta: 'Launch Free Tracker',
-    ctaHref: '/#showcase',
-    highlight: false,
-  },
-  {
-    name: 'PRO TRADER',
-    badge: 'POPULAR_CORRIDOR',
-    price: '490 EGP',
+    tag: 'FREE',
+    purpose: 'Casual buyers monitoring single items across local stores.',
+    price: 'EGP 0',
     period: '/ month',
-    desc: 'Real-time telemetry, flash pricing glitch webhooks, and US import parity.',
-    features: [
-      'Everything in Community',
-      'Sub-200ms WebSocket price stream',
-      'US-to-Egypt landed cost parity engine',
-      'Instant flash glitch & error push alerts',
-      'Customs Code 8517.13 tariff reconciliation',
-      'Unlimited SKU watchlist tracking',
+    billingNote: 'Free forever for individual shoppers',
+    highlight: false,
+    specs: [
+      'Up to 3 Real-time SKU monitors',
+      'Standard 6-hour probe refresh cadence',
+      'Baseline price history (last 30 days)',
+      'Standard Telegram/Email alerts',
     ],
-    cta: 'Start Pro Access',
+    cta: 'Get Started Free',
     ctaHref: '/sign-in',
-    highlight: true,
+    ctaStyle: 'ghost',
   },
   {
-    name: 'ENTERPRISE MESH',
-    badge: 'DEDICATED_NODES',
+    id: 'pro',
+    name: 'PRO INTELLIGENCE',
+    tag: 'FLAGSHIP',
+    purpose: 'Power shoppers, hardware enthusiasts & deal hunters.',
+    price: 'EGP 249',
+    period: '/ month',
+    billingNote: 'or EGP 2,400 billed annually (Save 20%)',
+    highlight: true,
+    specs: [
+      'Unlimited SKU monitors across all 12 Egyptian retailers',
+      'Sub-second Realtime Flash Glitch alerts (Webhook / SMS / WhatsApp)',
+      'Full 90-Day Ghost-Discount Audit Engine & Price Manipulation Scores',
+      'US-to-Egypt Landed Cost & Customs Arbitrage calculator',
+      'Automated Coupon & Bank Card Cashback stacking rules',
+    ],
+    cta: 'Upgrade to Pro',
+    ctaHref: '/sign-in',
+    ctaStyle: 'solid',
+  },
+  {
+    id: 'enterprise',
+    name: 'ENTERPRISE & RETAILERS',
+    tag: 'CUSTOM SCALE',
+    purpose: 'Merchants, distributors, and arbitrage resellers.',
     price: 'Custom',
-    period: 'billed annually',
-    desc: 'Dedicated scraper clusters and high-throughput REST API for institutional desks.',
-    features: [
-      'Dedicated residential proxy network',
-      '10,000+ API requests per minute',
-      'Custom retailer integration pipeline',
-      'Statutory Egyptian Customs & FX feeds',
-      '99.95% scrape uptime SLA',
-      'Direct Telegram & Webhook pipelines',
+    period: '/ Invoiced',
+    billingNote: 'Annual commitments & bespoke SLA guarantees',
+    highlight: false,
+    specs: [
+      'Full REST / WebSocket API Access (142ms telemetry stream)',
+      'Direct ERP/Inventory integration & competitor price scraping',
+      'Dedicated proxy network & zero-rate-limit querying',
+      'SLA: 99.98% uptime guarantee',
     ],
     cta: 'Contact Engineering',
     ctaHref: 'mailto:enterprise@cawlix.com',
-    highlight: false,
+    ctaStyle: 'ghost',
+  },
+];
+
+const MATRIX_SECTIONS = [
+  {
+    category: 'TELEMETRY & CADENCE',
+    rows: [
+      {
+        name: 'Realtime Cadence',
+        desc: 'Scraper probe frequency across index targets',
+        free: '6-hour probe refresh',
+        pro: 'Sub-second real-time',
+        ent: '142ms telemetry stream',
+      },
+      {
+        name: 'Retailer Coverage',
+        desc: 'Indexed Egyptian & international retail stores',
+        free: '12 Egyptian retailers',
+        pro: '12 Stores + US Corridors',
+        ent: 'All Stores + Custom Scrapers',
+      },
+      {
+        name: 'Active SKU Monitors',
+        desc: 'Concurrent price-watch slots per account',
+        free: 'Up to 3 items',
+        pro: 'Unlimited monitors',
+        ent: 'Unlimited / Fleet wide',
+      },
+    ],
+  },
+  {
+    category: 'INTELLIGENCE & AUDITING ENGINES',
+    rows: [
+      {
+        name: 'Anomaly Scoring & Glitch Radar',
+        desc: 'Sub-second pricing glitch detection & broadcast',
+        free: null,
+        pro: true,
+        ent: true,
+      },
+      {
+        name: 'Landed-Cost Simulator',
+        desc: 'US-to-Egypt customs tariff & FX arbitrage engine',
+        free: null,
+        pro: true,
+        ent: true,
+      },
+      {
+        name: 'Ghost-Discount Audit Engine',
+        desc: 'Pre-sale price hike detection & manipulation scores',
+        free: '30-day baseline history',
+        pro: '90-Day Full Audit Engine',
+        ent: 'Full 90-Day & Tick Data',
+      },
+      {
+        name: 'Cashback & Coupon Stacking',
+        desc: 'Automated bank promotions & promo code reconciliation',
+        free: null,
+        pro: true,
+        ent: true,
+      },
+    ],
+  },
+  {
+    category: 'INFRASTRUCTURE & INTEGRATIONS',
+    rows: [
+      {
+        name: 'Alert Dispatch Channels',
+        desc: 'Multi-channel low-latency notification vectors',
+        free: 'Telegram & Email',
+        pro: 'Webhook, SMS, WhatsApp',
+        ent: 'Dedicated Stream & Pipes',
+      },
+      {
+        name: 'API Access (REST / WebSocket)',
+        desc: 'Programmatic programmatic querying & stream feeds',
+        free: null,
+        pro: 'Rate-limited REST',
+        ent: 'Zero-Rate-Limit Stream',
+      },
+      {
+        name: 'Dedicated Proxy Mesh',
+        desc: 'Residential scraping nodes & anti-bot bypass',
+        free: null,
+        pro: 'Shared Pool',
+        ent: 'Dedicated Residential Mesh',
+      },
+      {
+        name: 'Service Level Agreement',
+        desc: 'Guaranteed platform & scraper network uptime',
+        free: 'Community SLA',
+        pro: '99.9% Uptime',
+        ent: '99.98% Guaranteed SLA',
+      },
+    ],
   },
 ];
 ---
@@ -66,121 +166,676 @@ const TIERS = [
 >
   <Navbar />
 
-  <main style="min-height: 100vh; background-color: #0A0A0A; padding-top: 130px; padding-bottom: 100px;">
-    <div style="max-width: 1160px; margin: 0 auto; padding: 0 24px;">
-      <!-- Header -->
-      <div style="text-align: center; max-width: 760px; margin: 0 auto 64px auto;">
-        <span class="feature-group-label" style="color: #3ECF8E; margin-bottom: 12px;">
-          // INSTITUTIONAL_ACCESS_TIERS
-        </span>
-        <h1
-          class="text-display"
-          style="font-size: clamp(2.25rem, 4.5vw, 3.5rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1.1; margin: 0 0 16px 0;"
-        >
-          <span style="color: #FFFFFF;">Deterministic Intelligence. </span>
-          <span class="text-contrast-tail">Transparent Access.</span>
+  <main class="pricing-main">
+    <div class="pricing-container">
+      <!-- Institutional Page Header -->
+      <header class="pricing-header">
+        <span class="pricing-kicker">// INSTITUTIONAL_PRICING_MATRIX</span>
+        <h1 class="pricing-title">
+          Deterministic Intelligence. <span class="pricing-title-muted">Transparent Access.</span>
         </h1>
-        <p style="font-size: 1.0625rem; color: #888888; line-height: 1.6; margin: 0;">
-          Eliminate artificial pricing markdowns and compare shelf prices against real-time direct US import corridors. No hidden platform surcharges.
+        <p class="pricing-subtitle">
+          Eliminate artificial retail markdowns and cross-border import spreads. Direct pricing surfaces with zero hidden fees.
         </p>
-      </div>
+      </header>
 
-      <!-- Pricing Cards Grid -->
-      <div
-        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; align-items: stretch;"
-      >
-        {TIERS.map((tier) => (
-          <div
-            style={{
-              background: tier.highlight ? '#121212' : '#0E0E0E',
-              border: tier.highlight ? '1px solid #3ECF8E' : '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '14px',
-              padding: '32px 28px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              position: 'relative',
-              boxShadow: tier.highlight ? '0 20px 48px rgba(62, 207, 142, 0.08)' : '0 20px 48px rgba(0, 0, 0, 0.5)',
-            }}
-          >
-            {tier.highlight && (
-              <div
-                style="position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: #3ECF8E; color: #0A0A0A; font-family: var(--font-mono); font-size: 0.625rem; font-weight: 700; padding: 2px 10px; border-radius: 9999px; letter-spacing: 0.06em; text-transform: uppercase;"
-              >
-                RECOMMENDED
+      <!-- Borderless 3-Column Comparative Surface Layout -->
+      <section class="pricing-surface-wrapper">
+        <div class="pricing-surface">
+          {TIERS.map((tier) => (
+            <div class={`tier-col ${tier.highlight ? 'tier-col-highlight' : ''}`}>
+              <!-- Top Tier Block -->
+              <div class="tier-top">
+                <!-- Header Meta -->
+                <div class="tier-header-meta">
+                  <span class={`tier-name ${tier.highlight ? 'text-highlight' : ''}`}>
+                    {tier.name}
+                  </span>
+                  <span class={`tier-tag ${tier.highlight ? 'tier-tag-highlight' : ''}`}>
+                    {tier.tag}
+                  </span>
+                </div>
+
+                <!-- Price Row -->
+                <div class="tier-price-row">
+                  <span class="tier-price-amount">{tier.price}</span>
+                  <span class="tier-price-period">{tier.period}</span>
+                </div>
+
+                <p class="tier-billing-note">{tier.billingNote}</p>
+
+                <!-- Purpose Statement -->
+                <p class="tier-purpose">{tier.purpose}</p>
+
+                <!-- Specs List -->
+                <div class="tier-specs-list">
+                  {tier.specs.map((spec) => (
+                    <div class="tier-spec-item">
+                      <svg
+                        class={`tier-spec-icon ${tier.highlight ? 'stroke-brand' : 'stroke-muted-brand'}`}
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      <span class="tier-spec-text">{spec}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            )}
 
-            <div>
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <span style="font-family: var(--font-mono); font-size: 0.75rem; color: #FFFFFF; font-weight: 600; letter-spacing: 0.04em;">
-                  {tier.name}
-                </span>
-                <span
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.625rem',
-                    color: tier.highlight ? '#3ECF8E' : '#737373',
-                    background: tier.highlight ? 'rgba(62, 207, 142, 0.1)' : 'rgba(255, 255, 255, 0.04)',
-                    padding: '2px 8px',
-                    borderRadius: '4px',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                  }}
+              <!-- CTA Bottom Block -->
+              <div class="tier-cta-block">
+                <a
+                  href={tier.ctaHref}
+                  class={`tier-cta-btn ${tier.ctaStyle === 'solid' ? 'btn-solid-brand' : 'btn-ghost-border'}`}
                 >
-                  {tier.badge}
-                </span>
-              </div>
-
-              <!-- Price Row -->
-              <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 12px;">
-                <span style="font-size: 2.5rem; font-weight: 700; color: #FFFFFF; letter-spacing: -0.03em;">
-                  {tier.price}
-                </span>
-                <span style="font-family: var(--font-mono); font-size: 0.75rem; color: #737373;">
-                  {tier.period}
-                </span>
-              </div>
-
-              <p style="font-size: 0.875rem; color: #888888; line-height: 1.5; margin-bottom: 24px;">
-                {tier.desc}
-              </p>
-
-              <!-- Feature List -->
-              <div style="border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 20px; display: flex; flexDirection: column; gap: 10px;">
-                {tier.features.map((feat) => (
-                  <div style="display: flex; align-items: center; gap: 10px; font-size: 0.8125rem; color: #D4D4D4;">
-                    <span style="width: 5px; height: 5px; border-radius: 50%; background-color: #3ECF8E; flex-shrink: 0;"></span>
-                    <span>{feat}</span>
-                  </div>
-                ))}
+                  {tier.cta}
+                </a>
               </div>
             </div>
+          ))}
+        </div>
+      </section>
 
-            <!-- CTA Button -->
-            <a
-              href={tier.ctaHref}
-              style={{
-                marginTop: '32px',
-                padding: '12px 20px',
-                borderRadius: '8px',
-                fontSize: '0.875rem',
-                fontWeight: 600,
-                textAlign: 'center',
-                textDecoration: 'none',
-                transition: 'all 140ms ease',
-                background: tier.highlight ? '#3ECF8E' : 'transparent',
-                color: tier.highlight ? '#0A0A0A' : '#EDEDED',
-                border: tier.highlight ? '1px solid #3ECF8E' : '1px solid rgba(255, 255, 255, 0.12)',
-                display: 'block',
-              }}
-            >
-              {tier.cta}
-            </a>
+      <!-- High-Density Feature Breakdown Matrix -->
+      <section class="matrix-section">
+        <header class="matrix-header">
+          <span class="pricing-kicker">// CAPABILITY_MATRIX</span>
+          <h2 class="matrix-title">Feature Breakdown &amp; Metric Verification</h2>
+          <p class="matrix-subtitle">
+            Comprehensive tabular audit of telemetry cadences, scraping limits, and programmatic endpoints.
+          </p>
+        </header>
+
+        <!-- Responsive Table Container -->
+        <div class="matrix-table-card">
+          <div class="matrix-table-scroll">
+            <table class="matrix-table">
+              <thead>
+                <tr class="matrix-thead-row">
+                  <th class="matrix-th matrix-th-metric">Capability / Metric</th>
+                  <th class="matrix-th matrix-th-col">Community</th>
+                  <th class="matrix-th matrix-th-col matrix-th-pro">
+                    <div class="pro-th-wrap">
+                      <span>Pro Intelligence</span>
+                      <span class="pro-th-accent">FLAGSHIP</span>
+                    </div>
+                  </th>
+                  <th class="matrix-th matrix-th-col">Enterprise &amp; Retailers</th>
+                </tr>
+              </thead>
+              <tbody>
+                {MATRIX_SECTIONS.map((section) => (
+                  <>
+                    <tr class="matrix-section-divider">
+                      <td colspan="4" class="matrix-section-header">
+                        {section.category}
+                      </td>
+                    </tr>
+                    {section.rows.map((row) => (
+                      <tr class="matrix-row">
+                        <td class="matrix-td matrix-td-name">
+                          <div class="metric-name-wrap">
+                            <span class="metric-title">{row.name}</span>
+                            <span class="metric-desc">{row.desc}</span>
+                          </div>
+                        </td>
+
+                        <!-- Community Column -->
+                        <td class="matrix-td matrix-td-val">
+                          {row.free === true ? (
+                            <svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          ) : row.free === null ? (
+                            <span class="dash-omitted" aria-label="Not included">—</span>
+                          ) : (
+                            <span class="val-text">{row.free}</span>
+                          )}
+                        </td>
+
+                        <!-- Pro Intelligence Column -->
+                        <td class="matrix-td matrix-td-val matrix-td-pro">
+                          {row.pro === true ? (
+                            <svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          ) : row.pro === null ? (
+                            <span class="dash-omitted" aria-label="Not included">—</span>
+                          ) : (
+                            <span class="val-text val-pro">{row.pro}</span>
+                          )}
+                        </td>
+
+                        <!-- Enterprise Column -->
+                        <td class="matrix-td matrix-td-val">
+                          {row.ent === true ? (
+                            <svg class="check-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3ECF8E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          ) : row.ent === null ? (
+                            <span class="dash-omitted" aria-label="Not included">—</span>
+                          ) : (
+                            <span class="val-text">{row.ent}</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </>
+                ))}
+              </tbody>
+            </table>
           </div>
-        ))}
-      </div>
+        </div>
+      </section>
     </div>
   </main>
 
   <Footer />
 </Layout>
+
+<style>
+  /* ─────────────────────────────────────────────────────────────────────────────
+     Institutional Zero-Card Pricing Stylesheet (Vercel / Supabase Style)
+     Pure #0A0A0A canvas · 1px hairline delimiters · Zero floating card boxes
+     ───────────────────────────────────────────────────────────────────────────── */
+
+  .pricing-main {
+    min-height: 100vh;
+    background-color: #0A0A0A;
+    padding-top: 130px;
+    padding-bottom: 120px;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .pricing-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* ── Header ─────────────────────────────────────────────────────────────────── */
+  .pricing-header {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto 64px auto;
+  }
+
+  .pricing-kicker {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #3ECF8E;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 14px;
+  }
+
+  .pricing-title {
+    font-family: var(--font-sans);
+    font-size: clamp(2.125rem, 4.5vw, 3.25rem);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 1.12;
+    color: #FFFFFF;
+    margin: 0 0 16px 0;
+  }
+
+  .pricing-title-muted {
+    color: #737373;
+    font-weight: 400;
+  }
+
+  .pricing-subtitle {
+    font-size: 1.0625rem;
+    color: #888888;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ── Borderless 3-Column Comparative Surface ───────────────────────────────── */
+  .pricing-surface-wrapper {
+    width: 100%;
+    margin-bottom: 96px;
+  }
+
+  .pricing-surface {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: transparent;
+    width: 100%;
+    position: relative;
+  }
+
+  .tier-col {
+    padding: 44px 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: transparent;
+    position: relative;
+    box-sizing: border-box;
+  }
+
+  .tier-col:not(:last-child) {
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .tier-col-highlight {
+    background: rgba(255, 255, 255, 0.015);
+  }
+
+  /* Top content within tier */
+  .tier-top {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .tier-header-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    gap: 12px;
+  }
+
+  .tier-name {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #FFFFFF;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .text-highlight {
+    color: #FFFFFF;
+  }
+
+  .tier-tag {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: #737373;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 2px 7px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+
+  .tier-tag-highlight {
+    color: #3ECF8E;
+    border-color: rgba(62, 207, 142, 0.28);
+    background: rgba(62, 207, 142, 0.05);
+  }
+
+  /* Price formatting */
+  .tier-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .tier-price-amount {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #FFFFFF;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .tier-price-period {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: #737373;
+  }
+
+  .tier-billing-note {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: #888888;
+    margin: 0 0 20px 0;
+    letter-spacing: 0.01em;
+  }
+
+  .tier-purpose {
+    font-size: 0.875rem;
+    color: #888888;
+    line-height: 1.55;
+    margin: 0 0 32px 0;
+    min-height: 42px;
+  }
+
+  /* Specs list */
+  .tier-specs-list {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    margin-bottom: 36px;
+  }
+
+  .tier-spec-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+  }
+
+  .tier-spec-icon {
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  .stroke-brand {
+    stroke: #3ECF8E;
+  }
+
+  .stroke-muted-brand {
+    stroke: #3ECF8E;
+    opacity: 0.85;
+  }
+
+  .tier-spec-text {
+    font-size: 0.84375rem;
+    color: #D4D4D4;
+    line-height: 1.5;
+  }
+
+  /* CTA Buttons */
+  .tier-cta-block {
+    margin-top: auto;
+  }
+
+  .tier-cta-btn {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-align: center;
+    text-decoration: none;
+    line-height: 1.25;
+    cursor: pointer;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+  }
+
+  .btn-ghost-border {
+    background: transparent;
+    color: #EDEDED;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .btn-ghost-border:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.24);
+    color: #FFFFFF;
+  }
+
+  .btn-solid-brand {
+    background: #3ECF8E;
+    color: #0A0A0A;
+    border: 1px solid #3ECF8E;
+  }
+
+  .btn-solid-brand:hover {
+    background: #34B27B;
+    border-color: #34B27B;
+  }
+
+  /* ── Tabular Matrix Section ─────────────────────────────────────────────────── */
+  .matrix-section {
+    width: 100%;
+  }
+
+  .matrix-header {
+    text-align: left;
+    margin-bottom: 32px;
+  }
+
+  .matrix-title {
+    font-family: var(--font-sans);
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    color: #FFFFFF;
+    margin: 4px 0 8px 0;
+  }
+
+  .matrix-subtitle {
+    font-size: 0.9375rem;
+    color: #888888;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .matrix-table-card {
+    width: 100%;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: transparent;
+  }
+
+  .matrix-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .matrix-table {
+    width: 100%;
+    min-width: 780px;
+    border-collapse: collapse;
+    font-family: var(--font-sans);
+    text-align: left;
+  }
+
+  /* Table Header */
+  .matrix-thead-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .matrix-th {
+    padding: 16px 20px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #FFFFFF;
+    vertical-align: middle;
+  }
+
+  .matrix-th-metric {
+    width: 40%;
+    padding-left: 12px;
+    color: #888888;
+  }
+
+  .matrix-th-col {
+    width: 20%;
+    text-align: left;
+  }
+
+  .matrix-th-pro {
+    background: rgba(255, 255, 255, 0.015);
+  }
+
+  .pro-th-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .pro-th-accent {
+    font-size: 0.5625rem;
+    color: #3ECF8E;
+    border: 1px solid rgba(62, 207, 142, 0.28);
+    padding: 1px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.06em;
+  }
+
+  /* Section Group Row */
+  .matrix-section-divider {
+    background: rgba(255, 255, 255, 0.02);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  .matrix-section-header {
+    padding: 10px 12px;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #737373;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Regular Table Rows */
+  .matrix-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition: background-color 120ms ease;
+  }
+
+  .matrix-row:hover {
+    background-color: rgba(255, 255, 255, 0.018);
+  }
+
+  .matrix-td {
+    padding: 16px 20px;
+    vertical-align: middle;
+  }
+
+  .matrix-td-name {
+    padding-left: 12px;
+  }
+
+  .metric-name-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .metric-title {
+    font-size: 0.84375rem;
+    font-weight: 500;
+    color: #EDEDED;
+    letter-spacing: -0.01em;
+  }
+
+  .metric-desc {
+    font-size: 0.75rem;
+    color: #737373;
+    line-height: 1.4;
+  }
+
+  .matrix-td-val {
+    font-size: 0.8125rem;
+    color: #888888;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .matrix-td-pro {
+    background: rgba(255, 255, 255, 0.012);
+  }
+
+  .val-text {
+    font-size: 0.8125rem;
+    color: #D4D4D4;
+    font-weight: 400;
+    line-height: 1.4;
+    display: inline-block;
+  }
+
+  .val-pro {
+    color: #FFFFFF;
+    font-weight: 500;
+  }
+
+  .check-svg {
+    display: block;
+  }
+
+  .dash-omitted {
+    color: #4A4A4A;
+    font-size: 1rem;
+    user-select: none;
+  }
+
+  /* ── Responsive Architecture (Compact & Borderless) ────────────────────────── */
+  @media (max-width: 860px) {
+    .pricing-main {
+      padding-top: 100px;
+      padding-bottom: 80px;
+    }
+
+    .pricing-container {
+      padding: 0 16px;
+    }
+
+    .pricing-header {
+      margin-bottom: 40px;
+      text-align: left;
+    }
+
+    .pricing-title {
+      font-size: 1.75rem;
+      letter-spacing: -0.03em;
+    }
+
+    .pricing-subtitle {
+      font-size: 0.9375rem;
+    }
+
+    /* Stack 3 tiers vertically */
+    .pricing-surface {
+      grid-template-columns: 1fr;
+    }
+
+    .tier-col {
+      padding: 32px 18px;
+    }
+
+    .tier-col:not(:last-child) {
+      border-right: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .tier-purpose {
+      min-height: auto;
+      margin-bottom: 24px;
+    }
+
+    .tier-specs-list {
+      margin-bottom: 28px;
+    }
+
+    .matrix-section {
+      margin-top: 56px;
+    }
+
+    .matrix-title {
+      font-size: 1.25rem;
+    }
+  }
+</style>

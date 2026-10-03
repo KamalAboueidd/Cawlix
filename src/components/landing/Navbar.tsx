@@ -251,13 +251,13 @@ export default function Navbar() {
                       position: 'absolute',
                       top: 'calc(100% + 8px)',
                       left: 0,
-                      width: '640px',
+                      width: '480px',
                       background: 'rgba(14, 14, 14, 0.96)',
                       backdropFilter: 'blur(20px)',
                       WebkitBackdropFilter: 'blur(20px)',
                       border: '1px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: '12px',
-                      padding: '12px',
+                      borderRadius: '10px',
+                      padding: '8px 10px',
                       boxShadow: '0 24px 64px rgba(0, 0, 0, 0.85)',
                       zIndex: 100,
                     }}
@@ -266,7 +266,7 @@ export default function Navbar() {
                       style={{
                         display: 'grid',
                         gridTemplateColumns: 'repeat(2, 1fr)',
-                        gap: '6px',
+                        gap: '3px 8px',
                       }}
                     >
                       {ENGINES_ITEMS.map((item) => {
@@ -278,36 +278,29 @@ export default function Navbar() {
                             style={{
                               display: 'flex',
                               alignItems: 'flex-start',
-                              gap: '12px',
-                              padding: '10px 12px',
-                              borderRadius: '8px',
+                              gap: '9px',
+                              padding: '6px 8px',
+                              borderRadius: '6px',
                               textDecoration: 'none',
-                              transition: 'background-color 140ms ease',
                               background: 'transparent',
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.04)';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.backgroundColor = 'transparent';
                             }}
                           >
                             <Icon
-                              size={18}
+                              size={14}
                               color="#3ECF8E"
-                              strokeWidth={1.8}
+                              strokeWidth={1.6}
                               style={{ flexShrink: 0, marginTop: '2px' }}
                             />
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', minWidth: 0, flex: 1 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap' }}>
-                                <span style={{ color: '#FFFFFF', fontSize: '0.8125rem', fontWeight: 500 }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0, flex: 1 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}>
+                                <span style={{ color: '#FFFFFF', fontSize: '0.75rem', fontWeight: 500 }}>
                                   {item.title}
                                 </span>
                                 {item.badge && (
                                   <span
                                     style={{
                                       fontFamily: 'var(--font-mono)',
-                                      fontSize: '0.625rem',
+                                      fontSize: '0.5625rem',
                                       color: '#3ECF8E',
                                       fontWeight: 600,
                                       letterSpacing: '0.04em',
@@ -317,7 +310,7 @@ export default function Navbar() {
                                   </span>
                                 )}
                               </div>
-                              <span style={{ color: '#888888', fontSize: '0.75rem', lineHeight: 1.4 }}>
+                              <span style={{ color: '#737373', fontSize: '0.6875rem', lineHeight: 1.35 }}>
                                 {item.desc}
                               </span>
                             </div>
@@ -376,18 +369,18 @@ export default function Navbar() {
                       position: 'absolute',
                       top: 'calc(100% + 8px)',
                       left: 0,
-                      width: '420px',
+                      width: '300px',
                       background: 'rgba(14, 14, 14, 0.96)',
                       backdropFilter: 'blur(20px)',
                       WebkitBackdropFilter: 'blur(20px)',
                       border: '1px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: '12px',
-                      padding: '12px',
+                      borderRadius: '10px',
+                      padding: '8px 10px',
                       boxShadow: '0 24px 64px rgba(0, 0, 0, 0.85)',
                       zIndex: 100,
                     }}
                   >
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
                       {SOLUTIONS_ITEMS.map((item) => {
                         const Icon = item.icon;
                         return (
@@ -397,31 +390,24 @@ export default function Navbar() {
                             style={{
                               display: 'flex',
                               alignItems: 'flex-start',
-                              gap: '12px',
-                              padding: '10px 12px',
-                              borderRadius: '8px',
+                              gap: '9px',
+                              padding: '6px 8px',
+                              borderRadius: '6px',
                               textDecoration: 'none',
-                              transition: 'background-color 140ms ease',
                               background: 'transparent',
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.04)';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.backgroundColor = 'transparent';
                             }}
                           >
                             <Icon
-                              size={18}
+                              size={14}
                               color="#3ECF8E"
-                              strokeWidth={1.8}
+                              strokeWidth={1.6}
                               style={{ flexShrink: 0, marginTop: '2px' }}
                             />
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', minWidth: 0, flex: 1 }}>
-                              <span style={{ color: '#FFFFFF', fontSize: '0.8125rem', fontWeight: 500, whiteSpace: 'nowrap' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0, flex: 1 }}>
+                              <span style={{ color: '#FFFFFF', fontSize: '0.75rem', fontWeight: 500, whiteSpace: 'nowrap' }}>
                                 {item.title}
                               </span>
-                              <span style={{ color: '#888888', fontSize: '0.75rem', lineHeight: 1.4 }}>
+                              <span style={{ color: '#737373', fontSize: '0.6875rem', lineHeight: 1.35 }}>
                                 {item.desc}
                               </span>
                             </div>
@@ -480,18 +466,18 @@ export default function Navbar() {
                       position: 'absolute',
                       top: 'calc(100% + 8px)',
                       left: 0,
-                      width: '440px',
+                      width: '310px',
                       background: 'rgba(14, 14, 14, 0.96)',
                       backdropFilter: 'blur(20px)',
                       WebkitBackdropFilter: 'blur(20px)',
                       border: '1px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: '12px',
-                      padding: '12px',
+                      borderRadius: '10px',
+                      padding: '8px 10px',
                       boxShadow: '0 24px 64px rgba(0, 0, 0, 0.85)',
                       zIndex: 100,
                     }}
                   >
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
                       {DEVELOPERS_ITEMS.map((item) => {
                         const Icon = item.icon;
                         return (
@@ -501,36 +487,29 @@ export default function Navbar() {
                             style={{
                               display: 'flex',
                               alignItems: 'flex-start',
-                              gap: '12px',
-                              padding: '10px 12px',
-                              borderRadius: '8px',
+                              gap: '9px',
+                              padding: '6px 8px',
+                              borderRadius: '6px',
                               textDecoration: 'none',
-                              transition: 'background-color 140ms ease',
                               background: 'transparent',
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.04)';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.backgroundColor = 'transparent';
                             }}
                           >
                             <Icon
-                              size={18}
+                              size={14}
                               color="#3ECF8E"
-                              strokeWidth={1.8}
+                              strokeWidth={1.6}
                               style={{ flexShrink: 0, marginTop: '2px' }}
                             />
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', minWidth: 0, flex: 1 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap' }}>
-                                <span style={{ color: '#FFFFFF', fontSize: '0.8125rem', fontWeight: 500 }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0, flex: 1 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}>
+                                <span style={{ color: '#FFFFFF', fontSize: '0.75rem', fontWeight: 500 }}>
                                   {item.title}
                                 </span>
                                 {item.badge && (
                                   <span
                                     style={{
                                       fontFamily: 'var(--font-mono)',
-                                      fontSize: '0.625rem',
+                                      fontSize: '0.5625rem',
                                       color: '#3ECF8E',
                                       fontWeight: 600,
                                       letterSpacing: '0.04em',
@@ -540,7 +519,7 @@ export default function Navbar() {
                                   </span>
                                 )}
                               </div>
-                              <span style={{ color: '#888888', fontSize: '0.75rem', lineHeight: 1.4 }}>
+                              <span style={{ color: '#737373', fontSize: '0.6875rem', lineHeight: 1.35 }}>
                                 {item.desc}
                               </span>
                             </div>
