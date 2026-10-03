@@ -684,7 +684,6 @@ export default function DocsPage() {
           background-color: #0A0A0A;
           padding-top: 130px;
           padding-bottom: 96px;
-          overflow-x: hidden;
         }
 
         .docs-container {
@@ -704,12 +703,14 @@ export default function DocsPage() {
         /* ── Sticky Sidebar Navigation ───────────────────────────────────────────── */
         .docs-sidebar {
           position: sticky;
-          top: 120px;
-          height: calc(100vh - 140px);
+          top: 84px;
+          height: calc(100vh - 104px);
           overflow-y: auto;
           padding-right: 16px;
           border-right: 1px solid rgba(255, 255, 255, 0.05);
           -webkit-overflow-scrolling: touch;
+          scrollbar-width: thin;
+          scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
         }
 
         .docs-sidebar::-webkit-scrollbar {
@@ -757,7 +758,7 @@ export default function DocsPage() {
         }
 
         .nav-link:hover {
-          color: #FFFFFF;
+          color: #3ECF8E;
         }
 
         .nav-link-active {

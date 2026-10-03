@@ -1,0 +1,294 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/astro/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout
+  title="404 — Node Lost in Dark Fiber · Cawlix Tracker"
+  description="[404_TELEMETRY_RADAR // TARGET_UNRESOLVED]: The SKU, index route, or document pointer you requested could not be tracked by our sensors."
+>
+  <Navbar />
+
+  <main class="page-viewport">
+    <div class="centerpiece-container">
+      
+      <!-- Interactive 4-👁️-4 Display Assembly -->
+      <div class="assembly-row" aria-label="404 Interactive Eye Tracker">
+        <span class="digit-four" aria-hidden="true">4</span>
+
+        <!-- The Reactive Ocular Scanner Socket -->
+        <div class="ocular-socket" id="ocular-socket" role="img" aria-label="Interactive radar pupil tracking mouse movement">
+          <!-- Radar Grid Lines & Concentric Target Rings -->
+          <svg class="radar-crosshair" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="64" cy="64" r="63" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" />
+            <circle cx="64" cy="64" r="44" stroke="rgba(255, 255, 255, 0.06)" stroke-dasharray="3 3" stroke-width="1" />
+            <circle cx="64" cy="64" r="24" stroke="rgba(62, 207, 142, 0.15)" stroke-width="1" />
+            <line x1="64" y1="0" x2="64" y2="128" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1" />
+            <line x1="0" y1="64" x2="128" y2="64" stroke="rgba(255, 255, 255, 0.06)" stroke-width="1" />
+          </svg>
+
+          <!-- The Iris & Emerald Pupil Focal Core -->
+          <div class="pupil-core" id="pupil-core">
+            <div class="pupil-inner-dot"></div>
+          </div>
+        </div>
+
+        <span class="digit-four" aria-hidden="true">4</span>
+      </div>
+
+      <h1 class="headline-title">
+        Node Lost in Dark Fiber
+      </h1>
+
+      <p class="subtitle-text">
+        The SKU, index route, or document pointer you requested could not be tracked by our sensors across the retail grid.
+      </p>
+
+      <!-- Action Recovery Buttons -->
+      <div class="cta-actions">
+        <a href="/" class="btn-primary">
+          Return to Terminal
+        </a>
+
+        <a href="/tracker" class="btn-secondary">
+          Open Telemetry Tracker
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .page-viewport {
+    min-height: calc(100vh - 60px);
+    background-color: #0A0A0A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 24px 80px 24px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  .centerpiece-container {
+    max-width: 640px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* 4 - 👁️ - 4 Row */
+  .assembly-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    user-select: none;
+  }
+
+  .digit-four {
+    font-family: var(--font-mono, monospace);
+    font-weight: 700;
+    font-size: clamp(5.5rem, 16vw, 9.5rem);
+    line-height: 1;
+    color: #3ECF8E;
+    letter-spacing: -0.05em;
+    text-shadow: 0 0 35px rgba(62, 207, 142, 0.25);
+  }
+
+  /* Ocular Socket */
+  .ocular-socket {
+    position: relative;
+    width: clamp(84px, 14vw, 132px);
+    height: clamp(84px, 14vw, 132px);
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background-color: #0D0D0D;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 32px rgba(0, 0, 0, 0.8), inset 0 0 16px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+  }
+
+  .radar-crosshair {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  /* The Pupil Focal Core */
+  .pupil-core {
+    position: absolute;
+    width: clamp(28px, 4.5vw, 38px);
+    height: clamp(28px, 4.5vw, 38px);
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #3ECF8E 0%, #10B981 60%, #065F46 100%);
+    box-shadow: 0 0 18px rgba(62, 207, 142, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    will-change: transform;
+    transition: transform 0.05s ease-out;
+  }
+
+  .pupil-inner-dot {
+    width: 32%;
+    height: 32%;
+    border-radius: 50%;
+    background-color: #0A0A0A;
+  }
+
+  /* Idle radar sweep for mobile / touch devices */
+  @media (hover: none) {
+    .pupil-core {
+      animation: idleRadarSweep 4s ease-in-out infinite;
+    }
+  }
+
+  @keyframes idleRadarSweep {
+    0%, 100% {
+      transform: translate(0px, 0px);
+    }
+    20% {
+      transform: translate(-18px, -6px);
+    }
+    40% {
+      transform: translate(-14px, 12px);
+    }
+    60% {
+      transform: translate(16px, 10px);
+    }
+    80% {
+      transform: translate(18px, -8px);
+    }
+  }
+
+  /* Supporting Typography */
+  .headline-title {
+    font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: -0.03em;
+    margin: 28px 0 0 0;
+    line-height: 1.2;
+  }
+
+  .subtitle-text {
+    font-size: 0.9375rem;
+    color: #737373;
+    line-height: 1.6;
+    max-width: 460px;
+    margin: 12px 0 0 0;
+  }
+
+  /* CTAs */
+  .cta-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background-color: #3ECF8E;
+    color: #0A0A0A;
+    font-weight: 600;
+    font-size: 0.6875rem;
+    padding: 6px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    line-height: 1.4;
+    transition: background-color 150ms ease-in-out;
+  }
+
+  .btn-primary:hover {
+    background-color: #34B27B;
+  }
+
+  .btn-secondary {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #EDEDED;
+    font-weight: 600;
+    font-size: 0.6875rem;
+    padding: 6px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    line-height: 1.4;
+    transition: background-color 150ms ease-in-out, border-color 150ms ease-in-out;
+  }
+
+  .btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  @media (max-width: 640px) {
+    .assembly-row {
+      gap: 10px;
+    }
+    .cta-actions {
+      flex-direction: column;
+      width: 100%;
+    }
+    .btn-primary, .btn-secondary {
+      width: 100%;
+      text-align: center;
+      box-sizing: border-box;
+    }
+  }
+</style>
+
+<script is:inline>
+  (function initEyeTracker() {
+    const socket = document.getElementById('ocular-socket');
+    const pupil = document.getElementById('pupil-core');
+    if (!socket || !pupil) return;
+
+    let hasInteracted = false;
+
+    function handleMouseMove(e) {
+      if (!hasInteracted) {
+        hasInteracted = true;
+        // Stop any idle CSS keyframe animation once user moves mouse
+        pupil.style.animation = 'none';
+      }
+
+      const rect = socket.getBoundingClientRect();
+      const socketCenterX = rect.left + rect.width / 2;
+      const socketCenterY = rect.top + rect.height / 2;
+
+      const distX = e.clientX - socketCenterX;
+      const distY = e.clientY - socketCenterY;
+
+      // Angular trajectory
+      const angle = Math.atan2(distY, distX);
+
+      // Distance from center
+      const rawDist = Math.hypot(distX, distY);
+
+      // Clamp max travel radius inside socket
+      const maxRadius = (rect.width - pupil.offsetWidth) / 2 - 4;
+      const clampedDist = Math.min(rawDist * 0.12, maxRadius);
+
+      const dx = Math.cos(angle) * clampedDist;
+      const dy = Math.sin(angle) * clampedDist;
+
+      pupil.style.transform = `translate(${dx.toFixed(2)}px, ${dy.toFixed(2)}px)`;
+    }
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+  })();
+</script>

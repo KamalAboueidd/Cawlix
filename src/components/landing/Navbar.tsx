@@ -427,18 +427,23 @@ export default function Navbar() {
           font-size: 0.8125rem;
           font-weight: 500;
           cursor: pointer;
-          transition: color 140ms ease, background-color 140ms ease;
+          transition: color 150ms ease-in-out;
         }
 
         .nav-btn:hover,
         .nav-btn-active {
-          color: #FFFFFF;
-          background-color: rgba(255, 255, 255, 0.05);
+          color: #3ECF8E;
+          background-color: transparent;
         }
 
         .chevron-icon {
           color: #737373;
-          transition: transform 150ms ease, color 150ms ease;
+          transition: transform 150ms ease, color 150ms ease-in-out;
+        }
+
+        .nav-btn:hover .chevron-icon,
+        .nav-btn-active .chevron-icon {
+          color: #3ECF8E;
         }
 
         .chevron-icon.rotated {
@@ -487,11 +492,10 @@ export default function Navbar() {
           border-radius: 6px;
           text-decoration: none;
           background: transparent;
-          transition: background-color 140ms ease;
         }
 
         .flyout-item:hover {
-          background-color: rgba(255, 255, 255, 0.04);
+          background-color: transparent;
         }
 
         .flyout-icon-box {
@@ -512,6 +516,11 @@ export default function Navbar() {
           font-size: 0.8125rem;
           font-weight: 600;
           letter-spacing: -0.01em;
+          transition: color 150ms ease-in-out;
+        }
+
+        .flyout-item:hover .flyout-item-title {
+          color: #3ECF8E;
         }
 
         .flyout-item-desc {
@@ -528,12 +537,13 @@ export default function Navbar() {
           font-size: 0.8125rem;
           font-weight: 500;
           text-decoration: none;
-          transition: color 140ms ease, background-color 140ms ease;
+          background: transparent;
+          transition: color 150ms ease-in-out;
         }
 
         .nav-direct-link:hover {
-          color: #FFFFFF;
-          background-color: rgba(255, 255, 255, 0.04);
+          color: #3ECF8E;
+          background-color: transparent;
         }
 
         /* ── Action CTA Group ───────────────────────────────────────────────────── */

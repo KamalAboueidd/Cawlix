@@ -1,0 +1,336 @@
+---
+import cawlixLogo from '../assets/ICon.png';
+
+const ENGINES_LINKS = [
+  { label: 'True-Cost Calculator', href: '/engines/true-cost' },
+  { label: 'Ghost-Discount Auditor', href: '/engines/ghost-auditor' },
+  { label: 'Landed-Cost Arbitrage', href: '/engines/landed-cost' },
+  { label: 'Anomaly & Glitch Radar', href: '/engines/anomaly-radar' },
+];
+
+const SOLUTIONS_LINKS = [
+  { label: 'For Hardware Enthusiasts', href: '/solutions/consumers' },
+  { label: 'For Merchants & Resellers', href: '/solutions/merchants' },
+  { label: 'Network Coverage & Probes', href: '/network/coverage' },
+  { label: 'Tracker Utility', href: '/tracker' },
+];
+
+const RESOURCES_LINKS = [
+  { label: 'Technical Documentation', href: '/docs' },
+  { label: 'API Reference', href: '/docs#endpoints' },
+  { label: 'White Friday Forensic Audit', href: '/blog/white-friday-fake-discounts' },
+  { label: 'Platform Changelog', href: '/changelog' },
+  { label: 'Pricing Plans', href: '/pricing' },
+];
+
+const LEGAL_LINKS = [
+  { label: 'Privacy Policy', href: '/privacy' },
+  { label: 'Terms of Telemetry', href: '/terms' },
+  { label: 'Security Matrix', href: '/security' },
+];
+---
+
+<footer class="cawlix-global-footer">
+  <div class="footer-inner">
+    <!-- Top 4-Column Grid -->
+    <div class="footer-columns-grid">
+      
+      <!-- Column 1: Core Platform & Node Status -->
+      <div class="col-platform">
+        <a href="/" class="platform-brand">
+          <img
+            src={cawlixLogo.src || cawlixLogo}
+            alt="Cawlix Telemetry Core Logo"
+            width="22"
+            height="22"
+            class="platform-logo"
+          />
+          <span class="platform-title">Cawlix Telemetry Core</span>
+        </a>
+
+        <div class="platform-status">
+          <span class="status-dot">●</span> 12 RETAIL NODES ACTIVE &middot; PING: 118MS
+        </div>
+
+        <p class="platform-tagline">
+          Deterministic price telemetry, fake discount forensic auditing, and landed-cost arbitrage for consumer electronics.
+        </p>
+
+        <div class="platform-copyright">
+          &copy; 2026 Cawlix Inc. All rights reserved.
+        </div>
+      </div>
+
+      <!-- Column 2: Engines -->
+      <div class="col-nav">
+        <div class="col-header">ENGINES</div>
+        <ul class="col-list">
+          {ENGINES_LINKS.map((link) => (
+            <li>
+              <a href={link.href} class="footer-link">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Column 3: Solutions & Use Cases -->
+      <div class="col-nav">
+        <div class="col-header">SOLUTIONS</div>
+        <ul class="col-list">
+          {SOLUTIONS_LINKS.map((link) => (
+            <li>
+              <a href={link.href} class="footer-link">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Column 4: Resources & Developers -->
+      <div class="col-nav">
+        <div class="col-header">RESOURCES</div>
+        <ul class="col-list">
+          {RESOURCES_LINKS.map((link) => (
+            <li>
+              <a href={link.href} class="footer-link">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Bottom Legal & Currency Matrix Strip -->
+    <div class="footer-bottom-strip">
+      <div class="strip-currency">
+        EGYPTIAN POUND (EGP) TELEMETRY &middot; CENTRAL BANK OF EGYPT REFERENCE RATE ENFORCED
+      </div>
+
+      <div class="strip-links">
+        {LEGAL_LINKS.map((item, idx) => (
+          <>
+            <a href={item.href} class="legal-link">
+              {item.label}
+            </a>
+            {idx < LEGAL_LINKS.length - 1 && <span class="legal-sep">&middot;</span>}
+          </>
+        ))}
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .cawlix-global-footer {
+    background-color: #0A0A0A;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    width: 100%;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  .footer-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 64px 24px 48px 24px;
+    box-sizing: border-box;
+  }
+
+  /* 4-Column Layout */
+  .footer-columns-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 48px;
+    align-items: flex-start;
+  }
+
+  /* Column 1 */
+  .col-platform {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .platform-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .platform-logo {
+    height: 22px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+  }
+
+  .platform-title {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #FFFFFF;
+    letter-spacing: -0.01em;
+  }
+
+  .platform-status {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    color: #3ECF8E;
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .status-dot {
+    font-size: 0.625rem;
+    line-height: 1;
+    color: #3ECF8E;
+  }
+
+  .platform-tagline {
+    font-family: var(--font-sans, system-ui, sans-serif);
+    font-size: 0.75rem;
+    color: #737373;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 320px;
+  }
+
+  .platform-copyright {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    color: #525252;
+    margin-top: 4px;
+  }
+
+  /* Nav Columns */
+  .col-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .col-header {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #FFFFFF;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .col-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer-link {
+    font-family: var(--font-sans, system-ui, sans-serif);
+    font-size: 0.75rem;
+    color: #888888;
+    text-decoration: none;
+    transition: color 150ms ease-in-out;
+    background: transparent;
+    display: inline-block;
+  }
+
+  .footer-link:hover {
+    color: #3ECF8E;
+    background: transparent;
+  }
+
+  /* Bottom Strip */
+  .footer-bottom-strip {
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    margin-top: 56px;
+    padding-top: 24px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .strip-currency {
+    font-family: var(--font-mono, monospace);
+    font-size: 11px;
+    color: #525252;
+    letter-spacing: 0.04em;
+  }
+
+  .strip-links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .legal-link {
+    font-family: var(--font-mono, monospace);
+    font-size: 11px;
+    color: #525252;
+    text-decoration: none;
+    transition: color 150ms ease-in-out;
+    background: transparent;
+  }
+
+  .legal-link:hover {
+    color: #FFFFFF;
+    background: transparent;
+  }
+
+  .legal-sep {
+    font-family: var(--font-mono, monospace);
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.15);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .footer-columns-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+    .col-platform {
+      grid-column: span 2;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .footer-inner {
+      padding: 48px 16px 36px 16px;
+    }
+
+    .footer-columns-grid {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+
+    .col-platform {
+      grid-column: span 1;
+    }
+
+    .footer-bottom-strip {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+      margin-top: 40px;
+      padding-top: 20px;
+    }
+
+    .strip-currency {
+      line-height: 1.5;
+    }
+  }
+</style>

@@ -1,0 +1,17 @@
+# Robots directive for Cawlix Telemetry Core
+User-agent: *
+Allow: /
+Allow: /engines/
+Allow: /solutions/
+Allow: /pricing
+Allow: /network/coverage
+Allow: /changelog
+Allow: /blog/
+Allow: /docs
+Allow: /tracker
+
+# Disallow API ingestion endpoints
+Disallow: /api/v1/*
+
+# Sitemap Index
+Sitemap: https://cawlix.com/sitemap-index.xml

@@ -2,12 +2,19 @@
 interface Props {
   title?: string;
   description?: string;
+  canonicalURL?: string | URL;
+  image?: string;
 }
 
 const {
-  title = "Cawlix Tracker — Institutional Price Intelligence for Egypt",
-  description = "Real-time price intelligence across 12 Egyptian retailers and 3 US import sources. Ghost deal detection, true-cost calculation, and landed-cost import analysis."
+  title = "Cawlix // Deterministic Price Telemetry & Retail Arbitrage",
+  description = "Institutional-grade price telemetry, 90-day fake discount auditing, and landed-cost arbitrage for consumer electronics across 12 domestic retail nodes.",
+  canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://cawlix.com'),
+  image = "/favicon.svg",
 } = Astro.props;
+
+const canonicalHref = canonicalURL instanceof URL ? canonicalURL.href : new URL(canonicalURL, 'https://cawlix.com').href;
+const ogImageHref = new URL(image, Astro.site || 'https://cawlix.com').href;
 ---
 
 <!doctype html>
@@ -17,28 +24,38 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0A0A0A" />
 
-    <!-- SEO -->
+    <!-- SEO & Canonical -->
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalHref} />
     <meta name="robots" content="index, follow" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Cawlix Telemetry" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content="https://cawlix.com" />
+    <meta property="og:url" content={canonicalHref} />
+    <meta property="og:image" content={ogImageHref} />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@Cawlix" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageHref} />
 
     <!-- Preconnect & Geist Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap" rel="stylesheet" />
 
-    <!-- Favicon -->
+    <!-- Favicon & Minimal Brand Identity -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     <link rel="stylesheet" href="/src/index.css" />
   </head>
-  <body style="background-color: #0A0A0A; color: #FFFFFF; min-height: 100vh; margin: 0;">
+  <body style="background-color: #0A0A0A; color: #FFFFFF; min-height: 100vh; margin: 0; overflow-x: hidden; max-width: 100vw;">
     <slot />
   </body>
 </html>

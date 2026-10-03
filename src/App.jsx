@@ -12,6 +12,10 @@ import WhiteFridayFakeDiscountsPage from './pages/blog/WhiteFridayFakeDiscountsP
 import ConsumersPage from './pages/solutions/ConsumersPage';
 import MerchantsPage from './pages/solutions/MerchantsPage';
 import ChangelogPage from './pages/ChangelogPage';
+import NotFoundPage from './pages/NotFoundPage';
+import TrackerPage from './pages/TrackerPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 
 export default function App() {
   const [route, setRoute] = useState(window.location.pathname);
@@ -70,6 +74,26 @@ export default function App() {
     return <DocsPage />;
   }
 
-  return <LandingPage />;
+  if (route === '/tracker') {
+    return <TrackerPage />;
+  }
+
+  if (route === '/login') {
+    return <LoginPage />;
+  }
+
+  if (route === '/register') {
+    return <RegisterPage />;
+  }
+
+  if (route === '/404') {
+    return <NotFoundPage />;
+  }
+
+  if (route === '/' || route === '') {
+    return <LandingPage />;
+  }
+
+  return <NotFoundPage />;
 }
 

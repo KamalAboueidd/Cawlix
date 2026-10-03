@@ -1,0 +1,47 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/astro/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import ShowcaseConsole from '../components/ShowcaseConsole';
+import TelemetryConsole from '../components/TelemetryConsole';
+---
+
+<Layout
+  title="Telemetry Tracker Utility — Cawlix Tracker"
+  description="Direct SKU price verification terminal, real-time retailer probes, and landed-cost arbitrage calculation console."
+>
+  <Navbar />
+
+  <main style="min-height: 100vh; background-color: #0A0A0A; padding-top: 130px; padding-bottom: 96px; overflow-x: hidden;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 24px;">
+      
+      <!-- Terminal Header -->
+      <header style="margin-bottom: 40px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); padding-bottom: 32px;">
+        <div style="font-family: var(--font-mono, monospace); font-size: 0.75rem; color: #3ECF8E; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px;">
+          TELEMETRY UTILITY // LIVE SCANNER
+        </div>
+
+        <h1 style="font-size: clamp(2rem, 4vw, 3rem); font-weight: 600; color: #FFFFFF; letter-spacing: -0.03em; line-height: 1.15; margin: 0 0 16px 0;">
+          Cawlix Telemetry Tracker
+        </h1>
+
+        <p style="font-size: 1rem; color: #888888; line-height: 1.6; max-width: 680px; margin: 0;">
+          Direct SKU telemetry query terminal and multi-retailer price probe console. Inspect 90-day pricing velocity and detect synthetic sales.
+        </p>
+      </header>
+
+      <!-- Interactive Showcase / Search Island -->
+      <section style="margin-bottom: 60px;">
+        <ShowcaseConsole client:load />
+      </section>
+
+      <!-- Live Stream Console -->
+      <section style="margin-top: 40px;">
+        <TelemetryConsole client:load />
+      </section>
+
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
