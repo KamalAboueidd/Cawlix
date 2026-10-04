@@ -245,6 +245,18 @@ export default function Navbar() {
         {/* Action CTA Group */}
         <div className="navbar-action-group">
           <a
+            href="/login"
+            className="navbar-login-link"
+          >
+            Sign In
+          </a>
+          <a
+            href="/register"
+            className="navbar-register-btn"
+          >
+            Register
+          </a>
+          <a
             href="/#showcase"
             className="navbar-cta-btn"
           >
@@ -335,12 +347,28 @@ export default function Navbar() {
               {/* Mobile CTA */}
               <div className="mobile-cta-wrap">
                 <a
+                  href="/register"
+                  onClick={() => setMobileOpen(false)}
+                  className="mobile-register-btn"
+                >
+                  Register Free Account
+                </a>
+                <a
                   href="/#showcase"
                   onClick={() => setMobileOpen(false)}
                   className="mobile-launch-btn"
                 >
                   Launch Tracker
                 </a>
+                <div style={{ textAlign: 'center', marginTop: '14px' }}>
+                  <a
+                    href="/login"
+                    onClick={() => setMobileOpen(false)}
+                    className="mobile-login-link"
+                  >
+                    Already have an account? Sign In &rarr;
+                  </a>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -550,7 +578,46 @@ export default function Navbar() {
         .navbar-action-group {
           display: flex;
           align-items: center;
-          gap: 12px;
+          gap: 10px;
+        }
+
+        .navbar-login-link {
+          color: #888888;
+          font-family: var(--font-sans, system-ui, sans-serif);
+          font-weight: 500;
+          font-size: 0.75rem;
+          padding: 6px 10px;
+          text-decoration: none;
+          transition: color 140ms ease;
+          white-space: nowrap;
+        }
+
+        .navbar-login-link:hover {
+          color: #FFFFFF;
+        }
+
+        .navbar-register-btn {
+          background-color: transparent;
+          border: 1px solid rgba(255, 255, 255, 0.14);
+          color: #EDEDED;
+          font-family: var(--font-sans, system-ui, sans-serif);
+          font-weight: 600;
+          font-size: 0.75rem;
+          padding: 7px 14px;
+          border-radius: 8px;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          white-space: nowrap;
+          line-height: 1;
+          transition: all 140ms ease;
+        }
+
+        .navbar-register-btn:hover {
+          background-color: rgba(255, 255, 255, 0.06);
+          border-color: rgba(255, 255, 255, 0.28);
+          color: #FFFFFF;
         }
 
         .navbar-cta-btn {
@@ -565,6 +632,8 @@ export default function Navbar() {
           display: inline-flex;
           align-items: center;
           justify-content: center;
+          white-space: nowrap;
+          line-height: 1;
           transition: background-color 140ms ease;
         }
 
@@ -614,8 +683,10 @@ export default function Navbar() {
             height: 22px !important;
           }
 
+          .navbar-login-link,
+          .navbar-register-btn,
           .navbar-cta-btn {
-            display: none;
+            display: none !important;
           }
 
           .mobile-drawer-overlay {
@@ -713,6 +784,29 @@ export default function Navbar() {
             border-top: 1px solid rgba(255, 255, 255, 0.06);
           }
 
+          .mobile-register-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            background-color: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            color: #FFFFFF;
+            font-family: var(--font-sans, system-ui, sans-serif);
+            font-size: 0.875rem;
+            font-weight: 600;
+            padding: 11px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+            transition: background-color 140ms ease;
+          }
+
+          .mobile-register-btn:hover {
+            background-color: rgba(255, 255, 255, 0.06);
+          }
+
           .mobile-launch-btn {
             display: flex;
             align-items: center;
@@ -727,6 +821,23 @@ export default function Navbar() {
             border-radius: 8px;
             text-decoration: none;
             box-sizing: border-box;
+            transition: background-color 140ms ease;
+          }
+
+          .mobile-launch-btn:hover {
+            background-color: #34B27B;
+          }
+
+          .mobile-login-link {
+            color: #888888;
+            font-family: var(--font-mono, monospace);
+            font-size: 0.75rem;
+            text-decoration: none;
+            transition: color 140ms ease;
+          }
+
+          .mobile-login-link:hover {
+            color: #3ECF8E;
           }
         }
       `}</style>

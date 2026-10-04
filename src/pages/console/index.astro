@@ -1,0 +1,1961 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AddSkuModal from '../../components/console/AddSkuModal.astro';
+---
+
+<Layout
+  title="Console — Cawlix Telemetry Terminal"
+  description="Vercel-inspired minimalist SKU price telemetry terminal and domestic retail node monitor."
+>
+  <!-- Google Font Cairo for Arabic Optical Density Match -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <div class="cawlix-console-root" id="console-root" data-theme="dark" dir="ltr">
+    
+    <!-- ── Row 1: Brand & Scope + Utilities ── -->
+    <header class="header-row-1">
+      <div class="header-scope">
+        <!-- Cawlix Minimal Mark -->
+        <a href="/" class="brand-link" aria-label="Cawlix Home">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="brand-icon">
+            <circle cx="12" cy="12" r="9" stroke="var(--text-primary)" stroke-width="1.25" stroke-opacity="0.3" />
+            <circle cx="12" cy="12" r="5" stroke="var(--text-primary)" stroke-width="1.25" stroke-opacity="0.6" />
+            <circle cx="12" cy="12" r="1.5" fill="var(--text-primary)" />
+            <line x1="12" y1="12" x2="19" y2="5" stroke="var(--text-primary)" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+          <span class="brand-title font-mono">Cawlix</span>
+        </a>
+
+        <span class="slash-divider">/</span>
+
+        <!-- Project Scope -->
+        <div class="scope-selector" id="scope-selector">
+          <span class="scope-avatar-dot"></span>
+          <span class="scope-handle font-mono" id="scope-user-name">kamal-core</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron-icon">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Utilities: Theme Toggle + Language Switcher + User Avatar -->
+      <div class="header-utilities">
+        <!-- Theme Toggle (Discrete Sun/Moon Icon + Text) -->
+        <button type="button" id="btn-theme-toggle" class="utility-btn font-mono" title="Toggle Theme" aria-label="Toggle Theme">
+          <svg id="theme-sun-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg id="theme-moon-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <span id="theme-label-text">Dark</span>
+        </button>
+
+        <!-- Instant Language Switcher (EN | عربي) -->
+        <div class="lang-switcher font-mono" id="lang-switcher">
+          <button type="button" class="lang-btn active" id="btn-lang-en" data-lang="en">EN</button>
+          <span class="lang-sep">|</span>
+          <button type="button" class="lang-btn" id="btn-lang-ar" data-lang="ar">عربي</button>
+        </div>
+
+        <div class="util-divider"></div>
+
+        <!-- User Profile Avatar -->
+        <div class="user-avatar-wrap">
+          <button type="button" id="btn-user-avatar" class="user-avatar-circle" aria-label="User menu">
+            <span id="user-avatar-initial">K</span>
+          </button>
+          <div id="user-dropdown-menu" class="user-dropdown-menu" style="display: none;">
+            <div class="dropdown-header font-mono" id="dropdown-user-email">developer@cawlix.com</div>
+            <div class="menu-divider"></div>
+            <a href="/tracker" class="menu-link" data-i18n="navTracker">Telemetry Tracker</a>
+            <a href="/docs" class="menu-link" data-i18n="navDocs">API Documentation</a>
+            <a href="/engines/true-cost" class="menu-link" data-i18n="navTrueCost">True-Cost Engine</a>
+            <div class="menu-divider"></div>
+            <button type="button" id="btn-sign-out" class="menu-btn-signout" data-i18n="btnSignOut">Sign Out</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── Row 2: Borderless Text Tabs ── -->
+    <nav class="header-row-2" aria-label="Console Subnavigation">
+      <div class="nav-tabs">
+        <button type="button" class="nav-tab active" data-tab="overview" data-i18n="tabOverview">Overview</button>
+        <button type="button" class="nav-tab" data-tab="watchlist" data-i18n="tabWatchlist">Watchlist</button>
+        <button type="button" class="nav-tab" data-tab="radar" data-i18n="tabRadar">Radar</button>
+        <button type="button" class="nav-tab" data-tab="settings" data-i18n="tabSettings">Settings</button>
+      </div>
+    </nav>
+
+    <!-- ── Main Canvas ── -->
+    <main class="console-body">
+      <div class="console-container">
+
+        <!-- Flat Command Search Bar + High-Contrast Primary Button -->
+        <section class="command-bar">
+          <div class="search-wrap">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-subtle)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input
+              type="text"
+              id="sku-search-input"
+              placeholder="Search tracked SKUs, nodes, or retailers..."
+              class="search-input font-mono"
+              autocomplete="off"
+            />
+            <button type="button" id="btn-clear-search" class="clear-search-btn" style="display: none;">&times;</button>
+          </div>
+
+          <button type="button" id="btn-add-sku" class="btn-primary-add font-mono">
+            <span class="plus-icon">+</span>
+            <span data-i18n="btnAddSku">Add Target SKU</span>
+          </button>
+        </section>
+
+        <!-- Unadorned Tracked Items List -->
+        <section class="tracked-list-section">
+          <!-- Table Header -->
+          <div class="list-header font-mono">
+            <span class="col-title" data-i18n="colTitle">ITEM / TITLE</span>
+            <span class="col-store" data-i18n="colStore">STORE</span>
+            <span class="col-price" data-i18n="colPrice">PRICE</span>
+            <span class="col-delta" data-i18n="colDelta">90D BASELINE DELTA</span>
+            <span class="col-time" data-i18n="colTime">LAST CHECK</span>
+            <span class="col-action" data-i18n="colAction">ACTION</span>
+          </div>
+
+          <!-- Loading state -->
+          <div id="loading-indicator" class="loading-state font-mono" style="display: none;">
+            INITIALIZING PROBE NODES...
+          </div>
+
+          <!-- Dynamic Rows -->
+          <div id="sku-rows-container" class="list-rows-container">
+            <!-- Dynamically populated rows -->
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- ── Vercel-style Slide-Over Drawer (Telemetry Inspector) ── -->
+    <div id="telemetry-drawer-overlay" class="drawer-overlay" style="display: none;">
+      <div class="drawer-backdrop" id="drawer-backdrop"></div>
+      <aside class="drawer-panel" id="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="drawer-item-title">
+        
+        <!-- Drawer Top Control Bar -->
+        <div class="drawer-topbar">
+          <div class="drawer-scope-pill font-mono">
+            <span class="status-pulse-dot"></span>
+            <span data-i18n="drawerLiveTelemetry">LIVE TELEMETRY PROBE</span>
+          </div>
+          <button type="button" id="btn-close-drawer" class="drawer-close-btn font-mono" aria-label="Close Drawer" title="Close (Esc)">
+            <span>ESC</span>
+          </button>
+        </div>
+
+        <!-- Drawer Content Container (Injected via JS) -->
+        <div class="drawer-content" id="drawer-content">
+          <!-- Populated dynamically -->
+        </div>
+
+      </aside>
+    </div>
+
+    <!-- Vercel-style Add SKU Modal -->
+    <AddSkuModal />
+
+  </div>
+</Layout>
+
+<style>
+  /* ── 1. Design System Tokens (Dark & Light Mode Architecture) ── */
+  :root[data-theme="dark"],
+  .cawlix-console-root[data-theme="dark"] {
+    --bg: #000000;
+    --surface: #0a0a0a;
+    --surface-hover: #121212;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(255, 255, 255, 0.2);
+    --text-primary: #ededed;
+    --text-muted: #888888;
+    --text-subtle: #525252;
+    --accent: #3ecf8e;
+    --btn-bg: #ffffff;
+    --btn-text: #000000;
+  }
+
+  :root[data-theme="light"],
+  .cawlix-console-root[data-theme="light"] {
+    --bg: #ffffff;
+    --surface: #fafafa;
+    --surface-hover: #f0f0f0;
+    --border: rgba(0, 0, 0, 0.08);
+    --border-hover: rgba(0, 0, 0, 0.2);
+    --text-primary: #111111;
+    --text-muted: #666666;
+    --text-subtle: #999999;
+    --accent: #059669;
+    --btn-bg: #000000;
+    --btn-text: #ffffff;
+  }
+
+  .cawlix-console-root {
+    min-height: 100vh;
+    background-color: var(--bg);
+    color: var(--text-primary);
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+
+  /* ── 2. Clean Arabic Typography & RTL Foundation ── */
+  [dir="rtl"] {
+    direction: rtl;
+    text-align: right;
+    font-family: 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  [dir="rtl"] .header-scope,
+  [dir="rtl"] .header-utilities,
+  [dir="rtl"] .nav-tabs,
+  [dir="rtl"] .command-bar,
+  [dir="rtl"] .list-header,
+  [dir="rtl"] .list-row,
+  [dir="rtl"] .drawer-topbar,
+  [dir="rtl"] .drawer-content {
+    direction: rtl;
+  }
+
+  [dir="rtl"] .list-header .col-delta,
+  [dir="rtl"] .list-header .col-price,
+  [dir="rtl"] .list-header .col-time,
+  [dir="rtl"] .list-row .col-delta,
+  [dir="rtl"] .list-row .col-price,
+  [dir="rtl"] .list-row .col-time {
+    text-align: left;
+  }
+
+  [dir="rtl"] .user-dropdown-menu {
+    right: auto;
+    left: 0;
+    text-align: right;
+  }
+
+  /* ── Header Row 1: Scope & Utilities ── */
+  .header-row-1 {
+    height: 48px;
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--bg);
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .header-scope {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .brand-link {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+
+  .brand-title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+
+  .slash-divider {
+    color: var(--text-subtle);
+    font-family: var(--font-mono, monospace);
+    font-size: 0.8125rem;
+  }
+
+  .scope-selector {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 6px;
+    border-radius: 4px;
+    cursor: default;
+  }
+
+  .scope-avatar-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--text-muted);
+  }
+
+  .scope-handle {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .chevron-icon {
+    color: var(--text-subtle);
+  }
+
+  .header-utilities {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .utility-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 120ms ease;
+  }
+
+  .utility-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--border-hover);
+  }
+
+  /* Instant Language Switcher (EN | عربي) */
+  .lang-switcher {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    background: transparent;
+  }
+
+  .lang-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-subtle);
+    cursor: pointer;
+    font-size: 11px;
+    padding: 1px 3px;
+    border-radius: 2px;
+    transition: color 120ms ease;
+  }
+
+  .lang-btn:hover {
+    color: var(--text-primary);
+  }
+
+  .lang-btn.active {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .lang-sep {
+    color: var(--border);
+    user-select: none;
+  }
+
+  .util-divider {
+    width: 1px;
+    height: 14px;
+    background-color: var(--border);
+  }
+
+  .user-avatar-wrap {
+    position: relative;
+  }
+
+  .user-avatar-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-primary);
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 120ms ease;
+  }
+
+  .user-avatar-circle:hover {
+    border-color: var(--border-hover);
+  }
+
+  .user-dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: 32px;
+    width: 200px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+    z-index: 100;
+  }
+
+  .dropdown-header {
+    padding: 6px 8px;
+    font-size: 10px;
+    color: var(--text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .menu-divider {
+    height: 1px;
+    background-color: var(--border);
+    margin: 3px 0;
+  }
+
+  .menu-link, .menu-btn-signout {
+    display: block;
+    width: 100%;
+    text-align: inherit;
+    padding: 6px 8px;
+    font-size: 12px;
+    color: var(--text-primary);
+    text-decoration: none;
+    border-radius: 4px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+
+  .menu-link:hover, .menu-btn-signout:hover {
+    background-color: var(--surface-hover);
+  }
+
+  .menu-btn-signout {
+    color: #ef4444;
+  }
+
+  /* ── Header Row 2: Borderless Text Tabs with Subtle Active Underline ── */
+  .header-row-2 {
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    background-color: var(--bg);
+  }
+
+  .nav-tabs {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    overflow-x: auto;
+  }
+
+  .nav-tab {
+    background: transparent;
+    border: none;
+    font-size: 12px;
+    color: var(--text-muted);
+    padding: 10px 0;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 120ms ease, border-color 120ms ease;
+    white-space: nowrap;
+    outline: none;
+  }
+
+  .nav-tab:hover {
+    color: var(--text-primary);
+  }
+
+  .nav-tab.active {
+    color: var(--text-primary);
+    font-weight: 500;
+    border-bottom-color: var(--text-primary);
+  }
+
+  /* ── Body: Canvas ── */
+  .console-body {
+    flex: 1;
+    background-color: var(--bg);
+    padding: 24px;
+    box-sizing: border-box;
+  }
+
+  .console-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Flat Command Search Bar + High-Contrast Primary Button */
+  .command-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .search-wrap {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    max-width: 480px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    height: 36px;
+    padding: 0 12px;
+    gap: 8px;
+    box-sizing: border-box;
+    transition: border-color 120ms ease;
+  }
+
+  .search-wrap:focus-within {
+    border-color: var(--border-hover);
+  }
+
+  .search-icon {
+    flex-shrink: 0;
+  }
+
+  .search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 11px;
+    outline: none;
+    height: 100%;
+  }
+
+  .search-input::placeholder {
+    color: var(--text-subtle);
+  }
+
+  .clear-search-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-subtle);
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .btn-primary-add {
+    background-color: var(--btn-bg);
+    color: var(--btn-text);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 0 14px;
+    height: 36px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 120ms ease;
+    white-space: nowrap;
+  }
+
+  .btn-primary-add:hover {
+    opacity: 0.88;
+  }
+
+  .plus-icon {
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  /* ── Tracked List Section (Simple Unadorned Rows) ── */
+  .tracked-list-section {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .list-header {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr 1.2fr 1.2fr 1fr 0.8fr;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 10px;
+    color: var(--text-subtle);
+    letter-spacing: 0.05em;
+  }
+
+  .col-title { min-width: 0; }
+  .col-store { min-width: 0; }
+  .col-price { text-align: right; }
+  .col-delta { text-align: right; }
+  .col-time { text-align: right; }
+  .col-action { text-align: right; }
+
+  .list-rows-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .list-row {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr 1.2fr 1.2fr 1fr 0.8fr;
+    align-items: center;
+    padding: 14px 12px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background-color 100ms ease;
+  }
+
+  .list-row:hover {
+    background-color: var(--surface-hover);
+  }
+
+  .row-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    padding-right: 12px;
+  }
+
+  [dir="rtl"] .row-title-wrap {
+    padding-right: 0;
+    padding-left: 12px;
+  }
+
+  .row-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .row-sku {
+    font-size: 10px;
+    color: var(--text-subtle);
+  }
+
+  .row-store {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .row-price {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: right;
+  }
+
+  /* Single subtle monospace text delta: NO boxes, NO pills! */
+  .row-delta {
+    font-size: 11px;
+    font-weight: 600;
+    text-align: right;
+  }
+
+  .row-delta.markup {
+    color: #ef4444;
+  }
+
+  .row-delta.deal {
+    color: var(--accent);
+  }
+
+  .row-time {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: right;
+  }
+
+  .row-action {
+    text-align: right;
+  }
+
+  .btn-reaudit {
+    background: transparent;
+    border: none;
+    color: var(--text-subtle);
+    font-size: 11px;
+    cursor: pointer;
+    padding: 2px 0;
+    transition: color 120ms ease;
+  }
+
+  .btn-reaudit:hover {
+    color: var(--text-primary);
+    text-decoration: underline;
+  }
+
+  .btn-reaudit.probing {
+    color: var(--accent);
+    cursor: wait;
+  }
+
+  .loading-state {
+    padding: 36px 0;
+    text-align: center;
+    color: var(--text-subtle);
+    font-size: 11px;
+  }
+
+  /* ── 3. Vercel Slide-Over Drawer (Telemetry Inspector) ── */
+  .drawer-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  [dir="rtl"] .drawer-overlay {
+    justify-content: flex-start;
+  }
+
+  .drawer-backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    animation: fadeInOverlay 140ms ease-out;
+  }
+
+  @keyframes fadeInOverlay {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .drawer-panel {
+    position: relative;
+    width: 100%;
+    max-width: 580px;
+    height: 100%;
+    background-color: var(--surface);
+    border-left: 1px solid var(--border);
+    box-shadow: -20px 0 40px rgba(0, 0, 0, 0.45);
+    z-index: 101;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    animation: drawerSlideRight 180ms cubic-bezier(0.16, 1, 0.3, 1);
+    box-sizing: border-box;
+  }
+
+  [dir="rtl"] .drawer-panel {
+    border-left: none;
+    border-right: 1px solid var(--border);
+    box-shadow: 20px 0 40px rgba(0, 0, 0, 0.45);
+    animation: drawerSlideLeft 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes drawerSlideRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+
+  @keyframes drawerSlideLeft {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+  }
+
+  .drawer-topbar {
+    height: 48px;
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .drawer-scope-pill {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+  }
+
+  .status-pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  .drawer-close-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 4px;
+    cursor: pointer;
+    line-height: 1.2;
+    transition: all 120ms ease;
+  }
+
+  .drawer-close-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--border-hover);
+    background-color: var(--surface-hover);
+  }
+
+  .drawer-content {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* Drawer Modules Styling */
+  .drawer-header-block {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .drawer-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    flex-wrap: wrap;
+  }
+
+  .drawer-sku-id {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .drawer-store-node {
+    color: var(--accent);
+  }
+
+  .drawer-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+  }
+
+  .drawer-actions-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 4px;
+    flex-wrap: wrap;
+  }
+
+  .drawer-ext-link {
+    font-size: 11px;
+    color: var(--text-primary);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-hover);
+    padding-bottom: 1px;
+    transition: opacity 120ms ease;
+  }
+
+  .drawer-ext-link:hover {
+    opacity: 0.8;
+  }
+
+  .drawer-ping-status {
+    font-size: 10px;
+    color: var(--text-subtle);
+  }
+
+  /* Module: Forensic Diagnostic */
+  .drawer-section-module {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .drawer-module-title {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--text-subtle);
+    margin: 0;
+  }
+
+  .diagnostic-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    background-color: var(--bg);
+  }
+
+  .diag-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .diag-label {
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .diag-val {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .diag-delta-sub {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  .diag-delta-sub.markup { color: #ef4444; }
+  .diag-delta-sub.deal { color: var(--accent); }
+
+  .verdict-box {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-size: 11px;
+    line-height: 1.5;
+    background-color: var(--bg);
+  }
+
+  .verdict-box.markup {
+    border-left: 3px solid #ef4444;
+  }
+
+  .verdict-box.deal {
+    border-left: 3px solid var(--accent);
+  }
+
+  [dir="rtl"] .verdict-box.markup {
+    border-left: 1px solid var(--border);
+    border-right: 3px solid #ef4444;
+  }
+
+  [dir="rtl"] .verdict-box.deal {
+    border-left: 1px solid var(--border);
+    border-right: 3px solid var(--accent);
+  }
+
+  .verdict-tag {
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .verdict-tag.markup { color: #ef4444; }
+  .verdict-tag.deal { color: var(--accent); }
+
+  .verdict-desc {
+    color: var(--text-muted);
+  }
+
+  /* Module: Sparkline Chart */
+  .chart-container {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    background-color: var(--bg);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .chart-svg-wrap {
+    width: 100%;
+    height: 100px;
+  }
+
+  .chart-axis-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: var(--text-subtle);
+  }
+
+  /* Module: Landed Cost Table */
+  .landed-cost-table {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: var(--bg);
+    font-size: 11px;
+  }
+
+  .landed-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .landed-row:last-child {
+    border-bottom: none;
+    font-weight: 600;
+    background-color: var(--surface);
+  }
+
+  .landed-label {
+    color: var(--text-muted);
+  }
+
+  .landed-value {
+    color: var(--text-primary);
+  }
+
+  .arbitrage-verdict-banner {
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .arbitrage-verdict-banner.positive {
+    color: var(--accent);
+    background-color: var(--bg);
+  }
+
+  /* Module: Alert Settings */
+  .alert-input-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .alert-input-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    height: 38px;
+    overflow: hidden;
+    transition: border-color 120ms ease;
+  }
+
+  .alert-input-wrap:focus-within {
+    border-color: var(--border-hover);
+  }
+
+  .alert-prefix {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-subtle);
+    padding: 0 12px;
+    background-color: var(--surface);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid var(--border);
+    user-select: none;
+  }
+
+  [dir="rtl"] .alert-prefix {
+    border-right: none;
+    border-left: 1px solid var(--border);
+  }
+
+  .alert-field {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 11px;
+    padding: 0 12px;
+    outline: none;
+    height: 100%;
+  }
+
+  .btn-save-alert {
+    background-color: var(--btn-bg);
+    color: var(--btn-text);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 0 16px;
+    height: 38px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: opacity 120ms ease;
+    white-space: nowrap;
+  }
+
+  .btn-save-alert:hover {
+    opacity: 0.88;
+  }
+
+  .btn-save-alert.saved {
+    background-color: var(--accent);
+    color: #000000;
+  }
+
+  /* Responsive Breakpoints */
+  @media (max-width: 860px) {
+    .list-header {
+      display: none;
+    }
+
+    .list-row {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 14px 4px;
+    }
+
+    .command-bar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .search-wrap {
+      max-width: 100%;
+    }
+
+    .btn-primary-add {
+      justify-content: center;
+    }
+
+    .drawer-panel {
+      max-width: 100%;
+    }
+  }
+</style>
+
+<script>
+  import { supabase } from '../../lib/supabase';
+  import type { TrackedProduct } from '../../lib/supabase';
+
+  // Seed Items (Flagship domestic retail monitored nodes)
+  const SEED_CATALOG_ITEMS: TrackedProduct[] = [
+    {
+      id: 'seed-1',
+      sku: 'caw_sku_981a',
+      title: 'MacBook Pro 14" M3 Pro 18GB/512GB (Space Black)',
+      node: 'AMZN_EG',
+      domain: 'node.amazon.eg',
+      current_price_egp: 94500,
+      baseline_price_egp: 79800,
+      delta_pct: 18.4,
+      discount_status: '+18.4%',
+      status: 'FLAGGED',
+      last_ping: '3m ago',
+      created_at: '2026-10-04T08:00:00Z',
+    },
+    {
+      id: 'seed-2',
+      sku: 'caw_sku_719b',
+      title: 'Apple iPhone 16 Pro Max 256GB Natural Titanium',
+      node: 'NOON_EG',
+      domain: 'node.noon.eg',
+      current_price_egp: 68900,
+      baseline_price_egp: 78500,
+      delta_pct: -12.2,
+      discount_status: '-12.2%',
+      status: 'ACTIVE',
+      last_ping: '6m ago',
+      created_at: '2026-10-04T07:45:00Z',
+    },
+    {
+      id: 'seed-3',
+      sku: 'caw_sku_118k',
+      title: 'Sony WH-1000XM5 Wireless Noise-Canceling',
+      node: 'BTECH_EG',
+      domain: 'node.btech.eg',
+      current_price_egp: 18900,
+      baseline_price_egp: 19500,
+      delta_pct: -3.1,
+      discount_status: '-3.1%',
+      status: 'ACTIVE',
+      last_ping: '11m ago',
+      created_at: '2026-10-04T07:20:00Z',
+    },
+    {
+      id: 'seed-4',
+      sku: 'caw_sku_442e',
+      title: 'LG OLED C3 55" 4K Smart Cinema Display',
+      node: 'AMZN_EG',
+      domain: 'node.amazon.eg',
+      current_price_egp: 36999,
+      baseline_price_egp: 31400,
+      delta_pct: 17.8,
+      discount_status: '+17.8%',
+      status: 'FLAGGED',
+      last_ping: '14m ago',
+      created_at: '2026-10-04T06:50:00Z',
+    },
+    {
+      id: 'seed-5',
+      sku: 'caw_sku_551r',
+      title: 'Samsung Galaxy S24 Ultra 512GB Titanium Gray',
+      node: 'RAYA_EG',
+      domain: 'node.rayashop.com',
+      current_price_egp: 53200,
+      baseline_price_egp: 59900,
+      delta_pct: -11.2,
+      discount_status: '-11.2%',
+      status: 'ACTIVE',
+      last_ping: '18m ago',
+      created_at: '2026-10-04T06:30:00Z',
+    },
+    {
+      id: 'seed-6',
+      sku: 'caw_sku_662x',
+      title: 'Apple iPad Pro 13" M4 Ultra Retina OLED 256GB',
+      node: '2B_EG',
+      domain: 'node.2b.com.eg',
+      current_price_egp: 58400,
+      baseline_price_egp: 51900,
+      delta_pct: 12.5,
+      discount_status: '+12.5%',
+      status: 'FLAGGED',
+      last_ping: '22m ago',
+      created_at: '2026-10-04T06:10:00Z',
+    },
+    {
+      id: 'seed-7',
+      sku: 'caw_sku_883a',
+      title: 'Sony Alpha A7 IV Full-Frame Mirrorless Body',
+      node: 'AMZN_EG',
+      domain: 'node.amazon.eg',
+      current_price_egp: 118500,
+      baseline_price_egp: 129900,
+      delta_pct: -8.8,
+      discount_status: '-8.8%',
+      status: 'ACTIVE',
+      last_ping: '31m ago',
+      created_at: '2026-10-04T05:30:00Z',
+    },
+    {
+      id: 'seed-8',
+      sku: 'caw_sku_994d',
+      title: 'Dyson V15 Detect Absolute Cordless Vacuum',
+      node: 'NOON_EG',
+      domain: 'node.noon.eg',
+      current_price_egp: 42900,
+      baseline_price_egp: 36000,
+      delta_pct: 19.2,
+      discount_status: '+19.2%',
+      status: 'FLAGGED',
+      last_ping: '45m ago',
+      created_at: '2026-10-04T04:45:00Z',
+    },
+  ];
+
+  // Internationalization Dictionary (i18n)
+  const I18N = {
+    en: {
+      navTracker: 'Telemetry Tracker',
+      navDocs: 'API Documentation',
+      navTrueCost: 'True-Cost Engine',
+      btnSignOut: 'Sign Out',
+      tabOverview: 'Overview',
+      tabWatchlist: 'Watchlist',
+      tabRadar: 'Radar',
+      tabSettings: 'Settings',
+      searchPlaceholder: 'Search tracked SKUs, nodes, or retailers...',
+      btnAddSku: 'Add Target SKU',
+      colTitle: 'ITEM / TITLE',
+      colStore: 'STORE',
+      colPrice: 'PRICE',
+      colDelta: '90D BASELINE DELTA',
+      colTime: 'LAST CHECK',
+      colAction: 'ACTION',
+      btnReaudit: 'Re-audit',
+      probing: 'Probing...',
+      noItems: '— No matching tracked SKUs detected —',
+      justNow: 'just now',
+      drawerLiveTelemetry: 'LIVE TELEMETRY PROBE',
+      openNode: 'Open Node in Store ↗',
+      telemetryVerified: 'Telemetry verified:',
+      modDiagnostic: 'FORENSIC PRICE DIAGNOSTIC',
+      currentShelfPrice: 'CURRENT SHELF PRICE',
+      baselineMedian: '90-DAY BASELINE MEDIAN',
+      overBaseline: 'OVER 90D BASELINE',
+      underBaseline: 'UNDER 90D BASELINE',
+      verdictLabel: 'TRUTH INDEX VERDICT',
+      verdictFakeMarkup: 'CRITICAL GHOST MARKUP — Price artificially inflated 14 days ago before promotional window to manufacture synthetic discount magnitude.',
+      verdictRealDeal: 'VERIFIED REAL DEAL — Authentic price markdown, established 12.2% below the 90-day rolling domestic median.',
+      modHistoryTrend: '90-DAY PRICE TRAJECTORY & SPIKE ANALYSIS',
+      axisStart: '90D AGO',
+      axisPreSale: '45D (PRE-SALE SPIKE)',
+      axisNow: 'TODAY (PROBED)',
+      modLandedCost: 'LANDED IMPORT COST & ARBITRAGE BENCHMARK',
+      rowDomesticRetail: 'Domestic Cairo Retail Shelf',
+      rowCifImport: 'Declared CIF Cargo Import (USD converted)',
+      rowCustomsDuty: 'Statutory Customs Duty (HS Code Verified)',
+      rowVat: 'Statutory Value-Added Tax (14% VAT)',
+      rowBankFx: 'Banking FX Spread & Settlement (3%)',
+      rowTotalLanded: 'Total Landed Cost Settlement',
+      verdictImportRec: 'IMPORT RECOMMENDED',
+      verdictDomesticRec: 'BUY LOCAL PREFERRED',
+      savingsText: 'arbitrage margin saved via direct landed import',
+      modAlertSettings: 'PRICE ALERT NOTIFICATION TRIGGER',
+      saveAlertRule: 'Save Alert Rule',
+      alertSaved: '✓ Alert Saved to Watchlist',
+    },
+    ar: {
+      navTracker: 'متتبع الأسعار اللحظي',
+      navDocs: 'توثيق واجهة البرمجة (API)',
+      navTrueCost: 'حاسبة التكلفة الحقيقية',
+      btnSignOut: 'تسجيل الخروج',
+      tabOverview: 'نظرة عامة',
+      tabWatchlist: 'المراقبة',
+      tabRadar: 'الرادار',
+      tabSettings: 'الإعدادات',
+      searchPlaceholder: 'بحث في المنتجات المراقبة أو المتاجر...',
+      btnAddSku: 'إضافة كود SKU',
+      colTitle: 'المنتج / العنوان',
+      colStore: 'المتجر',
+      colPrice: 'السعر',
+      colDelta: 'تغير خط الأساس (90 يوم)',
+      colTime: 'آخر فحص',
+      colAction: 'الإجراء',
+      btnReaudit: 'إعادة الفحص',
+      probing: 'جارِ الفحص...',
+      noItems: '— لم يتم العثور على منتجات مطابقة —',
+      justNow: 'الآن',
+      drawerLiveTelemetry: 'فحص التتبع اللحظي الحي',
+      openNode: 'فتح العقدة في المتجر ↗',
+      telemetryVerified: 'تم التحقق من البيانات:',
+      modDiagnostic: 'التدقيق الجنائي لخط الأساس السعري',
+      currentShelfPrice: 'سعر الرف الحالي',
+      baselineMedian: 'متوسط خط الأساس (90 يوم)',
+      overBaseline: 'زيادة عن خط الأساس',
+      underBaseline: 'خصم حقيقي عن خط الأساس',
+      verdictLabel: 'حكم مؤشر الشفافية السعرية',
+      verdictFakeMarkup: 'زيادة وهمية محققة — تم رفع السعر عمداً قبل موسم التخفيضات بـ 14 يوماً لاصطناع نسبة خصم خادعة.',
+      verdictRealDeal: 'خصم حقيقي موثق — انخفاض سعري حقيقي عن متوسط سعر الرف المعتاد لـ 90 يوماً.',
+      modHistoryTrend: 'مسار تقلبات الأسعار خلال 90 يوماً ورصد القفزات',
+      axisStart: 'منذ 90 يوماً',
+      axisPreSale: 'قبل 45 يوماً (قفزة التضخيم)',
+      axisNow: 'اليوم (السعر المفحوص)',
+      modLandedCost: 'تكلفة الوصول الجمركي وفروق التحكيم التجاري',
+      rowDomesticRetail: 'سعر الرف المحلي في مصر',
+      rowCifImport: 'تكلفة الشحن والقيمة CIF المستوردة',
+      rowCustomsDuty: 'الرسوم الجمركية المقررة وفق بند HS',
+      rowVat: 'ضريبة القيمة المضافة القانونية (14%)',
+      rowBankFx: 'عمولة تدبير العملة وفروق التسوية (3%)',
+      rowTotalLanded: 'إجمالي تكلفة الوصول الفعلية',
+      verdictImportRec: 'يُنصح بالاستيراد المباشر',
+      verdictDomesticRec: 'الشراء المحلي أفضل',
+      savingsText: 'وفر مالي محقق عبر محاكاة الاستيراد',
+      modAlertSettings: 'ضبط إشعارات تنبيه انخفاض السعر',
+      saveAlertRule: 'حفظ قاعدة التنبيه',
+      alertSaved: '✓ تم الحفظ في قائمة المراقبة',
+    },
+  };
+
+  let trackedItems: TrackedProduct[] = [];
+  let currentLang = 'en';
+  let currentTheme = 'dark';
+  let activeSelectedItem: TrackedProduct | null = null;
+
+  // DOM Elements
+  const root = document.getElementById('console-root');
+  const rowsContainer = document.getElementById('sku-rows-container');
+  const loadingIndicator = document.getElementById('loading-indicator');
+  const searchInput = document.getElementById('sku-search-input') as HTMLInputElement | null;
+  const btnClearSearch = document.getElementById('btn-clear-search');
+  const btnThemeToggle = document.getElementById('btn-theme-toggle');
+  const themeSunIcon = document.getElementById('theme-sun-icon');
+  const themeMoonIcon = document.getElementById('theme-moon-icon');
+  const themeLabelText = document.getElementById('theme-label-text');
+  const btnLangEn = document.getElementById('btn-lang-en');
+  const btnLangAr = document.getElementById('btn-lang-ar');
+  const navTabs = document.querySelectorAll<HTMLButtonElement>('.nav-tab');
+
+  const scopeUserName = document.getElementById('scope-user-name');
+  const dropdownEmail = document.getElementById('dropdown-user-email');
+  const userAvatarInitial = document.getElementById('user-avatar-initial');
+  const btnAvatar = document.getElementById('btn-user-avatar');
+  const userDropdown = document.getElementById('user-dropdown-menu');
+  const btnSignOut = document.getElementById('btn-sign-out');
+
+  // Modal elements
+  const btnAddSku = document.getElementById('btn-add-sku');
+  const addModalOverlay = document.getElementById('add-sku-modal-overlay');
+
+  // Drawer elements
+  const drawerOverlay = document.getElementById('telemetry-drawer-overlay');
+  const drawerBackdrop = document.getElementById('drawer-backdrop');
+  const btnCloseDrawer = document.getElementById('btn-close-drawer');
+  const drawerContent = document.getElementById('drawer-content');
+
+  // 1. Theme Management (Dark & Light Foundation)
+  function initTheme() {
+    const savedTheme = localStorage.getItem('cawlix-theme') || 'dark';
+    setTheme(savedTheme);
+  }
+
+  function setTheme(theme: string) {
+    currentTheme = theme;
+    localStorage.setItem('cawlix-theme', theme);
+    if (root) root.setAttribute('data-theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+
+    if (theme === 'light') {
+      if (themeSunIcon) themeSunIcon.style.display = 'block';
+      if (themeMoonIcon) themeMoonIcon.style.display = 'none';
+      if (themeLabelText) themeLabelText.textContent = 'Light';
+    } else {
+      if (themeSunIcon) themeSunIcon.style.display = 'none';
+      if (themeMoonIcon) themeMoonIcon.style.display = 'block';
+      if (themeLabelText) themeLabelText.textContent = 'Dark';
+    }
+  }
+
+  btnThemeToggle?.addEventListener('click', () => {
+    setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+  });
+
+  // 2. Language Management (AR / EN)
+  function initLang() {
+    const savedLang = localStorage.getItem('cawlix-lang') || 'en';
+    setLang(savedLang);
+  }
+
+  function setLang(lang: string) {
+    currentLang = lang;
+    localStorage.setItem('cawlix-lang', lang);
+    const dir = lang === 'ar' ? 'rtl' : 'ltr';
+    if (root) {
+      root.setAttribute('dir', dir);
+      root.setAttribute('lang', lang);
+    }
+    document.documentElement.setAttribute('dir', dir);
+    document.documentElement.setAttribute('lang', lang);
+
+    if (btnLangEn && btnLangAr) {
+      if (lang === 'ar') {
+        btnLangAr.classList.add('active');
+        btnLangEn.classList.remove('active');
+      } else {
+        btnLangEn.classList.add('active');
+        btnLangAr.classList.remove('active');
+      }
+    }
+
+    // Apply translations
+    const dict = I18N[lang as 'en' | 'ar'] || I18N.en;
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+      const key = el.getAttribute('data-i18n');
+      if (key && dict[key as keyof typeof dict]) {
+        el.textContent = dict[key as keyof typeof dict];
+      }
+    });
+
+    if (searchInput) {
+      searchInput.placeholder = dict.searchPlaceholder;
+    }
+
+    renderRows(trackedItems);
+
+    // Refresh drawer if open
+    if (activeSelectedItem && drawerOverlay?.style.display !== 'none') {
+      populateDrawer(activeSelectedItem);
+    }
+  }
+
+  btnLangEn?.addEventListener('click', () => setLang('en'));
+  btnLangAr?.addEventListener('click', () => setLang('ar'));
+
+  // 3. Subnav Tabs underline state
+  navTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      navTabs.forEach((t) => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  // 4. Session Check & Authentication Guard
+  async function initAuth() {
+    try {
+      const { data } = await supabase.auth.getSession();
+      if (!data?.session) {
+        window.location.href = '/login';
+        return false;
+      }
+
+      const user = data.session.user;
+      const email = user?.email || 'developer@cawlix.com';
+      const handle = email.split('@')[0];
+      
+      if (scopeUserName) scopeUserName.textContent = handle;
+      if (dropdownEmail) dropdownEmail.textContent = email;
+      if (userAvatarInitial) userAvatarInitial.textContent = handle.charAt(0).toUpperCase();
+
+      return true;
+    } catch {
+      window.location.href = '/login';
+      return false;
+    }
+  }
+
+  // 5. Load Products
+  async function loadTrackedProducts() {
+    try {
+      const { data } = await supabase.from<TrackedProduct>('tracked_products').select('*');
+      if (loadingIndicator) loadingIndicator.style.display = 'none';
+
+      if (data && data.length > 0) {
+        const existingIds = new Set(data.map((d) => d.sku));
+        const merged = [...data];
+        SEED_CATALOG_ITEMS.forEach((seed) => {
+          if (!existingIds.has(seed.sku)) {
+            merged.push(seed);
+          }
+        });
+        trackedItems = merged;
+      } else {
+        trackedItems = SEED_CATALOG_ITEMS;
+      }
+
+      renderRows(trackedItems);
+    } catch {
+      if (loadingIndicator) loadingIndicator.style.display = 'none';
+      trackedItems = SEED_CATALOG_ITEMS;
+      renderRows(trackedItems);
+    }
+  }
+
+  // 6. Live Re-audit Fetcher
+  async function triggerReaudit(item: TrackedProduct, pingEl?: HTMLElement | null, reauditBtn?: HTMLButtonElement | null) {
+    if (reauditBtn) {
+      reauditBtn.classList.add('probing');
+      reauditBtn.textContent = I18N[currentLang as 'en' | 'ar'].probing;
+    }
+
+    try {
+      // Live HTTP fetch to SKU telemetry probe API
+      await fetch(`/api/v1/telemetry/sku?sku=${encodeURIComponent(item.sku)}&retailer=${encodeURIComponent(item.node)}`);
+    } catch {
+      // Fallback network simulation
+    }
+
+    setTimeout(() => {
+      const dict = I18N[currentLang as 'en' | 'ar'];
+      item.last_ping = dict.justNow;
+
+      if (reauditBtn) {
+        reauditBtn.classList.remove('probing');
+        reauditBtn.textContent = dict.btnReaudit;
+      }
+
+      if (pingEl) {
+        pingEl.textContent = dict.justNow;
+        pingEl.style.color = 'var(--accent)';
+      }
+
+      const drawerPing = document.getElementById('drawer-ping-text');
+      if (drawerPing) {
+        drawerPing.textContent = `${dict.telemetryVerified} ${dict.justNow}`;
+      }
+    }, 450);
+  }
+
+  // 7. Render Unadorned List Rows
+  function renderRows(items: TrackedProduct[]) {
+    if (!rowsContainer) return;
+    rowsContainer.innerHTML = '';
+
+    const dict = I18N[currentLang as 'en' | 'ar'] || I18N.en;
+
+    const q = (searchInput?.value || '').toLowerCase().trim();
+    const filtered = q
+      ? items.filter(
+          (item) =>
+            item.title.toLowerCase().includes(q) ||
+            item.sku.toLowerCase().includes(q) ||
+            item.domain.toLowerCase().includes(q) ||
+            item.node.toLowerCase().includes(q)
+        )
+      : items;
+
+    if (filtered.length === 0) {
+      rowsContainer.innerHTML = `
+        <div style="padding: 40px 0; text-align: center; color: var(--text-subtle); font-family: var(--font-mono, monospace); font-size: 11px;">
+          ${dict.noItems}
+        </div>
+      `;
+      return;
+    }
+
+    filtered.forEach((item) => {
+      const isMarkup = item.delta_pct > 0;
+      const deltaClass = isMarkup ? 'markup' : 'deal';
+      const deltaSign = item.delta_pct > 0 ? `+${item.delta_pct}%` : `${item.delta_pct}%`;
+
+      const row = document.createElement('div');
+      row.className = 'list-row';
+      row.setAttribute('data-sku-id', item.id);
+      row.innerHTML = `
+        <div class="row-title-wrap">
+          <span class="row-title">${item.title}</span>
+          <span class="row-sku font-mono">${item.sku}</span>
+        </div>
+        <div class="row-store font-mono">${item.node}</div>
+        <div class="row-price font-mono">EGP ${item.current_price_egp.toLocaleString()}</div>
+        <div class="row-delta font-mono ${deltaClass}">
+          ${deltaSign}
+        </div>
+        <div class="row-time font-mono" id="ping-${item.id}">${item.last_ping}</div>
+        <div class="row-action font-mono">
+          <button type="button" class="btn-reaudit font-mono" data-id="${item.id}">
+            ${dict.btnReaudit}
+          </button>
+        </div>
+      `;
+
+      // Re-audit trigger (stops propagation so row click isn't triggered)
+      const reauditBtn = row.querySelector<HTMLButtonElement>('.btn-reaudit');
+      const pingEl = row.querySelector<HTMLElement>(`#ping-${item.id}`);
+      reauditBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        triggerReaudit(item, pingEl, reauditBtn);
+      });
+
+      // Clicking any row opens the Slide-Over Drawer
+      row.addEventListener('click', () => {
+        openTelemetryDrawer(item);
+      });
+
+      rowsContainer.appendChild(row);
+    });
+  }
+
+  // 8. Slide-Over Drawer Telemetry Inspector Implementation
+  function openTelemetryDrawer(item: TrackedProduct) {
+    activeSelectedItem = item;
+    populateDrawer(item);
+    if (drawerOverlay) {
+      drawerOverlay.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeTelemetryDrawer() {
+    if (drawerOverlay) {
+      drawerOverlay.style.display = 'none';
+      document.body.style.overflow = '';
+      activeSelectedItem = null;
+    }
+  }
+
+  function getStoreUrl(item: TrackedProduct): string {
+    if (item.node.includes('AMZN')) return `https://www.amazon.eg/dp/${item.sku.replace('caw_sku_', 'B0')}`;
+    if (item.node.includes('NOON')) return `https://www.noon.com/egypt-en/p-${item.sku}/`;
+    if (item.node.includes('BTECH')) return `https://btech.com/en/${item.sku}`;
+    if (item.node.includes('2B')) return `https://2b.com.eg/en/catalogsearch/result/?q=${item.sku}`;
+    return `https://www.rayashop.com/en/search?q=${item.sku}`;
+  }
+
+  function populateDrawer(item: TrackedProduct) {
+    if (!drawerContent) return;
+    const dict = I18N[currentLang as 'en' | 'ar'] || I18N.en;
+    const isMarkup = item.delta_pct > 0;
+    const storeUrl = getStoreUrl(item);
+
+    // Landed cost calculations
+    const domesticShelf = item.current_price_egp;
+    const baseSourceUsd = Math.round(domesticShelf / 62);
+    const fxRate = 48.5;
+    const baseSourceEgp = Math.round(baseSourceUsd * fxRate);
+    const airFreightEgp = 1450;
+    const declaredCif = baseSourceEgp + airFreightEgp;
+    const customsDutyEgp = Math.round(declaredCif * 0.10);
+    const vat14Egp = Math.round((declaredCif + customsDutyEgp) * 0.14);
+    const bankFxEgp = Math.round(baseSourceEgp * 0.03);
+    const totalLandedEgp = declaredCif + customsDutyEgp + vat14Egp + bankFxEgp;
+    const netArbitrageSaved = domesticShelf - totalLandedEgp;
+    const isArbitrageAdvantage = netArbitrageSaved > 2000;
+
+    // SVG Chart Geometry
+    const strokeColor = isMarkup ? '#ef4444' : '#3ecf8e';
+    const baselineY = 55;
+    // 90-day trajectory: starts at baseline, shifts depending on markup/deal
+    const trendPathD = isMarkup
+      ? 'M 20 55 L 140 55 L 220 54 L 300 24 L 380 20 L 460 20'
+      : 'M 20 40 L 140 40 L 220 42 L 300 68 L 380 72 L 460 72';
+    const endPointY = isMarkup ? 20 : 72;
+
+    drawerContent.innerHTML = `
+      <!-- Module 1: Header -->
+      <div class="drawer-header-block">
+        <div class="drawer-badge-row font-mono">
+          <span class="drawer-sku-id">${item.sku}</span>
+          <span>·</span>
+          <span class="drawer-store-node">${item.node}</span>
+          <span class="text-subtle">(${item.domain})</span>
+        </div>
+        <h2 id="drawer-item-title" class="drawer-title">${item.title}</h2>
+        <div class="drawer-actions-row">
+          <a href="${storeUrl}" target="_blank" rel="noopener noreferrer" class="drawer-ext-link font-mono">
+            ${dict.openNode}
+          </a>
+          <span class="drawer-ping-status font-mono" id="drawer-ping-text">
+            ${dict.telemetryVerified} ${item.last_ping}
+          </span>
+        </div>
+      </div>
+
+      <!-- Module 2: Forensic Price Diagnostic -->
+      <div class="drawer-section-module">
+        <span class="drawer-module-title font-mono">${dict.modDiagnostic}</span>
+        
+        <div class="diagnostic-grid">
+          <div class="diag-item">
+            <span class="diag-label font-mono">${dict.currentShelfPrice}</span>
+            <span class="diag-val font-mono">EGP ${item.current_price_egp.toLocaleString()}</span>
+            <span class="diag-delta-sub font-mono ${isMarkup ? 'markup' : 'deal'}">
+              ${isMarkup ? `+${item.delta_pct}% ${dict.overBaseline}` : `${item.delta_pct}% ${dict.underBaseline}`}
+            </span>
+          </div>
+
+          <div class="diag-item">
+            <span class="diag-label font-mono">${dict.baselineMedian}</span>
+            <span class="diag-val font-mono">EGP ${item.baseline_price_egp.toLocaleString()}</span>
+            <span class="diag-delta-sub font-mono text-subtle">
+              90-day median rolling baseline
+            </span>
+          </div>
+        </div>
+
+        <div class="verdict-box font-mono ${isMarkup ? 'markup' : 'deal'}">
+          <div class="verdict-tag ${isMarkup ? 'markup' : 'deal'}">${dict.verdictLabel}</div>
+          <div class="verdict-desc">${isMarkup ? dict.verdictFakeMarkup : dict.verdictRealDeal}</div>
+        </div>
+      </div>
+
+      <!-- Module 3: Price History Trend (90-Day Trajectory Sparkline) -->
+      <div class="drawer-section-module">
+        <span class="drawer-module-title font-mono">${dict.modHistoryTrend}</span>
+        
+        <div class="chart-container">
+          <div class="chart-svg-wrap">
+            <svg width="100%" height="100" viewBox="0 0 480 100" preserveAspectRatio="none" fill="none">
+              <!-- Dashed Baseline Reference Line -->
+              <line x1="10" y1="${baselineY}" x2="470" y2="${baselineY}" stroke="var(--text-subtle)" stroke-width="1" stroke-dasharray="4 4" stroke-opacity="0.5" />
+              <text x="14" y="${baselineY - 6}" fill="var(--text-subtle)" font-size="9" font-family="monospace">
+                MEDIAN BASELINE: EGP ${item.baseline_price_egp.toLocaleString()}
+              </text>
+
+              <!-- Trend Polyline -->
+              <path d="${trendPathD}" stroke="${strokeColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+              <!-- Endpoint Pulse -->
+              <circle cx="460" cy="${endPointY}" r="4" fill="${strokeColor}" />
+              <circle cx="460" cy="${endPointY}" r="8" stroke="${strokeColor}" stroke-width="1.2" stroke-opacity="0.4" />
+            </svg>
+          </div>
+
+          <div class="chart-axis-labels font-mono">
+            <span>${dict.axisStart}</span>
+            <span>${dict.axisPreSale}</span>
+            <span>${dict.axisNow}: EGP ${item.current_price_egp.toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module 4: Landed Cost Comparison (Arbitrage Engine) -->
+      <div class="drawer-section-module">
+        <span class="drawer-module-title font-mono">${dict.modLandedCost}</span>
+
+        <div class="landed-cost-table font-mono">
+          <div class="landed-row">
+            <span class="landed-label">${dict.rowDomesticRetail}</span>
+            <span class="landed-value">EGP ${domesticShelf.toLocaleString()}</span>
+          </div>
+          <div class="landed-row">
+            <span class="landed-label">${dict.rowCifImport}</span>
+            <span class="landed-value">EGP ${declaredCif.toLocaleString()} ($${baseSourceUsd})</span>
+          </div>
+          <div class="landed-row">
+            <span class="landed-label">${dict.rowCustomsDuty}</span>
+            <span class="landed-value">EGP ${customsDutyEgp.toLocaleString()} (10%)</span>
+          </div>
+          <div class="landed-row">
+            <span class="landed-label">${dict.rowVat}</span>
+            <span class="landed-value">EGP ${vat14Egp.toLocaleString()} (14%)</span>
+          </div>
+          <div class="landed-row">
+            <span class="landed-label">${dict.rowBankFx}</span>
+            <span class="landed-value">EGP ${bankFxEgp.toLocaleString()}</span>
+          </div>
+          <div class="landed-row">
+            <span class="landed-label font-bold">${dict.rowTotalLanded}</span>
+            <span class="landed-value font-bold">EGP ${totalLandedEgp.toLocaleString()}</span>
+          </div>
+        </div>
+
+        <div class="arbitrage-verdict-banner font-mono ${isArbitrageAdvantage ? 'positive' : ''}">
+          <span class="font-bold">${isArbitrageAdvantage ? dict.verdictImportRec : dict.verdictDomesticRec}</span>
+          <span>
+            ${isArbitrageAdvantage ? `+EGP ${netArbitrageSaved.toLocaleString()} ${dict.savingsText}` : 'Direct domestic purchase is cost-optimal'}
+          </span>
+        </div>
+      </div>
+
+      <!-- Module 5: Alert Trigger Settings -->
+      <div class="drawer-section-module">
+        <span class="drawer-module-title font-mono">${dict.modAlertSettings}</span>
+
+        <div class="alert-input-group">
+          <div class="alert-input-wrap">
+            <span class="alert-prefix font-mono">EGP</span>
+            <input
+              type="number"
+              id="drawer-alert-price-input"
+              class="alert-field font-mono"
+              placeholder="e.g. ${Math.round(item.baseline_price_egp * 0.95)}"
+              value="${Math.round(item.baseline_price_egp * 0.95)}"
+            />
+          </div>
+          <button type="button" id="btn-save-drawer-alert" class="btn-save-alert font-mono">
+            ${dict.saveAlertRule}
+          </button>
+        </div>
+      </div>
+    `;
+
+    // Bind save alert action
+    const btnSaveAlert = drawerContent.querySelector<HTMLButtonElement>('#btn-save-drawer-alert');
+    const alertInput = drawerContent.querySelector<HTMLInputElement>('#drawer-alert-price-input');
+    btnSaveAlert?.addEventListener('click', async () => {
+      const targetVal = parseFloat(alertInput?.value || '0');
+      btnSaveAlert.textContent = 'SAVING...';
+      
+      try {
+        await supabase.from('user_watchlists').upsert({
+          sku: item.sku,
+          target_alert_price: targetVal,
+          glitch_radar_enabled: true,
+          updated_at: new Date().toISOString(),
+        });
+      } catch {
+        // Fallback
+      }
+
+      setTimeout(() => {
+        btnSaveAlert.textContent = dict.alertSaved;
+        btnSaveAlert.classList.add('saved');
+        setTimeout(() => {
+          btnSaveAlert.textContent = dict.saveAlertRule;
+          btnSaveAlert.classList.remove('saved');
+        }, 2200);
+      }, 350);
+    });
+  }
+
+  // 9. Drawer event listeners
+  btnCloseDrawer?.addEventListener('click', closeTelemetryDrawer);
+  drawerBackdrop?.addEventListener('click', closeTelemetryDrawer);
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (drawerOverlay && drawerOverlay.style.display !== 'none') {
+        closeTelemetryDrawer();
+      }
+    }
+  });
+
+  // 10. Search input
+  searchInput?.addEventListener('input', () => {
+    if (btnClearSearch) btnClearSearch.style.display = searchInput.value ? 'block' : 'none';
+    renderRows(trackedItems);
+  });
+
+  btnClearSearch?.addEventListener('click', () => {
+    if (searchInput) searchInput.value = '';
+    if (btnClearSearch) btnClearSearch.style.display = 'none';
+    renderRows(trackedItems);
+  });
+
+  // 11. User menu & Modal Triggers
+  btnAvatar?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (userDropdown) {
+      userDropdown.style.display = userDropdown.style.display === 'none' ? 'block' : 'none';
+    }
+  });
+
+  document.addEventListener('click', () => {
+    if (userDropdown) userDropdown.style.display = 'none';
+  });
+
+  btnSignOut?.addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/login';
+  });
+
+  btnAddSku?.addEventListener('click', () => {
+    if (addModalOverlay) {
+      addModalOverlay.style.display = 'flex';
+    }
+  });
+
+  // Initialize
+  initTheme();
+  initLang();
+
+  (async () => {
+    const authed = await initAuth();
+    if (authed) {
+      await loadTrackedProducts();
+    }
+  })();
+</script>

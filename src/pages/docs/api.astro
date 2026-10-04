@@ -12,60 +12,133 @@ import Footer from '../../components/astro/Footer.astro';
 
   <main style="min-height: 100vh; background-color: #0A0A0A; padding-top: 130px; padding-bottom: 100px;">
     <div style="max-width: 960px; margin: 0 auto; padding: 0 24px;">
-      <div style="margin-bottom: 48px;">
-        <span class="feature-group-label" style="color: #3ECF8E; margin-bottom: 12px;">
-          // REST_API_v1_REFERENCE
-        </span>
+      <div style="margin-bottom: 48px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 32px;">
+        <div style="font-family: var(--font-mono, monospace); font-size: 0.75rem; color: #3ECF8E; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px;">
+          SYSTEM SPECIFICATION • REST API V1
+        </div>
         <h1
-          class="text-display"
-          style="font-size: clamp(2.25rem, 4.5vw, 3.5rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1.1; margin: 0 0 16px 0;"
+          style="font-size: clamp(2.25rem, 4.5vw, 3.25rem); font-weight: 600; letter-spacing: -0.03em; line-height: 1.15; margin: 0 0 16px 0; color: #FFFFFF;"
         >
           Programmatic Price Intelligence
         </h1>
-        <p style="font-size: 1.0625rem; color: #888888; line-height: 1.6; margin: 0;">
-          Deterministic JSON responses for SKU verification, time-series audits, and landed-cost parity.
+        <p style="font-size: 1.0625rem; color: #888888; line-height: 1.6; margin: 0; max-width: 680px;">
+          Deterministic JSON responses for SKU verification, time-series audits, and landed-cost parity across 12 indexed Egyptian retailers.
         </p>
       </div>
 
-      <!-- Sample Endpoint Card -->
-      <div style="background: #111111; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; overflow: hidden; margin-bottom: 32px;">
-        <div style="padding: 16px 20px; background: #161616; border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: space-between;">
-          <div style="display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 0.8125rem;">
-            <span style="background: #3ECF8E; color: #0A0A0A; font-weight: 700; padding: 2px 8px; border-radius: 4px;">GET</span>
-            <span style="color: #FFFFFF;">https://api.cawlix.com/v1/telemetry/probe?sku=SONY-WH-1000XM5</span>
+      <!-- Endpoint 1: SKU Telemetry -->
+      <section style="margin-bottom: 48px; border-b: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 32px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 10px; font-family: var(--font-mono, monospace); font-size: 0.8125rem;">
+            <span style="color: #3ECF8E; font-weight: 700;">GET</span>
+            <span style="color: #FFFFFF;">/api/v1/telemetry/sku</span>
           </div>
-          <span style="color: #737373; font-family: var(--font-mono); font-size: 0.6875rem;">Auth: Bearer Token</span>
+          <span style="color: #737373; font-family: var(--font-mono, monospace); font-size: 0.6875rem;">AUTH: BEARER TOKEN</span>
         </div>
-
-        <div style="padding: 24px; font-family: var(--font-mono); font-size: 0.8125rem; background: #0A0A0A; color: #D4D4D4; line-height: 1.6; overflow-x: auto;">
+        <p style="font-size: 0.875rem; color: #888888; margin-bottom: 16px;">
+          Returns canonical retailer SKU telemetry, current shelf price in EGP, in-stock status, and probe latency.
+        </p>
+        <div style="padding: 16px; font-family: var(--font-mono, monospace); font-size: 0.75rem; background: rgba(255, 255, 255, 0.02); border-left: 2px solid #3ECF8E; color: #D4D4D4; line-height: 1.6; overflow-x: auto;">
           <pre style="margin: 0;">{`{
-  "sku": "SONY-WH-1000XM5",
-  "status": "FLAGGED",
-  "ghost_score": 22,
-  "authentic_baseline_egp": 24000,
-  "current_listed_price_egp": 28320,
-  "artificial_spike_detected": true,
-  "spike_magnitude": "+18.0%",
-  "retailers_polled": 12,
-  "fastest_probe_latency_ms": 78,
-  "us_import_landed_parity": {
-    "us_msrp_usd": 399,
-    "fx_rate": 50.48,
-    "tariff_code": "8517.13",
-    "tariff_pct": 0,
-    "statutory_vat_pct": 14,
-    "total_landed_cost_egp": 22850
+  "status": "success",
+  "data": {
+    "sku": "AMZN_EG_B0CHX1W2X8",
+    "retailer": "AMZN_EG",
+    "shelf_price_egp": 94500,
+    "in_stock": true,
+    "probe_latency_ms": 118,
+    "timestamp": "2026-10-04T08:00:00Z"
   }
 }`}</pre>
         </div>
-      </div>
+      </section>
 
-      <div style="display: flex; gap: 12px;">
+      <!-- Endpoint 2: Ghost Discount Audit -->
+      <section style="margin-bottom: 48px; border-b: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 32px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 10px; font-family: var(--font-mono, monospace); font-size: 0.8125rem;">
+            <span style="color: #3ECF8E; font-weight: 700;">GET</span>
+            <span style="color: #FFFFFF;">/api/v1/audit/ghost-discount</span>
+          </div>
+          <span style="color: #737373; font-family: var(--font-mono, monospace); font-size: 0.6875rem;">AUTH: BEARER TOKEN</span>
+        </div>
+        <p style="font-size: 0.875rem; color: #888888; margin-bottom: 16px;">
+          Calculates rolling 90-day median pricing velocity to audit synthetic markups and return verified deal authenticity.
+        </p>
+        <div style="padding: 16px; font-family: var(--font-mono, monospace); font-size: 0.75rem; background: rgba(255, 255, 255, 0.02); border-left: 2px solid #3ECF8E; color: #D4D4D4; line-height: 1.6; overflow-x: auto;">
+          <pre style="margin: 0;">{`{
+  "status": "success",
+  "sku": "AMZN_EG_B0CHX1W2X8",
+  "window_days": 90,
+  "baseline_median_egp": 28500,
+  "current_shelf_egp": 29900,
+  "truth_index_pct": 4.91,
+  "advertised_discount_pct": 32.9,
+  "real_discount_pct": -4.9,
+  "pre_sale_spike_detected": false,
+  "spike_magnitude_egp": 1400,
+  "authenticity_score": 62,
+  "verdict": "MODERATE_MARKDOWN_RISK"
+}`}</pre>
+        </div>
+      </section>
+
+      <!-- Endpoint 3: Landed-Cost Arbitrage -->
+      <section style="margin-bottom: 48px; border-b: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 32px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 10px; font-family: var(--font-mono, monospace); font-size: 0.8125rem;">
+            <span style="color: #3ECF8E; font-weight: 700;">GET</span>
+            <span style="color: #FFFFFF;">/api/v1/arbitrage/landed-cost</span>
+          </div>
+          <span style="color: #737373; font-family: var(--font-mono, monospace); font-size: 0.6875rem;">AUTH: BEARER TOKEN</span>
+        </div>
+        <p style="font-size: 0.875rem; color: #888888; margin-bottom: 16px;">
+          Computes out-of-pocket settlement costs including official Egyptian Customs HS tariffs, 14% statutory VAT, air cargo, and bank commissions.
+        </p>
+        <div style="padding: 16px; font-family: var(--font-mono, monospace); font-size: 0.75rem; background: rgba(255, 255, 255, 0.02); border-left: 2px solid #3ECF8E; color: #D4D4D4; line-height: 1.6; overflow-x: auto;">
+          <pre style="margin: 0;">{`{
+  "status": "success",
+  "calculation_parameters": {
+    "origin_hub": "JFK",
+    "source_price_usd": 1299,
+    "weight_kg": 1.5,
+    "hs_category": "laptop",
+    "hs_code": "8471.30",
+    "effective_fx_rate": 48.5,
+    "statutory_duty_pct": 0
+  },
+  "cost_breakdown_egp": {
+    "source_price_shelf": 63002,
+    "air_freight_cargo": 1601,
+    "declared_cif_subtotal": 64603,
+    "customs_duty": 0,
+    "statutory_vat_14pct": 9044,
+    "banking_fx_commission_3pct": 1890,
+    "total_landed_settlement": 75537
+  },
+  "local_benchmark_comparison": {
+    "domestic_cairo_retail_egp": 85052,
+    "net_arbitrage_delta_egp": 9515,
+    "arbitrage_margin_pct": 11.2,
+    "verdict": "IMPORT_RECOMMENDED"
+  }
+}`}</pre>
+        </div>
+      </section>
+
+      <!-- Action Row -->
+      <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+        <a
+          href="/docs"
+          style="background: #3ECF8E; color: #0A0A0A; font-weight: 700; font-size: 0.8125rem; padding: 10px 20px; border-radius: 6px; text-decoration: none;"
+        >
+          View Full Interactive Documentation
+        </a>
         <a
           href="/pricing"
-          style="background: #3ECF8E; color: #0A0A0A; font-weight: 700; font-size: 0.875rem; padding: 10px 20px; border-radius: 8px; text-decoration: none;"
+          style="color: #FFFFFF; font-size: 0.8125rem; font-family: var(--font-mono, monospace); text-decoration: none; border-bottom: 1px solid rgba(255, 255, 255, 0.3);"
         >
-          Request Developer API Key
+          Request Enterprise Key &rarr;
         </a>
       </div>
     </div>

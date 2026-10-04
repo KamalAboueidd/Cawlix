@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/landing/Footer';
 
@@ -15,10 +15,10 @@ const RELEASES = [
     ],
   },
   {
-    version: 'v2.3.1',
-    date: 'SEPTEMBER 18, 2026',
+    version: 'v2.3.2',
+    date: 'SEPTEMBER 21, 2026',
     isLatest: false,
-    headline: 'Real-Time Parallel FX Stream & Checkout Surcharge Detection',
+    headline: 'Commercial Bank FX Stream & Checkout Surcharge Detection',
     deliverables: [
       'Connected direct commercial bank FX clearing feeds (CIB / NBE) for live USD-to-EGP conversion.',
       'Integrated detection of administrative fee surcharges on 0% interest BNPL plans.',

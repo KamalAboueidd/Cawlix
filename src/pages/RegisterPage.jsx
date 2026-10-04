@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import cawlixLogo from '../assets/ICon.png';
+
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -7,12 +10,26 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
+  // Session Check & Auto-Redirect on page mount
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (data?.session) {
+          window.location.href = '/console';
+        }
+      } catch {
+        // Ignore session read errors
+      }
+    })();
+  }, []);
+
   const handleGoogleSignup = async () => {
     setErrorMsg('');
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: `${window.location.origin}/tracker` },
+        options: { redirectTo: `${window.location.origin}/console` },
       });
       if (error) setErrorMsg(error.message);
     } catch (err) {
@@ -24,22 +41,27 @@ export default function RegisterPage() {
     e.preventDefault();
     setErrorMsg('');
 
-    if (!email) {
-      setErrorMsg('Please enter a valid email address.');
+    const cleanEmail = email.trim();
+    if (!cleanEmail || !EMAIL_REGEX.test(cleanEmail)) {
+      setErrorMsg('Please enter a valid work or personal email address.');
       return;
     }
-    if (!password || password.length < 6) {
-      setErrorMsg('Password must contain at least 6 characters.');
+    if (!password || password.length < 8) {
+      setErrorMsg('Password must contain at least 8 characters.');
+      return;
+    }
+    if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
+      setErrorMsg('Password must include both letters and numbers for telemetry entropy.');
       return;
     }
 
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { error } = await supabase.auth.signUp({ email: cleanEmail, password });
       if (error) {
         setErrorMsg(error.message);
       } else {
-        window.location.href = '/tracker';
+        window.location.href = '/console';
       }
     } catch (err) {
       setErrorMsg(err.message || 'Registration failed.');
@@ -63,25 +85,48 @@ export default function RegisterPage() {
     }}>
       {/* Top Anchor Brand */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
-        <a href="/" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '6px' }}>
-          <svg width="28" height="28" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M24 4L6 14V34L24 44L42 34V14L24 4Z" stroke="#3ECF8E" strokeWidth="2.5" strokeLinejoin="round" />
-            <path d="M24 14L14 20V30L24 36L34 30V20L24 14Z" fill="rgba(62, 207, 142, 0.12)" stroke="#3ECF8E" strokeWidth="1.75" />
-            <circle cx="24" cy="24" r="3" fill="#3ECF8E" />
-          </svg>
+        <a
+          href="/"
+          aria-label="Return to Cawlix Terminal"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '10px',
+            textDecoration: 'none',
+            padding: '6px 12px',
+            borderRadius: '8px',
+            transition: 'transform 150ms ease, opacity 150ms ease',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.92'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
+        >
+          <img
+            src={cawlixLogo}
+            alt="Cawlix Logo"
+            width={28}
+            height={28}
+            style={{ width: '28px', height: '28px', objectFit: 'contain', display: 'block' }}
+          />
+          <span style={{
+            fontSize: '1.1875rem',
+            fontWeight: 700,
+            color: '#FFFFFF',
+            letterSpacing: '-0.02em',
+            fontFamily: 'var(--font-sans, system-ui, sans-serif)',
+          }}>
+            Cawlix
+          </span>
         </a>
       </div>
 
-      {/* Form Shell: Max 380px Vercel / Supabase Spec */}
+      {/* Form Shell: Max 400px Container Bounds */}
       <div style={{
-        maxWidth: '380px',
+        maxWidth: '400px',
         width: '100%',
         border: '1px solid rgba(255, 255, 255, 0.08)',
         borderRadius: '12px',
         padding: '32px',
-        backgroundColor: 'rgba(13, 13, 13, 0.6)',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
+        backgroundColor: '#0A0A0A',
         boxSizing: 'border-box',
         marginBottom: 'auto',
       }}>
@@ -102,7 +147,7 @@ export default function RegisterPage() {
             onClick={handleGoogleSignup}
             style={{
               width: '100%',
-              height: '40px',
+              height: '44px',
               border: '1px solid rgba(255, 255, 255, 0.12)',
               backgroundColor: 'rgba(255, 255, 255, 0.02)',
               color: '#EDEDED',
@@ -112,7 +157,7 @@ export default function RegisterPage() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '10px',
+              gap: '12px',
               cursor: 'pointer',
               transition: 'background-color 150ms ease, border-color 150ms ease',
             }}
@@ -125,7 +170,7 @@ export default function RegisterPage() {
               e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
             }}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
@@ -146,7 +191,7 @@ export default function RegisterPage() {
         {/* Form */}
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label htmlFor="react-reg-email" style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '11px', color: '#737373', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '6px' }}>
+            <label htmlFor="react-reg-email" style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '11px', color: '#737373', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>
               WORK OR PERSONAL EMAIL
             </label>
             <input
@@ -157,17 +202,18 @@ export default function RegisterPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@domain.com"
               style={{
-                backgroundColor: '#0A0A0A',
+                backgroundColor: '#0D0D0D',
                 border: '1px solid rgba(255, 255, 255, 0.12)',
                 color: '#EDEDED',
                 fontSize: '0.875rem',
                 fontFamily: 'var(--font-mono, monospace)',
                 padding: '0 14px',
-                height: '40px',
+                height: '44px',
                 borderRadius: '6px',
                 outline: 'none',
                 width: '100%',
                 boxSizing: 'border-box',
+                transition: 'all 150ms ease',
               }}
               onFocus={(e) => e.target.style.borderColor = '#3ECF8E'}
               onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)'}
@@ -175,7 +221,7 @@ export default function RegisterPage() {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label htmlFor="react-reg-password" style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '11px', color: '#737373', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '6px' }}>
+            <label htmlFor="react-reg-password" style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '11px', color: '#737373', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>
               CREATE PASSWORD
             </label>
             <input
@@ -186,23 +232,24 @@ export default function RegisterPage() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••••••"
               style={{
-                backgroundColor: '#0A0A0A',
+                backgroundColor: '#0D0D0D',
                 border: '1px solid rgba(255, 255, 255, 0.12)',
                 color: '#EDEDED',
                 fontSize: '0.875rem',
                 fontFamily: 'var(--font-mono, monospace)',
                 padding: '0 14px',
-                height: '40px',
+                height: '44px',
                 borderRadius: '6px',
                 outline: 'none',
                 width: '100%',
                 boxSizing: 'border-box',
+                transition: 'all 150ms ease',
               }}
               onFocus={(e) => e.target.style.borderColor = '#3ECF8E'}
               onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)'}
             />
-            <span style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '10px', color: '#525252', marginTop: '5px' }}>
-              Minimum 6 characters with mixed telemetry entropy.
+            <span style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '10px', color: '#525252', marginTop: '6px' }}>
+              Minimum 8 characters with letters and numbers.
             </span>
           </div>
 
@@ -220,12 +267,13 @@ export default function RegisterPage() {
               color: '#0A0A0A',
               fontWeight: 700,
               fontSize: '0.875rem',
-              height: '40px',
+              height: '44px',
               borderRadius: '6px',
               border: 'none',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.6 : 1,
-              transition: 'background-color 150ms ease',
+              boxShadow: 'none',
+              transition: 'background-color 150ms ease, opacity 150ms ease',
               width: '100%',
               marginTop: '8px',
               display: 'flex',
@@ -235,24 +283,19 @@ export default function RegisterPage() {
             onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#34B27B'; }}
             onMouseLeave={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#3ECF8E'; }}
           >
-            {loading ? 'Processing...' : 'Create Account'}
+            {loading ? 'CONNECTING...' : 'Create Account'}
           </button>
         </form>
 
         {/* Footer */}
         <footer style={{ marginTop: '24px', textAlign: 'center' }}>
           <p style={{ fontSize: '0.75rem', color: '#737373', margin: 0 }}>
-            Already have an account? <a href="/login" style={{ color: '#EDEDED', textDecoration: 'none', fontWeight: 500 }}>Log in</a>
+            Already have an account? <a href="/login" style={{ color: '#3ECF8E', textDecoration: 'none', fontWeight: 600 }}>Log in</a>
           </p>
           <p style={{ fontSize: '11px', color: '#525252', marginTop: '10px', marginBottom: 0, lineHeight: 1.5 }}>
             By signing up, you agree to the Cawlix Telemetry Terms and Security Protocol.
           </p>
         </footer>
-      </div>
-
-      {/* Bottom Telemetry */}
-      <div style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '10px', color: '#525252', letterSpacing: '0.04em', textAlign: 'center', marginTop: '32px' }}>
-        <span style={{ color: '#3ECF8E' }}>●</span> ALL RECOGNITION NODES OPERATIONAL · STRICT ENCRYPTION (AES-256)
       </div>
     </div>
   );

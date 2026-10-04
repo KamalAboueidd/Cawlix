@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import cawlixLogo from '../assets/ICon.png';
 ---
 
 <Layout
@@ -11,16 +12,19 @@ import Layout from '../layouts/Layout.astro';
     <!-- Top Spacer / Brand Anchor -->
     <div class="brand-top-anchor">
       <a href="/" class="brand-link" aria-label="Return to Cawlix Terminal">
-        <svg width="28" height="28" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M24 4L6 14V34L24 44L42 34V14L24 4Z" stroke="#3ECF8E" stroke-width="2.5" stroke-linejoin="round" />
-          <path d="M24 14L14 20V30L24 36L34 30V20L24 14Z" fill="rgba(62, 207, 142, 0.12)" stroke="#3ECF8E" stroke-width="1.75" />
-          <circle cx="24" cy="24" r="3" fill="#3ECF8E" />
-        </svg>
+        <img
+          src={cawlixLogo.src || cawlixLogo}
+          alt="Cawlix Logo"
+          width="28"
+          height="28"
+          class="brand-icon"
+        />
+        <span class="brand-name">Cawlix</span>
       </a>
     </div>
 
     <!-- Minimal Form Shell (Vercel / Supabase Spec) -->
-    <div class="auth-card-shell">
+    <div class="auth-card-shell max-w-[400px] w-full border border-white/[0.08] bg-[#0A0A0A] rounded-xl p-8">
       
       <!-- Header -->
       <header class="card-header">
@@ -30,8 +34,8 @@ import Layout from '../layouts/Layout.astro';
 
       <!-- 1-Click Exclusive Google OAuth Provider -->
       <div class="oauth-section">
-        <button type="button" id="btn-google-signup" class="btn-google">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <button type="button" id="btn-google-signup" class="btn-google h-11 flex items-center justify-center gap-3 w-full text-sm font-medium text-[#EDEDED]">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
@@ -52,7 +56,7 @@ import Layout from '../layouts/Layout.astro';
         
         <!-- Email Field -->
         <div class="form-field">
-          <label for="email-input" class="field-label">WORK OR PERSONAL EMAIL</label>
+          <label for="email-input" class="field-label text-[11px] font-mono text-[#737373] uppercase tracking-wider mb-2 block">WORK OR PERSONAL EMAIL</label>
           <input
             id="email-input"
             name="email"
@@ -60,13 +64,13 @@ import Layout from '../layouts/Layout.astro';
             required
             autocomplete="email"
             placeholder="name@domain.com"
-            class="field-input font-mono"
+            class="field-input font-mono h-11 px-3.5 bg-[#0D0D0D] border border-white/[0.12] rounded-md text-sm text-[#EDEDED] focus:border-[#3ECF8E] focus:ring-0 outline-none transition-all placeholder:text-[#525252] placeholder:font-mono"
           />
         </div>
 
         <!-- Password Field -->
         <div class="form-field">
-          <label for="password-input" class="field-label">CREATE PASSWORD</label>
+          <label for="password-input" class="field-label text-[11px] font-mono text-[#737373] uppercase tracking-wider mb-2 block">CREATE PASSWORD</label>
           <input
             id="password-input"
             name="password"
@@ -74,16 +78,16 @@ import Layout from '../layouts/Layout.astro';
             required
             autocomplete="new-password"
             placeholder="••••••••••••"
-            class="field-input font-mono"
+            class="field-input font-mono h-11 px-3.5 bg-[#0D0D0D] border border-white/[0.12] rounded-md text-sm text-[#EDEDED] focus:border-[#3ECF8E] focus:ring-0 outline-none transition-all placeholder:text-[#525252] placeholder:font-mono"
           />
-          <span class="field-helper">Minimum 6 characters with mixed telemetry entropy.</span>
+          <span class="field-helper" style="margin-top: 6px;">Minimum 8 characters with letters and numbers.</span>
         </div>
 
         <!-- Inline Error Banner (Borderless) -->
         <div id="auth-error" class="auth-error-banner" style="display: none;"></div>
 
         <!-- Action Button -->
-        <button type="submit" id="btn-submit" class="btn-primary">
+        <button type="submit" id="btn-submit" class="btn-primary h-11 rounded-md bg-[#3ECF8E] hover:bg-[#34B27B] text-[#0A0A0A] font-bold text-sm flex items-center justify-center transition-colors shadow-none">
           <span id="btn-label">Create Account</span>
         </button>
       </form>
@@ -98,11 +102,6 @@ import Layout from '../layouts/Layout.astro';
         </p>
       </footer>
 
-    </div>
-
-    <!-- Minimal Viewport Footer Telemetry -->
-    <div class="viewport-telemetry">
-      <span class="telemetry-dot">●</span> ALL RECOGNITION NODES OPERATIONAL &middot; STRICT ENCRYPTION (AES-256)
     </div>
 
   </div>
@@ -130,25 +129,41 @@ import Layout from '../layouts/Layout.astro';
   .brand-link {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    padding: 6px;
-    transition: transform 150ms ease;
+    gap: 10px;
+    padding: 6px 12px;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: transform 150ms ease, opacity 150ms ease;
   }
 
   .brand-link:hover {
-    transform: scale(1.05);
+    transform: translateY(-1px);
+    opacity: 0.92;
   }
 
-  /* Form Shell: Max 380px Vercel / Supabase Spec */
+  .brand-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    display: block;
+  }
+
+  .brand-name {
+    font-size: 1.1875rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: -0.02em;
+    font-family: var(--font-sans, system-ui, sans-serif);
+  }
+
+  /* Form Shell: Max 400px Container Bounds */
   .auth-card-shell {
-    max-width: 380px;
+    max-width: 400px;
     width: 100%;
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
     padding: 32px;
-    background: rgba(13, 13, 13, 0.6);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background-color: #0A0A0A;
     box-sizing: border-box;
     margin-bottom: auto;
   }
@@ -183,9 +198,9 @@ import Layout from '../layouts/Layout.astro';
 
   .btn-google {
     width: 100%;
-    height: 40px;
+    height: 44px;
     border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.02);
+    background-color: rgba(255, 255, 255, 0.02);
     color: #EDEDED;
     font-size: 0.875rem;
     font-weight: 500;
@@ -193,13 +208,13 @@ import Layout from '../layouts/Layout.astro';
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
     cursor: pointer;
     transition: background-color 150ms ease, border-color 150ms ease;
   }
 
   .btn-google:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background-color: rgba(255, 255, 255, 0.06);
     border-color: rgba(255, 255, 255, 0.2);
   }
 
@@ -247,9 +262,10 @@ import Layout from '../layouts/Layout.astro';
     font-family: var(--font-mono, monospace);
     font-size: 11px;
     color: #737373;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    display: block;
   }
 
   .field-helper {
@@ -261,17 +277,17 @@ import Layout from '../layouts/Layout.astro';
   }
 
   .field-input {
-    background-color: #0A0A0A;
+    background-color: #0D0D0D;
     border: 1px solid rgba(255, 255, 255, 0.12);
     color: #EDEDED;
     font-size: 0.875rem;
     padding: 0 14px;
-    height: 40px;
+    height: 44px;
     border-radius: 6px;
     outline: none;
     width: 100%;
     box-sizing: border-box;
-    transition: border-color 150ms ease, box-shadow 150ms ease;
+    transition: all 150ms ease;
   }
 
   .field-input::placeholder {
@@ -282,7 +298,7 @@ import Layout from '../layouts/Layout.astro';
 
   .field-input:focus {
     border-color: #3ECF8E;
-    box-shadow: 0 0 0 1px #3ECF8E;
+    box-shadow: none;
   }
 
   .auth-error-banner {
@@ -298,10 +314,11 @@ import Layout from '../layouts/Layout.astro';
     color: #0A0A0A;
     font-weight: 700;
     font-size: 0.875rem;
-    height: 40px;
+    height: 44px;
     border-radius: 6px;
     border: none;
     cursor: pointer;
+    box-shadow: none;
     transition: background-color 150ms ease;
     width: 100%;
     margin-top: 8px;
@@ -327,14 +344,15 @@ import Layout from '../layouts/Layout.astro';
   }
 
   .link-emerald {
-    color: #EDEDED;
+    color: #3ECF8E;
     text-decoration: none;
-    font-weight: 500;
-    transition: color 140ms ease;
+    font-weight: 600;
+    transition: color 140ms ease, text-decoration 140ms ease;
   }
 
   .link-emerald:hover {
-    color: #3ECF8E;
+    color: #34B27B;
+    text-decoration: underline;
   }
 
   .legal-notice {
@@ -344,31 +362,32 @@ import Layout from '../layouts/Layout.astro';
     margin-bottom: 0;
     line-height: 1.5;
   }
-
-  /* Bottom Telemetry Readout */
-  .viewport-telemetry {
-    font-family: var(--font-mono, monospace);
-    font-size: 10px;
-    color: #525252;
-    letter-spacing: 0.04em;
-    text-align: center;
-    margin-top: 32px;
-  }
-
-  .telemetry-dot {
-    color: #3ECF8E;
-  }
 </style>
 
 <script>
   import { supabase } from '../lib/supabase';
 
+  const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
   const emailInput = document.getElementById('email-input') as HTMLInputElement | null;
   const passwordInput = document.getElementById('password-input') as HTMLInputElement | null;
-  const btnSubmit = document.getElementById('btn-submit');
+  const btnSubmit = document.getElementById('btn-submit') as HTMLButtonElement | null;
+  const btnLabel = document.getElementById('btn-label');
   const authError = document.getElementById('auth-error');
   const btnGoogle = document.getElementById('btn-google-signup');
   const form = document.getElementById('register-form');
+
+  // Session Check & Auto-Redirect on Page Mount
+  (async () => {
+    try {
+      const { data } = await supabase.auth.getSession();
+      if (data?.session) {
+        window.location.href = '/console';
+      }
+    } catch {
+      // Ignore session check errors
+    }
+  })();
 
   function showError(msg: string) {
     if (authError) {
@@ -390,7 +409,7 @@ import Layout from '../layouts/Layout.astro';
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: `${window.location.origin}/tracker` },
+        options: { redirectTo: `${window.location.origin}/console` },
       });
       if (error) showError(error.message);
     } catch (err: any) {
@@ -403,21 +422,28 @@ import Layout from '../layouts/Layout.astro';
     e.preventDefault();
     clearError();
 
-    const email = emailInput?.value.trim() || '';
+    const email = (emailInput?.value || '').trim();
     const password = passwordInput?.value || '';
 
-    if (!email) {
-      showError('Please enter a valid email address.');
+    if (!email || !EMAIL_REGEX.test(email)) {
+      showError('Please enter a valid work or personal email address.');
       return;
     }
-    if (!password || password.length < 6) {
-      showError('Password must contain at least 6 characters.');
+    if (!password || password.length < 8) {
+      showError('Password must contain at least 8 characters.');
+      return;
+    }
+    if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
+      showError('Password must include both letters and numbers for telemetry entropy.');
       return;
     }
 
+    const originalLabel = btnLabel ? btnLabel.textContent : 'Create Account';
     if (btnSubmit) {
       btnSubmit.setAttribute('disabled', 'true');
-      btnSubmit.style.opacity = '0.6';
+      btnSubmit.style.opacity = '0.7';
+      btnSubmit.style.cursor = 'not-allowed';
+      if (btnLabel) btnLabel.textContent = 'CONNECTING...';
     }
 
     try {
@@ -425,7 +451,7 @@ import Layout from '../layouts/Layout.astro';
       if (error) {
         showError(error.message);
       } else {
-        window.location.href = '/tracker';
+        window.location.href = '/console';
       }
     } catch (err: any) {
       showError(err.message || 'Registration error.');
@@ -433,6 +459,8 @@ import Layout from '../layouts/Layout.astro';
       if (btnSubmit) {
         btnSubmit.removeAttribute('disabled');
         btnSubmit.style.opacity = '1';
+        btnSubmit.style.cursor = 'pointer';
+        if (btnLabel) btnLabel.textContent = originalLabel;
       }
     }
   });

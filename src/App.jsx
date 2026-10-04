@@ -14,6 +14,7 @@ import MerchantsPage from './pages/solutions/MerchantsPage';
 import ChangelogPage from './pages/ChangelogPage';
 import NotFoundPage from './pages/NotFoundPage';
 import TrackerPage from './pages/TrackerPage';
+import ConsolePage from './pages/console/ConsolePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 
@@ -76,6 +77,10 @@ export default function App() {
 
   if (route === '/tracker') {
     return <TrackerPage />;
+  }
+
+  if (route === '/console' || route === '/console/') {
+    return <ConsolePage />;
   }
 
   if (route === '/login') {
