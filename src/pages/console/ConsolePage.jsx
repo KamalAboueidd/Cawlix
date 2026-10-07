@@ -314,7 +314,9 @@ export default function ConsolePage() {
 
     return () => {
       active = false;
-      supabase.removeChannel(channel);
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
     };
   }, []);
 
