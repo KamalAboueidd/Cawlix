@@ -7,30 +7,31 @@
 
 /* ── Design tokens ──────────────────────────────────────────────────────────── */
 :root {
-  /* Canvas & Dark Telemetry Palette */
-  --canvas:           #05070A;
-  --surface:          #0D1117;
-  --surface-elevated: #131822;
+  /* Canvas & Vercel True Pitch Black Palette */
+  --canvas:           #000000;
+  --surface:          #0A0A0A;
+  --surface-elevated: #111111;
 
   /* Borders */
-  --border:           rgba(255, 255, 255, 0.08);
-  --border-subtle:    rgba(255, 255, 255, 0.04);
-  --border-strong:    rgba(255, 255, 255, 0.16);
+  --border:           rgba(255, 255, 255, 0.1);
+  --border-subtle:    rgba(255, 255, 255, 0.06);
+  --border-strong:    rgba(255, 255, 255, 0.2);
   --border-zinc:      #27272A;
 
-  /* Brand & Primary Telemetry Emerald */
-  --brand:            #10B981;
-  --brand-hover:      #059669;
-  --brand-tint:       rgba(16, 185, 129, 0.08);
-  --brand-tint-hover: rgba(16, 185, 129, 0.16);
+  /* Brand / Neutral Vercel Palette */
+  --brand:            #FFFFFF;
+  --brand-hover:      #E4E4E7;
+  --brand-tint:       rgba(255, 255, 255, 0.08);
+  --brand-tint-hover: rgba(255, 255, 255, 0.14);
 
   /* Typography Colors */
-  --text-primary:     #F4F4F5;
+  --text-primary:     #EDEDED;
   --text-secondary:   #A1A1AA;
-  --text-muted:       #71717A;
-  --text-inverse:     #05070A;
+  --text-muted:       #888888;
+  --text-subtle:      #666666;
+  --text-inverse:     #000000;
 
-  /* Semantic Telemetry */
+  /* Semantic Telemetry (Subtle Accents Only) */
   --success:          #10B981;
   --warn:             #F59E0B;
   --danger:           #F43F5E;

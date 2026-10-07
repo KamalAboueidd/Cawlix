@@ -192,7 +192,7 @@ export default function ConsolePage() {
     };
   }, []);
 
-  // Keyboard navigation (Escape to close drawer)
+  // Keyboard navigation (Escape to close drawer, Command+K to search)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape' && selectedDrawerItem) {
@@ -363,19 +363,19 @@ export default function ConsolePage() {
     <div
       style={{
         minHeight: '100vh',
-        backgroundColor: '#05070A',
+        backgroundColor: '#000000',
         color: '#EDEDED',
-        fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+        fontFamily: "'Inter', 'Geist', -apple-system, BlinkMacSystemFont, sans-serif",
         display: 'flex',
       }}
     >
-      {/* ── 1. GLOBAL MINIMAL COMPACT SIDEBAR ── */}
+      {/* ── 1. VERCEL-STYLE MINIMALIST PURE BLACK SIDEBAR ── */}
       <aside
         style={{
-          width: '240px',
+          width: '232px',
           flexShrink: 0,
-          backgroundColor: '#0D1117',
-          borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+          backgroundColor: '#000000',
+          borderRight: '1px solid #27272A',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
@@ -386,90 +386,108 @@ export default function ConsolePage() {
           zIndex: 40,
         }}
       >
-        {/* Brand & Engine Status Section */}
         <div>
+          {/* Brand Logo & Minimalist Monochrome Badge */}
           <div
             style={{
-              padding: '20px 18px 16px 18px',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+              padding: '18px 16px 14px 16px',
+              borderBottom: '1px solid #27272A',
               display: 'flex',
               flexDirection: 'column',
               gap: '12px',
             }}
           >
-            <a
-              href="/"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                textDecoration: 'none',
-                color: '#FFFFFF',
-              }}
-            >
-              <img
-                src={cawlixLogo}
-                alt="Cawlix Mark"
-                width={24}
-                height={24}
-                style={{ width: '24px', height: '24px', objectFit: 'contain' }}
-              />
-              <span
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <a
+                href="/"
                 style={{
-                  fontSize: '1rem',
-                  fontWeight: 700,
-                  letterSpacing: '-0.02em',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  textDecoration: 'none',
                   color: '#FFFFFF',
                 }}
               >
-                Cawlix
-              </span>
-            </a>
+                <img
+                  src={cawlixLogo}
+                  alt="Cawlix Mark"
+                  width={20}
+                  height={20}
+                  style={{ width: '20px', height: '20px', objectFit: 'contain' }}
+                />
+                <span
+                  style={{
+                    fontSize: '0.9375rem',
+                    fontWeight: 600,
+                    letterSpacing: '-0.02em',
+                    color: '#FFFFFF',
+                  }}
+                >
+                  Cawlix
+                </span>
+              </a>
 
-            {/* Connection Status Indicator */}
+              {/* Minimal Monochrome Core Badge */}
+              <span
+                style={{
+                  fontSize: '0.625rem',
+                  fontWeight: 600,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  color: '#A1A1AA',
+                  backgroundColor: '#18181B',
+                  border: '1px solid #27272A',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                }}
+              >
+                CORE
+              </span>
+            </div>
+
+            {/* Status Tag: Small subtle pill with miniature pulsing dot */}
             <div
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
-                backgroundColor: 'rgba(16, 185, 129, 0.08)',
-                border: '1px solid rgba(16, 185, 129, 0.2)',
-                borderRadius: '6px',
-                padding: '5px 10px',
+                gap: '6px',
+                backgroundColor: '#09090B',
+                border: '1px solid #27272A',
+                borderRadius: '9999px',
+                padding: '3px 8px',
+                alignSelf: 'flex-start',
               }}
             >
               <span
                 style={{
-                  width: '7px',
-                  height: '7px',
+                  width: '6px',
+                  height: '6px',
                   borderRadius: '50%',
                   backgroundColor: '#10B981',
-                  boxShadow: '0 0 8px #10B981',
+                  boxShadow: '0 0 6px rgba(16, 185, 129, 0.6)',
                   animation: 'pulseDot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                 }}
               />
               <span
                 style={{
                   fontSize: '0.6875rem',
-                  fontWeight: 600,
-                  letterSpacing: '0.04em',
-                  color: '#10B981',
-                  textTransform: 'uppercase',
+                  fontWeight: 500,
+                  color: '#A1A1AA',
+                  letterSpacing: '0.02em',
                 }}
               >
-                ENGINE ONLINE
+                Engine online
               </span>
             </div>
           </div>
 
-          {/* Navigation Routes */}
-          <nav style={{ padding: '16px 10px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          {/* Navigation Links (Pure Monochrome Vercel Style) */}
+          <nav style={{ padding: '12px 10px', display: 'flex', flexDirection: 'column', gap: '3px' }}>
             {[
               {
                 id: 'overview',
                 label: 'Overview',
                 icon: (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect width="7" height="9" x="3" y="3" rx="1" />
                     <rect width="7" height="5" x="14" y="3" rx="1" />
                     <rect width="7" height="9" x="14" y="12" rx="1" />
@@ -482,7 +500,7 @@ export default function ConsolePage() {
                 label: 'Telemetry Nodes',
                 badge: '5 ACTIVE',
                 icon: (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="12" cy="12" r="3" />
                     <circle cx="19" cy="5" r="2" />
                     <circle cx="5" cy="5" r="2" />
@@ -500,7 +518,7 @@ export default function ConsolePage() {
                 label: 'SKU Tracker',
                 badge: trackedItems.length.toString(),
                 icon: (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="m21 16-4 4-4-4" />
                     <path d="M17 20V4" />
                     <path d="m3 8 4-4 4 4" />
@@ -513,7 +531,7 @@ export default function ConsolePage() {
                 label: 'System Logs',
                 badge: glitchRadarEvents.length ? `${glitchRadarEvents.length}` : null,
                 icon: (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
                     <polyline points="13 2 13 9 20 9" />
                     <line x1="9" y1="13" x2="15" y2="13" />
@@ -525,7 +543,7 @@ export default function ConsolePage() {
                 id: 'settings',
                 label: 'Settings',
                 icon: (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
                     <circle cx="12" cy="12" r="3" />
                   </svg>
@@ -543,13 +561,10 @@ export default function ConsolePage() {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     width: '100%',
-                    padding: '9px 12px',
+                    padding: '8px 10px',
                     borderRadius: '6px',
-                    background: isActive ? '#161D2B' : 'transparent',
-                    borderLeft: isActive ? '3px solid #10B981' : '3px solid transparent',
-                    borderTop: 'none',
-                    borderRight: 'none',
-                    borderBottom: 'none',
+                    backgroundColor: isActive ? '#18181B' : 'transparent',
+                    border: 'none',
                     color: isActive ? '#FFFFFF' : '#A1A1AA',
                     fontSize: '0.8125rem',
                     fontWeight: isActive ? 600 : 500,
@@ -559,7 +574,7 @@ export default function ConsolePage() {
                   }}
                   onMouseEnter={(e) => {
                     if (!isActive) {
-                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.04)';
+                      e.currentTarget.style.backgroundColor = 'rgba(24, 24, 27, 0.6)';
                       e.currentTarget.style.color = '#EDEDED';
                     }
                   }}
@@ -571,18 +586,18 @@ export default function ConsolePage() {
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span style={{ color: isActive ? '#10B981' : '#71717A' }}>{route.icon}</span>
+                    <span style={{ color: isActive ? '#FFFFFF' : '#71717A' }}>{route.icon}</span>
                     <span>{route.label}</span>
                   </div>
                   {route.badge && (
                     <span
                       style={{
                         fontSize: '0.625rem',
-                        fontWeight: 600,
+                        fontWeight: 500,
                         padding: '2px 6px',
-                        borderRadius: '4px',
-                        backgroundColor: isActive ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255, 255, 255, 0.06)',
-                        color: isActive ? '#10B981' : '#71717A',
+                        borderRadius: '9999px',
+                        backgroundColor: '#27272A',
+                        color: '#A1A1AA',
                         fontFamily: "'JetBrains Mono', monospace",
                       }}
                     >
@@ -598,11 +613,11 @@ export default function ConsolePage() {
         {/* Sidebar Footer */}
         <div
           style={{
-            padding: '16px',
-            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+            padding: '14px 16px',
+            borderTop: '1px solid #27272A',
             display: 'flex',
             flexDirection: 'column',
-            gap: '8px',
+            gap: '6px',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -613,58 +628,59 @@ export default function ConsolePage() {
               style={{
                 fontSize: '0.6875rem',
                 fontFamily: "'JetBrains Mono', monospace",
-                color: '#10B981',
-                fontWeight: 600,
+                color: '#EDEDED',
+                fontWeight: 500,
               }}
             >
-              CAIRO_CORE
+              cairo_node_01
             </span>
           </div>
           <div style={{ fontSize: '0.6875rem', color: '#52525B', lineHeight: 1.4 }}>
-            Direct PostgreSQL WebSocket telemetry sync active.
+            Direct WebSocket sync active.
           </div>
         </div>
       </aside>
 
       {/* ── 2. MAIN APPLICATION WORKSPACE ── */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden', backgroundColor: '#000000' }}>
         
-        {/* Topbar */}
+        {/* Topbar: Backdrop Blur + Border-zinc-800 */}
         <header
           style={{
-            height: '56px',
-            backgroundColor: '#0D1117',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            height: '52px',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            backdropFilter: 'blur(12px)',
+            borderBottom: '1px solid #27272A',
             padding: '0 24px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: '20px',
+            gap: '16px',
             position: 'sticky',
             top: 0,
             zIndex: 30,
             boxSizing: 'border-box',
           }}
         >
-          {/* Unified Search Command Bar */}
+          {/* Sleek Dark Search Input with Command ⌘K */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
               flex: 1,
-              maxWidth: '520px',
-              backgroundColor: '#05070A',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              maxWidth: '480px',
+              backgroundColor: 'rgba(24, 24, 27, 0.7)',
+              border: '1px solid #27272A',
               borderRadius: '8px',
-              height: '38px',
-              padding: '0 12px',
-              gap: '10px',
-              transition: 'border-color 150ms ease, box-shadow 150ms ease',
+              height: '34px',
+              padding: '0 10px',
+              gap: '8px',
+              transition: 'border-color 150ms ease',
             }}
           >
             <svg
-              width="15"
-              height="15"
+              width="14"
+              height="14"
               viewBox="0 0 24 24"
               fill="none"
               stroke="#71717A"
@@ -688,7 +704,7 @@ export default function ConsolePage() {
                 border: 'none',
                 color: '#EDEDED',
                 fontSize: '0.8125rem',
-                fontFamily: "'Inter', system-ui, sans-serif",
+                fontFamily: "'Inter', sans-serif",
                 outline: 'none',
               }}
             />
@@ -711,11 +727,11 @@ export default function ConsolePage() {
                 style={{
                   fontSize: '0.6875rem',
                   fontFamily: "'JetBrains Mono', monospace",
-                  color: '#71717A',
-                  backgroundColor: 'rgba(255, 255, 255, 0.06)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  color: '#A1A1AA',
+                  backgroundColor: '#27272A',
                   borderRadius: '4px',
-                  padding: '2px 6px',
+                  padding: '1px 5px',
+                  lineHeight: '1.4',
                 }}
               >
                 ⌘K
@@ -723,50 +739,49 @@ export default function ConsolePage() {
             )}
           </div>
 
-          {/* Topbar Right Controls: Workspace Badge + Live Ping + Add SKU + Profile */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          {/* Topbar Right Controls */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             {/* Active Workspace Badge */}
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px',
-                padding: '4px 10px',
+                padding: '3px 9px',
                 borderRadius: '6px',
-                backgroundColor: '#131822',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                backgroundColor: '#18181B',
+                border: '1px solid #27272A',
                 fontSize: '0.6875rem',
                 color: '#D4D4D8',
-                fontWeight: 600,
-                letterSpacing: '0.03em',
+                fontWeight: 500,
               }}
             >
               <span style={{ color: '#71717A' }}>WORKSPACE:</span>
-              <span style={{ color: '#10B981', fontFamily: "'JetBrains Mono', monospace" }}>
-                CAIRO_NODE / PROD
+              <span style={{ color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace" }}>
+                CAIRO_NODE
               </span>
             </div>
 
-            {/* Live Latency / Ping Counter */}
+            {/* Latency Pill */}
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px',
-                padding: '4px 10px',
+                padding: '3px 9px',
                 borderRadius: '6px',
-                backgroundColor: 'rgba(16, 185, 129, 0.08)',
-                border: '1px solid rgba(16, 185, 129, 0.2)',
+                backgroundColor: '#18181B',
+                border: '1px solid #27272A',
                 fontSize: '0.6875rem',
                 fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: 600,
-                color: '#10B981',
+                fontWeight: 500,
+                color: '#A1A1AA',
               }}
             >
               <span
                 style={{
-                  width: '6px',
-                  height: '6px',
+                  width: '5px',
+                  height: '5px',
                   borderRadius: '50%',
                   backgroundColor: '#10B981',
                 }}
@@ -774,44 +789,44 @@ export default function ConsolePage() {
               <span>24ms</span>
             </div>
 
-            {/* Quick Add Target SKU Trigger */}
+            {/* Iconic Vercel High-Contrast Action Button */}
             <button
               type="button"
               onClick={() => setModalOpen(true)}
               style={{
-                backgroundColor: '#10B981',
-                color: '#05070A',
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                padding: '0 12px',
-                height: '34px',
+                backgroundColor: '#FFFFFF',
+                color: '#000000',
+                fontSize: '0.8125rem',
+                fontWeight: 500,
+                padding: '6px 14px',
                 borderRadius: '6px',
                 border: 'none',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px',
-                transition: 'background-color 150ms ease',
+                transition: 'background-color 150ms ease, transform 100ms ease',
+                boxShadow: '0 1px 2px rgba(0, 0, 0, 0.4)',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#059669')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#10B981')}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#E4E4E7')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
             >
               <span style={{ fontSize: '14px', lineHeight: 1 }}>+</span>
               <span>Add Target SKU</span>
             </button>
 
-            {/* Profile Drawer / Dropdown */}
+            {/* User Session Profile Button */}
             <div style={{ position: 'relative' }}>
               <button
                 type="button"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 style={{
-                  width: '32px',
-                  height: '32px',
+                  width: '30px',
+                  height: '30px',
                   borderRadius: '50%',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  backgroundColor: '#131822',
-                  color: '#FFFFFF',
+                  border: '1px solid #27272A',
+                  backgroundColor: '#18181B',
+                  color: '#EDEDED',
                   fontSize: '0.75rem',
                   fontWeight: 600,
                   display: 'flex',
@@ -828,17 +843,17 @@ export default function ConsolePage() {
                   style={{
                     position: 'absolute',
                     right: 0,
-                    top: '40px',
-                    width: '220px',
-                    backgroundColor: '#0D1117',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    top: '38px',
+                    width: '210px',
+                    backgroundColor: '#0A0A0A',
+                    border: '1px solid #27272A',
                     borderRadius: '8px',
-                    padding: '6px',
-                    boxShadow: '0 16px 32px rgba(0, 0, 0, 0.6)',
+                    padding: '4px',
+                    boxShadow: '0 16px 32px rgba(0, 0, 0, 0.8)',
                     zIndex: 100,
                   }}
                 >
-                  <div style={{ padding: '8px 10px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                  <div style={{ padding: '8px 10px', borderBottom: '1px solid #27272A' }}>
                     <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#FFFFFF' }}>{userHandle}</div>
                     <div
                       style={{
@@ -857,13 +872,13 @@ export default function ConsolePage() {
                       href="/tracker"
                       style={{
                         display: 'block',
-                        padding: '7px 10px',
+                        padding: '6px 10px',
                         fontSize: '0.8125rem',
                         color: '#D4D4D8',
                         textDecoration: 'none',
                         borderRadius: '4px',
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#161D2B')}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#18181B')}
                       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                     >
                       Public Live Tracker
@@ -872,41 +887,26 @@ export default function ConsolePage() {
                       href="/docs"
                       style={{
                         display: 'block',
-                        padding: '7px 10px',
+                        padding: '6px 10px',
                         fontSize: '0.8125rem',
                         color: '#D4D4D8',
                         textDecoration: 'none',
                         borderRadius: '4px',
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#161D2B')}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#18181B')}
                       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                     >
-                      API Documentation
-                    </a>
-                    <a
-                      href="/engines/true-cost"
-                      style={{
-                        display: 'block',
-                        padding: '7px 10px',
-                        fontSize: '0.8125rem',
-                        color: '#D4D4D8',
-                        textDecoration: 'none',
-                        borderRadius: '4px',
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#161D2B')}
-                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-                    >
-                      True-Cost Engine
+                      Documentation
                     </a>
                   </div>
-                  <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '4px' }}>
+                  <div style={{ borderTop: '1px solid #27272A', paddingTop: '4px' }}>
                     <button
                       type="button"
                       onClick={handleSignOut}
                       style={{
                         width: '100%',
                         textAlign: 'left',
-                        padding: '7px 10px',
+                        padding: '6px 10px',
                         fontSize: '0.8125rem',
                         color: '#F43F5E',
                         background: 'transparent',
@@ -927,13 +927,13 @@ export default function ConsolePage() {
         </header>
 
         {/* ── 3. WORKSPACE CANVAS CONTENT ── */}
-        <main style={{ flex: 1, padding: '24px 32px', boxSizing: 'border-box' }}>
-          <div style={{ maxWidth: '1360px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <main style={{ flex: 1, padding: '24px 28px', boxSizing: 'border-box' }}>
+          <div style={{ maxWidth: '1360px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '22px' }}>
             
-            {/* View Header */}
+            {/* View Header with Subdued Controls */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '12px' }}>
               <div>
-                <h1 style={{ fontSize: '1.375rem', fontWeight: 600, color: '#FFFFFF', margin: '0 0 6px 0', letterSpacing: '-0.02em' }}>
+                <h1 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#FFFFFF', margin: '0 0 4px 0', letterSpacing: '-0.02em' }}>
                   {activeTab === 'overview' && 'Telemetry Control Dashboard'}
                   {activeTab === 'nodes' && 'Domestic Telemetry Nodes'}
                   {activeTab === 'tracker' && 'Tracked SKU Surveillance'}
@@ -949,29 +949,30 @@ export default function ConsolePage() {
                 </p>
               </div>
 
-              {/* View Switcher Controls */}
+              {/* View Switcher Controls (Subdued Vercel Segmented Bar) */}
               <div
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  backgroundColor: '#0D1117',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  backgroundColor: '#0A0A0A',
+                  border: '1px solid #27272A',
                   borderRadius: '6px',
-                  padding: '3px',
+                  padding: '2px',
                 }}
               >
                 <button
                   type="button"
                   onClick={() => setActiveTab('overview')}
                   style={{
-                    backgroundColor: activeTab === 'overview' ? '#161D2B' : 'transparent',
-                    color: activeTab === 'overview' ? '#FFFFFF' : '#71717A',
+                    backgroundColor: activeTab === 'overview' ? '#18181B' : 'transparent',
+                    color: activeTab === 'overview' ? '#FFFFFF' : '#A1A1AA',
                     fontSize: '0.75rem',
                     fontWeight: 500,
-                    padding: '5px 12px',
+                    padding: '4px 10px',
                     borderRadius: '4px',
                     border: 'none',
                     cursor: 'pointer',
+                    transition: 'all 120ms ease',
                   }}
                 >
                   Overview
@@ -980,14 +981,15 @@ export default function ConsolePage() {
                   type="button"
                   onClick={() => setActiveTab('tracker')}
                   style={{
-                    backgroundColor: activeTab === 'tracker' ? '#161D2B' : 'transparent',
-                    color: activeTab === 'tracker' ? '#FFFFFF' : '#71717A',
+                    backgroundColor: activeTab === 'tracker' ? '#18181B' : 'transparent',
+                    color: activeTab === 'tracker' ? '#FFFFFF' : '#A1A1AA',
                     fontSize: '0.75rem',
                     fontWeight: 500,
-                    padding: '5px 12px',
+                    padding: '4px 10px',
                     borderRadius: '4px',
                     border: 'none',
                     cursor: 'pointer',
+                    transition: 'all 120ms ease',
                   }}
                 >
                   Tracker
@@ -996,14 +998,15 @@ export default function ConsolePage() {
                   type="button"
                   onClick={() => setActiveTab('logs')}
                   style={{
-                    backgroundColor: activeTab === 'logs' ? '#161D2B' : 'transparent',
-                    color: activeTab === 'logs' ? '#FFFFFF' : '#71717A',
+                    backgroundColor: activeTab === 'logs' ? '#18181B' : 'transparent',
+                    color: activeTab === 'logs' ? '#FFFFFF' : '#A1A1AA',
                     fontSize: '0.75rem',
                     fontWeight: 500,
-                    padding: '5px 12px',
+                    padding: '4px 10px',
                     borderRadius: '4px',
                     border: 'none',
                     cursor: 'pointer',
+                    transition: 'all 120ms ease',
                   }}
                 >
                   Glitch Radar
@@ -1011,34 +1014,37 @@ export default function ConsolePage() {
               </div>
             </div>
 
-            {/* ── 4. METRIC CARDS REBUILD ── */}
+            {/* ── 4. METRIC CARDS (Vercel Rectangle #0A0A0A + border-zinc-800/80) ── */}
             {(activeTab === 'overview' || activeTab === 'tracker') && (
               <section
                 style={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-                  gap: '16px',
+                  gap: '14px',
                 }}
               >
                 {/* Metric 1 */}
                 <div
                   style={{
-                    backgroundColor: '#0D1117',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    borderRadius: '8px',
+                    backgroundColor: '#0A0A0A',
+                    border: '1px solid rgba(39, 39, 42, 0.8)',
+                    borderRadius: '12px',
                     padding: '20px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '10px',
+                    gap: '8px',
+                    transition: 'border-color 150ms ease',
                   }}
+                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#3F3F46')}
+                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(39, 39, 42, 0.8)')}
                 >
                   <span
                     style={{
                       fontSize: '0.75rem',
-                      fontWeight: 600,
+                      fontWeight: 500,
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
-                      color: '#71717A',
+                      color: '#A1A1AA',
                     }}
                   >
                     TOTAL MONITORED SKUS
@@ -1046,10 +1052,11 @@ export default function ConsolePage() {
                   <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
                     <span
                       style={{
-                        fontSize: '1.75rem',
+                        fontSize: '1.5rem',
                         fontWeight: 600,
-                        color: '#F4F4F5',
+                        color: '#FFFFFF',
                         fontFamily: "'JetBrains Mono', monospace",
+                        letterSpacing: '-0.02em',
                       }}
                     >
                       {trackedItems.length}
@@ -1057,10 +1064,10 @@ export default function ConsolePage() {
                     <span
                       style={{
                         fontSize: '0.75rem',
-                        fontWeight: 600,
-                        color: '#10B981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        border: '1px solid rgba(16, 185, 129, 0.25)',
+                        fontWeight: 500,
+                        color: '#34D399',
+                        backgroundColor: 'rgba(6, 78, 59, 0.4)',
+                        border: '1px solid rgba(6, 95, 70, 0.4)',
                         padding: '2px 8px',
                         borderRadius: '4px',
                         fontFamily: "'JetBrains Mono', monospace",
@@ -1069,30 +1076,33 @@ export default function ConsolePage() {
                       +12.4%
                     </span>
                   </div>
-                  <span style={{ fontSize: '0.75rem', color: '#52525B' }}>
-                    Active 90-day domestic price surveillance
+                  <span style={{ fontSize: '0.75rem', color: '#71717A' }}>
+                    Active 90-day price baseline monitoring
                   </span>
                 </div>
 
                 {/* Metric 2 */}
                 <div
                   style={{
-                    backgroundColor: '#0D1117',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    borderRadius: '8px',
+                    backgroundColor: '#0A0A0A',
+                    border: '1px solid rgba(39, 39, 42, 0.8)',
+                    borderRadius: '12px',
                     padding: '20px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '10px',
+                    gap: '8px',
+                    transition: 'border-color 150ms ease',
                   }}
+                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#3F3F46')}
+                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(39, 39, 42, 0.8)')}
                 >
                   <span
                     style={{
                       fontSize: '0.75rem',
-                      fontWeight: 600,
+                      fontWeight: 500,
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
-                      color: '#71717A',
+                      color: '#A1A1AA',
                     }}
                   >
                     ENGINE PING / LATENCY
@@ -1100,10 +1110,11 @@ export default function ConsolePage() {
                   <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
                     <span
                       style={{
-                        fontSize: '1.75rem',
+                        fontSize: '1.5rem',
                         fontWeight: 600,
-                        color: '#F4F4F5',
+                        color: '#FFFFFF',
                         fontFamily: "'JetBrains Mono', monospace",
+                        letterSpacing: '-0.02em',
                       }}
                     >
                       24ms
@@ -1111,10 +1122,10 @@ export default function ConsolePage() {
                     <span
                       style={{
                         fontSize: '0.75rem',
-                        fontWeight: 600,
-                        color: '#10B981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        border: '1px solid rgba(16, 185, 129, 0.25)',
+                        fontWeight: 500,
+                        color: '#34D399',
+                        backgroundColor: 'rgba(6, 78, 59, 0.4)',
+                        border: '1px solid rgba(6, 95, 70, 0.4)',
                         padding: '2px 8px',
                         borderRadius: '4px',
                         fontFamily: "'JetBrains Mono', monospace",
@@ -1123,30 +1134,33 @@ export default function ConsolePage() {
                       99.98%
                     </span>
                   </div>
-                  <span style={{ fontSize: '0.75rem', color: '#52525B' }}>
-                    Zero-dropped probe verification
+                  <span style={{ fontSize: '0.75rem', color: '#71717A' }}>
+                    Zero-dropped probe network uptime
                   </span>
                 </div>
 
                 {/* Metric 3 */}
                 <div
                   style={{
-                    backgroundColor: '#0D1117',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    borderRadius: '8px',
+                    backgroundColor: '#0A0A0A',
+                    border: '1px solid rgba(39, 39, 42, 0.8)',
+                    borderRadius: '12px',
                     padding: '20px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '10px',
+                    gap: '8px',
+                    transition: 'border-color 150ms ease',
                   }}
+                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#3F3F46')}
+                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(39, 39, 42, 0.8)')}
                 >
                   <span
                     style={{
                       fontSize: '0.75rem',
-                      fontWeight: 600,
+                      fontWeight: 500,
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
-                      color: '#71717A',
+                      color: '#A1A1AA',
                     }}
                   >
                     GLITCH ANOMALIES INTERCEPTED
@@ -1154,10 +1168,11 @@ export default function ConsolePage() {
                   <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
                     <span
                       style={{
-                        fontSize: '1.75rem',
+                        fontSize: '1.5rem',
                         fontWeight: 600,
-                        color: '#F4F4F5',
+                        color: '#FFFFFF',
                         fontFamily: "'JetBrains Mono', monospace",
+                        letterSpacing: '-0.02em',
                       }}
                     >
                       {glitchRadarEvents.length}
@@ -1165,10 +1180,10 @@ export default function ConsolePage() {
                     <span
                       style={{
                         fontSize: '0.75rem',
-                        fontWeight: 600,
-                        color: '#F43F5E',
-                        backgroundColor: 'rgba(244, 63, 94, 0.1)',
-                        border: '1px solid rgba(244, 63, 94, 0.25)',
+                        fontWeight: 500,
+                        color: '#FB7185',
+                        backgroundColor: 'rgba(76, 5, 25, 0.4)',
+                        border: '1px solid rgba(159, 18, 57, 0.4)',
                         padding: '2px 8px',
                         borderRadius: '4px',
                         fontFamily: "'JetBrains Mono', monospace",
@@ -1177,7 +1192,7 @@ export default function ConsolePage() {
                       -47.1% MAX
                     </span>
                   </div>
-                  <span style={{ fontSize: '0.75rem', color: '#52525B' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#71717A' }}>
                     Zero-margin flash crashes captured
                   </span>
                 </div>
@@ -1185,22 +1200,25 @@ export default function ConsolePage() {
                 {/* Metric 4 */}
                 <div
                   style={{
-                    backgroundColor: '#0D1117',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    borderRadius: '8px',
+                    backgroundColor: '#0A0A0A',
+                    border: '1px solid rgba(39, 39, 42, 0.8)',
+                    borderRadius: '12px',
                     padding: '20px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '10px',
+                    gap: '8px',
+                    transition: 'border-color 150ms ease',
                   }}
+                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#3F3F46')}
+                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(39, 39, 42, 0.8)')}
                 >
                   <span
                     style={{
                       fontSize: '0.75rem',
-                      fontWeight: 600,
+                      fontWeight: 500,
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
-                      color: '#71717A',
+                      color: '#A1A1AA',
                     }}
                   >
                     ESTIMATED ARBITRAGE SAVINGS
@@ -1208,10 +1226,11 @@ export default function ConsolePage() {
                   <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
                     <span
                       style={{
-                        fontSize: '1.75rem',
+                        fontSize: '1.5rem',
                         fontWeight: 600,
-                        color: '#F4F4F5',
+                        color: '#FFFFFF',
                         fontFamily: "'JetBrains Mono', monospace",
+                        letterSpacing: '-0.02em',
                       }}
                     >
                       EGP 342.8K
@@ -1219,10 +1238,10 @@ export default function ConsolePage() {
                     <span
                       style={{
                         fontSize: '0.75rem',
-                        fontWeight: 600,
-                        color: '#10B981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        border: '1px solid rgba(16, 185, 129, 0.25)',
+                        fontWeight: 500,
+                        color: '#34D399',
+                        backgroundColor: 'rgba(6, 78, 59, 0.4)',
+                        border: '1px solid rgba(6, 95, 70, 0.4)',
                         padding: '2px 8px',
                         borderRadius: '4px',
                         fontFamily: "'JetBrains Mono', monospace",
@@ -1231,52 +1250,52 @@ export default function ConsolePage() {
                       +18.5%
                     </span>
                   </div>
-                  <span style={{ fontSize: '0.75rem', color: '#52525B' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#71717A' }}>
                     Landed CIF benchmark advantage
                   </span>
                 </div>
               </section>
             )}
 
-            {/* ── 5. VIEW ROUTING ── */}
+            {/* ── 5. TAB VIEWS ── */}
 
             {/* TAB: Telemetry Nodes */}
             {activeTab === 'nodes' && (
-              <section style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <section style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div
                   style={{
                     display: 'grid',
                     gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                    gap: '16px',
+                    gap: '14px',
                   }}
                 >
                   {CLUSTER_NODES.map((node) => (
                     <div
                       key={node.id}
                       style={{
-                        backgroundColor: '#0D1117',
-                        border: '1px solid rgba(255, 255, 255, 0.08)',
-                        borderRadius: '8px',
-                        padding: '20px',
+                        backgroundColor: '#0A0A0A',
+                        border: '1px solid #27272A',
+                        borderRadius: '12px',
+                        padding: '18px',
                         display: 'flex',
                         flexDirection: 'column',
                         gap: '14px',
                       }}
                     >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <div>
-                          <div style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#FFFFFF' }}>{node.name}</div>
+                          <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#FFFFFF' }}>{node.name}</div>
                           <div style={{ fontSize: '0.75rem', color: '#71717A', fontFamily: "'JetBrains Mono', monospace" }}>{node.domain}</div>
                         </div>
                         <span
                           style={{
-                            fontSize: '0.6875rem',
-                            fontWeight: 600,
-                            padding: '3px 8px',
-                            borderRadius: '4px',
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            border: '1px solid rgba(16, 185, 129, 0.25)',
-                            color: '#10B981',
+                            fontSize: '0.625rem',
+                            fontWeight: 500,
+                            padding: '2px 7px',
+                            borderRadius: '9999px',
+                            backgroundColor: '#18181B',
+                            border: '1px solid #27272A',
+                            color: '#34D399',
                           }}
                         >
                           {node.status}
@@ -1289,24 +1308,24 @@ export default function ConsolePage() {
                           gridTemplateColumns: '1fr 1fr 1fr',
                           gap: '8px',
                           paddingTop: '10px',
-                          borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                          borderTop: '1px solid #18181B',
                         }}
                       >
                         <div>
                           <div style={{ fontSize: '0.6875rem', color: '#71717A', textTransform: 'uppercase' }}>PING</div>
-                          <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#F4F4F5', fontFamily: "'JetBrains Mono', monospace" }}>
+                          <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace" }}>
                             {node.ping}
                           </div>
                         </div>
                         <div>
                           <div style={{ fontSize: '0.6875rem', color: '#71717A', textTransform: 'uppercase' }}>THROUGHPUT</div>
-                          <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#F4F4F5', fontFamily: "'JetBrains Mono', monospace" }}>
+                          <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace" }}>
                             {node.throughput}
                           </div>
                         </div>
                         <div>
                           <div style={{ fontSize: '0.6875rem', color: '#71717A', textTransform: 'uppercase' }}>UPTIME</div>
-                          <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#10B981', fontFamily: "'JetBrains Mono', monospace" }}>
+                          <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#34D399', fontFamily: "'JetBrains Mono', monospace" }}>
                             {node.successRate}
                           </div>
                         </div>
@@ -1319,45 +1338,44 @@ export default function ConsolePage() {
 
             {/* TAB: System Logs / Glitch Radar Feed */}
             {activeTab === 'logs' && (
-              <section style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <section style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '14px 18px',
-                    backgroundColor: '#0D1117',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    borderRadius: '8px',
+                    padding: '12px 16px',
+                    backgroundColor: '#0A0A0A',
+                    border: '1px solid #27272A',
+                    borderRadius: '10px',
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span
                       style={{
-                        width: '8px',
-                        height: '8px',
+                        width: '6px',
+                        height: '6px',
                         borderRadius: '50%',
                         backgroundColor: '#10B981',
-                        boxShadow: '0 0 10px #10B981',
                       }}
                     />
                     <div>
                       <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#FFFFFF' }}>
                         REALTIME POSTGRES MUTATION STREAM
                       </div>
-                      <div style={{ fontSize: '0.75rem', color: '#71717A', fontFamily: "'JetBrains Mono', monospace" }}>
+                      <div style={{ fontSize: '0.6875rem', color: '#71717A', fontFamily: "'JetBrains Mono', monospace" }}>
                         channel: realtime:glitch_radar_events
                       </div>
                     </div>
                   </div>
                   <span
                     style={{
-                      fontSize: '0.75rem',
+                      fontSize: '0.6875rem',
                       fontFamily: "'JetBrains Mono', monospace",
-                      color: '#10B981',
-                      backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                      border: '1px solid rgba(16, 185, 129, 0.25)',
-                      padding: '4px 10px',
+                      color: '#EDEDED',
+                      backgroundColor: '#18181B',
+                      border: '1px solid #27272A',
+                      padding: '3px 8px',
                       borderRadius: '4px',
                     }}
                   >
@@ -1365,12 +1383,12 @@ export default function ConsolePage() {
                   </span>
                 </div>
 
-                {/* Event Feed List */}
+                {/* Event Feed List in Vercel Table Style */}
                 <div
                   style={{
-                    backgroundColor: '#0D1117',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    borderRadius: '8px',
+                    backgroundColor: '#0A0A0A',
+                    border: '1px solid #27272A',
+                    borderRadius: '12px',
                     overflow: 'hidden',
                   }}
                 >
@@ -1395,15 +1413,15 @@ export default function ConsolePage() {
                         display: 'grid',
                         gridTemplateColumns: '2.5fr 1fr 1.2fr 1fr 1fr',
                         alignItems: 'center',
-                        padding: '16px 20px',
-                        borderBottom: idx < glitchRadarEvents.length - 1 ? '1px solid rgba(255, 255, 255, 0.06)' : 'none',
+                        padding: '14px 18px',
+                        borderBottom: idx < glitchRadarEvents.length - 1 ? '1px solid rgba(39, 39, 42, 0.6)' : 'none',
                         cursor: 'pointer',
                         transition: 'background-color 100ms ease',
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#131822')}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(24, 24, 27, 0.4)')}
                       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                     >
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                         <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#FFFFFF' }}>{evt.title}</span>
                         <span style={{ fontSize: '0.6875rem', color: '#71717A', fontFamily: "'JetBrains Mono', monospace" }}>
                           {evt.sku}
@@ -1412,11 +1430,11 @@ export default function ConsolePage() {
                       <div>
                         <span
                           style={{
-                            fontSize: '0.75rem',
+                            fontSize: '0.6875rem',
                             fontFamily: "'JetBrains Mono', monospace",
-                            padding: '3px 8px',
-                            backgroundColor: '#131822',
-                            border: '1px solid rgba(255, 255, 255, 0.08)',
+                            padding: '2px 7px',
+                            backgroundColor: '#18181B',
+                            border: '1px solid #27272A',
                             borderRadius: '4px',
                             color: '#D4D4D8',
                           }}
@@ -1424,19 +1442,19 @@ export default function ConsolePage() {
                           {evt.retailer}
                         </span>
                       </div>
-                      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.875rem', fontWeight: 600, color: '#10B981' }}>
+                      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.875rem', fontWeight: 600, color: '#FFFFFF' }}>
                         EGP {evt.current_price_egp?.toLocaleString()}
                       </div>
                       <div>
                         <span
                           style={{
                             fontSize: '0.75rem',
-                            fontWeight: 600,
+                            fontWeight: 500,
                             fontFamily: "'JetBrains Mono', monospace",
-                            color: '#F43F5E',
-                            backgroundColor: 'rgba(244, 63, 94, 0.1)',
-                            border: '1px solid rgba(244, 63, 94, 0.25)',
-                            padding: '2px 8px',
+                            color: '#FB7185',
+                            backgroundColor: 'rgba(76, 5, 25, 0.4)',
+                            border: '1px solid rgba(159, 18, 57, 0.4)',
+                            padding: '2px 7px',
                             borderRadius: '4px',
                           }}
                         >
@@ -1454,65 +1472,65 @@ export default function ConsolePage() {
 
             {/* TAB: Settings */}
             {activeTab === 'settings' && (
-              <section style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <section style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div
                   style={{
-                    backgroundColor: '#0D1117',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    borderRadius: '8px',
-                    padding: '24px',
+                    backgroundColor: '#0A0A0A',
+                    border: '1px solid #27272A',
+                    borderRadius: '12px',
+                    padding: '22px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '16px',
+                    gap: '14px',
                   }}
                 >
-                  <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#FFFFFF', margin: 0 }}>
+                  <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#FFFFFF', margin: 0 }}>
                     ACTIVE TELEMETRY SESSION
                   </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.8125rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #18181B' }}>
                       <span style={{ color: '#71717A' }}>USER IDENTIFIER</span>
                       <span style={{ fontFamily: "'JetBrains Mono', monospace", color: '#EDEDED' }}>{user?.id || 'anon-session'}</span>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #18181B' }}>
                       <span style={{ color: '#71717A' }}>PRIMARY EMAIL</span>
                       <span style={{ fontFamily: "'JetBrains Mono', monospace", color: '#EDEDED' }}>{user?.email || 'admin@cawlix.com'}</span>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #18181B' }}>
                       <span style={{ color: '#71717A' }}>POSTGRES REPLICATION</span>
-                      <span style={{ fontFamily: "'JetBrains Mono', monospace", color: '#10B981', fontWeight: 600 }}>CONNECTED (WSS)</span>
+                      <span style={{ fontFamily: "'JetBrains Mono', monospace", color: '#34D399', fontWeight: 500 }}>CONNECTED (WSS)</span>
                     </div>
                   </div>
                 </div>
               </section>
             )}
 
-            {/* ── 6. MODERNIZED TELEMETRY TABLE (Overview & Tracker) ── */}
+            {/* ── 6. VERCEL TELEMETRY TABLE (Overview & Tracker) ── */}
             {(activeTab === 'overview' || activeTab === 'tracker') && (
               <section
                 style={{
-                  backgroundColor: '#0D1117',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  borderRadius: '8px',
+                  backgroundColor: '#0A0A0A',
+                  border: '1px solid #27272A',
+                  borderRadius: '12px',
                   overflow: 'hidden',
                   display: 'flex',
                   flexDirection: 'column',
                 }}
               >
-                {/* Table Header with Strict Font-Sans Hierarchy */}
+                {/* Table Header: bg-zinc-900/40 border-b border-zinc-800 */}
                 <div
                   style={{
                     display: 'grid',
                     gridTemplateColumns: '2.5fr 1fr 1.2fr 1fr 1fr 0.8fr',
                     alignItems: 'center',
-                    padding: '12px 20px',
-                    backgroundColor: '#131822',
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                    padding: '11px 18px',
+                    backgroundColor: 'rgba(24, 24, 27, 0.4)',
+                    borderBottom: '1px solid #27272A',
                     fontSize: '0.6875rem',
-                    fontWeight: 600,
+                    fontWeight: 500,
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
-                    color: '#71717A',
+                    color: '#A1A1AA',
                   }}
                 >
                   <span>ITEM / TITLE</span>
@@ -1525,19 +1543,19 @@ export default function ConsolePage() {
 
                 {/* Loading State */}
                 {loading ? (
-                  <div style={{ padding: '60px 0', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ padding: '60px 0', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
                     <div
                       style={{
-                        width: '24px',
-                        height: '24px',
-                        border: '2px solid rgba(16, 185, 129, 0.2)',
-                        borderTopColor: '#10B981',
+                        width: '20px',
+                        height: '20px',
+                        border: '2px solid rgba(255, 255, 255, 0.2)',
+                        borderTopColor: '#FFFFFF',
                         borderRadius: '50%',
                         animation: 'spin 1s linear infinite',
                       }}
                     />
                     <span style={{ fontSize: '0.8125rem', color: '#71717A' }}>
-                      Probing domestic telemetry nodes and synchronizing baselines...
+                      Probing domestic nodes...
                     </span>
                   </div>
                 ) : filteredItems.length === 0 ? (
@@ -1552,35 +1570,35 @@ export default function ConsolePage() {
                       gap: '12px',
                     }}
                   >
-                    <span style={{ fontSize: '1rem', fontWeight: 600, color: '#FFFFFF' }}>
+                    <span style={{ fontSize: '0.9375rem', fontWeight: 500, color: '#FFFFFF' }}>
                       No matching tracked SKUs detected
                     </span>
-                    <span style={{ fontSize: '0.8125rem', color: '#71717A', maxWidth: '400px' }}>
-                      Try adjusting your search criteria or add a new retail SKU to begin surveillance.
+                    <span style={{ fontSize: '0.8125rem', color: '#71717A', maxWidth: '380px' }}>
+                      Add a new domestic SKU to begin 90-day forensic price tracking.
                     </span>
                     <button
                       type="button"
                       onClick={() => setModalOpen(true)}
                       style={{
-                        backgroundColor: '#10B981',
-                        color: '#05070A',
+                        backgroundColor: '#FFFFFF',
+                        color: '#000000',
                         fontSize: '0.75rem',
-                        fontWeight: 600,
-                        padding: '8px 16px',
+                        fontWeight: 500,
+                        padding: '6px 14px',
                         borderRadius: '6px',
                         border: 'none',
                         cursor: 'pointer',
-                        marginTop: '8px',
+                        marginTop: '4px',
                       }}
                     >
                       Track Your First SKU
                     </button>
                   </div>
                 ) : (
-                  /* Table Rows */
+                  /* Table Rows: border-b border-zinc-800/60 hover:bg-zinc-900/30 */
                   filteredItems.map((item, idx) => {
                     const isMarkup = item.delta_pct > 0;
-                    const deltaColor = isMarkup ? '#F43F5E' : '#10B981';
+                    const deltaColor = isMarkup ? '#FB7185' : '#34D399';
                     const deltaSign = item.delta_pct > 0 ? `+${item.delta_pct}%` : `${item.delta_pct}%`;
 
                     return (
@@ -1591,21 +1609,21 @@ export default function ConsolePage() {
                           display: 'grid',
                           gridTemplateColumns: '2.5fr 1fr 1.2fr 1fr 1fr 0.8fr',
                           alignItems: 'center',
-                          padding: '14px 20px',
-                          borderBottom: idx < filteredItems.length - 1 ? '1px solid rgba(255, 255, 255, 0.06)' : 'none',
+                          padding: '13px 18px',
+                          borderBottom: idx < filteredItems.length - 1 ? '1px solid rgba(39, 39, 42, 0.6)' : 'none',
                           cursor: 'pointer',
                           transition: 'background-color 100ms ease',
                         }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#131822')}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(24, 24, 27, 0.3)')}
                         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                       >
                         {/* ITEM / TITLE */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', paddingRight: '16px', minWidth: 0 }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', paddingRight: '16px', minWidth: 0 }}>
                           <span
                             style={{
                               fontSize: '0.875rem',
                               fontWeight: 500,
-                              color: '#F4F4F5',
+                              color: '#FFFFFF',
                               whiteSpace: 'nowrap',
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
@@ -1629,12 +1647,12 @@ export default function ConsolePage() {
                           <span
                             style={{
                               fontSize: '0.6875rem',
-                              fontWeight: 600,
+                              fontWeight: 500,
                               fontFamily: "'JetBrains Mono', monospace",
-                              padding: '3px 8px',
+                              padding: '2px 7px',
                               borderRadius: '4px',
-                              backgroundColor: '#161D2B',
-                              border: '1px solid rgba(255, 255, 255, 0.08)',
+                              backgroundColor: '#18181B',
+                              border: '1px solid #27272A',
                               color: '#D4D4D8',
                             }}
                           >
@@ -1657,7 +1675,7 @@ export default function ConsolePage() {
                           <span
                             style={{
                               fontSize: '0.6875rem',
-                              fontWeight: 600,
+                              fontWeight: 500,
                               color: deltaColor,
                               fontFamily: "'JetBrains Mono', monospace",
                             }}
@@ -1671,12 +1689,12 @@ export default function ConsolePage() {
                           <span
                             style={{
                               fontSize: '0.6875rem',
-                              fontWeight: 600,
+                              fontWeight: 500,
                               padding: '2px 8px',
                               borderRadius: '4px',
-                              backgroundColor: item.status === 'Active' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)',
-                              border: item.status === 'Active' ? '1px solid rgba(16, 185, 129, 0.25)' : '1px solid rgba(245, 158, 11, 0.25)',
-                              color: item.status === 'Active' ? '#10B981' : '#F59E0B',
+                              backgroundColor: item.status === 'Active' ? 'rgba(6, 78, 59, 0.3)' : 'rgba(120, 53, 15, 0.3)',
+                              border: item.status === 'Active' ? '1px solid rgba(6, 95, 70, 0.4)' : '1px solid rgba(180, 83, 9, 0.4)',
+                              color: item.status === 'Active' ? '#34D399' : '#FBBF24',
                             }}
                           >
                             {item.status}
@@ -1695,31 +1713,29 @@ export default function ConsolePage() {
                           {item.last_ping}
                         </div>
 
-                        {/* ACTIONS */}
+                        {/* ACTIONS: Sleek Ghost Button */}
                         <div style={{ textAlign: 'right' }}>
                           <button
                             type="button"
                             onClick={(e) => handleReaudit(e, item)}
                             style={{
-                              backgroundColor: 'transparent',
-                              border: '1px solid rgba(255, 255, 255, 0.1)',
-                              borderRadius: '4px',
-                              padding: '4px 8px',
-                              color: probingSkuId === item.id ? '#10B981' : '#A1A1AA',
-                              fontSize: '0.6875rem',
+                              backgroundColor: 'rgba(24, 24, 27, 0.5)',
+                              border: '1px solid #3F3F46',
+                              borderRadius: '6px',
+                              padding: '4px 10px',
+                              color: '#D4D4D8',
+                              fontSize: '0.75rem',
                               fontWeight: 500,
                               cursor: 'pointer',
                               transition: 'all 120ms ease',
                             }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.borderColor = '#10B981';
-                              e.currentTarget.style.color = '#10B981';
+                              e.currentTarget.style.backgroundColor = '#27272A';
+                              e.currentTarget.style.color = '#FFFFFF';
                             }}
                             onMouseLeave={(e) => {
-                              if (probingSkuId !== item.id) {
-                                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                                e.currentTarget.style.color = '#A1A1AA';
-                              }
+                              e.currentTarget.style.backgroundColor = 'rgba(24, 24, 27, 0.5)';
+                              e.currentTarget.style.color = '#D4D4D8';
                             }}
                           >
                             {probingSkuId === item.id ? 'Probing...' : 'Re-audit'}
@@ -1736,7 +1752,7 @@ export default function ConsolePage() {
         </main>
       </div>
 
-      {/* ── 7. SLIDE-OVER DRAWER: TELEMETRY FORENSIC INSPECTOR ── */}
+      {/* ── 7. SLIDE-OVER DRAWER: PURE BLACK TELEMETRY INSPECTOR ── */}
       {selectedDrawerItem && (
         <div
           style={{
@@ -1753,8 +1769,8 @@ export default function ConsolePage() {
             style={{
               position: 'absolute',
               inset: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.7)',
-              backdropFilter: 'blur(4px)',
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              backdropFilter: 'blur(6px)',
             }}
           />
 
@@ -1765,11 +1781,11 @@ export default function ConsolePage() {
             style={{
               position: 'relative',
               width: '100%',
-              maxWidth: '560px',
+              maxWidth: '540px',
               height: '100%',
-              backgroundColor: '#0D1117',
-              borderLeft: '1px solid rgba(255, 255, 255, 0.08)',
-              boxShadow: '-20px 0 40px rgba(0, 0, 0, 0.8)',
+              backgroundColor: '#0A0A0A',
+              borderLeft: '1px solid #27272A',
+              boxShadow: '-20px 0 40px rgba(0, 0, 0, 0.9)',
               zIndex: 101,
               overflowY: 'auto',
               display: 'flex',
@@ -1780,20 +1796,20 @@ export default function ConsolePage() {
             {/* Topbar */}
             <div
               style={{
-                height: '52px',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-                padding: '0 24px',
+                height: '50px',
+                borderBottom: '1px solid #27272A',
+                padding: '0 20px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                backgroundColor: '#131822',
+                backgroundColor: '#000000',
                 position: 'sticky',
                 top: 0,
                 zIndex: 10,
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10B981', boxShadow: '0 0 8px #10B981' }} />
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10B981' }} />
                 <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#A1A1AA', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                   FORENSIC TELEMETRY PROBE
                 </span>
@@ -1803,12 +1819,12 @@ export default function ConsolePage() {
                 onClick={() => setSelectedDrawerItem(null)}
                 style={{
                   background: 'none',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  border: '1px solid #27272A',
                   borderRadius: '4px',
                   color: '#71717A',
                   fontSize: '0.6875rem',
                   fontFamily: "'JetBrains Mono', monospace",
-                  padding: '2px 8px',
+                  padding: '2px 7px',
                   cursor: 'pointer',
                 }}
               >
@@ -1817,17 +1833,17 @@ export default function ConsolePage() {
             </div>
 
             {/* Content Container */}
-            <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{ padding: '22px', display: 'flex', flexDirection: 'column', gap: '22px' }}>
               
               {/* Module 1: Header */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingBottom: '20px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingBottom: '18px', borderBottom: '1px solid #27272A' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.75rem' }}>
                   <span style={{ color: '#FFFFFF', fontWeight: 600, fontFamily: "'JetBrains Mono', monospace" }}>{selectedDrawerItem.sku}</span>
-                  <span style={{ color: '#71717A' }}>·</span>
-                  <span style={{ color: '#10B981', fontWeight: 600, fontFamily: "'JetBrains Mono', monospace" }}>{selectedDrawerItem.node}</span>
-                  <span style={{ color: '#71717A', fontSize: '0.6875rem' }}>({selectedDrawerItem.domain})</span>
+                  <span style={{ color: '#52525B' }}>·</span>
+                  <span style={{ color: '#A1A1AA', fontWeight: 500, fontFamily: "'JetBrains Mono', monospace" }}>{selectedDrawerItem.node}</span>
+                  <span style={{ color: '#52525B', fontSize: '0.6875rem' }}>({selectedDrawerItem.domain})</span>
                 </div>
-                <h2 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#FFFFFF', margin: 0, lineHeight: 1.4 }}>
+                <h2 style={{ fontSize: '1.0625rem', fontWeight: 600, color: '#FFFFFF', margin: 0, lineHeight: 1.4 }}>
                   {selectedDrawerItem.title}
                 </h2>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', paddingTop: '4px' }}>
@@ -1835,7 +1851,7 @@ export default function ConsolePage() {
                     href={getStoreUrl(selectedDrawerItem)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ fontSize: '0.75rem', color: '#10B981', textDecoration: 'none', fontWeight: 500 }}
+                    style={{ fontSize: '0.75rem', color: '#EDEDED', textDecoration: 'underline', fontWeight: 500 }}
                   >
                     Open Node in Store ↗
                   </a>
@@ -1846,7 +1862,7 @@ export default function ConsolePage() {
               </div>
 
               {/* Module 2: Forensic Price Diagnostic */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <span style={{ fontSize: '0.6875rem', fontWeight: 600, letterSpacing: '0.05em', color: '#71717A', textTransform: 'uppercase' }}>
                   FORENSIC PRICE DIAGNOSTIC
                 </span>
@@ -1855,24 +1871,24 @@ export default function ConsolePage() {
                   style={{
                     display: 'grid',
                     gridTemplateColumns: '1fr 1fr',
-                    gap: '16px',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    gap: '14px',
+                    border: '1px solid #27272A',
                     borderRadius: '8px',
                     padding: '16px',
-                    backgroundColor: '#05070A',
+                    backgroundColor: '#000000',
                   }}
                 >
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                     <span style={{ fontSize: '0.6875rem', color: '#71717A', textTransform: 'uppercase' }}>CURRENT SHELF PRICE</span>
                     <span style={{ fontSize: '1.125rem', fontWeight: 600, color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace" }}>
                       EGP {selectedDrawerItem.current_price_egp?.toLocaleString()}
                     </span>
-                    <span style={{ fontSize: '0.6875rem', marginTop: '2px', color: drawerIsMarkup ? '#F43F5E' : '#10B981', fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}>
+                    <span style={{ fontSize: '0.6875rem', marginTop: '2px', color: drawerIsMarkup ? '#FB7185' : '#34D399', fontFamily: "'JetBrains Mono', monospace", fontWeight: 500 }}>
                       {drawerIsMarkup ? `+${selectedDrawerItem.delta_pct}% OVER BASELINE` : `${selectedDrawerItem.delta_pct}% UNDER BASELINE`}
                     </span>
                   </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                     <span style={{ fontSize: '0.6875rem', color: '#71717A', textTransform: 'uppercase' }}>90-DAY BASELINE MEDIAN</span>
                     <span style={{ fontSize: '1.125rem', fontWeight: 600, color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace" }}>
                       EGP {selectedDrawerItem.baseline_price_egp?.toLocaleString()}
@@ -1885,54 +1901,54 @@ export default function ConsolePage() {
 
                 <div
                   style={{
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    borderLeft: `3px solid ${drawerIsMarkup ? '#F43F5E' : '#10B981'}`,
+                    border: '1px solid #27272A',
+                    borderLeft: `3px solid ${drawerIsMarkup ? '#FB7185' : '#34D399'}`,
                     borderRadius: '6px',
                     padding: '12px 14px',
                     fontSize: '0.8125rem',
                     lineHeight: 1.5,
-                    backgroundColor: '#05070A',
+                    backgroundColor: '#000000',
                   }}
                 >
-                  <div style={{ fontWeight: 600, marginBottom: '2px', color: drawerIsMarkup ? '#F43F5E' : '#10B981' }}>
+                  <div style={{ fontWeight: 600, marginBottom: '2px', color: drawerIsMarkup ? '#FB7185' : '#34D399' }}>
                     TRUTH INDEX VERDICT
                   </div>
                   <div style={{ color: '#A1A1AA' }}>
                     {drawerIsMarkup
                       ? 'CRITICAL GHOST MARKUP — Price artificially inflated prior to promotional cycle to manufacture synthetic discount magnitude.'
-                      : 'VERIFIED REAL DEAL — Authentic markdown verified 7.9% below 90-day rolling domestic shelf median.'}
+                      : 'VERIFIED REAL DEAL — Authentic markdown verified below 90-day rolling domestic shelf median.'}
                   </div>
                 </div>
               </div>
 
               {/* Module 3: 90-Day Trend Sparkline */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <span style={{ fontSize: '0.6875rem', fontWeight: 600, letterSpacing: '0.05em', color: '#71717A', textTransform: 'uppercase' }}>
                   90-DAY PRICE TRAJECTORY & SPIKE ANALYSIS
                 </span>
 
                 <div
                   style={{
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    border: '1px solid #27272A',
                     borderRadius: '8px',
-                    padding: '16px',
-                    backgroundColor: '#05070A',
+                    padding: '14px',
+                    backgroundColor: '#000000',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '10px',
                   }}
                 >
-                  <div style={{ width: '100%', height: '90px' }}>
-                    <svg width="100%" height="90" viewBox="0 0 480 90" preserveAspectRatio="none" fill="none">
-                      <line x1="10" y1="50" x2="470" y2="50" stroke="#27272A" strokeWidth="1" strokeDasharray="4 4" />
+                  <div style={{ width: '100%', height: '80px' }}>
+                    <svg width="100%" height="80" viewBox="0 0 480 80" preserveAspectRatio="none" fill="none">
+                      <line x1="10" y1="45" x2="470" y2="45" stroke="#27272A" strokeWidth="1" strokeDasharray="4 4" />
                       <path
-                        d={drawerIsMarkup ? 'M 20 50 L 140 50 L 220 48 L 300 20 L 380 16 L 460 16' : 'M 20 38 L 140 38 L 220 40 L 300 62 L 380 66 L 460 66'}
-                        stroke={drawerIsMarkup ? '#F43F5E' : '#10B981'}
-                        strokeWidth="2.5"
+                        d={drawerIsMarkup ? 'M 20 45 L 140 45 L 220 44 L 300 18 L 380 14 L 460 14' : 'M 20 34 L 140 34 L 220 36 L 300 56 L 380 60 L 460 60'}
+                        stroke={drawerIsMarkup ? '#FB7185' : '#34D399'}
+                        strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       />
-                      <circle cx="460" cy={drawerIsMarkup ? 16 : 66} r="4" fill={drawerIsMarkup ? '#F43F5E' : '#10B981'} />
+                      <circle cx="460" cy={drawerIsMarkup ? 14 : 60} r="3.5" fill={drawerIsMarkup ? '#FB7185' : '#34D399'} />
                     </svg>
                   </div>
 
@@ -1945,65 +1961,65 @@ export default function ConsolePage() {
               </div>
 
               {/* Module 4: Landed Cost & Arbitrage Benchmark */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <span style={{ fontSize: '0.6875rem', fontWeight: 600, letterSpacing: '0.05em', color: '#71717A', textTransform: 'uppercase' }}>
                   LANDED IMPORT COST & ARBITRAGE BENCHMARK
                 </span>
 
                 <div
                   style={{
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    border: '1px solid #27272A',
                     borderRadius: '8px',
                     overflow: 'hidden',
-                    backgroundColor: '#05070A',
+                    backgroundColor: '#000000',
                     fontSize: '0.75rem',
                   }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', borderBottom: '1px solid #18181B' }}>
                     <span style={{ color: '#71717A' }}>Domestic Cairo Retail Shelf</span>
-                    <span style={{ color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}>EGP {drawerDomestic.toLocaleString()}</span>
+                    <span style={{ color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace", fontWeight: 500 }}>EGP {drawerDomestic.toLocaleString()}</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', borderBottom: '1px solid #18181B' }}>
                     <span style={{ color: '#71717A' }}>Declared CIF Cargo Import (USD converted)</span>
                     <span style={{ color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace" }}>EGP {drawerCif.toLocaleString()} (${drawerBaseUsd})</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', borderBottom: '1px solid #18181B' }}>
                     <span style={{ color: '#71717A' }}>Customs Duty (10%)</span>
                     <span style={{ color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace" }}>EGP {drawerCustoms.toLocaleString()}</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', borderBottom: '1px solid #18181B' }}>
                     <span style={{ color: '#71717A' }}>Value-Added Tax (14% VAT)</span>
                     <span style={{ color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace" }}>EGP {drawerVat.toLocaleString()}</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', backgroundColor: '#131822', fontWeight: 600 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', backgroundColor: '#18181B', fontWeight: 600 }}>
                     <span style={{ color: '#FFFFFF' }}>Total Landed Cost Settlement</span>
-                    <span style={{ color: '#10B981', fontFamily: "'JetBrains Mono', monospace" }}>EGP {drawerTotalLanded.toLocaleString()}</span>
+                    <span style={{ color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace" }}>EGP {drawerTotalLanded.toLocaleString()}</span>
                   </div>
                 </div>
 
                 <div
                   style={{
-                    padding: '12px 14px',
+                    padding: '10px 12px',
                     borderRadius: '6px',
-                    border: '1px solid rgba(16, 185, 129, 0.25)',
-                    backgroundColor: 'rgba(16, 185, 129, 0.06)',
+                    border: '1px solid #27272A',
+                    backgroundColor: '#000000',
                     fontSize: '0.75rem',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                   }}
                 >
-                  <span style={{ fontWeight: 600, color: '#10B981' }}>
+                  <span style={{ fontWeight: 600, color: drawerHasAdvantage ? '#34D399' : '#EDEDED' }}>
                     {drawerHasAdvantage ? 'IMPORT RECOMMENDED' : 'BUY LOCAL PREFERRED'}
                   </span>
-                  <span style={{ fontFamily: "'JetBrains Mono', monospace", color: '#D4D4D8' }}>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", color: '#A1A1AA' }}>
                     {drawerHasAdvantage ? `+EGP ${drawerNetSaved.toLocaleString()} margin saved` : 'Domestic shelf is optimal'}
                   </span>
                 </div>
               </div>
 
               {/* Module 5: Alert Trigger Settings */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <span style={{ fontSize: '0.6875rem', fontWeight: 600, letterSpacing: '0.05em', color: '#71717A', textTransform: 'uppercase' }}>
                   PRICE ALERT NOTIFICATION TRIGGER
                 </span>
@@ -2014,25 +2030,25 @@ export default function ConsolePage() {
                       flex: 1,
                       display: 'flex',
                       alignItems: 'center',
-                      backgroundColor: '#05070A',
-                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      backgroundColor: '#000000',
+                      border: '1px solid #27272A',
                       borderRadius: '6px',
-                      height: '40px',
+                      height: '38px',
                       overflow: 'hidden',
                     }}
                   >
                     <span
                       style={{
                         fontSize: '0.75rem',
-                        fontWeight: 600,
+                        fontWeight: 500,
                         color: '#71717A',
                         padding: '0 12px',
-                        backgroundColor: '#131822',
+                        backgroundColor: '#18181B',
                         height: '100%',
                         display: 'flex',
                         alignItems: 'center',
                         fontFamily: "'JetBrains Mono', monospace",
-                        borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+                        borderRight: '1px solid #27272A',
                       }}
                     >
                       EGP
@@ -2060,12 +2076,12 @@ export default function ConsolePage() {
                     type="button"
                     onClick={handleSaveAlert}
                     style={{
-                      backgroundColor: alertSavedSuccess ? '#10B981' : '#FFFFFF',
-                      color: '#05070A',
+                      backgroundColor: alertSavedSuccess ? '#34D399' : '#FFFFFF',
+                      color: '#000000',
                       fontSize: '0.75rem',
-                      fontWeight: 600,
-                      padding: '0 16px',
-                      height: '40px',
+                      fontWeight: 500,
+                      padding: '0 14px',
+                      height: '38px',
                       borderRadius: '6px',
                       border: 'none',
                       cursor: 'pointer',
@@ -2073,7 +2089,7 @@ export default function ConsolePage() {
                       transition: 'background-color 150ms ease',
                     }}
                   >
-                    {alertSavedSuccess ? '✓ Alert Saved' : 'Save Alert Rule'}
+                    {alertSavedSuccess ? '✓ Saved' : 'Save Alert Rule'}
                   </button>
                 </div>
               </div>
@@ -2096,7 +2112,7 @@ export default function ConsolePage() {
       <style>{`
         @keyframes pulseDot {
           0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.4; transform: scale(0.85); }
+          50% { opacity: 0.35; transform: scale(0.85); }
         }
         @keyframes spin {
           from { transform: rotate(0deg); }

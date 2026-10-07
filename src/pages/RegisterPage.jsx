@@ -96,7 +96,7 @@ export default function RegisterPage() {
       return;
     }
     if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
-      setErrorMsg('Password must include both letters and numbers for telemetry entropy.');
+      setErrorMsg('Password must include both letters and numbers for entropy.');
       return;
     }
 
@@ -203,15 +203,31 @@ export default function RegisterPage() {
       });
 
       if (error) {
-        setErrorMsg(error.message || 'Invalid or expired code.');
-        setLoading(false);
-      } else if (data?.session || data?.user) {
-        window.location.href = getReturnTo();
+        setErrorMsg(error.message || 'Invalid verification code. Please check your inbox.');
+      } else if (data?.session) {
+        setSuccessMsg('✓ Identity verified. Initializing session...');
+        setTimeout(() => {
+          window.location.href = getReturnTo();
+        }, 300);
       } else {
-        window.location.href = '/console';
+        // Fallback sign in if verifyOtp didn't create session
+        const { data: signInData, error: signInErr } = await supabase.auth.signInWithPassword({
+          email: cleanEmail,
+          password,
+        });
+
+        if (signInErr) {
+          setErrorMsg('Verification completed. Please log in with your credentials.');
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 1500);
+        } else if (signInData?.session) {
+          window.location.href = getReturnTo();
+        }
       }
     } catch (err) {
-      setErrorMsg(err.message || 'Verification failed. Please retry.');
+      setErrorMsg(err.message || 'OTP verification error.');
+    } finally {
       setLoading(false);
     }
   };
@@ -245,18 +261,20 @@ export default function RegisterPage() {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundColor: '#0A0A0A',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: '40px 16px 28px 16px',
-      boxSizing: 'border-box',
-      fontFamily: 'var(--font-sans, system-ui, sans-serif)',
-      color: '#EDEDED',
-    }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        backgroundColor: '#000000',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '40px 16px 28px 16px',
+        boxSizing: 'border-box',
+        fontFamily: "'Inter', 'Geist', system-ui, -apple-system, sans-serif",
+        color: '#EDEDED',
+      }}
+    >
       {/* Top Anchor Brand */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
         <a
@@ -265,58 +283,89 @@ export default function RegisterPage() {
           style={{
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '10px',
+            gap: '8px',
             textDecoration: 'none',
             padding: '6px 12px',
-            borderRadius: '8px',
-            transition: 'transform 150ms ease, opacity 150ms ease',
+            borderRadius: '6px',
+            transition: 'opacity 150ms ease',
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.92'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
+          onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.85'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
         >
           <img
             src={cawlixLogo}
             alt="Cawlix Logo"
-            width={28}
-            height={28}
-            style={{ width: '28px', height: '28px', objectFit: 'contain', display: 'block' }}
+            width={24}
+            height={24}
+            style={{ width: '24px', height: '24px', objectFit: 'contain', display: 'block' }}
           />
-          <span style={{
-            fontSize: '1.1875rem',
-            fontWeight: 700,
-            color: '#FFFFFF',
-            letterSpacing: '-0.02em',
-            fontFamily: 'var(--font-sans, system-ui, sans-serif)',
-          }}>
+          <span
+            style={{
+              fontSize: '1.125rem',
+              fontWeight: 600,
+              color: '#FFFFFF',
+              letterSpacing: '-0.02em',
+            }}
+          >
             Cawlix
           </span>
         </a>
       </div>
 
       {/* Form Shell: Max 400px Container Bounds */}
-      <div style={{
-        maxWidth: '400px',
-        width: '100%',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
-        borderRadius: '12px',
-        padding: '32px',
-        backgroundColor: '#0A0A0A',
-        boxSizing: 'border-box',
-        marginBottom: 'auto',
-      }}>
+      <div
+        style={{
+          maxWidth: '400px',
+          width: '100%',
+          border: '1px solid #27272A',
+          borderRadius: '12px',
+          padding: '32px',
+          backgroundColor: '#0A0A0A',
+          boxSizing: 'border-box',
+          marginBottom: 'auto',
+          boxShadow: '0 24px 48px -12px rgba(0, 0, 0, 0.9)',
+        }}
+      >
         {step === 'form' ? (
           <div>
             {/* Header */}
             <header style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '3px 9px',
+                  borderRadius: '9999px',
+                  backgroundColor: '#18181B',
+                  border: '1px solid #27272A',
+                  fontSize: '0.6875rem',
+                  color: '#A1A1AA',
+                  fontWeight: 500,
+                  letterSpacing: '0.04em',
+                  textTransform: 'uppercase',
+                  marginBottom: '14px',
+                }}
+              >
+                <span
+                  style={{
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    backgroundColor: '#10B981',
+                  }}
+                />
+                TELEMETRY AUTH ENGINE
+              </div>
               <h1 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#FFFFFF', letterSpacing: '-0.02em', margin: 0 }}>
-                Create your account
+                Create your Cawlix Account
               </h1>
-              <p style={{ fontSize: '0.75rem', color: '#737373', marginTop: '6px', marginBottom: 0, lineHeight: 1.5 }}>
-                Deploy your telemetry terminal and monitoring engine.
+              <p style={{ fontSize: '0.8125rem', color: '#888888', marginTop: '6px', marginBottom: 0, lineHeight: 1.5 }}>
+                Deploy price telemetry probes and monitor retail volatility.
               </p>
             </header>
 
-            {/* 1-Click Exclusive Google Provider */}
+            {/* 1-Click Exclusive Google Signup */}
             <div>
               <button
                 type="button"
@@ -324,9 +373,9 @@ export default function RegisterPage() {
                 onClick={handleGoogleSignup}
                 style={{
                   width: '100%',
-                  height: '44px',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
-                  backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                  height: '42px',
+                  border: '1px solid #27272A',
+                  backgroundColor: '#111111',
                   color: '#EDEDED',
                   fontSize: '0.875rem',
                   fontWeight: 500,
@@ -334,18 +383,18 @@ export default function RegisterPage() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '12px',
+                  gap: '10px',
                   cursor: loading ? 'not-allowed' : 'pointer',
                   opacity: loading ? 0.6 : 1,
                   transition: 'background-color 150ms ease, border-color 150ms ease',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.06)';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                  e.currentTarget.style.backgroundColor = '#18181B';
+                  e.currentTarget.style.borderColor = '#3F3F46';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.02)';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+                  e.currentTarget.style.backgroundColor = '#111111';
+                  e.currentTarget.style.borderColor = '#27272A';
                 }}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
@@ -358,10 +407,10 @@ export default function RegisterPage() {
               </button>
             </div>
 
-            {/* Institutional Divider */}
+            {/* Divider */}
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '22px 0' }}>
-              <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: '1px', backgroundColor: 'rgba(255, 255, 255, 0.08)' }} />
-              <span style={{ position: 'relative', backgroundColor: '#0D0D0D', padding: '0 8px', fontFamily: 'var(--font-mono, monospace)', fontSize: '10px', color: '#525252', letterSpacing: '0.06em' }}>
+              <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: '1px', backgroundColor: '#27272A' }} />
+              <span style={{ position: 'relative', backgroundColor: '#0A0A0A', padding: '0 8px', fontSize: '10px', color: '#71717A', letterSpacing: '0.06em' }}>
                 OR
               </span>
             </div>
@@ -369,7 +418,7 @@ export default function RegisterPage() {
             {/* Form */}
             <form onSubmit={handleInitialSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <label htmlFor="react-reg-email" style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '11px', color: '#737373', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>
+                <label htmlFor="react-reg-email" style={{ fontSize: '0.75rem', fontWeight: 500, color: '#A1A1AA', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>
                   WORK OR PERSONAL EMAIL
                 </label>
                 <input
@@ -380,26 +429,25 @@ export default function RegisterPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@domain.com"
                   style={{
-                    backgroundColor: '#0D0D0D',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    backgroundColor: '#000000',
+                    border: '1px solid #27272A',
                     color: '#EDEDED',
                     fontSize: '0.875rem',
-                    fontFamily: 'var(--font-mono, monospace)',
-                    padding: '0 14px',
-                    height: '44px',
+                    padding: '0 12px',
+                    height: '42px',
                     borderRadius: '6px',
                     outline: 'none',
                     width: '100%',
                     boxSizing: 'border-box',
-                    transition: 'all 150ms ease',
+                    transition: 'border-color 150ms ease',
                   }}
-                  onFocus={(e) => e.target.style.borderColor = '#3ECF8E'}
-                  onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)'}
+                  onFocus={(e) => e.target.style.borderColor = '#71717A'}
+                  onBlur={(e) => e.target.style.borderColor = '#27272A'}
                 />
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <label htmlFor="react-reg-password" style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '11px', color: '#737373', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>
+                <label htmlFor="react-reg-password" style={{ fontSize: '0.75rem', fontWeight: 500, color: '#A1A1AA', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>
                   CREATE PASSWORD
                 </label>
                 <input
@@ -410,79 +458,78 @@ export default function RegisterPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
                   style={{
-                    backgroundColor: '#0D0D0D',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    backgroundColor: '#000000',
+                    border: '1px solid #27272A',
                     color: '#EDEDED',
                     fontSize: '0.875rem',
-                    fontFamily: 'var(--font-mono, monospace)',
-                    padding: '0 14px',
-                    height: '44px',
+                    padding: '0 12px',
+                    height: '42px',
                     borderRadius: '6px',
                     outline: 'none',
                     width: '100%',
                     boxSizing: 'border-box',
-                    transition: 'all 150ms ease',
+                    transition: 'border-color 150ms ease',
                   }}
-                  onFocus={(e) => e.target.style.borderColor = '#3ECF8E'}
-                  onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)'}
+                  onFocus={(e) => e.target.style.borderColor = '#71717A'}
+                  onBlur={(e) => e.target.style.borderColor = '#27272A'}
                 />
-                <span style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '10px', color: '#525252', marginTop: '6px' }}>
+                <span style={{ fontSize: '0.6875rem', color: '#71717A', marginTop: '6px' }}>
                   Minimum 8 characters with letters and numbers.
                 </span>
               </div>
 
               {errorMsg && (
-                <div style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '0.75rem', color: '#EF4444', lineHeight: 1.4 }}>
+                <div style={{ fontSize: '0.8125rem', color: '#FB7185', backgroundColor: 'rgba(76, 5, 25, 0.4)', border: '1px solid rgba(159, 18, 57, 0.4)', borderRadius: '6px', padding: '9px 12px', lineHeight: 1.4 }}>
                   {errorMsg}
                 </div>
               )}
 
               {successMsg && (
-                <div style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '0.75rem', color: '#3ECF8E', lineHeight: 1.4 }}>
+                <div style={{ fontSize: '0.8125rem', color: '#34D399', backgroundColor: 'rgba(6, 78, 59, 0.4)', border: '1px solid rgba(6, 95, 70, 0.4)', borderRadius: '6px', padding: '9px 12px', lineHeight: 1.4 }}>
                   {successMsg}
                 </div>
               )}
 
+              {/* Vercel High-Contrast Button */}
               <button
                 type="submit"
                 disabled={loading}
                 style={{
-                  backgroundColor: '#3ECF8E',
-                  color: '#0A0A0A',
-                  fontWeight: 700,
+                  backgroundColor: '#FFFFFF',
+                  color: '#000000',
+                  fontWeight: 500,
                   fontSize: '0.875rem',
-                  height: '44px',
+                  height: '42px',
                   borderRadius: '6px',
                   border: 'none',
                   cursor: loading ? 'not-allowed' : 'pointer',
                   opacity: loading ? 0.6 : 1,
-                  boxShadow: 'none',
                   transition: 'background-color 150ms ease, opacity 150ms ease',
                   width: '100%',
-                  marginTop: '8px',
+                  marginTop: '4px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
-                onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#34B27B'; }}
-                onMouseLeave={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#3ECF8E'; }}
+                onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#E4E4E7'; }}
+                onMouseLeave={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#FFFFFF'; }}
               >
-                {loading ? 'CONNECTING...' : 'Create Account'}
+                {loading ? 'Deploying...' : 'Create Account'}
               </button>
             </form>
           </div>
         ) : (
-          /* STEP 2: 6-Digit OTP Verification in Cawlix aesthetic */
+          /* STEP 2: 6-Digit OTP Verification in Vercel aesthetic */
           <div>
             <header style={{ textAlign: 'center', marginBottom: '24px' }}>
               <h1 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#FFFFFF', letterSpacing: '-0.02em', margin: 0 }}>
                 Verify Your Email
               </h1>
-              <p style={{ fontSize: '0.75rem', color: '#737373', marginTop: '6px', marginBottom: 0, lineHeight: 1.5 }}>
+              <p style={{ fontSize: '0.8125rem', color: '#888888', marginTop: '6px', marginBottom: 0, lineHeight: 1.5 }}>
                 Enter the 6-digit verification code sent to:
               </p>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
-                <span style={{ fontSize: '0.8125rem', color: '#EDEDED', fontWeight: 600, fontFamily: 'var(--font-mono, monospace)' }}>
+                <span style={{ fontSize: '0.8125rem', color: '#EDEDED', fontWeight: 500 }}>
                   {email}
                 </span>
                 <button
@@ -495,9 +542,8 @@ export default function RegisterPage() {
                   style={{
                     background: 'transparent',
                     border: 'none',
-                    color: '#3ECF8E',
+                    color: '#FFFFFF',
                     fontSize: '11px',
-                    fontFamily: 'var(--font-mono, monospace)',
                     cursor: 'pointer',
                     padding: 0,
                     textDecoration: 'underline',
@@ -531,33 +577,33 @@ export default function RegisterPage() {
                   onKeyDown={(e) => handleOtpKeyDown(idx, e)}
                   style={{
                     width: '100%',
-                    height: '48px',
-                    backgroundColor: '#0D0D0D',
-                    border: digit ? '1px solid #3ECF8E' : '1px solid rgba(255, 255, 255, 0.12)',
-                    color: '#EDEDED',
-                    fontSize: '1.25rem',
-                    fontWeight: 700,
+                    height: '46px',
+                    backgroundColor: '#000000',
+                    border: digit ? '1px solid #EDEDED' : '1px solid #27272A',
+                    color: '#FFFFFF',
+                    fontSize: '1.125rem',
+                    fontWeight: 600,
                     textAlign: 'center',
-                    fontFamily: 'var(--font-mono, monospace)',
+                    fontFamily: "'JetBrains Mono', monospace",
                     borderRadius: '6px',
                     outline: 'none',
                     boxSizing: 'border-box',
-                    transition: 'all 150ms ease',
+                    transition: 'border-color 150ms ease',
                   }}
-                  onFocus={(e) => (e.target.style.borderColor = '#3ECF8E')}
-                  onBlur={(e) => (e.target.style.borderColor = digit ? '#3ECF8E' : 'rgba(255, 255, 255, 0.12)')}
+                  onFocus={(e) => (e.target.style.borderColor = '#FFFFFF')}
+                  onBlur={(e) => (e.target.style.borderColor = digit ? '#EDEDED' : '#27272A')}
                 />
               ))}
             </div>
 
             {errorMsg && (
-              <div style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '0.75rem', color: '#EF4444', lineHeight: 1.4, marginBottom: '14px' }}>
+              <div style={{ fontSize: '0.8125rem', color: '#FB7185', backgroundColor: 'rgba(76, 5, 25, 0.4)', border: '1px solid rgba(159, 18, 57, 0.4)', borderRadius: '6px', padding: '9px 12px', lineHeight: 1.4, marginBottom: '14px' }}>
                 {errorMsg}
               </div>
             )}
 
             {successMsg && (
-              <div style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '0.75rem', color: '#3ECF8E', lineHeight: 1.4, marginBottom: '14px' }}>
+              <div style={{ fontSize: '0.8125rem', color: '#34D399', backgroundColor: 'rgba(6, 78, 59, 0.4)', border: '1px solid rgba(6, 95, 70, 0.4)', borderRadius: '6px', padding: '9px 12px', lineHeight: 1.4, marginBottom: '14px' }}>
                 {successMsg}
               </div>
             )}
@@ -567,16 +613,15 @@ export default function RegisterPage() {
               disabled={loading || otp.some((d) => d === '')}
               onClick={() => handleVerifyOtp()}
               style={{
-                backgroundColor: '#3ECF8E',
-                color: '#0A0A0A',
-                fontWeight: 700,
+                backgroundColor: '#FFFFFF',
+                color: '#000000',
+                fontWeight: 500,
                 fontSize: '0.875rem',
-                height: '44px',
+                height: '42px',
                 borderRadius: '6px',
                 border: 'none',
                 cursor: loading || otp.some((d) => d === '') ? 'not-allowed' : 'pointer',
                 opacity: loading || otp.some((d) => d === '') ? 0.6 : 1,
-                boxShadow: 'none',
                 transition: 'background-color 150ms ease, opacity 150ms ease',
                 width: '100%',
                 display: 'flex',
@@ -585,16 +630,16 @@ export default function RegisterPage() {
               }}
               onMouseEnter={(e) => {
                 if (!loading && otp.every((d) => d !== '')) {
-                  e.currentTarget.style.backgroundColor = '#34B27B';
+                  e.currentTarget.style.backgroundColor = '#E4E4E7';
                 }
               }}
               onMouseLeave={(e) => {
                 if (!loading) {
-                  e.currentTarget.style.backgroundColor = '#3ECF8E';
+                  e.currentTarget.style.backgroundColor = '#FFFFFF';
                 }
               }}
             >
-              {loading ? 'VERIFYING...' : 'Verify Code & Continue'}
+              {loading ? 'Verifying...' : 'Verify Code & Continue'}
             </button>
 
             {/* Resend and Back actions */}
@@ -609,9 +654,8 @@ export default function RegisterPage() {
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  color: '#737373',
+                  color: '#71717A',
                   fontSize: '11px',
-                  fontFamily: 'var(--font-mono, monospace)',
                   cursor: 'pointer',
                   padding: 0,
                 }}
@@ -626,9 +670,8 @@ export default function RegisterPage() {
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  color: resendCooldown > 0 ? '#525252' : '#3ECF8E',
+                  color: resendCooldown > 0 ? '#52525B' : '#A1A1AA',
                   fontSize: '11px',
-                  fontFamily: 'var(--font-mono, monospace)',
                   cursor: resendCooldown > 0 || loading ? 'not-allowed' : 'pointer',
                   padding: 0,
                   textDecoration: resendCooldown > 0 ? 'none' : 'underline',
@@ -642,10 +685,10 @@ export default function RegisterPage() {
 
         {/* Footer */}
         <footer style={{ marginTop: '24px', textAlign: 'center' }}>
-          <p style={{ fontSize: '0.75rem', color: '#737373', margin: 0 }}>
-            Already have an account? <a href="/login" style={{ color: '#3ECF8E', textDecoration: 'none', fontWeight: 600 }}>Log in</a>
+          <p style={{ fontSize: '0.8125rem', color: '#888888', margin: 0 }}>
+            Already have an account? <a href="/login" style={{ color: '#FFFFFF', textDecoration: 'underline', fontWeight: 500 }}>Log in</a>
           </p>
-          <p style={{ fontSize: '11px', color: '#525252', marginTop: '10px', marginBottom: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: '0.6875rem', color: '#666666', marginTop: '10px', marginBottom: 0, lineHeight: 1.5 }}>
             By signing up, you agree to the Cawlix Telemetry Terms and Security Protocol.
           </p>
         </footer>

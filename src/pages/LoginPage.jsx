@@ -110,14 +110,14 @@ export default function LoginPage() {
     <div
       style={{
         minHeight: '100vh',
-        backgroundColor: '#05070A',
+        backgroundColor: '#000000',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: '40px 16px 28px 16px',
         boxSizing: 'border-box',
-        fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+        fontFamily: "'Inter', 'Geist', system-ui, -apple-system, sans-serif",
         color: '#EDEDED',
       }}
     >
@@ -129,32 +129,30 @@ export default function LoginPage() {
           style={{
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '10px',
+            gap: '8px',
             textDecoration: 'none',
             padding: '6px 12px',
-            borderRadius: '8px',
-            transition: 'transform 150ms ease, opacity 150ms ease',
+            borderRadius: '6px',
+            transition: 'opacity 150ms ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.opacity = '0.9';
-            e.currentTarget.style.transform = 'translateY(-1px)';
+            e.currentTarget.style.opacity = '0.85';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.opacity = '1';
-            e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
           <img
             src={cawlixLogo}
             alt="Cawlix Logo"
-            width={28}
-            height={28}
-            style={{ width: '28px', height: '28px', objectFit: 'contain', display: 'block' }}
+            width={24}
+            height={24}
+            style={{ width: '24px', height: '24px', objectFit: 'contain', display: 'block' }}
           />
           <span
             style={{
-              fontSize: '1.1875rem',
-              fontWeight: 700,
+              fontSize: '1.125rem',
+              fontWeight: 600,
               color: '#FFFFFF',
               letterSpacing: '-0.02em',
             }}
@@ -164,18 +162,18 @@ export default function LoginPage() {
         </a>
       </div>
 
-      {/* Form Shell: Max 400px Container Bounds */}
+      {/* Form Shell: Max 400px Container Bounds (Vercel True Black) */}
       <div
         style={{
           maxWidth: '400px',
           width: '100%',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          border: '1px solid #27272A',
           borderRadius: '12px',
           padding: '32px',
-          backgroundColor: '#0D1117',
+          backgroundColor: '#0A0A0A',
           boxSizing: 'border-box',
           marginBottom: 'auto',
-          boxShadow: '0 20px 40px -15px rgba(0, 0, 0, 0.7)',
+          boxShadow: '0 24px 48px -12px rgba(0, 0, 0, 0.9)',
         }}
       >
         {/* Header */}
@@ -185,13 +183,13 @@ export default function LoginPage() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              padding: '4px 10px',
+              padding: '3px 9px',
               borderRadius: '9999px',
-              backgroundColor: 'rgba(16, 185, 129, 0.1)',
-              border: '1px solid rgba(16, 185, 129, 0.25)',
+              backgroundColor: '#18181B',
+              border: '1px solid #27272A',
               fontSize: '0.6875rem',
-              color: '#10B981',
-              fontWeight: 600,
+              color: '#A1A1AA',
+              fontWeight: 500,
               letterSpacing: '0.04em',
               textTransform: 'uppercase',
               marginBottom: '14px',
@@ -203,10 +201,9 @@ export default function LoginPage() {
                 height: '6px',
                 borderRadius: '50%',
                 backgroundColor: '#10B981',
-                boxShadow: '0 0 8px #10B981',
               }}
             />
-            TELEMETRY ENGINE AUTH
+            TELEMETRY AUTH ENGINE
           </div>
           <h1
             style={{
@@ -222,7 +219,7 @@ export default function LoginPage() {
           <p
             style={{
               fontSize: '0.8125rem',
-              color: '#71717A',
+              color: '#888888',
               marginTop: '6px',
               marginBottom: 0,
               lineHeight: 1.5,
@@ -240,9 +237,9 @@ export default function LoginPage() {
             onClick={handleGoogleAuth}
             style={{
               width: '100%',
-              height: '44px',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              backgroundColor: '#131822',
+              height: '42px',
+              border: '1px solid #27272A',
+              backgroundColor: '#111111',
               color: '#EDEDED',
               fontSize: '0.875rem',
               fontWeight: 500,
@@ -250,18 +247,18 @@ export default function LoginPage() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '12px',
+              gap: '10px',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.6 : 1,
               transition: 'background-color 150ms ease, border-color 150ms ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#182030';
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+              e.currentTarget.style.backgroundColor = '#18181B';
+              e.currentTarget.style.borderColor = '#3F3F46';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#131822';
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+              e.currentTarget.style.backgroundColor = '#111111';
+              e.currentTarget.style.borderColor = '#27272A';
             }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
@@ -276,11 +273,11 @@ export default function LoginPage() {
 
         {/* Institutional Divider */}
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '22px 0' }}>
-          <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: '1px', backgroundColor: 'rgba(255, 255, 255, 0.08)' }} />
+          <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: '1px', backgroundColor: '#27272A' }} />
           <span
             style={{
               position: 'relative',
-              backgroundColor: '#0D1117',
+              backgroundColor: '#0A0A0A',
               padding: '0 10px',
               fontSize: '0.75rem',
               color: '#71717A',
@@ -292,7 +289,7 @@ export default function LoginPage() {
         </div>
 
         {/* Auth Method Tabs */}
-        <div style={{ display: 'flex', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', marginBottom: '18px', gap: '20px' }}>
+        <div style={{ display: 'flex', borderBottom: '1px solid #27272A', marginBottom: '18px', gap: '20px' }}>
           <button
             type="button"
             onClick={() => setMode('password')}
@@ -301,8 +298,8 @@ export default function LoginPage() {
               border: 'none',
               fontSize: '0.8125rem',
               fontWeight: mode === 'password' ? 600 : 400,
-              color: mode === 'password' ? '#10B981' : '#71717A',
-              borderBottom: mode === 'password' ? '2px solid #10B981' : '2px solid transparent',
+              color: mode === 'password' ? '#FFFFFF' : '#71717A',
+              borderBottom: mode === 'password' ? '2px solid #FFFFFF' : '2px solid transparent',
               padding: '0 0 8px 0',
               cursor: 'pointer',
               transition: 'color 150ms ease',
@@ -318,8 +315,8 @@ export default function LoginPage() {
               border: 'none',
               fontSize: '0.8125rem',
               fontWeight: mode === 'magic' ? 600 : 400,
-              color: mode === 'magic' ? '#10B981' : '#71717A',
-              borderBottom: mode === 'magic' ? '2px solid #10B981' : '2px solid transparent',
+              color: mode === 'magic' ? '#FFFFFF' : '#71717A',
+              borderBottom: mode === 'magic' ? '2px solid #FFFFFF' : '2px solid transparent',
               padding: '0 0 8px 0',
               cursor: 'pointer',
               transition: 'color 150ms ease',
@@ -336,7 +333,7 @@ export default function LoginPage() {
               htmlFor="login-email"
               style={{
                 fontSize: '0.75rem',
-                fontWeight: 600,
+                fontWeight: 500,
                 color: '#A1A1AA',
                 letterSpacing: '0.04em',
                 textTransform: 'uppercase',
@@ -354,20 +351,20 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@domain.com"
               style={{
-                backgroundColor: '#05070A',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
+                backgroundColor: '#000000',
+                border: '1px solid #27272A',
                 color: '#EDEDED',
                 fontSize: '0.875rem',
-                padding: '0 14px',
-                height: '44px',
+                padding: '0 12px',
+                height: '42px',
                 borderRadius: '6px',
                 outline: 'none',
                 width: '100%',
                 boxSizing: 'border-box',
                 transition: 'border-color 150ms ease',
               }}
-              onFocus={(e) => (e.target.style.borderColor = '#10B981')}
-              onBlur={(e) => (e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)')}
+              onFocus={(e) => (e.target.style.borderColor = '#71717A')}
+              onBlur={(e) => (e.target.style.borderColor = '#27272A')}
             />
           </div>
 
@@ -378,7 +375,7 @@ export default function LoginPage() {
                   htmlFor="login-password"
                   style={{
                     fontSize: '0.75rem',
-                    fontWeight: 600,
+                    fontWeight: 500,
                     color: '#A1A1AA',
                     letterSpacing: '0.04em',
                     textTransform: 'uppercase',
@@ -392,12 +389,12 @@ export default function LoginPage() {
                   href="/forgot-password"
                   style={{
                     fontSize: '0.75rem',
-                    color: '#71717A',
+                    color: '#888888',
                     textDecoration: 'none',
                     transition: 'color 150ms ease',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = '#10B981')}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = '#71717A')}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = '#FFFFFF')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = '#888888')}
                 >
                   Forgot password?
                 </a>
@@ -410,20 +407,20 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
                 style={{
-                  backgroundColor: '#05070A',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  backgroundColor: '#000000',
+                  border: '1px solid #27272A',
                   color: '#EDEDED',
                   fontSize: '0.875rem',
-                  padding: '0 14px',
-                  height: '44px',
+                  padding: '0 12px',
+                  height: '42px',
                   borderRadius: '6px',
                   outline: 'none',
                   width: '100%',
                   boxSizing: 'border-box',
                   transition: 'border-color 150ms ease',
                 }}
-                onFocus={(e) => (e.target.style.borderColor = '#10B981')}
-                onBlur={(e) => (e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)')}
+                onFocus={(e) => (e.target.style.borderColor = '#71717A')}
+                onBlur={(e) => (e.target.style.borderColor = '#27272A')}
               />
             </div>
           )}
@@ -432,11 +429,11 @@ export default function LoginPage() {
             <div
               style={{
                 fontSize: '0.8125rem',
-                color: '#F43F5E',
-                backgroundColor: 'rgba(244, 63, 94, 0.1)',
-                border: '1px solid rgba(244, 63, 94, 0.25)',
+                color: '#FB7185',
+                backgroundColor: 'rgba(76, 5, 25, 0.4)',
+                border: '1px solid rgba(159, 18, 57, 0.4)',
                 borderRadius: '6px',
-                padding: '10px 12px',
+                padding: '9px 12px',
                 lineHeight: 1.4,
               }}
             >
@@ -448,11 +445,11 @@ export default function LoginPage() {
             <div
               style={{
                 fontSize: '0.8125rem',
-                color: '#10B981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                border: '1px solid rgba(16, 185, 129, 0.25)',
+                color: '#34D399',
+                backgroundColor: 'rgba(6, 78, 59, 0.4)',
+                border: '1px solid rgba(6, 95, 70, 0.4)',
                 borderRadius: '6px',
-                padding: '10px 12px',
+                padding: '9px 12px',
                 lineHeight: 1.4,
               }}
             >
@@ -460,15 +457,16 @@ export default function LoginPage() {
             </div>
           )}
 
+          {/* Vercel High-Contrast Button */}
           <button
             type="submit"
             disabled={loading}
             style={{
-              backgroundColor: '#10B981',
-              color: '#05070A',
-              fontWeight: 600,
+              backgroundColor: '#FFFFFF',
+              color: '#000000',
+              fontWeight: 500,
               fontSize: '0.875rem',
-              height: '44px',
+              height: '42px',
               borderRadius: '6px',
               border: 'none',
               cursor: loading ? 'not-allowed' : 'pointer',
@@ -481,25 +479,25 @@ export default function LoginPage() {
               justifyContent: 'center',
             }}
             onMouseEnter={(e) => {
-              if (!loading) e.currentTarget.style.backgroundColor = '#059669';
+              if (!loading) e.currentTarget.style.backgroundColor = '#E4E4E7';
             }}
             onMouseLeave={(e) => {
-              if (!loading) e.currentTarget.style.backgroundColor = '#10B981';
+              if (!loading) e.currentTarget.style.backgroundColor = '#FFFFFF';
             }}
           >
-            {loading ? 'CONNECTING...' : mode === 'password' ? 'Continue with Email' : 'Send Magic Link'}
+            {loading ? 'Connecting...' : mode === 'password' ? 'Continue with Email' : 'Send Magic Link'}
           </button>
         </form>
 
         {/* Footer */}
         <footer style={{ marginTop: '24px', textAlign: 'center' }}>
-          <p style={{ fontSize: '0.8125rem', color: '#71717A', margin: 0 }}>
+          <p style={{ fontSize: '0.8125rem', color: '#888888', margin: 0 }}>
             Don't have an account?{' '}
-            <a href="/register" style={{ color: '#10B981', textDecoration: 'none', fontWeight: 600 }}>
+            <a href="/register" style={{ color: '#FFFFFF', textDecoration: 'underline', fontWeight: 500 }}>
               Sign up
             </a>
           </p>
-          <p style={{ fontSize: '0.6875rem', color: '#52525B', marginTop: '10px', marginBottom: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: '0.6875rem', color: '#666666', marginTop: '10px', marginBottom: 0, lineHeight: 1.5 }}>
             By signing in, you agree to the Cawlix Telemetry Terms and Security Protocol.
           </p>
         </footer>

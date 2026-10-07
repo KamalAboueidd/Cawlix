@@ -55,16 +55,16 @@ export default function ForgotPasswordPage() {
 
   // Password strength calculation
   const getPasswordStrength = (pass) => {
-    if (!pass) return { score: 0, label: '', color: 'bg-zinc-800' };
+    if (!pass) return { score: 0, label: '', color: '#27272A' };
     let score = 0;
     if (pass.length >= 8) score += 1;
     if (/[A-Z]/.test(pass) && /[a-z]/.test(pass)) score += 1;
     if (/[0-9]/.test(pass)) score += 1;
     if (/[^A-Za-z0-9]/.test(pass)) score += 1;
 
-    if (score <= 1) return { score: 1, label: 'Weak', color: '#EF4444' };
-    if (score <= 3) return { score: 2, label: 'Moderate', color: '#F59E0B' };
-    return { score: 3, label: 'Strong', color: '#10B981' };
+    if (score <= 1) return { score: 1, label: 'Weak', color: '#FB7185' };
+    if (score <= 3) return { score: 2, label: 'Moderate', color: '#FBBF24' };
+    return { score: 3, label: 'Strong', color: '#34D399' };
   };
 
   const strength = getPasswordStrength(newPassword);
@@ -234,14 +234,14 @@ export default function ForgotPasswordPage() {
     <div
       style={{
         minHeight: '100vh',
-        backgroundColor: '#05070A',
+        backgroundColor: '#000000',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: '40px 16px 28px 16px',
         boxSizing: 'border-box',
-        fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+        fontFamily: "'Inter', 'Geist', system-ui, -apple-system, sans-serif",
         color: '#EDEDED',
       }}
     >
@@ -253,32 +253,30 @@ export default function ForgotPasswordPage() {
           style={{
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '10px',
+            gap: '8px',
             textDecoration: 'none',
             padding: '6px 12px',
-            borderRadius: '8px',
-            transition: 'transform 150ms ease, opacity 150ms ease',
+            borderRadius: '6px',
+            transition: 'opacity 150ms ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.opacity = '0.9';
-            e.currentTarget.style.transform = 'translateY(-1px)';
+            e.currentTarget.style.opacity = '0.85';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.opacity = '1';
-            e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
           <img
             src={cawlixLogo}
             alt="Cawlix Logo"
-            width={28}
-            height={28}
-            style={{ width: '28px', height: '28px', objectFit: 'contain', display: 'block' }}
+            width={24}
+            height={24}
+            style={{ width: '24px', height: '24px', objectFit: 'contain', display: 'block' }}
           />
           <span
             style={{
-              fontSize: '1.1875rem',
-              fontWeight: 700,
+              fontSize: '1.125rem',
+              fontWeight: 600,
               color: '#FFFFFF',
               letterSpacing: '-0.02em',
             }}
@@ -288,18 +286,18 @@ export default function ForgotPasswordPage() {
         </a>
       </div>
 
-      {/* Auth Shell Card */}
+      {/* Auth Shell Card (Vercel True Pitch Black) */}
       <div
         style={{
           maxWidth: '420px',
           width: '100%',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          border: '1px solid #27272A',
           borderRadius: '12px',
           padding: '32px',
-          backgroundColor: '#0D1117',
+          backgroundColor: '#0A0A0A',
           boxSizing: 'border-box',
           marginBottom: 'auto',
-          boxShadow: '0 20px 40px -15px rgba(0, 0, 0, 0.7)',
+          boxShadow: '0 24px 48px -12px rgba(0, 0, 0, 0.9)',
         }}
       >
         {/* Header */}
@@ -309,13 +307,13 @@ export default function ForgotPasswordPage() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              padding: '4px 10px',
+              padding: '3px 9px',
               borderRadius: '9999px',
-              backgroundColor: 'rgba(16, 185, 129, 0.1)',
-              border: '1px solid rgba(16, 185, 129, 0.25)',
+              backgroundColor: '#18181B',
+              border: '1px solid #27272A',
               fontSize: '0.6875rem',
-              color: '#10B981',
-              fontWeight: 600,
+              color: '#A1A1AA',
+              fontWeight: 500,
               letterSpacing: '0.04em',
               textTransform: 'uppercase',
               marginBottom: '14px',
@@ -327,7 +325,6 @@ export default function ForgotPasswordPage() {
                 height: '6px',
                 borderRadius: '50%',
                 backgroundColor: '#10B981',
-                boxShadow: '0 0 8px #10B981',
               }}
             />
             TELEMETRY RECOVERY ENGINE
@@ -347,7 +344,7 @@ export default function ForgotPasswordPage() {
           <p
             style={{
               fontSize: '0.8125rem',
-              color: '#71717A',
+              color: '#888888',
               marginTop: '8px',
               marginBottom: 0,
               lineHeight: 1.5,
@@ -361,13 +358,13 @@ export default function ForgotPasswordPage() {
 
         {/* Phase 1: Request Email */}
         {step === 'request' ? (
-          <form onSubmit={handleRequestReset} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+          <form onSubmit={handleRequestReset} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <label
                 htmlFor="recovery-email"
                 style={{
                   fontSize: '0.75rem',
-                  fontWeight: 600,
+                  fontWeight: 500,
                   color: '#A1A1AA',
                   letterSpacing: '0.04em',
                   textTransform: 'uppercase',
@@ -384,20 +381,20 @@ export default function ForgotPasswordPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@domain.com"
                 style={{
-                  backgroundColor: '#05070A',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  backgroundColor: '#000000',
+                  border: '1px solid #27272A',
                   color: '#EDEDED',
                   fontSize: '0.875rem',
-                  padding: '0 14px',
-                  height: '44px',
+                  padding: '0 12px',
+                  height: '42px',
                   borderRadius: '6px',
                   outline: 'none',
                   width: '100%',
                   boxSizing: 'border-box',
                   transition: 'border-color 150ms ease',
                 }}
-                onFocus={(e) => (e.target.style.borderColor = '#10B981')}
-                onBlur={(e) => (e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)')}
+                onFocus={(e) => (e.target.style.borderColor = '#71717A')}
+                onBlur={(e) => (e.target.style.borderColor = '#27272A')}
               />
             </div>
 
@@ -405,11 +402,11 @@ export default function ForgotPasswordPage() {
               <div
                 style={{
                   fontSize: '0.8125rem',
-                  color: '#F43F5E',
-                  backgroundColor: 'rgba(244, 63, 94, 0.1)',
-                  border: '1px solid rgba(244, 63, 94, 0.25)',
+                  color: '#FB7185',
+                  backgroundColor: 'rgba(76, 5, 25, 0.4)',
+                  border: '1px solid rgba(159, 18, 57, 0.4)',
                   borderRadius: '6px',
-                  padding: '10px 12px',
+                  padding: '9px 12px',
                   lineHeight: 1.4,
                 }}
               >
@@ -421,11 +418,11 @@ export default function ForgotPasswordPage() {
               <div
                 style={{
                   fontSize: '0.8125rem',
-                  color: '#10B981',
-                  backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                  border: '1px solid rgba(16, 185, 129, 0.25)',
+                  color: '#34D399',
+                  backgroundColor: 'rgba(6, 78, 59, 0.4)',
+                  border: '1px solid rgba(6, 95, 70, 0.4)',
                   borderRadius: '6px',
-                  padding: '10px 12px',
+                  padding: '9px 12px',
                   lineHeight: 1.4,
                 }}
               >
@@ -437,11 +434,11 @@ export default function ForgotPasswordPage() {
               type="submit"
               disabled={loading}
               style={{
-                backgroundColor: '#10B981',
-                color: '#05070A',
-                fontWeight: 600,
+                backgroundColor: '#FFFFFF',
+                color: '#000000',
+                fontWeight: 500,
                 fontSize: '0.875rem',
-                height: '44px',
+                height: '42px',
                 borderRadius: '6px',
                 border: 'none',
                 cursor: loading ? 'not-allowed' : 'pointer',
@@ -455,18 +452,18 @@ export default function ForgotPasswordPage() {
                 gap: '8px',
               }}
               onMouseEnter={(e) => {
-                if (!loading) e.currentTarget.style.backgroundColor = '#059669';
+                if (!loading) e.currentTarget.style.backgroundColor = '#E4E4E7';
               }}
               onMouseLeave={(e) => {
-                if (!loading) e.currentTarget.style.backgroundColor = '#10B981';
+                if (!loading) e.currentTarget.style.backgroundColor = '#FFFFFF';
               }}
             >
               {loading ? (
                 <>
                   <svg
                     style={{ animation: 'spin 1s linear infinite' }}
-                    width="16"
-                    height="16"
+                    width="14"
+                    height="14"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -484,7 +481,7 @@ export default function ForgotPasswordPage() {
           </form>
         ) : (
           /* Phase 2: 6-Slot OTP + Password Setup */
-          <form onSubmit={handleResetPassword} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+          <form onSubmit={handleResetPassword} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {/* Target Email Banner & Edit Action */}
             <div
               style={{
@@ -492,14 +489,14 @@ export default function ForgotPasswordPage() {
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '8px 12px',
-                backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                backgroundColor: '#111111',
                 borderRadius: '6px',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                border: '1px solid #27272A',
                 fontSize: '0.8125rem',
               }}
             >
-              <span style={{ color: '#A1A1AA', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                Target: <span style={{ color: '#F4F4F5', fontWeight: 500 }}>{email}</span>
+              <span style={{ color: '#888888', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                Target: <span style={{ color: '#FFFFFF', fontWeight: 500 }}>{email}</span>
               </span>
               <button
                 type="button"
@@ -511,11 +508,12 @@ export default function ForgotPasswordPage() {
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#10B981',
+                  color: '#EDEDED',
+                  textDecoration: 'underline',
                   cursor: 'pointer',
                   fontSize: '0.75rem',
                   fontWeight: 500,
-                  padding: '2px 6px',
+                  padding: '2px 4px',
                 }}
               >
                 Change
@@ -527,11 +525,11 @@ export default function ForgotPasswordPage() {
               <label
                 style={{
                   fontSize: '0.75rem',
-                  fontWeight: 600,
+                  fontWeight: 500,
                   color: '#A1A1AA',
                   letterSpacing: '0.04em',
                   textTransform: 'uppercase',
-                  marginBottom: '10px',
+                  marginBottom: '8px',
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
@@ -540,7 +538,7 @@ export default function ForgotPasswordPage() {
                 <span>6-DIGIT RECOVERY CODE</span>
                 <span
                   style={{
-                    fontFamily: "'JetBrains Mono', 'Geist Mono', monospace",
+                    fontFamily: "'JetBrains Mono', monospace",
                     fontSize: '0.6875rem',
                     color: '#71717A',
                   }}
@@ -568,25 +566,23 @@ export default function ForgotPasswordPage() {
                     onChange={(e) => handleOtpChange(idx, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(idx, e)}
                     style={{
-                      height: '50px',
-                      backgroundColor: '#05070A',
-                      border: digit ? '1px solid #10B981' : '1px solid rgba(255, 255, 255, 0.12)',
-                      borderRadius: '8px',
+                      height: '46px',
+                      backgroundColor: '#000000',
+                      border: digit ? '1px solid #EDEDED' : '1px solid #27272A',
+                      borderRadius: '6px',
                       textAlign: 'center',
-                      fontSize: '1.25rem',
-                      fontWeight: 700,
-                      fontFamily: "'JetBrains Mono', 'Geist Mono', monospace",
-                      color: '#10B981',
+                      fontSize: '1.125rem',
+                      fontWeight: 600,
+                      fontFamily: "'JetBrains Mono', monospace",
+                      color: '#FFFFFF',
                       outline: 'none',
-                      transition: 'border-color 150ms ease, box-shadow 150ms ease',
+                      transition: 'border-color 150ms ease',
                     }}
                     onFocus={(e) => {
-                      e.target.style.borderColor = '#10B981';
-                      e.target.style.boxShadow = '0 0 0 2px rgba(16, 185, 129, 0.2)';
+                      e.target.style.borderColor = '#FFFFFF';
                     }}
                     onBlur={(e) => {
-                      if (!digit) e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)';
-                      e.target.style.boxShadow = 'none';
+                      if (!digit) e.target.style.borderColor = '#27272A';
                     }}
                   />
                 ))}
@@ -602,7 +598,7 @@ export default function ForgotPasswordPage() {
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: resendCooldown > 0 ? '#52525B' : '#10B981',
+                  color: resendCooldown > 0 ? '#52525B' : '#A1A1AA',
                   cursor: resendCooldown > 0 ? 'default' : 'pointer',
                   fontSize: '0.75rem',
                   fontWeight: 500,
@@ -621,7 +617,7 @@ export default function ForgotPasswordPage() {
                 htmlFor="new-password"
                 style={{
                   fontSize: '0.75rem',
-                  fontWeight: 600,
+                  fontWeight: 500,
                   color: '#A1A1AA',
                   letterSpacing: '0.04em',
                   textTransform: 'uppercase',
@@ -638,26 +634,26 @@ export default function ForgotPasswordPage() {
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="At least 8 characters"
                 style={{
-                  backgroundColor: '#05070A',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  backgroundColor: '#000000',
+                  border: '1px solid #27272A',
                   color: '#EDEDED',
                   fontSize: '0.875rem',
-                  padding: '0 14px',
-                  height: '44px',
+                  padding: '0 12px',
+                  height: '42px',
                   borderRadius: '6px',
                   outline: 'none',
                   width: '100%',
                   boxSizing: 'border-box',
                   transition: 'border-color 150ms ease',
                 }}
-                onFocus={(e) => (e.target.style.borderColor = '#10B981')}
-                onBlur={(e) => (e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)')}
+                onFocus={(e) => (e.target.style.borderColor = '#71717A')}
+                onBlur={(e) => (e.target.style.borderColor = '#27272A')}
               />
 
               {/* Password strength visualizer */}
               {newPassword && (
-                <div style={{ marginTop: '8px' }}>
-                  <div style={{ display: 'flex', gap: '4px', height: '4px', marginBottom: '6px' }}>
+                <div style={{ marginTop: '6px' }}>
+                  <div style={{ display: 'flex', gap: '4px', height: '3px', marginBottom: '4px' }}>
                     <div
                       style={{
                         flex: 1,
@@ -696,7 +692,7 @@ export default function ForgotPasswordPage() {
                 htmlFor="confirm-password"
                 style={{
                   fontSize: '0.75rem',
-                  fontWeight: 600,
+                  fontWeight: 500,
                   color: '#A1A1AA',
                   letterSpacing: '0.04em',
                   textTransform: 'uppercase',
@@ -713,20 +709,20 @@ export default function ForgotPasswordPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Re-enter password"
                 style={{
-                  backgroundColor: '#05070A',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  backgroundColor: '#000000',
+                  border: '1px solid #27272A',
                   color: '#EDEDED',
                   fontSize: '0.875rem',
-                  padding: '0 14px',
-                  height: '44px',
+                  padding: '0 12px',
+                  height: '42px',
                   borderRadius: '6px',
                   outline: 'none',
                   width: '100%',
                   boxSizing: 'border-box',
                   transition: 'border-color 150ms ease',
                 }}
-                onFocus={(e) => (e.target.style.borderColor = '#10B981')}
-                onBlur={(e) => (e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)')}
+                onFocus={(e) => (e.target.style.borderColor = '#71717A')}
+                onBlur={(e) => (e.target.style.borderColor = '#27272A')}
               />
             </div>
 
@@ -734,11 +730,11 @@ export default function ForgotPasswordPage() {
               <div
                 style={{
                   fontSize: '0.8125rem',
-                  color: '#F43F5E',
-                  backgroundColor: 'rgba(244, 63, 94, 0.1)',
-                  border: '1px solid rgba(244, 63, 94, 0.25)',
+                  color: '#FB7185',
+                  backgroundColor: 'rgba(76, 5, 25, 0.4)',
+                  border: '1px solid rgba(159, 18, 57, 0.4)',
                   borderRadius: '6px',
-                  padding: '10px 12px',
+                  padding: '9px 12px',
                   lineHeight: 1.4,
                 }}
               >
@@ -750,11 +746,11 @@ export default function ForgotPasswordPage() {
               <div
                 style={{
                   fontSize: '0.8125rem',
-                  color: '#10B981',
-                  backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                  border: '1px solid rgba(16, 185, 129, 0.25)',
+                  color: '#34D399',
+                  backgroundColor: 'rgba(6, 78, 59, 0.4)',
+                  border: '1px solid rgba(6, 95, 70, 0.4)',
                   borderRadius: '6px',
-                  padding: '10px 12px',
+                  padding: '9px 12px',
                   lineHeight: 1.4,
                 }}
               >
@@ -766,11 +762,11 @@ export default function ForgotPasswordPage() {
               type="submit"
               disabled={loading}
               style={{
-                backgroundColor: '#10B981',
-                color: '#05070A',
-                fontWeight: 600,
+                backgroundColor: '#FFFFFF',
+                color: '#000000',
+                fontWeight: 500,
                 fontSize: '0.875rem',
-                height: '44px',
+                height: '42px',
                 borderRadius: '6px',
                 border: 'none',
                 cursor: loading ? 'not-allowed' : 'pointer',
@@ -784,18 +780,18 @@ export default function ForgotPasswordPage() {
                 gap: '8px',
               }}
               onMouseEnter={(e) => {
-                if (!loading) e.currentTarget.style.backgroundColor = '#059669';
+                if (!loading) e.currentTarget.style.backgroundColor = '#E4E4E7';
               }}
               onMouseLeave={(e) => {
-                if (!loading) e.currentTarget.style.backgroundColor = '#10B981';
+                if (!loading) e.currentTarget.style.backgroundColor = '#FFFFFF';
               }}
             >
               {loading ? (
                 <>
                   <svg
                     style={{ animation: 'spin 1s linear infinite' }}
-                    width="16"
-                    height="16"
+                    width="14"
+                    height="14"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -815,9 +811,9 @@ export default function ForgotPasswordPage() {
 
         {/* Footer Link back to Sign In */}
         <footer style={{ marginTop: '24px', textAlign: 'center' }}>
-          <p style={{ fontSize: '0.8125rem', color: '#71717A', margin: 0 }}>
+          <p style={{ fontSize: '0.8125rem', color: '#888888', margin: 0 }}>
             Remembered credentials?{' '}
-            <a href="/login" style={{ color: '#10B981', textDecoration: 'none', fontWeight: 600 }}>
+            <a href="/login" style={{ color: '#FFFFFF', textDecoration: 'underline', fontWeight: 500 }}>
               Back to sign in
             </a>
           </p>

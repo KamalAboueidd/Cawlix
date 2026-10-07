@@ -62,141 +62,106 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
     setErrorMsg('');
 
     try {
-      // Derive canonical SKU and title
+      // 1. Resolve canonical SKU and title heuristic
       let canonicalSku = rawVal;
-      let title = rawVal;
+      let inferredTitle = 'Probed Hardware Product';
 
       if (rawVal.includes('amazon.eg') || rawVal.includes('/dp/')) {
-        const asinMatch = rawVal.match(/\/dp\/([A-Z0-9]{10})/i) || rawVal.match(/\/gp\/product\/([A-Z0-9]{10})/i);
-        const asin = asinMatch ? asinMatch[1].toUpperCase() : `AMZN_${Date.now().toString().slice(-6)}`;
-        canonicalSku = `caw_sku_${asin.toLowerCase()}`;
-        title = `Amazon Product Telemetry (${asin})`;
+        const match = rawVal.match(/\/dp\/([A-Z0-9]{10})/i);
+        canonicalSku = match ? `caw_sku_${match[1].toLowerCase()}` : `caw_sku_${Date.now().toString(36)}`;
+        inferredTitle = 'Amazon EG Domestic Probed SKU';
       } else if (rawVal.includes('noon.com')) {
-        const noonMatch = rawVal.match(/\/([A-Z0-9_-]+)\/p\/?/i) || rawVal.match(/\/p-([0-9]+)/i);
-        const code = noonMatch ? noonMatch[1].slice(0, 10).toUpperCase() : `NOON_${Date.now().toString().slice(-6)}`;
-        canonicalSku = `caw_sku_${code.toLowerCase()}`;
-        title = `Noon Product Telemetry (${code})`;
-      } else {
-        canonicalSku = rawVal.startsWith('caw_') ? rawVal : `caw_sku_${rawVal.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase().slice(0, 16)}`;
-        title = `Tracked Item (${canonicalSku})`;
+        const match = rawVal.match(/\/p-([A-Z0-9_-]+)/i);
+        canonicalSku = match ? `caw_sku_${match[1].toLowerCase().slice(0, 8)}` : `caw_sku_${Date.now().toString(36)}`;
+        inferredTitle = 'Noon Egypt Catalog Item';
+      } else if (!rawVal.startsWith('http')) {
+        canonicalSku = rawVal.startsWith('caw_') ? rawVal : `caw_sku_${rawVal.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+        inferredTitle = `Target Probed SKU [${rawVal}]`;
       }
 
-      const activeDomain = DOMESTIC_NODES.find((n) => n.id === selectedNode)?.domain || 'node.amazon.eg';
-
-      // Estimate prices based on alert threshold or baseline
-      const alertNum = parseFloat(targetAlertPrice);
-      const estimatedShelfPrice = alertNum > 0 ? Math.round(alertNum * 1.08) : 29900;
-      const baseline = Math.round(estimatedShelfPrice * 0.94);
-      const delta = parseFloat((((estimatedShelfPrice - baseline) / baseline) * 100).toFixed(1));
-
-      // 1. Get active session user
+      // Check current session
       const { data: sessionData } = await supabase.auth.getSession();
-      const currentUser = sessionData?.session?.user;
-      const currentUserId = currentUser?.id || 'usr_core_kamal';
+      const user = sessionData?.session?.user;
 
-      // 2. Resolve existing tracked_product or insert new
-      let productRecord = null;
-      try {
-        const { data: existingProduct } = await supabase
-          .from('tracked_products')
-          .select('*')
-          .eq('sku', canonicalSku)
-          .maybeSingle();
+      if (!user) {
+        throw new Error('Authenticated session required to add SKU.');
+      }
 
-        if (existingProduct) {
-          productRecord = existingProduct;
-        } else {
-          const newProductPayload = {
+      const parsedTarget = targetAlertPrice ? parseFloat(targetAlertPrice) : null;
+      const baseEstimate = parsedTarget ? Math.round(parsedTarget * 1.08) : 48500;
+      const currentEstimate = parsedTarget || 45000;
+      const deltaCalc = parseFloat((((currentEstimate - baseEstimate) / baseEstimate) * 100).toFixed(1));
+
+      // 2. Insert into tracked_products
+      const { data: productData, error: productErr } = await supabase
+        .from('tracked_products')
+        .upsert(
+          {
             sku: canonicalSku,
-            title,
+            title: inferredTitle,
+            retailer: selectedNode,
             node: selectedNode,
-            domain: activeDomain,
-            current_price_egp: estimatedShelfPrice,
-            baseline_price_egp: baseline,
-            delta_pct: delta,
-            discount_status: delta > 0 ? `MARKUP (+${delta}%)` : `VERIFIED DEAL (${delta}%)`,
-            status: delta > 5 ? 'FLAGGED' : 'ACTIVE',
+            domain: DOMESTIC_NODES.find((n) => n.id === selectedNode)?.domain || 'node.cawlix.com',
+            current_price: currentEstimate,
+            current_price_egp: currentEstimate,
+            baseline_price: baseEstimate,
+            baseline_price_egp: baseEstimate,
+            delta_pct: deltaCalc,
+            discount_status: `${deltaCalc}%`,
+            status: 'Active',
             last_ping: 'just now',
-            created_at: new Date().toISOString(),
-          };
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'sku' }
+        )
+        .select()
+        .single();
 
-          const { data: insertedProduct, error: insertProdErr } = await supabase
-            .from('tracked_products')
-            .insert(newProductPayload)
-            .select()
-            .maybeSingle();
-
-          if (insertProdErr) {
-            console.warn('tracked_products insert note:', insertProdErr);
-          }
-          productRecord = insertedProduct || { id: `tp-${Date.now()}`, ...newProductPayload };
-        }
-      } catch (prodErr) {
-        console.warn('Error resolving tracked_product:', prodErr);
+      if (productErr) {
+        console.warn('Direct product insert fallback:', productErr.message);
       }
 
-      const finalProduct = productRecord || {
-        id: `tp-${Date.now()}`,
-        sku: canonicalSku,
-        title,
-        node: selectedNode,
-        domain: activeDomain,
-        current_price_egp: estimatedShelfPrice,
-        baseline_price_egp: baseline,
-        delta_pct: delta,
-        discount_status: delta > 0 ? `MARKUP (+${delta}%)` : `VERIFIED DEAL (${delta}%)`,
-        status: delta > 5 ? 'FLAGGED' : 'ACTIVE',
-        last_ping: 'just now',
-        created_at: new Date().toISOString(),
-      };
+      const resolvedProductId = productData?.id || canonicalSku;
 
-      // 3. Link into user_watchlists
-      const watchlistPayload = {
-        user_id: currentUserId,
-        target_price: alertNum || null,
-        notify_on_glitch: glitchRadarEnabled,
-        sku: canonicalSku,
-        node: selectedNode,
-        product_id: finalProduct.id,
-        tracked_product_id: finalProduct.id,
-        target_alert_price_egp: alertNum || null,
-        glitch_radar_enabled: glitchRadarEnabled,
-        created_at: new Date().toISOString(),
-      };
+      // 3. Upsert user_watchlists connection
+      const { error: watchlistErr } = await supabase
+        .from('user_watchlists')
+        .upsert(
+          {
+            user_id: user.id,
+            product_id: resolvedProductId,
+            sku: canonicalSku,
+            target_price: parsedTarget,
+            target_alert_price: parsedTarget,
+            notify_on_glitch: glitchRadarEnabled,
+            glitch_radar_enabled: glitchRadarEnabled,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'user_id,product_id' }
+        );
 
-      let wlRecord = null;
-      try {
-        const { data: wlData, error: wlErr } = await supabase
-          .from('user_watchlists')
-          .insert(watchlistPayload)
-          .select()
-          .maybeSingle();
-
-        if (wlErr) {
-          console.warn('user_watchlists insert note:', wlErr);
-        }
-        wlRecord = wlData;
-      } catch (errWl) {
-        console.warn('Error inserting into user_watchlists:', errWl);
+      if (watchlistErr) {
+        console.warn('Watchlist insert notice:', watchlistErr.message);
       }
 
-      // 4. Optimistic update with joined structure
-      const optimisticItem = {
-        id: wlRecord?.id || finalProduct.id || `item-${Date.now()}`,
-        watchlist_id: wlRecord?.id,
-        target_price: alertNum || null,
-        notify_on_glitch: glitchRadarEnabled,
-        ...finalProduct,
-        tracked_products: finalProduct,
-      };
-
+      // 4. Return new hydrated product for optimistic UI update
       if (onSuccess) {
-        onSuccess(optimisticItem);
+        onSuccess({
+          id: resolvedProductId,
+          sku: canonicalSku,
+          title: inferredTitle,
+          node: selectedNode,
+          domain: DOMESTIC_NODES.find((n) => n.id === selectedNode)?.domain || 'node.cawlix.com',
+          current_price_egp: currentEstimate,
+          baseline_price_egp: baseEstimate,
+          delta_pct: deltaCalc,
+          status: 'Active',
+          last_ping: 'just now',
+          target_price: parsedTarget,
+          notify_on_glitch: glitchRadarEnabled,
+        });
       }
 
-      // Reset form
-      setSkuUrl('');
-      setTargetAlertPrice('');
       onClose();
     } catch (err) {
       setErrorMsg(err?.message || 'Failed to initialize telemetry. Please retry.');
@@ -211,7 +176,7 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
         position: 'fixed',
         inset: 0,
         zIndex: 9999,
-        backgroundColor: 'rgba(0, 0, 0, 0.72)',
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
         backdropFilter: 'blur(8px)',
         WebkitBackdropFilter: 'blur(8px)',
         display: 'flex',
@@ -227,7 +192,7 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
       <div
         style={{
           backgroundColor: '#0A0A0A',
-          border: '1px solid rgba(255, 255, 255, 0.12)',
+          border: '1px solid #27272A',
           borderRadius: '12px',
           maxWidth: '520px',
           width: '100%',
@@ -242,10 +207,10 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
           <div>
-            <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 500, color: '#FFFFFF', letterSpacing: '-0.015em' }}>
+            <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#FFFFFF', letterSpacing: '-0.015em' }}>
               Track Target SKU Node
             </h2>
-            <p style={{ margin: '6px 0 0 0', fontSize: '0.75rem', color: '#737373', lineHeight: 1.45 }}>
+            <p style={{ margin: '6px 0 0 0', fontSize: '0.8125rem', color: '#888888', lineHeight: 1.45 }}>
               Enter an Egyptian retail node URL or canonical identifier to begin continuous telemetry ingestion.
             </p>
           </div>
@@ -254,11 +219,11 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
             onClick={onClose}
             style={{
               background: 'transparent',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              color: '#737373',
-              fontFamily: 'var(--font-mono, monospace)',
+              border: '1px solid #27272A',
+              color: '#71717A',
+              fontFamily: "'JetBrains Mono', monospace",
               fontSize: '10px',
-              fontWeight: 600,
+              fontWeight: 500,
               padding: '2px 6px',
               borderRadius: '4px',
               cursor: 'pointer',
@@ -275,13 +240,12 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
         {errorMsg && (
           <div
             style={{
-              color: '#EF4444',
-              fontFamily: 'var(--font-mono, monospace)',
-              fontSize: '0.75rem',
+              color: '#FB7185',
+              fontSize: '0.8125rem',
               lineHeight: 1.4,
               padding: '8px 12px',
-              border: '1px solid rgba(239, 68, 68, 0.2)',
-              backgroundColor: 'rgba(239, 68, 68, 0.05)',
+              border: '1px solid rgba(159, 18, 57, 0.4)',
+              backgroundColor: 'rgba(76, 5, 25, 0.4)',
               borderRadius: '6px',
             }}
           >
@@ -296,12 +260,12 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
             <label
               htmlFor="sku-url-input-jsx"
               style={{
-                fontSize: '11px',
-                color: '#737373',
+                fontSize: '0.75rem',
+                color: '#A1A1AA',
                 textTransform: 'uppercase',
-                letterSpacing: '0.06em',
+                letterSpacing: '0.04em',
                 marginBottom: '8px',
-                fontFamily: 'var(--font-mono, monospace)',
+                fontWeight: 500,
               }}
             >
               RETAIL NODE URL OR CANONICAL SKU
@@ -314,18 +278,20 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
               onChange={handleUrlChange}
               placeholder="https://www.amazon.eg/dp/... or B0CHX..."
               style={{
-                backgroundColor: '#0D0D0D',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                fontSize: '0.75rem',
-                fontFamily: 'var(--font-mono, monospace)',
+                backgroundColor: '#000000',
+                border: '1px solid #27272A',
+                fontSize: '0.8125rem',
                 color: '#EDEDED',
-                padding: '0 14px',
+                padding: '0 12px',
                 height: '40px',
                 borderRadius: '6px',
                 width: '100%',
                 outline: 'none',
                 boxSizing: 'border-box',
+                transition: 'border-color 150ms ease',
               }}
+              onFocus={(e) => (e.target.style.borderColor = '#71717A')}
+              onBlur={(e) => (e.target.style.borderColor = '#27272A')}
               autoComplete="off"
             />
           </div>
@@ -334,12 +300,12 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <label
               style={{
-                fontSize: '11px',
-                color: '#737373',
+                fontSize: '0.75rem',
+                color: '#A1A1AA',
                 textTransform: 'uppercase',
-                letterSpacing: '0.06em',
+                letterSpacing: '0.04em',
                 marginBottom: '8px',
-                fontFamily: 'var(--font-mono, monospace)',
+                fontWeight: 500,
               }}
             >
               DOMESTIC RETAIL NODE
@@ -353,13 +319,13 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                     type="button"
                     onClick={() => setSelectedNode(node.id)}
                     style={{
-                      backgroundColor: isActive ? 'rgba(255, 255, 255, 0.08)' : '#0D0D0D',
-                      border: `1px solid ${isActive ? '#FFFFFF' : 'rgba(255, 255, 255, 0.12)'}`,
+                      backgroundColor: isActive ? '#18181B' : '#000000',
+                      border: `1px solid ${isActive ? '#FFFFFF' : '#27272A'}`,
                       color: isActive ? '#FFFFFF' : '#888888',
-                      fontFamily: 'var(--font-mono, monospace)',
+                      fontFamily: "'JetBrains Mono', monospace",
                       fontSize: '11px',
                       fontWeight: isActive ? 600 : 500,
-                      padding: '6px 10px',
+                      padding: '5px 10px',
                       borderRadius: '6px',
                       cursor: 'pointer',
                       transition: 'all 130ms ease',
@@ -377,12 +343,12 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
             <label
               htmlFor="target-alert-price-jsx"
               style={{
-                fontSize: '11px',
-                color: '#737373',
+                fontSize: '0.75rem',
+                color: '#A1A1AA',
                 textTransform: 'uppercase',
-                letterSpacing: '0.06em',
+                letterSpacing: '0.04em',
                 marginBottom: '8px',
-                fontFamily: 'var(--font-mono, monospace)',
+                fontWeight: 500,
               }}
             >
               TARGET ALERT THRESHOLD (EGP)
@@ -391,8 +357,8 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                backgroundColor: '#0D0D0D',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
+                backgroundColor: '#000000',
+                border: '1px solid #27272A',
                 borderRadius: '6px',
                 height: '40px',
                 overflow: 'hidden',
@@ -401,15 +367,15 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
               <span
                 style={{
                   fontSize: '11px',
-                  fontWeight: 600,
-                  fontFamily: 'var(--font-mono, monospace)',
-                  color: '#737373',
+                  fontWeight: 500,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  color: '#71717A',
                   padding: '0 12px',
-                  backgroundColor: '#121212',
+                  backgroundColor: '#18181B',
                   height: '100%',
                   display: 'flex',
                   alignItems: 'center',
-                  borderRight: '1px solid rgba(255, 255, 255, 0.12)',
+                  borderRight: '1px solid #27272A',
                   userSelect: 'none',
                 }}
               >
@@ -427,8 +393,8 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                   flex: 1,
                   background: 'transparent',
                   border: 'none',
-                  fontSize: '0.75rem',
-                  fontFamily: 'var(--font-mono, monospace)',
+                  fontSize: '0.8125rem',
+                  fontFamily: "'JetBrains Mono', monospace",
                   color: '#EDEDED',
                   padding: '0 12px',
                   height: '100%',
@@ -442,8 +408,8 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
           <div
             style={{
               padding: '10px 12px',
-              backgroundColor: 'rgba(255, 255, 255, 0.02)',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
+              backgroundColor: '#111111',
+              border: '1px solid #27272A',
               borderRadius: '6px',
             }}
           >
@@ -461,14 +427,15 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                 checked={glitchRadarEnabled}
                 onChange={(e) => setGlitchRadarEnabled(e.target.checked)}
                 style={{
-                  accentColor: '#3ECF8E',
+                  accentColor: '#FFFFFF',
                   marginTop: '2px',
-                  width: '15px',
-                  height: '15px',
+                  width: '14px',
+                  height: '14px',
                   cursor: 'pointer',
                 }}
-              />
-              <span style={{ fontSize: '0.75rem', color: '#A3A3A3', lineHeight: 1.4 }}>
+              >
+              </input>
+              <span style={{ fontSize: '0.75rem', color: '#A1A1AA', lineHeight: 1.4 }}>
                 Instant Webhook/Email dispatch if a sub-second price glitch (&gt;30% drop) is detected.
               </span>
             </label>
@@ -480,10 +447,10 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'flex-end',
-              gap: '14px',
-              marginTop: '8px',
+              gap: '12px',
+              marginTop: '4px',
               paddingTop: '16px',
-              borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+              borderTop: '1px solid #27272A',
             }}
           >
             <button
@@ -492,8 +459,8 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
               style={{
                 background: 'transparent',
                 border: 'none',
-                fontSize: '0.75rem',
-                color: '#737373',
+                fontSize: '0.8125rem',
+                color: '#888888',
                 cursor: 'pointer',
                 padding: '6px 10px',
                 borderRadius: '4px',
@@ -507,10 +474,10 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
               style={{
                 backgroundColor: '#FFFFFF',
                 color: '#000000',
-                fontSize: '0.75rem',
-                fontWeight: 600,
+                fontSize: '0.8125rem',
+                fontWeight: 500,
                 padding: '0 16px',
-                height: '36px',
+                height: '38px',
                 borderRadius: '6px',
                 border: 'none',
                 cursor: isSubmitting ? 'not-allowed' : 'pointer',
@@ -518,12 +485,16 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                 alignItems: 'center',
                 gap: '8px',
                 opacity: isSubmitting ? 0.7 : 1,
+                transition: 'background-color 150ms ease',
+              }}
+              onMouseEnter={(e) => {
+                if (!isSubmitting) e.currentTarget.style.backgroundColor = '#E4E4E7';
+              }}
+              onMouseLeave={(e) => {
+                if (!isSubmitting) e.currentTarget.style.backgroundColor = '#FFFFFF';
               }}
             >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-              </svg>
-              <span>{isSubmitting ? 'INITIALIZING TELEMETRY...' : 'Initialize Telemetry'}</span>
+              <span>{isSubmitting ? 'Initializing Telemetry...' : 'Initialize Telemetry'}</span>
             </button>
           </div>
         </form>
