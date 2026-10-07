@@ -1,45 +1,66 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import cawlixLogo from '../assets/ICon.png';
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+const getReturnTo = () => {
+  if (typeof window === 'undefined') return '/console';
+  const params = new URLSearchParams(window.location.search);
+  const target = params.get('returnTo');
+  return target && target.startsWith('/') ? target : '/console';
+};
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
 
   // Session Check & Auto-Redirect on page mount
   useEffect(() => {
+    let active = true;
     (async () => {
       try {
         const { data } = await supabase.auth.getSession();
-        if (data?.session) {
-          window.location.href = '/console';
+        if (active && data?.session) {
+          window.location.href = getReturnTo();
         }
       } catch {
         // Ignore session read errors
       }
     })();
+    return () => {
+      active = false;
+    };
   }, []);
 
   const handleGoogleSignup = async () => {
+    if (loading) return;
     setErrorMsg('');
+    setLoading(true);
     try {
+      const redirectUrl = `${window.location.origin}${getReturnTo()}`;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: `${window.location.origin}/console` },
+        options: { redirectTo: redirectUrl },
       });
-      if (error) setErrorMsg(error.message);
+      if (error) {
+        setErrorMsg(error.message);
+        setLoading(false);
+      }
     } catch (err) {
       setErrorMsg(err.message || 'Google registration failed.');
+      setLoading(false);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
     setErrorMsg('');
+    setSuccessMsg('');
 
     const cleanEmail = email.trim();
     if (!cleanEmail || !EMAIL_REGEX.test(cleanEmail)) {
@@ -57,11 +78,17 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({ email: cleanEmail, password });
+      const { data, error } = await supabase.auth.signUp({
+        email: cleanEmail,
+        password,
+      });
+
       if (error) {
         setErrorMsg(error.message);
-      } else {
-        window.location.href = '/console';
+      } else if (data?.session) {
+        window.location.href = getReturnTo();
+      } else if (data?.user) {
+        setSuccessMsg('Account registered. Please verify your email to continue.');
       }
     } catch (err) {
       setErrorMsg(err.message || 'Registration failed.');
@@ -144,6 +171,7 @@ export default function RegisterPage() {
         <div>
           <button
             type="button"
+            disabled={loading}
             onClick={handleGoogleSignup}
             style={{
               width: '100%',
@@ -158,7 +186,8 @@ export default function RegisterPage() {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '12px',
-              cursor: 'pointer',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.6 : 1,
               transition: 'background-color 150ms ease, border-color 150ms ease',
             }}
             onMouseEnter={(e) => {
@@ -256,6 +285,12 @@ export default function RegisterPage() {
           {errorMsg && (
             <div style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '0.75rem', color: '#EF4444', lineHeight: 1.4 }}>
               {errorMsg}
+            </div>
+          )}
+
+          {successMsg && (
+            <div style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '0.75rem', color: '#3ECF8E', lineHeight: 1.4 }}>
+              ✓ {successMsg}
             </div>
           )}
 

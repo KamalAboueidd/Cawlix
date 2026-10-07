@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { AuthProvider, ProtectedRoute, PublicOnlyRoute } from './context/AuthContext';
 import LandingPage from './pages/LandingPage';
 import PricingPage from './pages/PricingPage';
 import TrueCostPage from './pages/engines/TrueCostPage';
@@ -18,7 +19,7 @@ import ConsolePage from './pages/console/ConsolePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 
-export default function App() {
+function AppRoutes() {
   const [route, setRoute] = useState(window.location.pathname);
 
   useEffect(() => {
@@ -79,16 +80,28 @@ export default function App() {
     return <TrackerPage />;
   }
 
-  if (route === '/console' || route === '/console/') {
-    return <ConsolePage />;
+  if (route === '/console' || route === '/console/' || route.startsWith('/console/')) {
+    return (
+      <ProtectedRoute>
+        <ConsolePage />
+      </ProtectedRoute>
+    );
   }
 
   if (route === '/login') {
-    return <LoginPage />;
+    return (
+      <PublicOnlyRoute>
+        <LoginPage />
+      </PublicOnlyRoute>
+    );
   }
 
   if (route === '/register') {
-    return <RegisterPage />;
+    return (
+      <PublicOnlyRoute>
+        <RegisterPage />
+      </PublicOnlyRoute>
+    );
   }
 
   if (route === '/404') {
@@ -100,5 +113,13 @@ export default function App() {
   }
 
   return <NotFoundPage />;
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
+  );
 }
 

@@ -1,121 +1,6 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 import AddSkuModal from '../../components/console/AddSkuModal';
-
-const SEED_CATALOG_ITEMS = [
-  {
-    id: 'seed-1',
-    sku: 'caw_sku_981a',
-    title: 'MacBook Pro 14" M3 Pro 18GB/512GB (Space Black)',
-    node: 'AMZN_EG',
-    domain: 'node.amazon.eg',
-    current_price_egp: 94500,
-    baseline_price_egp: 79800,
-    delta_pct: 18.4,
-    discount_status: '+18.4%',
-    status: 'FLAGGED',
-    last_ping: '3m ago',
-    created_at: '2026-10-04T08:00:00Z',
-  },
-  {
-    id: 'seed-2',
-    sku: 'caw_sku_719b',
-    title: 'Apple iPhone 16 Pro Max 256GB Natural Titanium',
-    node: 'NOON_EG',
-    domain: 'node.noon.eg',
-    current_price_egp: 68900,
-    baseline_price_egp: 78500,
-    delta_pct: -12.2,
-    discount_status: '-12.2%',
-    status: 'ACTIVE',
-    last_ping: '6m ago',
-    created_at: '2026-10-04T07:45:00Z',
-  },
-  {
-    id: 'seed-3',
-    sku: 'caw_sku_118k',
-    title: 'Sony WH-1000XM5 Wireless Noise-Canceling',
-    node: 'BTECH_EG',
-    domain: 'node.btech.eg',
-    current_price_egp: 18900,
-    baseline_price_egp: 19500,
-    delta_pct: -3.1,
-    discount_status: '-3.1%',
-    status: 'ACTIVE',
-    last_ping: '11m ago',
-    created_at: '2026-10-04T07:20:00Z',
-  },
-  {
-    id: 'seed-4',
-    sku: 'caw_sku_442e',
-    title: 'LG OLED C3 55" 4K Smart Cinema Display',
-    node: 'AMZN_EG',
-    domain: 'node.amazon.eg',
-    current_price_egp: 36999,
-    baseline_price_egp: 31400,
-    delta_pct: 17.8,
-    discount_status: '+17.8%',
-    status: 'FLAGGED',
-    last_ping: '14m ago',
-    created_at: '2026-10-04T06:50:00Z',
-  },
-  {
-    id: 'seed-5',
-    sku: 'caw_sku_551r',
-    title: 'Samsung Galaxy S24 Ultra 512GB Titanium Gray',
-    node: 'RAYA_EG',
-    domain: 'node.rayashop.com',
-    current_price_egp: 53200,
-    baseline_price_egp: 59900,
-    delta_pct: -11.2,
-    discount_status: '-11.2%',
-    status: 'ACTIVE',
-    last_ping: '18m ago',
-    created_at: '2026-10-04T06:30:00Z',
-  },
-  {
-    id: 'seed-6',
-    sku: 'caw_sku_662x',
-    title: 'Apple iPad Pro 13" M4 Ultra Retina OLED 256GB',
-    node: '2B_EG',
-    domain: 'node.2b.com.eg',
-    current_price_egp: 58400,
-    baseline_price_egp: 51900,
-    delta_pct: 12.5,
-    discount_status: '+12.5%',
-    status: 'FLAGGED',
-    last_ping: '22m ago',
-    created_at: '2026-10-04T06:10:00Z',
-  },
-  {
-    id: 'seed-7',
-    sku: 'caw_sku_883a',
-    title: 'Sony Alpha A7 IV Full-Frame Mirrorless Body',
-    node: 'AMZN_EG',
-    domain: 'node.amazon.eg',
-    current_price_egp: 118500,
-    baseline_price_egp: 129900,
-    delta_pct: -8.8,
-    discount_status: '-8.8%',
-    status: 'ACTIVE',
-    last_ping: '31m ago',
-    created_at: '2026-10-04T05:30:00Z',
-  },
-  {
-    id: 'seed-8',
-    sku: 'caw_sku_994d',
-    title: 'Dyson V15 Detect Absolute Cordless Vacuum',
-    node: 'NOON_EG',
-    domain: 'node.noon.eg',
-    current_price_egp: 42900,
-    baseline_price_egp: 36000,
-    delta_pct: 19.2,
-    discount_status: '+19.2%',
-    status: 'FLAGGED',
-    last_ping: '45m ago',
-    created_at: '2026-10-04T04:45:00Z',
-  },
-];
 
 const I18N = {
   en: {
@@ -167,6 +52,16 @@ const I18N = {
     modAlertSettings: 'PRICE ALERT NOTIFICATION TRIGGER',
     saveAlertRule: 'Save Alert Rule',
     alertSaved: '✓ Alert Saved to Watchlist',
+    emptyWatchlistTitle: 'No Tracked SKUs in Watchlist',
+    emptyWatchlistDesc: 'Your personal telemetry watchlist is currently empty. Add a product SKU or store link to commence 90-day forensic baseline tracking and glitch surveillance.',
+    emptyWatchlistBtn: 'Track Your First SKU',
+    radarFeedTitle: 'GLITCH RADAR — LIVE TELEMETRY FEED',
+    radarFeedSubtitle: 'Direct Postgres change listener capturing flash crashes, algorithmic pricing glitches, and merchant errors.',
+    radarStatusLive: 'REALTIME STREAM ACTIVE',
+    radarListeningOn: 'channel: realtime:glitch_radar_events',
+    colAnomaly: 'DETECTED ANOMALY / SKU',
+    colGlitchPrice: 'GLITCH PRICE',
+    colDropMagnitude: 'DROP MAGNITUDE',
   },
   ar: {
     navTracker: 'متتبع الأسعار اللحظي',
@@ -217,18 +112,66 @@ const I18N = {
     modAlertSettings: 'ضبط إشعارات تنبيه انخفاض السعر',
     saveAlertRule: 'حفظ قاعدة التنبيه',
     alertSaved: '✓ تم الحفظ في قائمة المراقبة',
+    emptyWatchlistTitle: 'قائمة المراقبة فارغة حالياً',
+    emptyWatchlistDesc: 'لا توجد منتجات مراقبة في حسابك حتى الآن. أضف كود SKU أو رابط منتج للبدء في تتبع الأسعار ورصد الأخطاء السعرية.',
+    emptyWatchlistBtn: 'إضافة أول كود SKU للمراقبة',
+    radarFeedTitle: 'رادار العروض الخاطئة — البث الحي المباشر',
+    radarFeedSubtitle: 'بث حي متصل مباشرة بقاعدة البيانات لرصد الانهيارات السعرية الفورية وأخطاء التسعير الخوارزمية.',
+    radarStatusLive: 'البث اللحظي متصل ونشط',
+    radarListeningOn: 'قناة: realtime:glitch_radar_events',
+    colAnomaly: 'الخطأ السعري المرصود / SKU',
+    colGlitchPrice: 'سعر الخطأ',
+    colDropMagnitude: 'نسبة الانهيار',
   },
 };
 
 export default function ConsolePage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [trackedItems, setTrackedItems] = useState(SEED_CATALOG_ITEMS);
+  const [trackedItems, setTrackedItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [probingSkuId, setProbingSkuId] = useState(null);
+
+  // Glitch Radar Realtime Feed State
+  const [glitchRadarEvents, setGlitchRadarEvents] = useState([
+    {
+      id: 'gre-seed-1',
+      sku: 'caw_sku_981a',
+      title: 'MacBook Pro 14" M3 Pro 18GB/512GB (Space Black)',
+      retailer: 'AMZN_EG',
+      current_price_egp: 54900,
+      baseline_price_egp: 94500,
+      drop_pct: -41.9,
+      status: 'SYSTEM_GLITCH',
+      detected_at: '2m ago',
+    },
+    {
+      id: 'gre-seed-2',
+      sku: 'caw_sku_719b',
+      title: 'Apple iPhone 16 Pro Max 256GB Natural Titanium',
+      retailer: 'NOON_EG',
+      current_price_egp: 49999,
+      baseline_price_egp: 68900,
+      drop_pct: -27.4,
+      status: 'FLASH_CRASH',
+      detected_at: '7m ago',
+    },
+    {
+      id: 'gre-seed-3',
+      sku: 'caw_sku_118k',
+      title: 'Sony WH-1000XM5 Wireless Noise-Canceling',
+      retailer: 'BTECH_EG',
+      current_price_egp: 9999,
+      baseline_price_egp: 18900,
+      drop_pct: -47.1,
+      status: 'ZERO_MARGIN_MISPRICE',
+      detected_at: '14m ago',
+    },
+  ]);
+  const [realtimeConnected, setRealtimeConnected] = useState(false);
 
   // Drawer Inspection State
   const [selectedDrawerItem, setSelectedDrawerItem] = useState(null);
@@ -247,36 +190,132 @@ export default function ConsolePage() {
     localStorage.setItem('cawlix-lang', lang);
   }, [lang]);
 
-  // Session check
+  // Real Supabase data hydration & Glitch Radar realtime channel
   useEffect(() => {
-    (async () => {
+    let active = true;
+
+    async function loadConsoleData() {
+      setLoading(true);
       try {
-        const { data } = await supabase.auth.getSession();
-        if (!data?.session) {
+        const { data: sessionData, error: sessionErr } = await supabase.auth.getSession();
+        if (sessionErr || !sessionData?.session) {
           window.location.href = '/login';
           return;
         }
-        setUser(data.session.user);
 
-        const { data: items } = await supabase.from('tracked_products').select('*');
-        if (items && items.length > 0) {
-          const existingIds = new Set(items.map((d) => d.sku));
-          const merged = [...items];
-          SEED_CATALOG_ITEMS.forEach((seed) => {
-            if (!existingIds.has(seed.sku)) {
-              merged.push(seed);
-            }
-          });
-          setTrackedItems(merged);
-        } else {
-          setTrackedItems(SEED_CATALOG_ITEMS);
+        const activeUser = sessionData.session.user;
+        if (!active) return;
+        setUser(activeUser);
+
+        // Fetch User Watchlist joined with products
+        const { data, error } = await supabase
+          .from('user_watchlists')
+          .select(`
+            id,
+            target_price,
+            notify_on_glitch,
+            tracked_products (*)
+          `)
+          .eq('user_id', activeUser.id);
+
+        if (error) {
+          console.error('Error fetching user watchlists:', error);
+          if (active) setTrackedItems([]);
+          return;
         }
-      } catch {
-        setTrackedItems(SEED_CATALOG_ITEMS);
+
+        if (!active) return;
+
+        if (data && data.length > 0) {
+          const hydratedItems = data
+            .map((row) => {
+              const product = Array.isArray(row.tracked_products)
+                ? row.tracked_products[0]
+                : row.tracked_products;
+
+              if (!product) return null;
+
+              const currentPrice = product.current_price_egp ?? product.current_price ?? 0;
+              const baselinePrice = product.baseline_price_egp ?? product.baseline_price ?? currentPrice;
+              const delta =
+                product.delta_pct ??
+                (currentPrice && baselinePrice
+                  ? parseFloat((((currentPrice - baselinePrice) / baselinePrice) * 100).toFixed(1))
+                  : 0);
+
+              return {
+                id: row.id,
+                watchlist_id: row.id,
+                target_price: row.target_price,
+                notify_on_glitch: row.notify_on_glitch,
+                sku: product.sku || 'N/A',
+                title: product.title || 'Tracked Product',
+                node: product.node || product.retailer || 'DOMESTIC',
+                domain: product.domain || 'node.cawlix.com',
+                current_price_egp: currentPrice,
+                baseline_price_egp: baselinePrice,
+                delta_pct: delta,
+                discount_status: product.discount_status || (delta > 0 ? `+${delta}%` : `${delta}%`),
+                status: product.status || (delta > 5 ? 'FLAGGED' : 'ACTIVE'),
+                last_ping: product.last_ping || 'just now',
+                created_at: product.created_at || row.created_at,
+                ...product,
+              };
+            })
+            .filter(Boolean);
+
+          setTrackedItems(hydratedItems);
+        } else {
+          // Empty state: User has no tracked SKUs yet
+          setTrackedItems([]);
+        }
+      } catch (err) {
+        console.error('Failed to load telemetry console data:', err);
+        if (active) setTrackedItems([]);
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
-    })();
+    }
+
+    loadConsoleData();
+
+    // Supabase Realtime Subscription for Glitch Radar
+    const channel = supabase
+      .channel('realtime:glitch_radar_events')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'glitch_radar_events' },
+        (payload) => {
+          console.log('Realtime Glitch Radar alert detected:', payload);
+          const newEvent = payload.new || payload;
+          setGlitchRadarEvents((prev) => [
+            {
+              id: newEvent.id || `gre-${Date.now()}`,
+              sku: newEvent.sku || 'SKU_GLITCH',
+              title: newEvent.title || 'Sudden Pricing Anomaly Detected',
+              retailer: newEvent.retailer || newEvent.node || 'DOMESTIC_NODE',
+              current_price_egp: newEvent.current_price_egp ?? newEvent.price ?? 0,
+              baseline_price_egp: newEvent.baseline_price_egp ?? newEvent.baseline ?? 0,
+              drop_pct: newEvent.drop_pct ?? newEvent.delta_pct ?? -30.0,
+              status: newEvent.status || 'PRICING_GLITCH',
+              detected_at: 'just now',
+              isRealtime: true,
+              ...newEvent,
+            },
+            ...prev,
+          ]);
+        }
+      )
+      .subscribe((status) => {
+        if (active) {
+          setRealtimeConnected(status === 'SUBSCRIBED');
+        }
+      });
+
+    return () => {
+      active = false;
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   // Close drawer on Escape
@@ -762,112 +801,343 @@ export default function ConsolePage() {
             </button>
           </section>
 
-          {/* Unadorned Tracked Items List */}
-          <section style={{ display: 'flex', flexDirection: 'column' }}>
-            {/* Table Header */}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '2.2fr 1fr 1.2fr 1.2fr 1fr 0.8fr',
-                alignItems: 'center',
-                padding: '8px 12px',
-                borderBottom: `1px solid ${colors.border}`,
-                fontSize: '10px',
-                color: colors.textSubtle,
-                letterSpacing: '0.05em',
-                fontFamily: 'var(--font-mono, monospace)',
-              }}
-            >
-              <span>{t.colTitle}</span>
-              <span>{t.colStore}</span>
-              <span style={{ textAlign: isRtl ? 'left' : 'right' }}>{t.colPrice}</span>
-              <span style={{ textAlign: isRtl ? 'left' : 'right' }}>{t.colDelta}</span>
-              <span style={{ textAlign: isRtl ? 'left' : 'right' }}>{t.colTime}</span>
-              <span style={{ textAlign: isRtl ? 'left' : 'right' }}>{t.colAction}</span>
-            </div>
+          {/* Content Views: Radar Tab vs Watchlist/Overview Tabs */}
+          {activeTab === 'radar' ? (
+            <section style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {/* Radar Live Status Banner */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '12px 16px',
+                  backgroundColor: colors.surface,
+                  border: `1px solid ${colors.border}`,
+                  borderRadius: '6px',
+                  flexWrap: 'wrap',
+                  gap: '12px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span
+                    style={{
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      backgroundColor: realtimeConnected ? colors.accent : '#F59E0B',
+                      boxShadow: `0 0 10px ${realtimeConnected ? colors.accent : '#F59E0B'}`,
+                    }}
+                  />
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 600, color: colors.textPrimary, fontFamily: 'var(--font-mono, monospace)' }}>
+                      {t.radarStatusLive}
+                    </span>
+                    <span style={{ fontSize: '10px', color: colors.textSubtle, fontFamily: 'var(--font-mono, monospace)' }}>
+                      {t.radarListeningOn}
+                    </span>
+                  </div>
+                </div>
 
-            {loading ? (
-              <div style={{ padding: '36px 0', textAlign: 'center', color: colors.textSubtle, fontSize: '11px', fontFamily: 'var(--font-mono, monospace)' }}>
-                CONNECTING TO PROBE NETWORK...
+                <div
+                  style={{
+                    fontSize: '10px',
+                    fontFamily: 'var(--font-mono, monospace)',
+                    color: colors.accent,
+                    backgroundColor: colors.bg,
+                    border: `1px solid ${colors.border}`,
+                    padding: '4px 10px',
+                    borderRadius: '4px',
+                    fontWeight: 600,
+                  }}
+                >
+                  {glitchRadarEvents.length} ANOMALIES INTERCEPTED
+                </div>
               </div>
-            ) : filteredItems.length === 0 ? (
-              <div style={{ padding: '40px 0', textAlign: 'center', color: colors.textSubtle, fontSize: '11px', fontFamily: 'var(--font-mono, monospace)' }}>
-                {t.noItems}
-              </div>
-            ) : (
-              filteredItems.map((item) => {
-                const isMarkup = item.delta_pct > 0;
-                const deltaColor = isMarkup ? '#ef4444' : colors.accent;
-                const deltaSign = item.delta_pct > 0 ? `+${item.delta_pct}%` : `${item.delta_pct}%`;
 
-                return (
+              {/* Radar Table */}
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '2.4fr 1fr 1.2fr 1.2fr 1.2fr 0.8fr',
+                    alignItems: 'center',
+                    padding: '8px 12px',
+                    borderBottom: `1px solid ${colors.border}`,
+                    fontSize: '10px',
+                    color: colors.textSubtle,
+                    letterSpacing: '0.05em',
+                    fontFamily: 'var(--font-mono, monospace)',
+                  }}
+                >
+                  <span>{t.colAnomaly}</span>
+                  <span>{t.colStore}</span>
+                  <span style={{ textAlign: isRtl ? 'left' : 'right' }}>{t.colGlitchPrice}</span>
+                  <span style={{ textAlign: isRtl ? 'left' : 'right' }}>{t.baselineMedian}</span>
+                  <span style={{ textAlign: isRtl ? 'left' : 'right' }}>{t.colDropMagnitude}</span>
+                  <span style={{ textAlign: isRtl ? 'left' : 'right' }}>{t.colTime}</span>
+                </div>
+
+                {glitchRadarEvents.map((evt) => (
                   <div
-                    key={item.id}
-                    onClick={() => handleRowClick(item)}
+                    key={evt.id}
+                    onClick={() => {
+                      handleRowClick({
+                        id: evt.id,
+                        sku: evt.sku,
+                        title: evt.title,
+                        node: evt.retailer,
+                        domain: 'node.live.eg',
+                        current_price_egp: evt.current_price_egp,
+                        baseline_price_egp: evt.baseline_price_egp,
+                        delta_pct: evt.drop_pct,
+                        discount_status: `${evt.drop_pct}%`,
+                        status: evt.status,
+                        last_ping: evt.detected_at,
+                      });
+                    }}
                     style={{
                       display: 'grid',
-                      gridTemplateColumns: '2.2fr 1fr 1.2fr 1.2fr 1fr 0.8fr',
+                      gridTemplateColumns: '2.4fr 1fr 1.2fr 1.2fr 1.2fr 0.8fr',
                       alignItems: 'center',
                       padding: '14px 12px',
                       borderBottom: `1px solid ${colors.border}`,
                       cursor: 'pointer',
                       transition: 'background-color 100ms ease',
+                      backgroundColor: evt.isRealtime ? 'rgba(62, 207, 142, 0.04)' : 'transparent',
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.backgroundColor = colors.surfaceHover;
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'transparent';
+                      e.currentTarget.style.backgroundColor = evt.isRealtime ? 'rgba(62, 207, 142, 0.04)' : 'transparent';
                     }}
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', minWidth: 0, paddingRight: isRtl ? 0 : '12px', paddingLeft: isRtl ? '12px' : 0 }}>
                       <span style={{ fontSize: '13px', fontWeight: 500, color: colors.textPrimary, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {item.title}
+                        {evt.title}
                       </span>
-                      <span style={{ fontSize: '10px', color: colors.textSubtle, fontFamily: 'var(--font-mono, monospace)' }}>
-                        {item.sku}
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontSize: '10px', color: colors.textSubtle, fontFamily: 'var(--font-mono, monospace)' }}>
+                          {evt.sku}
+                        </span>
+                        <span style={{ fontSize: '9px', padding: '1px 5px', borderRadius: '3px', backgroundColor: '#EF4444', color: '#FFFFFF', fontWeight: 700, fontFamily: 'var(--font-mono, monospace)' }}>
+                          {evt.status}
+                        </span>
+                      </div>
                     </div>
 
                     <div style={{ fontSize: '11px', color: colors.textMuted, fontFamily: 'var(--font-mono, monospace)' }}>
-                      {item.node}
+                      {evt.retailer}
                     </div>
 
-                    <div style={{ fontSize: '13px', fontWeight: 600, color: colors.textPrimary, textAlign: isRtl ? 'left' : 'right', fontFamily: 'var(--font-mono, monospace)' }}>
-                      EGP {item.current_price_egp.toLocaleString()}
+                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#3ECF8E', textAlign: isRtl ? 'left' : 'right', fontFamily: 'var(--font-mono, monospace)' }}>
+                      EGP {evt.current_price_egp?.toLocaleString()}
                     </div>
 
-                    {/* Single subtle monospace text delta: NO boxes, NO pills! */}
-                    <div style={{ fontSize: '11px', fontWeight: 600, color: deltaColor, textAlign: isRtl ? 'left' : 'right', fontFamily: 'var(--font-mono, monospace)' }}>
-                      {deltaSign}
+                    <div style={{ fontSize: '11px', color: colors.textSubtle, textAlign: isRtl ? 'left' : 'right', fontFamily: 'var(--font-mono, monospace)' }}>
+                      EGP {evt.baseline_price_egp?.toLocaleString()}
+                    </div>
+
+                    <div style={{ fontSize: '12px', fontWeight: 700, color: '#EF4444', textAlign: isRtl ? 'left' : 'right', fontFamily: 'var(--font-mono, monospace)' }}>
+                      {evt.drop_pct}%
                     </div>
 
                     <div style={{ fontSize: '11px', color: colors.textMuted, textAlign: isRtl ? 'left' : 'right', fontFamily: 'var(--font-mono, monospace)' }}>
-                      {item.last_ping}
-                    </div>
-
-                    <div style={{ textAlign: isRtl ? 'left' : 'right' }}>
-                      <button
-                        type="button"
-                        onClick={(e) => handleReaudit(e, item)}
-                        style={{
-                          background: 'transparent',
-                          border: 'none',
-                          color: probingSkuId === item.id ? colors.accent : colors.textSubtle,
-                          fontSize: '11px',
-                          cursor: 'pointer',
-                          padding: '2px 0',
-                          fontFamily: 'var(--font-mono, monospace)',
-                        }}
-                      >
-                        {probingSkuId === item.id ? t.probing : t.btnReaudit}
-                      </button>
+                      {evt.detected_at}
                     </div>
                   </div>
-                );
-              })
-            )}
-          </section>
+                ))}
+              </div>
+            </section>
+          ) : activeTab === 'settings' ? (
+            <section style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ border: `1px solid ${colors.border}`, borderRadius: '6px', padding: '20px', backgroundColor: colors.surface }}>
+                <h3 style={{ fontSize: '13px', fontWeight: 600, color: colors.textPrimary, margin: '0 0 12px 0', fontFamily: 'var(--font-mono, monospace)' }}>
+                  AUTHENTICATED TELEMETRY SESSION
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '11px', fontFamily: 'var(--font-mono, monospace)', color: colors.textMuted }}>
+                  <div>USER ID: <span style={{ color: colors.textPrimary }}>{user?.id || '—'}</span></div>
+                  <div>EMAIL: <span style={{ color: colors.textPrimary }}>{user?.email || '—'}</span></div>
+                  <div>REALTIME STREAM STATUS: <span style={{ color: realtimeConnected ? '#3ECF8E' : '#F59E0B' }}>{realtimeConnected ? 'CONNECTED (SUBSCRIBED)' : 'CONNECTING...'}</span></div>
+                </div>
+              </div>
+            </section>
+          ) : (
+            /* Unadorned Tracked Items List (Overview & Watchlist) */
+            <section style={{ display: 'flex', flexDirection: 'column' }}>
+              {/* Table Header */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '2.2fr 1fr 1.2fr 1.2fr 1fr 0.8fr',
+                  alignItems: 'center',
+                  padding: '8px 12px',
+                  borderBottom: `1px solid ${colors.border}`,
+                  fontSize: '10px',
+                  color: colors.textSubtle,
+                  letterSpacing: '0.05em',
+                  fontFamily: 'var(--font-mono, monospace)',
+                }}
+              >
+                <span>{t.colTitle}</span>
+                <span>{t.colStore}</span>
+                <span style={{ textAlign: isRtl ? 'left' : 'right' }}>{t.colPrice}</span>
+                <span style={{ textAlign: isRtl ? 'left' : 'right' }}>{t.colDelta}</span>
+                <span style={{ textAlign: isRtl ? 'left' : 'right' }}>{t.colTime}</span>
+                <span style={{ textAlign: isRtl ? 'left' : 'right' }}>{t.colAction}</span>
+              </div>
+
+              {loading ? (
+                <div style={{ padding: '60px 0', textAlign: 'center', color: colors.textSubtle, fontSize: '11px', fontFamily: 'var(--font-mono, monospace)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: colors.accent, boxShadow: `0 0 10px ${colors.accent}` }} />
+                  <span>CONNECTING TO PROBE NETWORK & HYDRATING WATCHLIST...</span>
+                </div>
+              ) : trackedItems.length === 0 ? (
+                /* Requirement 4.2: Clean empty state offering prompt to track first item */
+                <div
+                  style={{
+                    padding: '60px 24px',
+                    textAlign: 'center',
+                    border: `1px dashed ${colors.border}`,
+                    borderRadius: '8px',
+                    margin: '16px 0',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: colors.surface,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '44px',
+                      height: '44px',
+                      borderRadius: '50%',
+                      backgroundColor: colors.bg,
+                      border: `1px solid ${colors.border}`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginBottom: '16px',
+                      color: colors.accent,
+                    }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="22" y1="12" x2="18" y2="12" />
+                      <line x1="6" y1="12" x2="2" y2="12" />
+                      <line x1="12" y1="6" x2="12" y2="2" />
+                      <line x1="12" y1="22" x2="12" y2="18" />
+                    </svg>
+                  </div>
+                  <h3 style={{ fontSize: '14px', fontWeight: 600, color: colors.textPrimary, margin: '0 0 6px 0' }}>
+                    {t.emptyWatchlistTitle}
+                  </h3>
+                  <p style={{ fontSize: '12px', color: colors.textMuted, maxWidth: '440px', margin: '0 0 20px 0', lineHeight: 1.5, fontFamily: 'var(--font-mono, monospace)' }}>
+                    {t.emptyWatchlistDesc}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setModalOpen(true)}
+                    style={{
+                      backgroundColor: colors.btnBg,
+                      color: colors.btnText,
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      padding: '0 16px',
+                      height: '38px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      fontFamily: 'var(--font-mono, monospace)',
+                    }}
+                  >
+                    <span style={{ fontSize: '14px' }}>+</span>
+                    <span>{t.emptyWatchlistBtn}</span>
+                  </button>
+                </div>
+              ) : filteredItems.length === 0 ? (
+                <div style={{ padding: '40px 0', textAlign: 'center', color: colors.textSubtle, fontSize: '11px', fontFamily: 'var(--font-mono, monospace)' }}>
+                  {t.noItems}
+                </div>
+              ) : (
+                filteredItems.map((item) => {
+                  const isMarkup = item.delta_pct > 0;
+                  const deltaColor = isMarkup ? '#ef4444' : colors.accent;
+                  const deltaSign = item.delta_pct > 0 ? `+${item.delta_pct}%` : `${item.delta_pct}%`;
+
+                  return (
+                    <div
+                      key={item.id}
+                      onClick={() => handleRowClick(item)}
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '2.2fr 1fr 1.2fr 1.2fr 1fr 0.8fr',
+                        alignItems: 'center',
+                        padding: '14px 12px',
+                        borderBottom: `1px solid ${colors.border}`,
+                        cursor: 'pointer',
+                        transition: 'background-color 100ms ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = colors.surfaceHover;
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                      }}
+                    >
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', minWidth: 0, paddingRight: isRtl ? 0 : '12px', paddingLeft: isRtl ? '12px' : 0 }}>
+                        <span style={{ fontSize: '13px', fontWeight: 500, color: colors.textPrimary, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {item.title}
+                        </span>
+                        <span style={{ fontSize: '10px', color: colors.textSubtle, fontFamily: 'var(--font-mono, monospace)' }}>
+                          {item.sku}
+                        </span>
+                      </div>
+
+                      <div style={{ fontSize: '11px', color: colors.textMuted, fontFamily: 'var(--font-mono, monospace)' }}>
+                        {item.node}
+                      </div>
+
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: colors.textPrimary, textAlign: isRtl ? 'left' : 'right', fontFamily: 'var(--font-mono, monospace)' }}>
+                        EGP {item.current_price_egp.toLocaleString()}
+                      </div>
+
+                      {/* Single subtle monospace text delta */}
+                      <div style={{ fontSize: '11px', fontWeight: 600, color: deltaColor, textAlign: isRtl ? 'left' : 'right', fontFamily: 'var(--font-mono, monospace)' }}>
+                        {deltaSign}
+                      </div>
+
+                      <div style={{ fontSize: '11px', color: colors.textMuted, textAlign: isRtl ? 'left' : 'right', fontFamily: 'var(--font-mono, monospace)' }}>
+                        {item.last_ping}
+                      </div>
+
+                      <div style={{ textAlign: isRtl ? 'left' : 'right' }}>
+                        <button
+                          type="button"
+                          onClick={(e) => handleReaudit(e, item)}
+                          style={{
+                            background: 'transparent',
+                            border: 'none',
+                            color: probingSkuId === item.id ? colors.accent : colors.textSubtle,
+                            fontSize: '11px',
+                            cursor: 'pointer',
+                            padding: '2px 0',
+                            fontFamily: 'var(--font-mono, monospace)',
+                          }}
+                        >
+                          {probingSkuId === item.id ? t.probing : t.btnReaudit}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </section>
+          )}
 
         </div>
       </main>

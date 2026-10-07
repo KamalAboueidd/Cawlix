@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 import type { TrackedProduct } from '../../lib/supabase';
 
 interface AddSkuModalProps {
@@ -94,7 +94,48 @@ export const AddSkuModal = ({ isOpen, onClose, onSuccess }: AddSkuModalProps) =>
       const baseline = Math.round(estimatedShelfPrice * 0.94);
       const delta = parseFloat((((estimatedShelfPrice - baseline) / baseline) * 100).toFixed(1));
 
-      const newProduct: TrackedProduct = {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const currentUser = sessionData?.session?.user;
+      const currentUserId = currentUser?.id || 'usr_core_kamal';
+
+      let productRecord: any = null;
+      try {
+        const { data: existingProduct } = await supabase
+          .from('tracked_products')
+          .select('*')
+          .eq('sku', canonicalSku)
+          .maybeSingle();
+
+        if (existingProduct) {
+          productRecord = existingProduct;
+        } else {
+          const newProductPayload = {
+            sku: canonicalSku,
+            title,
+            node: selectedNode,
+            domain: activeDomain,
+            current_price_egp: estimatedShelfPrice,
+            baseline_price_egp: baseline,
+            delta_pct: delta,
+            discount_status: delta > 0 ? `MARKUP (+${delta}%)` : `VERIFIED DEAL (${delta}%)`,
+            status: delta > 5 ? 'FLAGGED' : 'ACTIVE',
+            last_ping: 'just now',
+            created_at: new Date().toISOString(),
+          };
+
+          const { data: insertedProduct } = await supabase
+            .from('tracked_products')
+            .insert(newProductPayload)
+            .select()
+            .maybeSingle();
+
+          productRecord = insertedProduct || { id: `tp-${Date.now()}`, ...newProductPayload };
+        }
+      } catch {
+        // fallback
+      }
+
+      const finalProduct = productRecord || {
         id: `tp-${Date.now()}`,
         sku: canonicalSku,
         title,
@@ -109,24 +150,42 @@ export const AddSkuModal = ({ isOpen, onClose, onSuccess }: AddSkuModalProps) =>
         created_at: new Date().toISOString(),
       };
 
-      const { data: sessionData } = await supabase.auth.getSession();
-      const currentUserId = sessionData?.session?.user?.id || 'usr_core_kamal';
-
-      const watchlistEntry = {
-        id: `wl-${Date.now()}`,
+      const watchlistPayload = {
         user_id: currentUserId,
+        target_price: alertNum || null,
+        notify_on_glitch: glitchRadarEnabled,
         sku: canonicalSku,
         node: selectedNode,
+        product_id: finalProduct.id,
+        tracked_product_id: finalProduct.id,
         target_alert_price_egp: alertNum || null,
         glitch_radar_enabled: glitchRadarEnabled,
         created_at: new Date().toISOString(),
       };
 
-      await supabase.from('tracked_products').insert(newProduct);
-      await supabase.from('user_watchlists').insert(watchlistEntry);
+      let wlRecord: any = null;
+      try {
+        const { data: wlData } = await supabase
+          .from('user_watchlists')
+          .insert(watchlistPayload)
+          .select()
+          .maybeSingle();
+        wlRecord = wlData;
+      } catch {
+        // fallback
+      }
+
+      const optimisticItem = {
+        id: wlRecord?.id || finalProduct.id || `item-${Date.now()}`,
+        watchlist_id: wlRecord?.id,
+        target_price: alertNum || null,
+        notify_on_glitch: glitchRadarEnabled,
+        ...finalProduct,
+        tracked_products: finalProduct,
+      };
 
       if (onSuccess) {
-        onSuccess(newProduct);
+        onSuccess(optimisticItem);
       }
 
       setSkuUrl('');

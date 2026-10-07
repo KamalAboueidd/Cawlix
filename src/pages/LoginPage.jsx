@@ -1,8 +1,15 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import cawlixLogo from '../assets/ICon.png';
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+const getReturnTo = () => {
+  if (typeof window === 'undefined') return '/console';
+  const params = new URLSearchParams(window.location.search);
+  const target = params.get('returnTo');
+  return target && target.startsWith('/') ? target : '/console';
+};
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -14,33 +21,45 @@ export default function LoginPage() {
 
   // Session Check & Auto-Redirect on page mount
   useEffect(() => {
+    let active = true;
     (async () => {
       try {
         const { data } = await supabase.auth.getSession();
-        if (data?.session) {
-          window.location.href = '/console';
+        if (active && data?.session) {
+          window.location.href = getReturnTo();
         }
       } catch {
         // Ignore session read errors
       }
     })();
+    return () => {
+      active = false;
+    };
   }, []);
 
   const handleGoogleAuth = async () => {
+    if (loading) return;
     setErrorMsg('');
+    setLoading(true);
     try {
+      const redirectUrl = `${window.location.origin}${getReturnTo()}`;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: `${window.location.origin}/console` },
+        options: { redirectTo: redirectUrl },
       });
-      if (error) setErrorMsg(error.message);
+      if (error) {
+        setErrorMsg(error.message);
+        setLoading(false);
+      }
     } catch (err) {
       setErrorMsg(err.message || 'Google authentication failed.');
+      setLoading(false);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
     setErrorMsg('');
     setSuccessMsg('');
 
@@ -59,16 +78,20 @@ export default function LoginPage() {
           return;
         }
 
-        const { error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password });
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: cleanEmail,
+          password,
+        });
+
         if (error) {
           setErrorMsg(error.message);
-        } else {
-          window.location.href = '/console';
+        } else if (data?.session) {
+          window.location.href = getReturnTo();
         }
       } else {
         const { error } = await supabase.auth.signInWithOtp({
           email: cleanEmail,
-          options: { emailRedirectTo: `${window.location.origin}/console` },
+          options: { emailRedirectTo: `${window.location.origin}${getReturnTo()}` },
         });
         if (error) {
           setErrorMsg(error.message);
@@ -157,6 +180,7 @@ export default function LoginPage() {
         <div>
           <button
             type="button"
+            disabled={loading}
             onClick={handleGoogleAuth}
             style={{
               width: '100%',
@@ -171,7 +195,8 @@ export default function LoginPage() {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '12px',
-              cursor: 'pointer',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.6 : 1,
               transition: 'background-color 150ms ease, border-color 150ms ease',
             }}
             onMouseEnter={(e) => {

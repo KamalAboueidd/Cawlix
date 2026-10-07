@@ -390,15 +390,20 @@ class SupabaseTableBuilder<T> {
   }
 }
 
-const DEFAULT_SUPABASE_URL = 'https://dbrzkjlklfrusiapoqua.supabase.co';
-const DEFAULT_SUPABASE_KEY = 'sb_publishable_NrX9K6Bx961f83I6VCpXNQ_r_smwTHz';
+export { supabase, default } from './supabaseClient.js';
 
-const rawUrl = (typeof import.meta !== 'undefined' && (import.meta.env?.PUBLIC_SUPABASE_URL || import.meta.env?.VITE_SUPABASE_URL)) || DEFAULT_SUPABASE_URL;
-const supabaseUrl = (rawUrl || DEFAULT_SUPABASE_URL).replace(/\/rest\/v1\/?$/, '').replace(/\/$/, '');
-const supabaseKey = (typeof import.meta !== 'undefined' && (import.meta.env?.PUBLIC_SUPABASE_ANON_KEY || import.meta.env?.VITE_SUPABASE_ANON_KEY)) || DEFAULT_SUPABASE_KEY;
-
-export const supabase = {
-  auth: new SupabaseAuthClient(supabaseUrl, supabaseKey),
-  from: <T = any>(table: string) => new SupabaseTableBuilder<T>(table, supabaseUrl, supabaseKey),
-};
+export interface TrackedProduct {
+  id: string;
+  sku: string;
+  title: string;
+  node: string;
+  domain?: string;
+  current_price_egp: number;
+  baseline_price_egp: number;
+  delta_pct: number;
+  discount_status: string;
+  status: string;
+  last_ping: string;
+  created_at?: string;
+}
 

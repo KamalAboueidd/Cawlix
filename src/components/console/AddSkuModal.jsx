@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 
 const DOMESTIC_NODES = [
   { id: 'AMZN_EG', label: 'AMZN_EG', domain: 'node.amazon.eg' },
@@ -89,7 +89,53 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
       const baseline = Math.round(estimatedShelfPrice * 0.94);
       const delta = parseFloat((((estimatedShelfPrice - baseline) / baseline) * 100).toFixed(1));
 
-      const newProduct = {
+      // 1. Get active session user
+      const { data: sessionData } = await supabase.auth.getSession();
+      const currentUser = sessionData?.session?.user;
+      const currentUserId = currentUser?.id || 'usr_core_kamal';
+
+      // 2. Resolve existing tracked_product or insert new
+      let productRecord = null;
+      try {
+        const { data: existingProduct } = await supabase
+          .from('tracked_products')
+          .select('*')
+          .eq('sku', canonicalSku)
+          .maybeSingle();
+
+        if (existingProduct) {
+          productRecord = existingProduct;
+        } else {
+          const newProductPayload = {
+            sku: canonicalSku,
+            title,
+            node: selectedNode,
+            domain: activeDomain,
+            current_price_egp: estimatedShelfPrice,
+            baseline_price_egp: baseline,
+            delta_pct: delta,
+            discount_status: delta > 0 ? `MARKUP (+${delta}%)` : `VERIFIED DEAL (${delta}%)`,
+            status: delta > 5 ? 'FLAGGED' : 'ACTIVE',
+            last_ping: 'just now',
+            created_at: new Date().toISOString(),
+          };
+
+          const { data: insertedProduct, error: insertProdErr } = await supabase
+            .from('tracked_products')
+            .insert(newProductPayload)
+            .select()
+            .maybeSingle();
+
+          if (insertProdErr) {
+            console.warn('tracked_products insert note:', insertProdErr);
+          }
+          productRecord = insertedProduct || { id: `tp-${Date.now()}`, ...newProductPayload };
+        }
+      } catch (prodErr) {
+        console.warn('Error resolving tracked_product:', prodErr);
+      }
+
+      const finalProduct = productRecord || {
         id: `tp-${Date.now()}`,
         sku: canonicalSku,
         title,
@@ -104,27 +150,48 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
         created_at: new Date().toISOString(),
       };
 
-      // Get active session user id
-      const { data: sessionData } = await supabase.auth.getSession();
-      const currentUserId = sessionData?.session?.user?.id || 'usr_core_kamal';
-
-      const watchlistEntry = {
-        id: `wl-${Date.now()}`,
+      // 3. Link into user_watchlists
+      const watchlistPayload = {
         user_id: currentUserId,
+        target_price: alertNum || null,
+        notify_on_glitch: glitchRadarEnabled,
         sku: canonicalSku,
         node: selectedNode,
+        product_id: finalProduct.id,
+        tracked_product_id: finalProduct.id,
         target_alert_price_egp: alertNum || null,
         glitch_radar_enabled: glitchRadarEnabled,
         created_at: new Date().toISOString(),
       };
 
-      // Insert into tracked_products and user_watchlists
-      await supabase.from('tracked_products').insert(newProduct);
-      await supabase.from('user_watchlists').insert(watchlistEntry);
+      let wlRecord = null;
+      try {
+        const { data: wlData, error: wlErr } = await supabase
+          .from('user_watchlists')
+          .insert(watchlistPayload)
+          .select()
+          .maybeSingle();
 
-      // Optimistic update
+        if (wlErr) {
+          console.warn('user_watchlists insert note:', wlErr);
+        }
+        wlRecord = wlData;
+      } catch (errWl) {
+        console.warn('Error inserting into user_watchlists:', errWl);
+      }
+
+      // 4. Optimistic update with joined structure
+      const optimisticItem = {
+        id: wlRecord?.id || finalProduct.id || `item-${Date.now()}`,
+        watchlist_id: wlRecord?.id,
+        target_price: alertNum || null,
+        notify_on_glitch: glitchRadarEnabled,
+        ...finalProduct,
+        tracked_products: finalProduct,
+      };
+
       if (onSuccess) {
-        onSuccess(newProduct);
+        onSuccess(optimisticItem);
       }
 
       // Reset form
