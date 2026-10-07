@@ -28,59 +28,61 @@ function AppRoutes() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  if (route === '/pricing') {
+  const cleanRoute = (route.length > 1 ? route.replace(/\/+$/, '') : route) || '/';
+
+  if (cleanRoute === '/pricing') {
     return <PricingPage />;
   }
 
-  if (route === '/engines/true-cost') {
+  if (cleanRoute === '/engines/true-cost') {
     return <TrueCostPage />;
   }
 
-  if (route === '/engines/ghost-auditor') {
+  if (cleanRoute === '/engines/ghost-auditor') {
     return <GhostAuditorPage />;
   }
 
-  if (route === '/engines/landed-cost') {
+  if (cleanRoute === '/engines/landed-cost') {
     return <LandedCostPage />;
   }
 
-  if (route === '/engines/anomaly-radar') {
+  if (cleanRoute === '/engines/anomaly-radar') {
     return <AnomalyRadarPage />;
   }
 
-  if (route === '/network/coverage') {
+  if (cleanRoute === '/network/coverage') {
     return <CoveragePage />;
   }
 
-  if (route === '/blog') {
+  if (cleanRoute === '/blog') {
     return <BlogIndexPage />;
   }
 
-  if (route === '/blog/white-friday-fake-discounts') {
+  if (cleanRoute === '/blog/white-friday-fake-discounts') {
     return <WhiteFridayFakeDiscountsPage />;
   }
 
-  if (route === '/solutions/consumers' || route === '/solutions/power-shoppers') {
+  if (cleanRoute === '/solutions/consumers' || cleanRoute === '/solutions/power-shoppers') {
     return <ConsumersPage />;
   }
 
-  if (route === '/solutions/merchants' || route === '/solutions/retailers' || route === '/solutions/arbitrage') {
+  if (cleanRoute === '/solutions/merchants' || cleanRoute === '/solutions/retailers' || cleanRoute === '/solutions/arbitrage') {
     return <MerchantsPage />;
   }
 
-  if (route === '/changelog') {
+  if (cleanRoute === '/changelog') {
     return <ChangelogPage />;
   }
 
-  if (route === '/docs') {
+  if (cleanRoute === '/docs') {
     return <DocsPage />;
   }
 
-  if (route === '/tracker') {
+  if (cleanRoute === '/tracker') {
     return <TrackerPage />;
   }
 
-  if (route === '/console' || route === '/console/' || route.startsWith('/console/')) {
+  if (cleanRoute === '/console' || cleanRoute.startsWith('/console/')) {
     return (
       <ProtectedRoute>
         <ConsolePage />
@@ -88,7 +90,7 @@ function AppRoutes() {
     );
   }
 
-  if (route === '/login') {
+  if (cleanRoute === '/login') {
     return (
       <PublicOnlyRoute>
         <LoginPage />
@@ -96,7 +98,7 @@ function AppRoutes() {
     );
   }
 
-  if (route === '/register') {
+  if (cleanRoute === '/register') {
     return (
       <PublicOnlyRoute>
         <RegisterPage />
@@ -104,11 +106,11 @@ function AppRoutes() {
     );
   }
 
-  if (route === '/404') {
+  if (cleanRoute === '/404') {
     return <NotFoundPage />;
   }
 
-  if (route === '/' || route === '') {
+  if (cleanRoute === '/' || cleanRoute === '') {
     return <LandingPage />;
   }
 
