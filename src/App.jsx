@@ -18,6 +18,7 @@ import TrackerPage from './pages/TrackerPage';
 import ConsolePage from './pages/console/ConsolePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 
 function AppRoutes() {
   const [route, setRoute] = useState(window.location.pathname);
@@ -102,6 +103,14 @@ function AppRoutes() {
     return (
       <PublicOnlyRoute>
         <RegisterPage />
+      </PublicOnlyRoute>
+    );
+  }
+
+  if (cleanRoute === '/forgot-password') {
+    return (
+      <PublicOnlyRoute>
+        <ForgotPasswordPage />
       </PublicOnlyRoute>
     );
   }

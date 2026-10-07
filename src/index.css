@@ -7,38 +7,40 @@
 
 /* ── Design tokens ──────────────────────────────────────────────────────────── */
 :root {
-  /* Canvas */
-  --canvas:           #0A0A0A;
-  --surface:          #121212;
-  --surface-elevated: #181818;
+  /* Canvas & Dark Telemetry Palette */
+  --canvas:           #05070A;
+  --surface:          #0D1117;
+  --surface-elevated: #131822;
 
   /* Borders */
   --border:           rgba(255, 255, 255, 0.08);
   --border-subtle:    rgba(255, 255, 255, 0.04);
   --border-strong:    rgba(255, 255, 255, 0.16);
+  --border-zinc:      #27272A;
 
-  /* Brand */
-  --brand:            #3ECF8E;
-  --brand-hover:      #34B27B;
-  --brand-tint:       rgba(62, 207, 142, 0.08);
-  --brand-tint-hover: rgba(62, 207, 142, 0.16);
+  /* Brand & Primary Telemetry Emerald */
+  --brand:            #10B981;
+  --brand-hover:      #059669;
+  --brand-tint:       rgba(16, 185, 129, 0.08);
+  --brand-tint-hover: rgba(16, 185, 129, 0.16);
 
-  /* Typography */
-  --text-primary:     #FFFFFF;
-  --text-secondary:   #888888;
-  --text-muted:       #737373;
-  --text-inverse:     #0A0A0A;
+  /* Typography Colors */
+  --text-primary:     #F4F4F5;
+  --text-secondary:   #A1A1AA;
+  --text-muted:       #71717A;
+  --text-inverse:     #05070A;
 
-  /* Semantic */
-  --success:          #3ECF8E;
+  /* Semantic Telemetry */
+  --success:          #10B981;
   --warn:             #F59E0B;
-  --danger:           #EF4444;
-  --danger-tint:      rgba(239, 68, 68, 0.08);
+  --danger:           #F43F5E;
+  --danger-crimson:   #9F1239;
+  --danger-tint:      rgba(244, 63, 94, 0.08);
   --warn-tint:        rgba(245, 158, 11, 0.08);
 
   /* Typography scale */
-  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'Geist Mono', 'JetBrains Mono', monospace;
+  --font-sans: 'Inter', 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Geist Mono', monospace;
 }
 
 /* ── Reset & base ────────────────────────────────────────────────────────────── */

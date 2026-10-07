@@ -107,18 +107,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundColor: '#0A0A0A',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: '40px 16px 28px 16px',
-      boxSizing: 'border-box',
-      fontFamily: 'var(--font-sans, system-ui, sans-serif)',
-      color: '#EDEDED',
-    }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        backgroundColor: '#05070A',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '40px 16px 28px 16px',
+        boxSizing: 'border-box',
+        fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+        color: '#EDEDED',
+      }}
+    >
       {/* Top Anchor Brand */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
         <a
@@ -133,8 +135,14 @@ export default function LoginPage() {
             borderRadius: '8px',
             transition: 'transform 150ms ease, opacity 150ms ease',
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.92'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.opacity = '0.9';
+            e.currentTarget.style.transform = 'translateY(-1px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.opacity = '1';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
         >
           <img
             src={cawlixLogo}
@@ -143,35 +151,83 @@ export default function LoginPage() {
             height={28}
             style={{ width: '28px', height: '28px', objectFit: 'contain', display: 'block' }}
           />
-          <span style={{
-            fontSize: '1.1875rem',
-            fontWeight: 700,
-            color: '#FFFFFF',
-            letterSpacing: '-0.02em',
-            fontFamily: 'var(--font-sans, system-ui, sans-serif)',
-          }}>
+          <span
+            style={{
+              fontSize: '1.1875rem',
+              fontWeight: 700,
+              color: '#FFFFFF',
+              letterSpacing: '-0.02em',
+            }}
+          >
             Cawlix
           </span>
         </a>
       </div>
 
       {/* Form Shell: Max 400px Container Bounds */}
-      <div style={{
-        maxWidth: '400px',
-        width: '100%',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
-        borderRadius: '12px',
-        padding: '32px',
-        backgroundColor: '#0A0A0A',
-        boxSizing: 'border-box',
-        marginBottom: 'auto',
-      }}>
+      <div
+        style={{
+          maxWidth: '400px',
+          width: '100%',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          borderRadius: '12px',
+          padding: '32px',
+          backgroundColor: '#0D1117',
+          boxSizing: 'border-box',
+          marginBottom: 'auto',
+          boxShadow: '0 20px 40px -15px rgba(0, 0, 0, 0.7)',
+        }}
+      >
         {/* Header */}
         <header style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <h1 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#FFFFFF', letterSpacing: '-0.02em', margin: 0 }}>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '4px 10px',
+              borderRadius: '9999px',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              border: '1px solid rgba(16, 185, 129, 0.25)',
+              fontSize: '0.6875rem',
+              color: '#10B981',
+              fontWeight: 600,
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
+              marginBottom: '14px',
+            }}
+          >
+            <span
+              style={{
+                width: '6px',
+                height: '6px',
+                borderRadius: '50%',
+                backgroundColor: '#10B981',
+                boxShadow: '0 0 8px #10B981',
+              }}
+            />
+            TELEMETRY ENGINE AUTH
+          </div>
+          <h1
+            style={{
+              fontSize: '1.25rem',
+              fontWeight: 600,
+              color: '#FFFFFF',
+              letterSpacing: '-0.02em',
+              margin: 0,
+            }}
+          >
             Sign in to Cawlix
           </h1>
-          <p style={{ fontSize: '0.75rem', color: '#737373', marginTop: '6px', marginBottom: 0, lineHeight: 1.5 }}>
+          <p
+            style={{
+              fontSize: '0.8125rem',
+              color: '#71717A',
+              marginTop: '6px',
+              marginBottom: 0,
+              lineHeight: 1.5,
+            }}
+          >
             Enter your telemetry terminal and monitoring engine.
           </p>
         </header>
@@ -185,8 +241,8 @@ export default function LoginPage() {
             style={{
               width: '100%',
               height: '44px',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              backgroundColor: 'rgba(255, 255, 255, 0.02)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              backgroundColor: '#131822',
               color: '#EDEDED',
               fontSize: '0.875rem',
               fontWeight: 500,
@@ -200,12 +256,12 @@ export default function LoginPage() {
               transition: 'background-color 150ms ease, border-color 150ms ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.06)';
+              e.currentTarget.style.backgroundColor = '#182030';
               e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.02)';
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+              e.currentTarget.style.backgroundColor = '#131822';
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
             }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
@@ -221,25 +277,35 @@ export default function LoginPage() {
         {/* Institutional Divider */}
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '22px 0' }}>
           <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: '1px', backgroundColor: 'rgba(255, 255, 255, 0.08)' }} />
-          <span style={{ position: 'relative', backgroundColor: '#0D0D0D', padding: '0 8px', fontFamily: 'var(--font-mono, monospace)', fontSize: '10px', color: '#525252', letterSpacing: '0.06em' }}>
+          <span
+            style={{
+              position: 'relative',
+              backgroundColor: '#0D1117',
+              padding: '0 10px',
+              fontSize: '0.75rem',
+              color: '#71717A',
+              fontWeight: 500,
+            }}
+          >
             OR
           </span>
         </div>
 
         {/* Auth Method Tabs */}
-        <div style={{ display: 'flex', borderBottom: '1px solid rgba(255, 255, 255, 0.06)', marginBottom: '18px', gap: '16px' }}>
+        <div style={{ display: 'flex', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', marginBottom: '18px', gap: '20px' }}>
           <button
             type="button"
             onClick={() => setMode('password')}
             style={{
               background: 'transparent',
               border: 'none',
-              fontSize: '0.75rem',
-              fontFamily: 'var(--font-mono, monospace)',
-              color: mode === 'password' ? '#3ECF8E' : '#737373',
-              borderBottom: mode === 'password' ? '2px solid #3ECF8E' : 'none',
+              fontSize: '0.8125rem',
+              fontWeight: mode === 'password' ? 600 : 400,
+              color: mode === 'password' ? '#10B981' : '#71717A',
+              borderBottom: mode === 'password' ? '2px solid #10B981' : '2px solid transparent',
               padding: '0 0 8px 0',
               cursor: 'pointer',
+              transition: 'color 150ms ease',
             }}
           >
             Credentials
@@ -250,12 +316,13 @@ export default function LoginPage() {
             style={{
               background: 'transparent',
               border: 'none',
-              fontSize: '0.75rem',
-              fontFamily: 'var(--font-mono, monospace)',
-              color: mode === 'magic' ? '#3ECF8E' : '#737373',
-              borderBottom: mode === 'magic' ? '2px solid #3ECF8E' : 'none',
+              fontSize: '0.8125rem',
+              fontWeight: mode === 'magic' ? 600 : 400,
+              color: mode === 'magic' ? '#10B981' : '#71717A',
+              borderBottom: mode === 'magic' ? '2px solid #10B981' : '2px solid transparent',
               padding: '0 0 8px 0',
               cursor: 'pointer',
+              transition: 'color 150ms ease',
             }}
           >
             Magic Link
@@ -265,80 +332,130 @@ export default function LoginPage() {
         {/* Form */}
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label htmlFor="react-email" style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '11px', color: '#737373', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>
+            <label
+              htmlFor="login-email"
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                color: '#A1A1AA',
+                letterSpacing: '0.04em',
+                textTransform: 'uppercase',
+                marginBottom: '8px',
+                display: 'block',
+              }}
+            >
               WORK OR PERSONAL EMAIL
             </label>
             <input
-              id="react-email"
+              id="login-email"
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@domain.com"
               style={{
-                backgroundColor: '#0D0D0D',
+                backgroundColor: '#05070A',
                 border: '1px solid rgba(255, 255, 255, 0.12)',
                 color: '#EDEDED',
                 fontSize: '0.875rem',
-                fontFamily: 'var(--font-mono, monospace)',
                 padding: '0 14px',
                 height: '44px',
                 borderRadius: '6px',
                 outline: 'none',
                 width: '100%',
                 boxSizing: 'border-box',
-                transition: 'all 150ms ease',
+                transition: 'border-color 150ms ease',
               }}
-              onFocus={(e) => e.target.style.borderColor = '#3ECF8E'}
-              onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)'}
+              onFocus={(e) => (e.target.style.borderColor = '#10B981')}
+              onBlur={(e) => (e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)')}
             />
           </div>
 
           {mode === 'password' && (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <label htmlFor="react-password" style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '11px', color: '#737373', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 0, display: 'block' }}>
+                <label
+                  htmlFor="login-password"
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    color: '#A1A1AA',
+                    letterSpacing: '0.04em',
+                    textTransform: 'uppercase',
+                    marginBottom: 0,
+                    display: 'block',
+                  }}
+                >
                   PASSWORD
                 </label>
-                <a href="#reset" style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '0.6875rem', color: '#737373', textDecoration: 'none' }}>
+                <a
+                  href="/forgot-password"
+                  style={{
+                    fontSize: '0.75rem',
+                    color: '#71717A',
+                    textDecoration: 'none',
+                    transition: 'color 150ms ease',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = '#10B981')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = '#71717A')}
+                >
                   Forgot password?
                 </a>
               </div>
               <input
-                id="react-password"
+                id="login-password"
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
                 style={{
-                  backgroundColor: '#0D0D0D',
+                  backgroundColor: '#05070A',
                   border: '1px solid rgba(255, 255, 255, 0.12)',
                   color: '#EDEDED',
                   fontSize: '0.875rem',
-                  fontFamily: 'var(--font-mono, monospace)',
                   padding: '0 14px',
                   height: '44px',
                   borderRadius: '6px',
                   outline: 'none',
                   width: '100%',
                   boxSizing: 'border-box',
-                  transition: 'all 150ms ease',
+                  transition: 'border-color 150ms ease',
                 }}
-                onFocus={(e) => e.target.style.borderColor = '#3ECF8E'}
-                onBlur={(e) => e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)'}
+                onFocus={(e) => (e.target.style.borderColor = '#10B981')}
+                onBlur={(e) => (e.target.style.borderColor = 'rgba(255, 255, 255, 0.12)')}
               />
             </div>
           )}
 
           {errorMsg && (
-            <div style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '0.75rem', color: '#EF4444', lineHeight: 1.4 }}>
+            <div
+              style={{
+                fontSize: '0.8125rem',
+                color: '#F43F5E',
+                backgroundColor: 'rgba(244, 63, 94, 0.1)',
+                border: '1px solid rgba(244, 63, 94, 0.25)',
+                borderRadius: '6px',
+                padding: '10px 12px',
+                lineHeight: 1.4,
+              }}
+            >
               {errorMsg}
             </div>
           )}
 
           {successMsg && (
-            <div style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '0.75rem', color: '#3ECF8E', lineHeight: 1.4 }}>
+            <div
+              style={{
+                fontSize: '0.8125rem',
+                color: '#10B981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                border: '1px solid rgba(16, 185, 129, 0.25)',
+                borderRadius: '6px',
+                padding: '10px 12px',
+                lineHeight: 1.4,
+              }}
+            >
               {successMsg}
             </div>
           )}
@@ -347,37 +464,42 @@ export default function LoginPage() {
             type="submit"
             disabled={loading}
             style={{
-              backgroundColor: '#3ECF8E',
-              color: '#0A0A0A',
-              fontWeight: 700,
+              backgroundColor: '#10B981',
+              color: '#05070A',
+              fontWeight: 600,
               fontSize: '0.875rem',
               height: '44px',
               borderRadius: '6px',
               border: 'none',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.6 : 1,
-              boxShadow: 'none',
               transition: 'background-color 150ms ease, opacity 150ms ease',
               width: '100%',
-              marginTop: '8px',
+              marginTop: '4px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}
-            onMouseEnter={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#34B27B'; }}
-            onMouseLeave={(e) => { if (!loading) e.currentTarget.style.backgroundColor = '#3ECF8E'; }}
+            onMouseEnter={(e) => {
+              if (!loading) e.currentTarget.style.backgroundColor = '#059669';
+            }}
+            onMouseLeave={(e) => {
+              if (!loading) e.currentTarget.style.backgroundColor = '#10B981';
+            }}
           >
-            {loading ? 'CONNECTING...' : (mode === 'password' ? 'Continue with Email' : 'Send Magic Link')}
+            {loading ? 'CONNECTING...' : mode === 'password' ? 'Continue with Email' : 'Send Magic Link'}
           </button>
-         
         </form>
 
         {/* Footer */}
         <footer style={{ marginTop: '24px', textAlign: 'center' }}>
-          <p style={{ fontSize: '0.75rem', color: '#737373', margin: 0 }}>
-            Don't have an account? <a href="/register" style={{ color: '#3ECF8E', textDecoration: 'none', fontWeight: 600 }}>Sign up</a>
+          <p style={{ fontSize: '0.8125rem', color: '#71717A', margin: 0 }}>
+            Don't have an account?{' '}
+            <a href="/register" style={{ color: '#10B981', textDecoration: 'none', fontWeight: 600 }}>
+              Sign up
+            </a>
           </p>
-          <p style={{ fontSize: '11px', color: '#525252', marginTop: '10px', marginBottom: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: '0.6875rem', color: '#52525B', marginTop: '10px', marginBottom: 0, lineHeight: 1.5 }}>
             By signing in, you agree to the Cawlix Telemetry Terms and Security Protocol.
           </p>
         </footer>
