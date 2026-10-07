@@ -240,13 +240,9 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
         {errorMsg && (
           <div
             style={{
-              color: '#FB7185',
+              color: '#EF4444',
               fontSize: '0.8125rem',
               lineHeight: 1.4,
-              padding: '8px 12px',
-              border: '1px solid rgba(159, 18, 57, 0.4)',
-              backgroundColor: 'rgba(76, 5, 25, 0.4)',
-              borderRadius: '6px',
             }}
           >
             {errorMsg}

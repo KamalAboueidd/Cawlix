@@ -275,7 +275,7 @@ export default function RegisterPage() {
         color: '#EDEDED',
       }}
     >
-      {/* Top Anchor Brand */}
+      {/* Top Anchor Brand with Interactive Hover Motion */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
         <a
           href="/"
@@ -283,25 +283,47 @@ export default function RegisterPage() {
           style={{
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '8px',
+            gap: '10px',
             textDecoration: 'none',
-            padding: '6px 12px',
-            borderRadius: '6px',
-            transition: 'opacity 150ms ease',
+            padding: '8px 16px',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1), opacity 150ms ease',
           }}
-          onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.85'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            const icon = e.currentTarget.querySelector('.brand-logo-img');
+            if (icon) {
+              icon.style.transform = 'scale(1.12) rotate(-6deg)';
+              icon.style.filter = 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.45))';
+            }
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            const icon = e.currentTarget.querySelector('.brand-logo-img');
+            if (icon) {
+              icon.style.transform = 'scale(1) rotate(0deg)';
+              icon.style.filter = 'none';
+            }
+          }}
         >
           <img
             src={cawlixLogo}
             alt="Cawlix Logo"
-            width={24}
-            height={24}
-            style={{ width: '24px', height: '24px', objectFit: 'contain', display: 'block' }}
+            className="brand-logo-img"
+            width={26}
+            height={26}
+            style={{
+              width: '26px',
+              height: '26px',
+              objectFit: 'contain',
+              display: 'block',
+              transition: 'transform 250ms cubic-bezier(0.16, 1, 0.3, 1), filter 250ms ease',
+            }}
           />
           <span
             style={{
-              fontSize: '1.125rem',
+              fontSize: '1.1875rem',
               fontWeight: 600,
               color: '#FFFFFF',
               letterSpacing: '-0.02em',
@@ -330,33 +352,6 @@ export default function RegisterPage() {
           <div>
             {/* Header */}
             <header style={{ textAlign: 'center', marginBottom: '24px' }}>
-              <div
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '3px 9px',
-                  borderRadius: '9999px',
-                  backgroundColor: '#18181B',
-                  border: '1px solid #27272A',
-                  fontSize: '0.6875rem',
-                  color: '#A1A1AA',
-                  fontWeight: 500,
-                  letterSpacing: '0.04em',
-                  textTransform: 'uppercase',
-                  marginBottom: '14px',
-                }}
-              >
-                <span
-                  style={{
-                    width: '6px',
-                    height: '6px',
-                    borderRadius: '50%',
-                    backgroundColor: '#10B981',
-                  }}
-                />
-                TELEMETRY AUTH ENGINE
-              </div>
               <h1 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#FFFFFF', letterSpacing: '-0.02em', margin: 0 }}>
                 Create your Cawlix Account
               </h1>
@@ -479,13 +474,13 @@ export default function RegisterPage() {
               </div>
 
               {errorMsg && (
-                <div style={{ fontSize: '0.8125rem', color: '#FB7185', backgroundColor: 'rgba(76, 5, 25, 0.4)', border: '1px solid rgba(159, 18, 57, 0.4)', borderRadius: '6px', padding: '9px 12px', lineHeight: 1.4 }}>
+                <div style={{ fontSize: '0.8125rem', color: '#EF4444', lineHeight: 1.4 }}>
                   {errorMsg}
                 </div>
               )}
 
               {successMsg && (
-                <div style={{ fontSize: '0.8125rem', color: '#34D399', backgroundColor: 'rgba(6, 78, 59, 0.4)', border: '1px solid rgba(6, 95, 70, 0.4)', borderRadius: '6px', padding: '9px 12px', lineHeight: 1.4 }}>
+                <div style={{ fontSize: '0.8125rem', color: '#10B981', lineHeight: 1.4 }}>
                   {successMsg}
                 </div>
               )}
@@ -597,13 +592,13 @@ export default function RegisterPage() {
             </div>
 
             {errorMsg && (
-              <div style={{ fontSize: '0.8125rem', color: '#FB7185', backgroundColor: 'rgba(76, 5, 25, 0.4)', border: '1px solid rgba(159, 18, 57, 0.4)', borderRadius: '6px', padding: '9px 12px', lineHeight: 1.4, marginBottom: '14px' }}>
+              <div style={{ fontSize: '0.8125rem', color: '#EF4444', lineHeight: 1.4, marginBottom: '14px' }}>
                 {errorMsg}
               </div>
             )}
 
             {successMsg && (
-              <div style={{ fontSize: '0.8125rem', color: '#34D399', backgroundColor: 'rgba(6, 78, 59, 0.4)', border: '1px solid rgba(6, 95, 70, 0.4)', borderRadius: '6px', padding: '9px 12px', lineHeight: 1.4, marginBottom: '14px' }}>
+              <div style={{ fontSize: '0.8125rem', color: '#10B981', lineHeight: 1.4, marginBottom: '14px' }}>
                 {successMsg}
               </div>
             )}

@@ -384,11 +384,18 @@ export default function Navbar() {
           z-index: 50;
           height: 60px;
           width: 100%;
-          background-color: rgba(10, 10, 10, 0.90);
+          background-color: transparent;
+          border-bottom: 1px solid transparent;
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
+          transition: background-color 200ms ease, border-color 200ms ease, backdrop-filter 200ms ease;
+        }
+
+        .navbar-header.scrolled {
+          background-color: rgba(0, 0, 0, 0.85);
           backdrop-filter: blur(16px);
           -webkit-backdrop-filter: blur(16px);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-          transition: background-color 200ms ease, border-color 200ms ease;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .navbar-inner {

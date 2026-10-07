@@ -375,7 +375,7 @@ export default function ConsolePage() {
           width: '232px',
           flexShrink: 0,
           backgroundColor: '#000000',
-          borderRight: '1px solid #27272A',
+          borderRight: 'none',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
@@ -391,7 +391,7 @@ export default function ConsolePage() {
           <div
             style={{
               padding: '18px 16px 14px 16px',
-              borderBottom: '1px solid #27272A',
+              borderBottom: 'none',
               display: 'flex',
               flexDirection: 'column',
               gap: '12px',
@@ -435,47 +435,12 @@ export default function ConsolePage() {
                   fontFamily: "'JetBrains Mono', monospace",
                   color: '#A1A1AA',
                   backgroundColor: '#18181B',
-                  border: '1px solid #27272A',
+                  border: 'none',
                   padding: '2px 6px',
                   borderRadius: '4px',
                 }}
               >
                 CORE
-              </span>
-            </div>
-
-            {/* Status Tag: Small subtle pill with miniature pulsing dot */}
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                backgroundColor: '#09090B',
-                border: '1px solid #27272A',
-                borderRadius: '9999px',
-                padding: '3px 8px',
-                alignSelf: 'flex-start',
-              }}
-            >
-              <span
-                style={{
-                  width: '6px',
-                  height: '6px',
-                  borderRadius: '50%',
-                  backgroundColor: '#10B981',
-                  boxShadow: '0 0 6px rgba(16, 185, 129, 0.6)',
-                  animation: 'pulseDot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                }}
-              />
-              <span
-                style={{
-                  fontSize: '0.6875rem',
-                  fontWeight: 500,
-                  color: '#A1A1AA',
-                  letterSpacing: '0.02em',
-                }}
-              >
-                Engine online
               </span>
             </div>
           </div>
@@ -614,7 +579,7 @@ export default function ConsolePage() {
         <div
           style={{
             padding: '14px 16px',
-            borderTop: '1px solid #27272A',
+            borderTop: 'none',
             display: 'flex',
             flexDirection: 'column',
             gap: '6px',
@@ -644,13 +609,12 @@ export default function ConsolePage() {
       {/* ── 2. MAIN APPLICATION WORKSPACE ── */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden', backgroundColor: '#000000' }}>
         
-        {/* Topbar: Backdrop Blur + Border-zinc-800 */}
+        {/* Topbar: Seamless pitch black, borderless */}
         <header
           style={{
             height: '52px',
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            backdropFilter: 'blur(12px)',
-            borderBottom: '1px solid #27272A',
+            backgroundColor: '#000000',
+            borderBottom: 'none',
             padding: '0 24px',
             display: 'flex',
             alignItems: 'center',
@@ -669,13 +633,13 @@ export default function ConsolePage() {
               alignItems: 'center',
               flex: 1,
               maxWidth: '480px',
-              backgroundColor: 'rgba(24, 24, 27, 0.7)',
-              border: '1px solid #27272A',
+              backgroundColor: '#0A0A0A',
+              border: 'none',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
               borderRadius: '8px',
               height: '34px',
               padding: '0 10px',
               gap: '8px',
-              transition: 'border-color 150ms ease',
             }}
           >
             <svg
@@ -728,7 +692,7 @@ export default function ConsolePage() {
                   fontSize: '0.6875rem',
                   fontFamily: "'JetBrains Mono', monospace",
                   color: '#A1A1AA',
-                  backgroundColor: '#27272A',
+                  backgroundColor: '#18181B',
                   borderRadius: '4px',
                   padding: '1px 5px',
                   lineHeight: '1.4',
@@ -741,53 +705,6 @@ export default function ConsolePage() {
 
           {/* Topbar Right Controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            {/* Active Workspace Badge */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '3px 9px',
-                borderRadius: '6px',
-                backgroundColor: '#18181B',
-                border: '1px solid #27272A',
-                fontSize: '0.6875rem',
-                color: '#D4D4D8',
-                fontWeight: 500,
-              }}
-            >
-              <span style={{ color: '#71717A' }}>WORKSPACE:</span>
-              <span style={{ color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace" }}>
-                CAIRO_NODE
-              </span>
-            </div>
-
-            {/* Latency Pill */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '3px 9px',
-                borderRadius: '6px',
-                backgroundColor: '#18181B',
-                border: '1px solid #27272A',
-                fontSize: '0.6875rem',
-                fontFamily: "'JetBrains Mono', monospace",
-                fontWeight: 500,
-                color: '#A1A1AA',
-              }}
-            >
-              <span
-                style={{
-                  width: '5px',
-                  height: '5px',
-                  borderRadius: '50%',
-                  backgroundColor: '#10B981',
-                }}
-              />
-              <span>24ms</span>
-            </div>
 
             {/* Iconic Vercel High-Contrast Action Button */}
             <button
@@ -954,10 +871,10 @@ export default function ConsolePage() {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  backgroundColor: '#0A0A0A',
-                  border: '1px solid #27272A',
+                  backgroundColor: '#000000',
                   borderRadius: '6px',
                   padding: '2px',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
                 }}
               >
                 <button
@@ -1014,7 +931,7 @@ export default function ConsolePage() {
               </div>
             </div>
 
-            {/* ── 4. METRIC CARDS (Vercel Rectangle #0A0A0A + border-zinc-800/80) ── */}
+            {/* ── 4. METRIC CARDS (Vercel Pure Black #000000 + Borderless + Subtle Shadow) ── */}
             {(activeTab === 'overview' || activeTab === 'tracker') && (
               <section
                 style={{
@@ -1026,17 +943,15 @@ export default function ConsolePage() {
                 {/* Metric 1 */}
                 <div
                   style={{
-                    backgroundColor: '#0A0A0A',
-                    border: '1px solid rgba(39, 39, 42, 0.8)',
+                    backgroundColor: '#000000',
+                    border: 'none',
                     borderRadius: '12px',
                     padding: '20px',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '8px',
-                    transition: 'border-color 150ms ease',
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#3F3F46')}
-                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(39, 39, 42, 0.8)')}
                 >
                   <span
                     style={{
@@ -1084,17 +999,15 @@ export default function ConsolePage() {
                 {/* Metric 2 */}
                 <div
                   style={{
-                    backgroundColor: '#0A0A0A',
-                    border: '1px solid rgba(39, 39, 42, 0.8)',
+                    backgroundColor: '#000000',
+                    border: 'none',
                     borderRadius: '12px',
                     padding: '20px',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '8px',
-                    transition: 'border-color 150ms ease',
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#3F3F46')}
-                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(39, 39, 42, 0.8)')}
                 >
                   <span
                     style={{
@@ -1105,7 +1018,7 @@ export default function ConsolePage() {
                       color: '#A1A1AA',
                     }}
                   >
-                    ENGINE PING / LATENCY
+                    DOMESTIC RETAILERS MONITORED
                   </span>
                   <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
                     <span
@@ -1117,7 +1030,7 @@ export default function ConsolePage() {
                         letterSpacing: '-0.02em',
                       }}
                     >
-                      24ms
+                      6
                     </span>
                     <span
                       style={{
@@ -1131,28 +1044,26 @@ export default function ConsolePage() {
                         fontFamily: "'JetBrains Mono', monospace",
                       }}
                     >
-                      99.98%
+                      100% ACTIVE
                     </span>
                   </div>
                   <span style={{ fontSize: '0.75rem', color: '#71717A' }}>
-                    Zero-dropped probe network uptime
+                    Amazon, Noon, B.TECH, 2B, Raya & Jumia
                   </span>
                 </div>
 
                 {/* Metric 3 */}
                 <div
                   style={{
-                    backgroundColor: '#0A0A0A',
-                    border: '1px solid rgba(39, 39, 42, 0.8)',
+                    backgroundColor: '#000000',
+                    border: 'none',
                     borderRadius: '12px',
                     padding: '20px',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '8px',
-                    transition: 'border-color 150ms ease',
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#3F3F46')}
-                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(39, 39, 42, 0.8)')}
                 >
                   <span
                     style={{
@@ -1200,17 +1111,15 @@ export default function ConsolePage() {
                 {/* Metric 4 */}
                 <div
                   style={{
-                    backgroundColor: '#0A0A0A',
-                    border: '1px solid rgba(39, 39, 42, 0.8)',
+                    backgroundColor: '#000000',
+                    border: 'none',
                     borderRadius: '12px',
                     padding: '20px',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '8px',
-                    transition: 'border-color 150ms ease',
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#3F3F46')}
-                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(39, 39, 42, 0.8)')}
                 >
                   <span
                     style={{
@@ -1273,8 +1182,9 @@ export default function ConsolePage() {
                     <div
                       key={node.id}
                       style={{
-                        backgroundColor: '#0A0A0A',
-                        border: '1px solid #27272A',
+                        backgroundColor: '#000000',
+                        border: 'none',
+                        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
                         borderRadius: '12px',
                         padding: '18px',
                         display: 'flex',
@@ -1294,7 +1204,7 @@ export default function ConsolePage() {
                             padding: '2px 7px',
                             borderRadius: '9999px',
                             backgroundColor: '#18181B',
-                            border: '1px solid #27272A',
+                            border: 'none',
                             color: '#34D399',
                           }}
                         >
@@ -1308,7 +1218,7 @@ export default function ConsolePage() {
                           gridTemplateColumns: '1fr 1fr 1fr',
                           gap: '8px',
                           paddingTop: '10px',
-                          borderTop: '1px solid #18181B',
+                          borderTop: '1px solid rgba(255, 255, 255, 0.05)',
                         }}
                       >
                         <div>
@@ -1345,9 +1255,10 @@ export default function ConsolePage() {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '12px 16px',
-                    backgroundColor: '#0A0A0A',
-                    border: '1px solid #27272A',
+                    backgroundColor: '#000000',
+                    border: 'none',
                     borderRadius: '10px',
+                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -1374,7 +1285,7 @@ export default function ConsolePage() {
                       fontFamily: "'JetBrains Mono', monospace",
                       color: '#EDEDED',
                       backgroundColor: '#18181B',
-                      border: '1px solid #27272A',
+                      border: 'none',
                       padding: '3px 8px',
                       borderRadius: '4px',
                     }}
@@ -1386,10 +1297,11 @@ export default function ConsolePage() {
                 {/* Event Feed List in Vercel Table Style */}
                 <div
                   style={{
-                    backgroundColor: '#0A0A0A',
-                    border: '1px solid #27272A',
+                    backgroundColor: '#000000',
+                    border: 'none',
                     borderRadius: '12px',
                     overflow: 'hidden',
+                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
                   }}
                 >
                   {glitchRadarEvents.map((evt, idx) => (
@@ -1414,7 +1326,7 @@ export default function ConsolePage() {
                         gridTemplateColumns: '2.5fr 1fr 1.2fr 1fr 1fr',
                         alignItems: 'center',
                         padding: '14px 18px',
-                        borderBottom: idx < glitchRadarEvents.length - 1 ? '1px solid rgba(39, 39, 42, 0.6)' : 'none',
+                        borderBottom: idx < glitchRadarEvents.length - 1 ? '1px solid rgba(255, 255, 255, 0.05)' : 'none',
                         cursor: 'pointer',
                         transition: 'background-color 100ms ease',
                       }}
@@ -1434,7 +1346,7 @@ export default function ConsolePage() {
                             fontFamily: "'JetBrains Mono', monospace",
                             padding: '2px 7px',
                             backgroundColor: '#18181B',
-                            border: '1px solid #27272A',
+                            border: 'none',
                             borderRadius: '4px',
                             color: '#D4D4D8',
                           }}
@@ -1475,28 +1387,29 @@ export default function ConsolePage() {
               <section style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div
                   style={{
-                    backgroundColor: '#0A0A0A',
-                    border: '1px solid #27272A',
+                    backgroundColor: '#000000',
+                    border: 'none',
                     borderRadius: '12px',
                     padding: '22px',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '14px',
+                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
                   }}
                 >
                   <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#FFFFFF', margin: 0 }}>
                     ACTIVE TELEMETRY SESSION
                   </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.8125rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #18181B' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
                       <span style={{ color: '#71717A' }}>USER IDENTIFIER</span>
                       <span style={{ fontFamily: "'JetBrains Mono', monospace", color: '#EDEDED' }}>{user?.id || 'anon-session'}</span>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #18181B' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
                       <span style={{ color: '#71717A' }}>PRIMARY EMAIL</span>
                       <span style={{ fontFamily: "'JetBrains Mono', monospace", color: '#EDEDED' }}>{user?.email || 'admin@cawlix.com'}</span>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #18181B' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
                       <span style={{ color: '#71717A' }}>POSTGRES REPLICATION</span>
                       <span style={{ fontFamily: "'JetBrains Mono', monospace", color: '#34D399', fontWeight: 500 }}>CONNECTED (WSS)</span>
                     </div>
@@ -1509,23 +1422,24 @@ export default function ConsolePage() {
             {(activeTab === 'overview' || activeTab === 'tracker') && (
               <section
                 style={{
-                  backgroundColor: '#0A0A0A',
-                  border: '1px solid #27272A',
+                  backgroundColor: '#000000',
+                  border: 'none',
                   borderRadius: '12px',
                   overflow: 'hidden',
                   display: 'flex',
                   flexDirection: 'column',
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
                 }}
               >
-                {/* Table Header: bg-zinc-900/40 border-b border-zinc-800 */}
+                {/* Table Header: Pure Vercel subtle row */}
                 <div
                   style={{
                     display: 'grid',
                     gridTemplateColumns: '2.5fr 1fr 1.2fr 1fr 1fr 0.8fr',
                     alignItems: 'center',
                     padding: '11px 18px',
-                    backgroundColor: 'rgba(24, 24, 27, 0.4)',
-                    borderBottom: '1px solid #27272A',
+                    backgroundColor: 'transparent',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
                     fontSize: '0.6875rem',
                     fontWeight: 500,
                     textTransform: 'uppercase',
@@ -1595,7 +1509,7 @@ export default function ConsolePage() {
                     </button>
                   </div>
                 ) : (
-                  /* Table Rows: border-b border-zinc-800/60 hover:bg-zinc-900/30 */
+                  /* Table Rows: ultra-subtle dividers hover:bg-zinc-900/30 */
                   filteredItems.map((item, idx) => {
                     const isMarkup = item.delta_pct > 0;
                     const deltaColor = isMarkup ? '#FB7185' : '#34D399';
@@ -1610,7 +1524,7 @@ export default function ConsolePage() {
                           gridTemplateColumns: '2.5fr 1fr 1.2fr 1fr 1fr 0.8fr',
                           alignItems: 'center',
                           padding: '13px 18px',
-                          borderBottom: idx < filteredItems.length - 1 ? '1px solid rgba(39, 39, 42, 0.6)' : 'none',
+                          borderBottom: idx < filteredItems.length - 1 ? '1px solid rgba(255, 255, 255, 0.05)' : 'none',
                           cursor: 'pointer',
                           transition: 'background-color 100ms ease',
                         }}
