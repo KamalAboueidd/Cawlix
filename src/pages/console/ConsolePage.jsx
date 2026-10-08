@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
+import { useAuth } from '../../context/AuthContext';
 import AddSkuModal from '../../components/console/AddSkuModal';
 import cawlixLogo from '../../assets/ICon.png';
 
@@ -13,8 +14,32 @@ const CLUSTER_NODES = [
 ];
 
 export default function ConsolePage() {
+  const { signOut } = useAuth();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Hard BFCache / Browser Back button defense: redirect immediately if unauthenticated
+  useEffect(() => {
+    const enforceSessionBoundary = async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (!data?.session) {
+          window.location.replace('/login');
+        }
+      } catch {
+        window.location.replace('/login');
+      }
+    };
+
+    window.addEventListener('pageshow', enforceSessionBoundary);
+    window.addEventListener('popstate', enforceSessionBoundary);
+
+    return () => {
+      window.removeEventListener('pageshow', enforceSessionBoundary);
+      window.removeEventListener('popstate', enforceSessionBoundary);
+    };
+  }, []);
+
   const [trackedItems, setTrackedItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'nodes' | 'tracker' | 'logs' | 'settings'
@@ -74,7 +99,7 @@ export default function ConsolePage() {
       try {
         const { data: sessionData, error: sessionErr } = await supabase.auth.getSession();
         if (sessionErr || !sessionData?.session) {
-          window.location.href = '/login';
+          window.location.replace('/login');
           return;
         }
 
@@ -274,8 +299,12 @@ export default function ConsolePage() {
   }
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    window.location.href = '/login';
+    try {
+      await signOut();
+    } catch {
+      await supabase.auth.signOut();
+      window.location.replace('/login');
+    }
   };
 
   const handleReaudit = async (e, item) => {

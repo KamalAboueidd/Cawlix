@@ -54,9 +54,27 @@ export function AuthProvider({ children }) {
   const signOut = async () => {
     try {
       await supabase.auth.signOut();
+    } catch (e) {
+      console.error('Sign out error:', e);
     } finally {
+      try {
+        if (typeof window !== 'undefined') {
+          for (let i = window.localStorage.length - 1; i >= 0; i--) {
+            const key = window.localStorage.key(i);
+            if (key && (key.startsWith('sb-') || key.includes('supabase'))) {
+              window.localStorage.removeItem(key);
+            }
+          }
+          window.sessionStorage.clear();
+        }
+      } catch {
+        // Ignore storage errors
+      }
       setSession(null);
       setUser(null);
+      if (typeof window !== 'undefined') {
+        window.location.replace('/login');
+      }
     }
   };
 
@@ -77,6 +95,28 @@ export function useAuth() {
  */
 export function ProtectedRoute({ children }) {
   const { session, loading } = useAuth();
+
+  // Block Back/Forward Cache (BFCache) after sign out
+  useEffect(() => {
+    const handleBfCacheKill = async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (!data?.session) {
+          window.location.replace('/login');
+        }
+      } catch {
+        window.location.replace('/login');
+      }
+    };
+
+    window.addEventListener('pageshow', handleBfCacheKill);
+    window.addEventListener('popstate', handleBfCacheKill);
+
+    return () => {
+      window.removeEventListener('pageshow', handleBfCacheKill);
+      window.removeEventListener('popstate', handleBfCacheKill);
+    };
+  }, []);
 
   if (loading) {
     return (
