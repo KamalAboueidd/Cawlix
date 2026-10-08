@@ -43,7 +43,7 @@ const CLUSTER_NODES = [
 
 export default function ConsolePage() {
   const { signOut } = useAuth();
-  const { lang, toggleLang, isRtl, dir, t, getRetailerName } = useLanguage();
+  const { lang, toggleLang, isRtl, dir, t, getRetailerName, formatCurrency } = useLanguage();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -2787,7 +2787,7 @@ export default function ConsolePage() {
                       {isRtl ? 'سعر الرف الحالي' : 'CURRENT SHELF PRICE'}
                     </span>
                     <span style={{ fontSize: '1.125rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>
-                      EGP {selectedDrawerItem.current_price_egp?.toLocaleString()}
+                      {formatCurrency(selectedDrawerItem.current_price_egp)}
                     </span>
                     <span style={{ fontSize: '0.6875rem', marginTop: '2px', color: drawerIsMarkup ? '#FB7185' : '#00DF8F', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace", fontWeight: 500 }}>
                       {drawerIsMarkup
@@ -2805,7 +2805,7 @@ export default function ConsolePage() {
                       {isRtl ? 'متوسط سعر السوق الحقيقي (آخر 90 يوم)' : '90-DAY BASELINE MEDIAN'}
                     </span>
                     <span style={{ fontSize: '1.125rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>
-                      EGP {selectedDrawerItem.baseline_price_egp?.toLocaleString()}
+                      {formatCurrency(selectedDrawerItem.baseline_price_egp)}
                     </span>
                     <span style={{ fontSize: '0.6875rem', marginTop: '2px', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                       {isRtl ? 'المتوسط الحسابي المعتمد بالسوق' : 'Rolling Cairo benchmark'}
@@ -2873,7 +2873,7 @@ export default function ConsolePage() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.6875rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace" }}>
                     <span>{isRtl ? 'منذ 90 يوماً' : '90D AGO'}</span>
                     <span>{isRtl ? 'منذ 45 يوماً (رفع السعر قبل العرض)' : '45D (PRE-SALE SPIKE)'}</span>
-                    <span>{isRtl ? `اليوم: ${selectedDrawerItem.current_price_egp?.toLocaleString()} ج.م` : `TODAY: EGP ${selectedDrawerItem.current_price_egp?.toLocaleString()}`}</span>
+                    <span>{isRtl ? `اليوم: ${formatCurrency(selectedDrawerItem.current_price_egp)}` : `TODAY: ${formatCurrency(selectedDrawerItem.current_price_egp)}`}</span>
                   </div>
                 </div>
               </div>
@@ -2881,7 +2881,7 @@ export default function ConsolePage() {
               {/* Module 4: Landed Cost & Arbitrage Benchmark */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <span style={{ fontSize: '0.6875rem', fontWeight: 500, letterSpacing: '0.05em', color: '#888888', textTransform: 'uppercase', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
-                  {isRtl ? 'تكلفة الاستيراد الشاملة ومقارنة السوق المحلي' : 'LANDED IMPORT COST & ARBITRAGE BENCHMARK'}
+                  {t('drawer.landedCostBreakdown', isRtl ? 'تكلفة الاستيراد الشاملة ومقارنة السوق المحلي' : 'LANDED IMPORT COST & ARBITRAGE BENCHMARK')}
                 </span>
 
                 <div
@@ -2897,31 +2897,31 @@ export default function ConsolePage() {
                     <span style={{ color: '#888888', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                       {isRtl ? 'سعر السوق المحلي بالقاهرة' : 'Domestic Cairo Retail Shelf'}
                     </span>
-                    <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace", fontWeight: 500 }}>EGP {drawerDomestic.toLocaleString()}</span>
+                    <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace", fontWeight: 500 }}>{formatCurrency(drawerDomestic)}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', borderBottom: '1px solid #1F1F1F' }}>
                     <span style={{ color: '#888888', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                       {isRtl ? 'تكلفة الشحن والاستيراد (CIF بالدولار)' : 'Declared CIF Cargo Import (USD converted)'}
                     </span>
-                    <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>EGP {drawerCif.toLocaleString()} (${drawerBaseUsd})</span>
+                    <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>{formatCurrency(drawerCif)} (${drawerBaseUsd})</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', borderBottom: '1px solid #1F1F1F' }}>
                     <span style={{ color: '#888888', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                       {isRtl ? 'الجمارك وضريبة الوارد (10%)' : 'Customs Duty (10%)'}
                     </span>
-                    <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>EGP {drawerCustoms.toLocaleString()}</span>
+                    <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>{formatCurrency(drawerCustoms)}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', borderBottom: '1px solid #1F1F1F' }}>
                     <span style={{ color: '#888888', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                       {isRtl ? 'ضريبة القيمة المضافة (14%)' : 'Value-Added Tax (14% VAT)'}
                     </span>
-                    <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>EGP {drawerVat.toLocaleString()}</span>
+                    <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>{formatCurrency(drawerVat)}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', backgroundColor: '#0A0A0A', fontWeight: 500 }}>
                     <span style={{ color: '#EDEDED', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                       {isRtl ? 'إجمالي التكلفة الشاملة المستخلصة' : 'Total Landed Cost Settlement'}
                     </span>
-                    <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>EGP {drawerTotalLanded.toLocaleString()}</span>
+                    <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>{formatCurrency(drawerTotalLanded)}</span>
                   </div>
                 </div>
 
@@ -2943,8 +2943,8 @@ export default function ConsolePage() {
                   <span style={{ fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace", color: '#888888' }}>
                     {drawerHasAdvantage
                       ? isRtl
-                        ? `+${drawerNetSaved.toLocaleString()} ج.م وفر متاح`
-                        : `+EGP ${drawerNetSaved.toLocaleString()} margin saved`
+                        ? `+${formatCurrency(drawerNetSaved)} وفر متاح`
+                        : `+${formatCurrency(drawerNetSaved)} margin saved`
                       : isRtl
                       ? 'سعر السوق المحلي هو الأفضل حالياً'
                       : 'Domestic shelf is optimal'}
@@ -2955,7 +2955,7 @@ export default function ConsolePage() {
               {/* Module 5: Alert Trigger Settings */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <span style={{ fontSize: '0.6875rem', fontWeight: 500, letterSpacing: '0.05em', color: '#888888', textTransform: 'uppercase', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
-                  {isRtl ? 'قائمة المتابعة والتنبيهات المخصصة' : 'PRICE ALERT NOTIFICATION TRIGGER'}
+                  {t('alerts.title', isRtl ? 'قائمة المتابعة والتنبيهات المخصصة' : 'PRICE ALERT NOTIFICATION TRIGGER')}
                 </span>
 
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -2986,7 +2986,7 @@ export default function ConsolePage() {
                         borderLeft: isRtl ? '1px solid #1F1F1F' : 'none',
                       }}
                     >
-                      EGP
+                      {isRtl ? 'ج.م' : 'EGP'}
                     </span>
                     <input
                       type="number"
@@ -3003,6 +3003,8 @@ export default function ConsolePage() {
                         outline: 'none',
                         height: '100%',
                         fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace",
+                        direction: isRtl ? 'rtl' : 'ltr',
+                        textAlign: isRtl ? 'right' : 'left',
                       }}
                     />
                   </div>
@@ -3091,15 +3093,15 @@ export default function ConsolePage() {
             }}
           >
             {/* Modal Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', direction: isRtl ? 'rtl' : 'ltr' }}>
               <div>
-                <h2 style={{ fontSize: '1.0625rem', fontWeight: 500, color: '#EDEDED', margin: 0, fontFamily: "'Geist', sans-serif" }}>
-                  {isEmailPasswordActive ? 'Change Password' : 'Set Direct Password'}
+                <h2 style={{ fontSize: '1.0625rem', fontWeight: 600, color: '#EDEDED', margin: 0, fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                  {isEmailPasswordActive ? (isRtl ? 'تغيير كلمة المرور' : 'Change Password') : (isRtl ? 'تعيين كلمة مرور للحساب' : 'Set Direct Password')}
                 </h2>
-                <p style={{ fontSize: '0.8125rem', color: '#888888', marginTop: '4px', marginBottom: 0, fontFamily: "'Geist', sans-serif" }}>
+                <p style={{ fontSize: '0.8125rem', color: '#888888', marginTop: '4px', marginBottom: 0, fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                   {isEmailPasswordActive
-                    ? 'Enter a new master password for email credential login.'
-                    : 'Set a direct password so you can log in with both Google and email.'}
+                    ? (isRtl ? 'أدخل كلمة مرور رئيسية جديدة لتسجيل الدخول المباشر بالبريد.' : 'Enter a new master password for email credential login.')
+                    : (isRtl ? 'قم بتعيين كلمة مرور مباشرة للتمكن من الدخول عبر جوجل أو البريد الإلكتروني.' : 'Set a direct password so you can log in with both Google and email.')}
                 </p>
               </div>
               <button
@@ -3125,7 +3127,7 @@ export default function ConsolePage() {
             </div>
 
             {/* Modal Form */}
-            <form onSubmit={handleSavePassword} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <form onSubmit={handleSavePassword} style={{ display: 'flex', flexDirection: 'column', gap: '16px', direction: isRtl ? 'rtl' : 'ltr' }}>
               {/* New Password */}
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
@@ -3138,10 +3140,10 @@ export default function ConsolePage() {
                       letterSpacing: '0.04em',
                       textTransform: 'uppercase',
                       margin: 0,
-                      fontFamily: "'Geist', sans-serif",
+                      fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                     }}
                   >
-                    NEW PASSWORD
+                    {isRtl ? 'كلمة المرور الجديدة' : 'NEW PASSWORD'}
                   </label>
                   <button
                     type="button"
@@ -3155,10 +3157,10 @@ export default function ConsolePage() {
                       cursor: 'pointer',
                       padding: 0,
                       textDecoration: 'underline',
-                      fontFamily: "'Geist', sans-serif",
+                      fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                     }}
                   >
-                    Suggest Strong
+                    {isRtl ? 'اقتراح كلمة قوية' : 'Suggest Strong'}
                   </button>
                 </div>
                 <div style={{ position: 'relative' }}>
@@ -3271,10 +3273,10 @@ export default function ConsolePage() {
                     textTransform: 'uppercase',
                     marginBottom: '8px',
                     display: 'block',
-                    fontFamily: "'Geist', sans-serif",
+                    fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                   }}
                 >
-                  CONFIRM PASSWORD
+                  {isRtl ? 'تأكيد كلمة المرور' : 'CONFIRM PASSWORD'}
                 </label>
                 <div style={{ position: 'relative' }}>
                   <input
@@ -3309,7 +3311,8 @@ export default function ConsolePage() {
                     onClick={() => setShowConfirmPassword((prev) => !prev)}
                     style={{
                       position: 'absolute',
-                      right: '10px',
+                      right: isRtl ? 'auto' : '10px',
+                      left: isRtl ? '10px' : 'auto',
                       top: '50%',
                       transform: 'translateY(-50%)',
                       background: 'none',
@@ -3349,7 +3352,7 @@ export default function ConsolePage() {
                     display: 'flex',
                     alignItems: 'flex-start',
                     gap: '10px',
-                    fontFamily: "'Geist', sans-serif",
+                    fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                   }}
                 >
                   <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>✕</span>
@@ -3370,7 +3373,7 @@ export default function ConsolePage() {
                     display: 'flex',
                     alignItems: 'flex-start',
                     gap: '10px',
-                    fontFamily: "'Geist', sans-serif",
+                    fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                   }}
                 >
                   <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>✓</span>
@@ -3393,7 +3396,7 @@ export default function ConsolePage() {
                     borderRadius: '6px',
                     cursor: 'pointer',
                     transition: 'all 120ms ease',
-                    fontFamily: "'Geist', sans-serif",
+                    fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.color = '#EDEDED';
@@ -3404,7 +3407,7 @@ export default function ConsolePage() {
                     e.currentTarget.style.borderColor = '#222222';
                   }}
                 >
-                  Cancel
+                  {t('common.cancel', 'إلغاء')}
                 </button>
                 <button
                   type="submit"
@@ -3412,7 +3415,7 @@ export default function ConsolePage() {
                   style={{
                     padding: '7px 16px',
                     fontSize: '0.8125rem',
-                    fontWeight: 500,
+                    fontWeight: 600,
                     backgroundColor: '#FFFFFF',
                     border: 'none',
                     color: '#000000',
@@ -3420,10 +3423,10 @@ export default function ConsolePage() {
                     cursor: passwordLoading ? 'not-allowed' : 'pointer',
                     opacity: passwordLoading ? 0.6 : 1,
                     transition: 'opacity 150ms ease',
-                    fontFamily: "'Geist', sans-serif",
+                    fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                   }}
                 >
-                  {passwordLoading ? 'Saving...' : 'Save Password'}
+                  {passwordLoading ? (isRtl ? 'جاري الحفظ...' : 'Saving...') : (isRtl ? 'حفظ كلمة المرور' : 'Save Password')}
                 </button>
               </div>
             </form>

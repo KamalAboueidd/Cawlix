@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { TRANSLATIONS, t as translateFn, getRetailerName as getRetailerNameFn } from '../utils/i18n.js';
+import { ar, en, dictionaries, translate } from '../locales/index.js';
+import { getRetailerName as getRetailerNameFn, formatCurrency as formatCurrencyFn } from '../utils/i18n.js';
 
 const LanguageContext = createContext(null);
 
@@ -22,13 +23,12 @@ export function LanguageProvider({ children }) {
   const isRtl = lang === 'ar';
   const dir = isRtl ? 'rtl' : 'ltr';
 
-  // Apply layout direction and document language
+  // Apply layout direction, document language, and typography
   useEffect(() => {
     if (typeof document !== 'undefined') {
       document.documentElement.setAttribute('dir', dir);
       document.documentElement.setAttribute('lang', lang);
 
-      // Add arabic font class or style if needed
       if (lang === 'ar') {
         document.body.style.fontFamily = "'Cairo', 'Alexandria', 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
       } else {
@@ -44,7 +44,7 @@ export function LanguageProvider({ children }) {
       try {
         localStorage.setItem(STORAGE_KEY, newLang);
       } catch {
-        // Quota / sandboxed
+        // Quota or sandboxed
       }
     }
   }, []);
@@ -53,9 +53,18 @@ export function LanguageProvider({ children }) {
     setLang((prev) => (prev === 'ar' ? 'en' : 'ar'));
   }, [setLang]);
 
+  /**
+   * Main translation function with dot-notation path and token interpolation
+   * e.g. t('matrix.badges.bestDeal', { retailer: 'أمازون مصر' })
+   * e.g. t('nav.overview')
+   */
   const t = useCallback(
-    (key, fallback = '') => {
-      return translateFn(key, lang, fallback);
+    (key, params = {}, fallback = '') => {
+      if (typeof params === 'string') {
+        fallback = params;
+        params = {};
+      }
+      return translate(lang, key, params, fallback);
     },
     [lang]
   );
@@ -63,6 +72,13 @@ export function LanguageProvider({ children }) {
   const getRetailerName = useCallback(
     (slugOrName) => {
       return getRetailerNameFn(slugOrName, lang);
+    },
+    [lang]
+  );
+
+  const formatCurrency = useCallback(
+    (amount) => {
+      return formatCurrencyFn(amount, lang);
     },
     [lang]
   );
@@ -75,7 +91,9 @@ export function LanguageProvider({ children }) {
     dir,
     t,
     getRetailerName,
-    translations: TRANSLATIONS,
+    formatCurrency,
+    dictionary: dictionaries[lang],
+    dictionaries,
   };
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
@@ -91,9 +109,17 @@ export function useLanguage() {
       toggleLang: () => {},
       isRtl: true,
       dir: 'rtl',
-      t: (key, fallback = '') => translateFn(key, 'ar', fallback),
+      t: (key, params = {}, fallback = '') => {
+        if (typeof params === 'string') {
+          fallback = params;
+          params = {};
+        }
+        return translate('ar', key, params, fallback);
+      },
       getRetailerName: (slug) => getRetailerNameFn(slug, 'ar'),
-      translations: TRANSLATIONS,
+      formatCurrency: (val) => formatCurrencyFn(val, 'ar'),
+      dictionary: ar,
+      dictionaries,
     };
   }
   return context;

@@ -14,7 +14,7 @@ import { SEEDED_MASTER_PRODUCTS, PLATFORMS_REGISTRY } from '../../services/marke
 import { useLanguage } from '../../context/LanguageContext';
 
 export default function ExportsReports({ onShowToast = null }) {
-  const { lang, isRtl, t, getRetailerName } = useLanguage();
+  const { lang, isRtl, t, getRetailerName, formatCurrency } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [inStockOnly, setInStockOnly] = useState(false);
   const [isExportingCsv, setIsExportingCsv] = useState(false);
@@ -467,10 +467,10 @@ export default function ExportsReports({ onShowToast = null }) {
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
           <div>
             <h2 style={{ fontSize: '1rem', fontWeight: 600, color: '#EDEDED', margin: '0 0 4px 0', letterSpacing: '-0.01em', fontFamily: "'Geist', sans-serif" }}>
-              Data Export Engines & Snapshot Extraction
+              {lang === 'ar' ? 'محركات تصدير البيانات وتفريغ الرصد' : 'Data Export Engines & Snapshot Extraction'}
             </h2>
             <p style={{ fontSize: '0.8125rem', color: '#888888', margin: 0, fontFamily: "'Geist', sans-serif" }}>
-              Download real-time market snapshots formatted for enterprise ERPs, trading models, or regulatory reporting.
+              {lang === 'ar' ? 'تحميل لقطات فورية لبيانات السوق مهيأة لأنظمة ERP أو المحاسبة أو التقارير الرقابية.' : 'Download real-time market snapshots formatted for enterprise ERPs, trading models, or regulatory reporting.'}
             </p>
           </div>
 
@@ -508,7 +508,7 @@ export default function ExportsReports({ onShowToast = null }) {
               }}
             >
               <FileSpreadsheet size={15} color="#10B981" />
-              <span>{isExportingCsv ? 'Generating CSV...' : 'Export Monitored SKUs (CSV)'}</span>
+              <span>{isExportingCsv ? (lang === 'ar' ? 'جاري إنشاء CSV...' : 'Generating CSV...') : (lang === 'ar' ? 'تصدير المنتجات المراقبة (CSV)' : 'Export Monitored SKUs (CSV)')}</span>
             </button>
 
             <button
@@ -541,7 +541,7 @@ export default function ExportsReports({ onShowToast = null }) {
               }}
             >
               <Download size={15} color="#EDEDED" />
-              <span>{isExportingJson ? 'Exporting...' : 'Export Arbitrage Log (JSON)'}</span>
+              <span>{isExportingJson ? (lang === 'ar' ? 'جاري التصدير...' : 'Exporting...') : (lang === 'ar' ? 'تصدير سجل فروق الأسعار (JSON)' : 'Export Arbitrage Log (JSON)')}</span>
             </button>
 
             <button
@@ -569,7 +569,7 @@ export default function ExportsReports({ onShowToast = null }) {
               }}
             >
               <Printer size={15} color="#000000" />
-              <span>Print Audit Report</span>
+              <span>{lang === 'ar' ? 'طباعة تقرير الفحص' : 'Print Audit Report'}</span>
             </button>
           </div>
         </div>
@@ -887,13 +887,13 @@ export default function ExportsReports({ onShowToast = null }) {
                   <div style={{ textAlign: isRtl ? 'left' : 'right' }}>
                     <div style={{ color: '#666666', fontSize: '0.6875rem' }}>{lang === 'ar' ? 'السعر المعلن قبل / بعد الخصم' : 'Claimed Was / Shelf Price'}</div>
                     <div style={{ color: '#888888' }}>
-                      <span style={{ textDecoration: 'line-through' }}>{inc.claimedOriginal.toLocaleString()} {lang === 'ar' ? 'ج.م' : 'EGP'}</span> → <strong style={{ color: '#EDEDED' }}>{inc.currentPrice.toLocaleString()} {lang === 'ar' ? 'ج.م' : 'EGP'}</strong>
+                      <span style={{ textDecoration: 'line-through' }}>{formatCurrency(inc.claimedOriginal)}</span> → <strong style={{ color: '#EDEDED' }}>{formatCurrency(inc.currentPrice)}</strong>
                     </div>
                   </div>
 
                   <div style={{ textAlign: isRtl ? 'left' : 'right' }}>
                     <div style={{ color: '#666666', fontSize: '0.6875rem' }}>{lang === 'ar' ? 'سعر السوق الحقيقي (30 يوم)' : 'Genuine 30D Base'}</div>
-                    <div style={{ color: '#F59E0B' }}>{inc.genuinePreSalePrice.toLocaleString()} {lang === 'ar' ? 'ج.م' : 'EGP'}</div>
+                    <div style={{ color: '#F59E0B' }}>{formatCurrency(inc.genuinePreSalePrice)}</div>
                   </div>
 
                   <div style={{ textAlign: isRtl ? 'left' : 'right' }}>

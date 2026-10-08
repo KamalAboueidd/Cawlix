@@ -12,7 +12,7 @@ import { SEEDED_MASTER_PRODUCTS, PLATFORMS_REGISTRY } from '../../services/marke
 import { useLanguage } from '../../context/LanguageContext';
 
 export default function WatchlistManager({ onInspectProduct = null, onShowToast = null }) {
-  const { lang, isRtl, t, getRetailerName } = useLanguage();
+  const { lang, isRtl, t, getRetailerName, formatCurrency } = useLanguage();
   // Pre-seeded trader watchlist rules
   const [watchlist, setWatchlist] = useState([
     {
@@ -269,7 +269,7 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
                       <td style={{ padding: '14px 18px' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                           <span style={{ fontSize: '0.9375rem', fontWeight: 700, color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>
-                            EGP {item.currentLowestPrice.toLocaleString()}
+                            {formatCurrency(item.currentLowestPrice)}
                           </span>
                           <span style={{ fontSize: '0.6875rem', color: '#10B981', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace" }}>
                             {isRtl ? `عبر ${getRetailerName(item.cheapestPlatform, lang)}` : `via ${getRetailerName(item.cheapestPlatform, lang)}`}
@@ -280,7 +280,7 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
                       {/* Limit Target Price */}
                       <td style={{ padding: '14px 18px' }}>
                         <span style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#00DF8F', fontFamily: "'Geist Mono', monospace" }}>
-                          EGP {item.targetPrice.toLocaleString()}
+                          {formatCurrency(item.targetPrice)}
                         </span>
                       </td>
 
@@ -289,17 +289,17 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
                         {isTriggerMet ? (
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <CheckCircle2 size={13} color="#10B981" />
-                            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
-                              TRIGGER MET (-EGP {Math.abs(priceDiff).toLocaleString()})
+                            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#10B981', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace" }}>
+                              {isRtl ? `تم الوصول للهدف (وفر ${formatCurrency(Math.abs(priceDiff))})` : `TRIGGER MET (-${formatCurrency(Math.abs(priceDiff))})`}
                             </span>
                           </div>
                         ) : (
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                            <span style={{ fontSize: '0.75rem', color: '#F59E0B', fontFamily: "'Geist Mono', monospace" }}>
-                              +EGP {priceDiff.toLocaleString()} ({diffPct}% above)
+                            <span style={{ fontSize: '0.75rem', color: '#F59E0B', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace" }}>
+                              +{formatCurrency(priceDiff)} ({diffPct}% {isRtl ? 'أعلى من الهدف' : 'above'})
                             </span>
-                            <span style={{ fontSize: '0.625rem', color: '#666666' }}>
-                              Standing limit order waiting
+                            <span style={{ fontSize: '0.625rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                              {isRtl ? 'أمر شراء معلق في انتظار هبوط السعر' : 'Standing limit order waiting'}
                             </span>
                           </div>
                         )}
@@ -393,9 +393,10 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
                                 fontSize: '0.6875rem',
                                 cursor: 'pointer',
                                 padding: '4px',
+                                fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                               }}
                             >
-                              Matrix
+                              {isRtl ? 'المصفوفة' : 'Matrix'}
                             </button>
                           )}
                           <button

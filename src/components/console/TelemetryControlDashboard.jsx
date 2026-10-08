@@ -26,9 +26,9 @@ import { useLanguage } from '../../context/LanguageContext';
 export default function TelemetryControlDashboard({
   onSelectProduct,
   className = '',
-  placeholder = 'Search SKUs, domestic nodes, or retailers...',
+  placeholder = null,
 }) {
-  const { lang, isRtl, t, getRetailerName } = useLanguage();
+  const { lang, isRtl, t, getRetailerName, formatCurrency } = useLanguage();
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -271,7 +271,7 @@ export default function TelemetryControlDashboard({
             setIsOpen(true);
           }}
           onKeyDown={handleKeyDown}
-          placeholder={isRtl ? 'ابحث عن اسم المنتج، الموديل، الباركود، أو المتجر...' : placeholder}
+          placeholder={placeholder || t('nav.searchPlaceholder')}
           style={{
             flex: 1,
             background: 'transparent',
@@ -392,8 +392,8 @@ export default function TelemetryControlDashboard({
                 }}
               >
                 {isResolving
-                  ? 'Probing 12 Egyptian Nodes...'
-                  : 'Multi-Platform Query Resolver Active'}
+                  ? (isRtl ? 'جاري فحص الـ 12 متجر مصري...' : 'Probing 12 Egyptian Nodes...')
+                  : (isRtl ? 'محرك الربط بين المتاجر نشط' : 'Multi-Platform Query Resolver Active')}
               </span>
             </div>
 
@@ -401,10 +401,10 @@ export default function TelemetryControlDashboard({
               style={{
                 fontSize: '0.625rem',
                 color: '#666666',
-                fontFamily: "'Geist Mono', monospace",
+                fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
               }}
             >
-              350ms Debounced · ↵ Inspect
+              {isRtl ? 'بحث فوري · ↵ فحص' : '350ms Debounced · ↵ Inspect'}
             </span>
           </div>
 
@@ -435,11 +435,11 @@ export default function TelemetryControlDashboard({
                     fontSize: '0.5625rem',
                     fontWeight: 600,
                     color: '#888888',
-                    fontFamily: "'Geist Mono', monospace",
+                    fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                     textTransform: 'uppercase',
                   }}
                 >
-                  {isRtl ? 'رادار العروض والتلاعب' : 'GLITCH RADAR'}
+                  {t('kpis.glitchesIntercepted')}
                 </span>
                 <span
                   style={{
@@ -449,10 +449,10 @@ export default function TelemetryControlDashboard({
                     border: '1px solid rgba(16, 185, 129, 0.25)',
                     padding: '0 4px',
                     borderRadius: '3px',
-                    fontFamily: "'Geist Mono', monospace",
+                    fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                   }}
                 >
-                  LIVE
+                  {isRtl ? 'مباشر' : 'LIVE'}
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
@@ -467,7 +467,7 @@ export default function TelemetryControlDashboard({
                   {anomalyDetectionsCount}
                 </span>
                 <span style={{ fontSize: '0.625rem', color: '#666666' }}>
-                  {isRtl ? 'مؤشر النزاهة موثق' : 'Truth Index verified'}
+                  {t('kpis.truthIndex')}
                 </span>
               </div>
             </div>
@@ -490,17 +490,17 @@ export default function TelemetryControlDashboard({
                     fontSize: '0.5625rem',
                     fontWeight: 600,
                     color: '#888888',
-                    fontFamily: "'Geist Mono', monospace",
+                    fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                     textTransform: 'uppercase',
                   }}
                 >
-                  {isRtl ? 'إجمالي وفر الأسعار' : 'EST. ARBITRAGE SAVINGS'}
+                  {t('kpis.arbitrageSavings')}
                 </span>
                 <span
                   style={{
                     fontSize: '0.5625rem',
                     color: '#10B981',
-                    fontFamily: "'Geist Mono', monospace",
+                    fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                   }}
                 >
                   {isRtl ? 'أعلى فارق' : 'MAX SPREAD'}
@@ -515,10 +515,10 @@ export default function TelemetryControlDashboard({
                     fontFamily: "'Geist Mono', monospace",
                   }}
                 >
-                  EGP {(totalArbitrageSavings / 1000).toFixed(1)}K
+                  {formatCurrency(totalArbitrageSavings)}
                 </span>
                 <span style={{ fontSize: '0.625rem', color: '#666666' }}>
-                  {isRtl ? 'فارق الكتالوج' : 'catalog delta'}
+                  {isRtl ? 'فارق السوق' : 'catalog delta'}
                 </span>
               </div>
             </div>
@@ -620,9 +620,7 @@ export default function TelemetryControlDashboard({
                               fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace",
                             }}
                           >
-                            {isRtl
-                              ? `أرخص متجر حالياً في ${getRetailerName(item.lowestPlatformName || item.lowestPlatformId, lang)}: ${item.lowestPrice.toLocaleString()} ج.م`
-                              : `Cheapest at ${getRetailerName(item.lowestPlatformName || item.lowestPlatformId, lang)}: EGP ${item.lowestPrice.toLocaleString()}`}
+                            {t('matrix.badges.bestDeal', { retailer: getRetailerName(item.lowestPlatformName || item.lowestPlatformId, lang) })}: {formatCurrency(item.lowestPrice)}
                           </span>
                         </div>
                       )}
@@ -643,7 +641,7 @@ export default function TelemetryControlDashboard({
                   color: '#666666',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
-                  fontFamily: "'Geist Mono', monospace",
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                   padding: '4px 8px 0 8px',
                   display: 'flex',
                   justifyContent: 'space-between',
@@ -652,7 +650,7 @@ export default function TelemetryControlDashboard({
               >
                 <span>{isRtl ? 'مطابقة المنصات الـ 12 الموحدة' : 'Universal Multi-Platform Resolution (12 Nodes)'}</span>
                 <span style={{ color: '#10B981' }}>
-                  {resolvedResult.source === 'LOCAL_CATALOG' ? 'Catalog Correlated' : 'Real-time Ingest'}
+                  {resolvedResult.source === 'LOCAL_CATALOG' ? (isRtl ? 'متطابق مع الكتالوج' : 'Catalog Correlated') : (isRtl ? 'رصد لحظي مباشر' : 'Real-time Ingest')}
                 </span>
               </div>
 
@@ -695,7 +693,7 @@ export default function TelemetryControlDashboard({
                       </span>
                     </div>
                     <span style={{ fontSize: '0.6875rem', color: '#888888', marginTop: '2px', display: 'block' }}>
-                      Model: {resolvedResult.masterProduct.model}
+                      {isRtl ? 'الموديل: ' : 'Model: '}{resolvedResult.masterProduct.model}
                     </span>
                   </div>
 
@@ -709,8 +707,8 @@ export default function TelemetryControlDashboard({
                       flexShrink: 0,
                     }}
                   >
-                    <span>{isRtl ? 'مصفوفة المنصات الـ 12' : 'Market Matrix'}</span>
-                    <ArrowRight size={12} />
+                    <span>{t('nav.marketMatrix')}</span>
+                    <ArrowRight size={12} style={{ transform: isRtl ? 'scaleX(-1)' : 'none' }} />
                   </span>
                 </div>
 
@@ -761,7 +759,7 @@ export default function TelemetryControlDashboard({
                             fontFamily: "'Geist Mono', monospace",
                           }}
                         >
-                          EGP {resolvedResult.metrics.cheapestNode.price.toLocaleString()}
+                          {formatCurrency(resolvedResult.metrics.cheapestNode.price)}
                         </span>
                       </div>
                       {resolvedResult.metrics.cheapestNode.deltaSavings > 0 && (
@@ -773,8 +771,8 @@ export default function TelemetryControlDashboard({
                           }}
                         >
                           {isRtl
-                            ? `${resolvedResult.metrics.cheapestNode.deltaSavings.toLocaleString()} ج.م أقل من متوسط السوق (-${resolvedResult.metrics.cheapestNode.deltaSavingsPct}%)`
-                            : `EGP ${resolvedResult.metrics.cheapestNode.deltaSavings.toLocaleString()} below median (-${resolvedResult.metrics.cheapestNode.deltaSavingsPct}%)`}
+                            ? `${formatCurrency(resolvedResult.metrics.cheapestNode.deltaSavings)} أقل من متوسط السوق (-${resolvedResult.metrics.cheapestNode.deltaSavingsPct}%)`
+                            : `${formatCurrency(resolvedResult.metrics.cheapestNode.deltaSavings)} below median (-${resolvedResult.metrics.cheapestNode.deltaSavingsPct}%)`}
                         </span>
                       )}
                       <a
@@ -799,7 +797,7 @@ export default function TelemetryControlDashboard({
                           alignSelf: 'flex-start',
                         }}
                       >
-                        <span>{isRtl ? 'الرابط المباشر للمتجر' : 'Direct Store Link'}</span>
+                        <span>{t('matrix.actions.visitStore')}</span>
                         <ExternalLink size={9} />
                       </a>
                     </div>
@@ -826,14 +824,14 @@ export default function TelemetryControlDashboard({
                             fontWeight: 600,
                             color: '#888888',
                             textTransform: 'uppercase',
-                            fontFamily: "'Geist Mono', monospace",
+                            fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                           }}
                         >
-                          DOMESTIC GUARANTEE LEADER
+                          {isRtl ? 'الضمان المحلي المعتمد' : 'DOMESTIC GUARANTEE LEADER'}
                         </span>
                       </div>
                       <span style={{ fontSize: '0.75rem', fontWeight: 500, color: '#EDEDED' }}>
-                        {resolvedResult.metrics.domesticGuaranteeLeader.platformName}
+                        {getRetailerName(resolvedResult.metrics.domesticGuaranteeLeader.platformId || resolvedResult.metrics.domesticGuaranteeLeader.platformName, lang)}
                       </span>
                       <span
                         style={{
@@ -868,7 +866,7 @@ export default function TelemetryControlDashboard({
                           alignSelf: 'flex-start',
                         }}
                       >
-                        <span>Inspect on {resolvedResult.metrics.domesticGuaranteeLeader.platformName.split(' ')[0]}</span>
+                        <span>{isRtl ? `فحص على ${getRetailerName(resolvedResult.metrics.domesticGuaranteeLeader.platformId, lang)}` : `Inspect on ${resolvedResult.metrics.domesticGuaranteeLeader.platformName}`}</span>
                         <ExternalLink size={9} />
                       </a>
                     </div>
@@ -895,14 +893,14 @@ export default function TelemetryControlDashboard({
                             fontWeight: 600,
                             color: '#888888',
                             textTransform: 'uppercase',
-                            fontFamily: "'Geist Mono', monospace",
+                            fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                           }}
                         >
-                          HIGHEST RATED NODE
+                          {isRtl ? 'الأعلى تقييماً' : 'HIGHEST RATED NODE'}
                         </span>
                       </div>
                       <span style={{ fontSize: '0.75rem', fontWeight: 500, color: '#EDEDED' }}>
-                        {resolvedResult.metrics.highestRatedNode.platformName}
+                        {getRetailerName(resolvedResult.metrics.highestRatedNode.platformId || resolvedResult.metrics.highestRatedNode.platformName, lang)}
                       </span>
                       <span
                         style={{
@@ -943,10 +941,10 @@ export default function TelemetryControlDashboard({
                             fontWeight: 600,
                             color: resolvedResult.metrics.truthIndex.isGenuine ? '#10B981' : '#FB7185',
                             textTransform: 'uppercase',
-                            fontFamily: "'Geist Mono', monospace",
+                            fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                           }}
                         >
-                          TRUTH INDEX: {resolvedResult.metrics.truthIndex.score}/100
+                          {t('kpis.truthIndex')}: {resolvedResult.metrics.truthIndex.score}/100
                         </span>
                       </div>
                       <span
@@ -954,12 +952,12 @@ export default function TelemetryControlDashboard({
                           fontSize: '0.75rem',
                           fontWeight: 600,
                           color: resolvedResult.metrics.truthIndex.isGenuine ? '#10B981' : '#FB7185',
-                          fontFamily: "'Geist Mono', monospace",
+                          fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                         }}
                       >
                         {resolvedResult.metrics.truthIndex.isGenuine
-                          ? 'Authentic Markdown'
-                          : 'Ghost Markup Detected'}
+                          ? t('matrix.badges.genuineDiscount')
+                          : t('matrix.badges.ghostMarkup')}
                       </span>
                       <span
                         style={{
@@ -991,9 +989,10 @@ export default function TelemetryControlDashboard({
                 flexDirection: 'column',
                 gap: '8px',
                 alignItems: 'center',
+                fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
               }}
             >
-              <span>No exact SKU matches in catalog for "{query}".</span>
+              <span>{isRtl ? `لا توجد نتائج مطابقة لـ "${query}" في الكتالوج.` : `No exact SKU matches in catalog for "${query}".`}</span>
               <button
                 type="button"
                 onClick={async () => {
@@ -1018,10 +1017,11 @@ export default function TelemetryControlDashboard({
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
                 }}
               >
                 <Zap size={12} color="#10B981" />
-                <span>Execute Universal Multi-Platform Resolution</span>
+                <span>{isRtl ? 'بدء الفحص والبحث عبر الـ 12 متجر مصري' : 'Execute Universal Multi-Platform Resolution'}</span>
               </button>
             </div>
           )}
@@ -1036,17 +1036,17 @@ export default function TelemetryControlDashboard({
               justifyContent: 'space-between',
               fontSize: '0.625rem',
               color: '#666666',
-              fontFamily: "'Geist Mono', monospace",
+              fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span>↑↓ Navigate</span>
+              <span>{isRtl ? '↑↓ للتنقل' : '↑↓ Navigate'}</span>
               <span>·</span>
-              <span>↵ Open in Matrix</span>
+              <span>{isRtl ? '↵ فتح في مصفوفة المقارنة' : '↵ Open in Matrix'}</span>
               <span>·</span>
-              <span>ESC Close</span>
+              <span>{isRtl ? 'ESC للإغلاق' : 'ESC Close'}</span>
             </div>
-            <span>12 Egyptian Nodes</span>
+            <span>{isRtl ? '12 متجر مصري' : '12 Egyptian Nodes'}</span>
           </div>
         </div>
       )}

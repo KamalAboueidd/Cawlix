@@ -13,12 +13,14 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { sanitizeRetailerUrl } from '../../utils/urlSanitizer.js';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 /**
  * Institutional Pitch-Black Notification Center (CAWLIX)
  * Displays real-time price drop alerts, All-Time Lows (ATL), and Arbitrage Anomalies.
  */
 export default function NotificationCenter({ onInspectProduct = null, placement = 'bottom' }) {
+  const { lang, isRtl, t, formatCurrency, getRetailerName } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [alerts, setAlerts] = useState([]);
   const containerRef = useRef(null);
@@ -135,22 +137,22 @@ export default function NotificationCenter({ onInspectProduct = null, placement 
                   fontWeight: 600,
                   color: '#EDEDED',
                   letterSpacing: '0.04em',
-                  fontFamily: "'Geist Mono', monospace",
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                   textTransform: 'uppercase',
                 }}
               >
-                TELEMETRY ALERTS
+                {t('alerts.title')}
               </span>
               {unreadCount > 0 && (
                 <span
                   style={{
                     fontSize: '0.6875rem',
                     color: '#10B981',
-                    fontFamily: "'Geist Mono', monospace",
+                    fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                     fontWeight: 600,
                   }}
                 >
-                  {unreadCount} UNREAD
+                  {unreadCount} {t('alerts.unread')}
                 </span>
               )}
             </div>
@@ -171,11 +173,12 @@ export default function NotificationCenter({ onInspectProduct = null, placement 
                     gap: '4px',
                     padding: '2px 6px',
                     borderRadius: '4px',
+                    fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
                   }}
-                  title="Mark all as read"
+                  title={t('alerts.markAllRead')}
                 >
                   <Check size={12} color="#10B981" />
-                  <span>Mark Read</span>
+                  <span>{t('alerts.markAllRead')}</span>
                 </button>
               )}
               {alerts.length > 0 && (
@@ -189,7 +192,7 @@ export default function NotificationCenter({ onInspectProduct = null, placement 
                     cursor: 'pointer',
                     padding: '2px 4px',
                   }}
-                  title="Clear all alerts"
+                  title={t('alerts.clearAll')}
                 >
                   <Trash2 size={12} />
                 </button>
@@ -215,12 +218,10 @@ export default function NotificationCenter({ onInspectProduct = null, placement 
                   textAlign: 'center',
                   color: '#666666',
                   fontSize: '0.75rem',
-                  fontFamily: "'Geist Mono', monospace",
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                 }}
               >
-                No active price anomalies detected.
-                <br />
-                Fleet telemetry continuously surveilling 12 nodes.
+                {t('alerts.noAlerts')}
               </div>
             ) : (
               alerts.map((alert) => {
@@ -245,6 +246,7 @@ export default function NotificationCenter({ onInspectProduct = null, placement 
                       gap: '8px',
                       transition: 'all 120ms ease',
                       opacity: alert.read ? 0.75 : 1,
+                      fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#141414')}
                     onMouseLeave={(e) =>
@@ -263,10 +265,10 @@ export default function NotificationCenter({ onInspectProduct = null, placement 
                             border: '1px solid #2B2B2B',
                             padding: '1px 5px',
                             borderRadius: '3px',
-                            fontFamily: "'Geist Mono', monospace",
+                            fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                           }}
                         >
-                          {alert.retailerName}
+                          {getRetailerName(alert.retailerName || alert.retailerId)}
                         </span>
 
                         <span
@@ -274,14 +276,14 @@ export default function NotificationCenter({ onInspectProduct = null, placement 
                             fontSize: '0.625rem',
                             fontWeight: 600,
                             color: accentColor,
-                            fontFamily: "'Geist Mono', monospace",
+                            fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                           }}
                         >
                           {isATL
-                            ? 'ALL-TIME LOW (ATL)'
+                            ? t('kpis.allTimeLow')
                             : isCrash
-                            ? `PRICE CRASH (-${alert.savingsPct}%)`
-                            : `MEDIAN ARBITRAGE (-${alert.savingsPct}%)`}
+                            ? `${t('alerts.flashCrash')} (-${alert.savingsPct}%)`
+                            : `${t('alerts.anomalousDrop')} (-${alert.savingsPct}%)`}
                         </span>
                       </div>
 
@@ -320,7 +322,7 @@ export default function NotificationCenter({ onInspectProduct = null, placement 
                               fontFamily: "'Geist Mono', monospace",
                             }}
                           >
-                            EGP {alert.oldPrice.toLocaleString()}
+                            {formatCurrency(alert.oldPrice)}
                           </span>
                         )}
                         <span
@@ -331,16 +333,16 @@ export default function NotificationCenter({ onInspectProduct = null, placement 
                             fontFamily: "'Geist Mono', monospace",
                           }}
                         >
-                          EGP {alert.newPrice.toLocaleString()}
+                          {formatCurrency(alert.newPrice)}
                         </span>
                         <span
                           style={{
                             fontSize: '0.625rem',
                             color: '#10B981',
-                            fontFamily: "'Geist Mono', monospace",
+                            fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                           }}
                         >
-                          (Save EGP {alert.savingsEgp.toLocaleString()})
+                          ({isRtl ? 'وفر' : 'Save'} {formatCurrency(alert.savingsEgp)})
                         </span>
                       </div>
 
@@ -354,8 +356,8 @@ export default function NotificationCenter({ onInspectProduct = null, placement 
                             gap: '3px',
                           }}
                         >
-                          <span>Inspect</span>
-                          <ArrowRight size={10} />
+                          <span>{t('matrix.actions.inspectSku')}</span>
+                          <ArrowRight size={10} style={{ transform: isRtl ? 'scaleX(-1)' : 'none' }} />
                         </span>
 
                         <a
@@ -368,7 +370,7 @@ export default function NotificationCenter({ onInspectProduct = null, placement 
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          title={`Open directly on ${alert.retailerName || 'retailer'}`}
+                          title={t('matrix.actions.visitStore')}
                           style={{
                             display: 'inline-flex',
                             alignItems: 'center',
@@ -412,11 +414,11 @@ export default function NotificationCenter({ onInspectProduct = null, placement 
               justifyContent: 'space-between',
               fontSize: '0.625rem',
               color: '#666666',
-              fontFamily: "'Geist Mono', monospace",
+              fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
             }}
           >
-            <span>Live Brevo SMTP Connected</span>
-            <span>12 Egyptian Nodes</span>
+            <span>{t('alerts.emailNotice')}</span>
+            <span>{isRtl ? '12 متجر مصري متصل' : '12 Egyptian Nodes'}</span>
           </div>
         </div>
       )}

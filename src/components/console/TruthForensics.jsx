@@ -15,7 +15,7 @@ import { fetchGlitchRadarEvents } from '../../services/dataWiringService.js';
 import { supabase } from '../../lib/supabaseClient.js';
 
 export default function TruthForensics({ onInspectProduct = null, onShowToast = null }) {
-  const { lang, t, isRtl, getRetailerName } = useLanguage();
+  const { lang, t, isRtl, getRetailerName, formatCurrency } = useLanguage();
   const [filterSeverity, setFilterSeverity] = useState('ALL');
   const [selectedRetailer, setSelectedRetailer] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
@@ -327,7 +327,7 @@ export default function TruthForensics({ onInspectProduct = null, onShowToast = 
               +16.4%
             </span>
             <span style={{ fontSize: '0.75rem', color: '#888888', fontFamily: "'Geist Mono', monospace" }}>
-              ~6,500 {isRtl ? 'ج.م' : 'EGP'}
+              ~{formatCurrency(6500)}
             </span>
           </div>
           <div style={{ fontSize: '0.6875rem', color: '#666666' }}>
@@ -650,21 +650,21 @@ export default function TruthForensics({ onInspectProduct = null, onShowToast = 
                   <div>
                     <div style={{ fontSize: '0.6875rem', color: '#666666' }}>{isRtl ? 'السعر المعلن قبل الخصم' : 'Claimed Was Price'}</div>
                     <div style={{ fontSize: '0.9375rem', color: '#888888', textDecoration: 'line-through', fontFamily: "'Geist Mono', monospace" }}>
-                      {item.advertisedOriginalPrice.toLocaleString()} {isRtl ? 'ج.م' : 'EGP'}
+                      {formatCurrency(item.advertisedOriginalPrice)}
                     </div>
                   </div>
 
                   <div>
                     <div style={{ fontSize: '0.6875rem', color: '#10B981' }}>{isRtl ? 'متوسط سعر السوق الحقيقي' : 'Genuine 30D Baseline'}</div>
                     <div style={{ fontSize: '0.9375rem', color: '#10B981', fontWeight: 600, fontFamily: "'Geist Mono', monospace" }}>
-                      {item.genuineBaselinePrice.toLocaleString()} {isRtl ? 'ج.م' : 'EGP'}
+                      {formatCurrency(item.genuineBaselinePrice)}
                     </div>
                   </div>
 
                   <div>
                     <div style={{ fontSize: '0.6875rem', color: '#666666' }}>{isRtl ? 'السعر الفعلي الآن' : 'Current Active Price'}</div>
                     <div style={{ fontSize: '0.9375rem', color: '#EDEDED', fontWeight: 600, fontFamily: "'Geist Mono', monospace" }}>
-                      {item.currentActivePrice.toLocaleString()} {isRtl ? 'ج.م' : 'EGP'}
+                      {formatCurrency(item.currentActivePrice)}
                     </div>
                   </div>
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
+import { useLanguage } from '../../context/LanguageContext';
 
 const DOMESTIC_NODES = [
   { id: 'AMZN_EG', label: 'AMZN_EG', domain: 'node.amazon.eg' },
@@ -10,6 +11,7 @@ const DOMESTIC_NODES = [
 ];
 
 export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
+  const { lang, t, isRtl, getRetailerName, formatCurrency } = useLanguage();
   const [skuUrl, setSkuUrl] = useState('');
   const [selectedNode, setSelectedNode] = useState('AMZN_EG');
   const [targetAlertPrice, setTargetAlertPrice] = useState('');
@@ -202,16 +204,17 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
           display: 'flex',
           flexDirection: 'column',
           gap: '20px',
+          direction: isRtl ? 'rtl' : 'ltr',
         }}
       >
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
           <div>
-            <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 500, color: '#EDEDED', letterSpacing: '-0.015em', fontFamily: "'Geist', sans-serif" }}>
-              Track Target SKU Node
+            <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#EDEDED', letterSpacing: '-0.015em', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
+              {t('modal.addTitle', 'Track Target SKU Node')}
             </h2>
-            <p style={{ margin: '6px 0 0 0', fontSize: '0.8125rem', color: '#888888', lineHeight: 1.45, fontFamily: "'Geist', sans-serif" }}>
-              Enter an Egyptian retail node URL or canonical identifier to begin continuous telemetry ingestion.
+            <p style={{ margin: '6px 0 0 0', fontSize: '0.8125rem', color: '#888888', lineHeight: 1.45, fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
+              {t('modal.addSubtitle', 'Enter an Egyptian retail node URL or canonical identifier to begin continuous telemetry ingestion.')}
             </p>
           </div>
           <button
@@ -256,7 +259,7 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
               padding: '10px 12px',
               fontSize: '0.8125rem',
               lineHeight: 1.4,
-              fontFamily: "'Geist', sans-serif",
+              fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
             }}
           >
             {errorMsg}
@@ -276,10 +279,10 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                 letterSpacing: '0.04em',
                 marginBottom: '8px',
                 fontWeight: 500,
-                fontFamily: "'Geist', sans-serif",
+                fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
               }}
             >
-              RETAIL NODE URL OR CANONICAL SKU
+              {t('modal.retailerUrlLabel', 'RETAIL NODE URL OR CANONICAL SKU')}
             </label>
             <input
               id="sku-url-input-jsx"
@@ -287,7 +290,7 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
               required
               value={skuUrl}
               onChange={handleUrlChange}
-              placeholder="https://www.amazon.eg/dp/... or B0CHX..."
+              placeholder={t('modal.retailerUrlPlaceholder', 'https://www.amazon.eg/dp/... or B0CHX...')}
               style={{
                 backgroundColor: '#000000',
                 border: '1px solid #1F1F1F',
@@ -301,6 +304,8 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                 boxSizing: 'border-box',
                 transition: 'border-color 150ms ease',
                 fontFamily: "'Geist Mono', monospace",
+                direction: 'ltr',
+                textAlign: 'left',
               }}
               onFocus={(e) => (e.target.style.borderColor = '#333333')}
               onBlur={(e) => (e.target.style.borderColor = '#1F1F1F')}
@@ -318,10 +323,10 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                 letterSpacing: '0.04em',
                 marginBottom: '8px',
                 fontWeight: 500,
-                fontFamily: "'Geist', sans-serif",
+                fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
               }}
             >
-              DOMESTIC RETAIL NODE
+              {isRtl ? 'المتجر المصري المستهدف' : 'DOMESTIC RETAIL NODE'}
             </label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {DOMESTIC_NODES.map((node) => {
@@ -335,7 +340,7 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                       backgroundColor: isActive ? '#111111' : '#000000',
                       border: `1px solid ${isActive ? '#333333' : '#222222'}`,
                       color: isActive ? '#EDEDED' : '#888888',
-                      fontFamily: "'Geist Mono', monospace",
+                      fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                       fontSize: '11px',
                       fontWeight: isActive ? 600 : 500,
                       padding: '5px 10px',
@@ -344,7 +349,7 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                       transition: 'all 130ms ease',
                     }}
                   >
-                    {node.label}
+                    {getRetailerName(node.id)}
                   </button>
                 );
               })}
@@ -362,10 +367,10 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                 letterSpacing: '0.04em',
                 marginBottom: '8px',
                 fontWeight: 500,
-                fontFamily: "'Geist', sans-serif",
+                fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
               }}
             >
-              TARGET ALERT THRESHOLD (EGP)
+              {t('drawer.targetPriceLabel', 'سعر التنبيه المستهدف')} ({isRtl ? 'ج.م' : 'EGP'})
             </label>
             <div
               style={{
@@ -382,18 +387,19 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                 style={{
                   fontSize: '11px',
                   fontWeight: 500,
-                  fontFamily: "'Geist Mono', monospace",
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                   color: '#666666',
                   padding: '0 12px',
                   backgroundColor: '#0A0A0A',
                   height: '100%',
                   display: 'flex',
                   alignItems: 'center',
-                  borderRight: '1px solid #1F1F1F',
+                  borderRight: isRtl ? 'none' : '1px solid #1F1F1F',
+                  borderLeft: isRtl ? '1px solid #1F1F1F' : 'none',
                   userSelect: 'none',
                 }}
               >
-                EGP
+                {isRtl ? 'ج.م' : 'EGP'}
               </span>
               <input
                 id="target-alert-price-jsx"
@@ -402,17 +408,19 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                 step="10"
                 value={targetAlertPrice}
                 onChange={(e) => setTargetAlertPrice(e.target.value)}
-                placeholder="e.g. 27500 (triggers instant alert when shelf drops below)"
+                placeholder={isRtl ? 'مثال: 27500 (يتم إرسال إشعار فوري عند هبوط السعر)' : 'e.g. 27500 (triggers instant alert when shelf drops below)'}
                 style={{
                   flex: 1,
                   background: 'transparent',
                   border: 'none',
                   fontSize: '0.8125rem',
-                  fontFamily: "'Geist Mono', monospace",
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                   color: '#EDEDED',
                   padding: '0 12px',
                   height: '100%',
                   outline: 'none',
+                  direction: isRtl ? 'rtl' : 'ltr',
+                  textAlign: isRtl ? 'right' : 'left',
                 }}
               />
             </div>
@@ -448,8 +456,10 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                   cursor: 'pointer',
                 }}
               />
-              <span style={{ fontSize: '0.75rem', color: '#888888', lineHeight: 1.4, fontFamily: "'Geist', sans-serif" }}>
-                Instant Webhook/Email dispatch if a sub-second price glitch (&gt;30% drop) is detected.
+              <span style={{ fontSize: '0.75rem', color: '#888888', lineHeight: 1.4, fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
+                {isRtl
+                  ? 'إرسال تنبيه فوري عبر البريد الإلكتروني عند اكتشاف أي انهيار سعري لحظي أو خصم استثنائي (>30%).'
+                  : 'Instant Webhook/Email dispatch if a sub-second price glitch (>30% drop) is detected.'}
               </span>
             </label>
           </div>
@@ -478,7 +488,7 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                 padding: '6px 14px',
                 borderRadius: '6px',
                 transition: 'all 120ms ease',
-                fontFamily: "'Geist', sans-serif",
+                fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = '#EDEDED';
@@ -489,7 +499,7 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                 e.currentTarget.style.borderColor = '#222222';
               }}
             >
-              Cancel
+              {t('modal.cancelButton', 'Cancel')}
             </button>
             <button
               type="submit"
@@ -498,7 +508,7 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                 backgroundColor: '#FFFFFF',
                 color: '#000000',
                 fontSize: '0.8125rem',
-                fontWeight: 500,
+                fontWeight: 600,
                 padding: '0 16px',
                 height: '38px',
                 borderRadius: '6px',
@@ -509,10 +519,10 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                 gap: '8px',
                 opacity: isSubmitting ? 0.7 : 1,
                 transition: 'opacity 150ms ease',
-                fontFamily: "'Geist', sans-serif",
+                fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
               }}
             >
-              <span>{isSubmitting ? 'Initializing Telemetry...' : 'Initialize Telemetry'}</span>
+              <span>{isSubmitting ? t('modal.submitting', 'Initializing Telemetry...') : t('modal.submitButton', 'Initialize Telemetry')}</span>
             </button>
           </div>
         </form>

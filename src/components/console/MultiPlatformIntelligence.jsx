@@ -36,7 +36,7 @@ export default function MultiPlatformIntelligence({
   defaultProductId = null,
   resolvedProduct = null,
 }) {
-  const { lang, t, isRtl, getRetailerName } = useLanguage();
+  const { lang, t, isRtl, getRetailerName, formatCurrency } = useLanguage();
   const [products, setProducts] = useState(SEEDED_MASTER_PRODUCTS);
   const [selectedProductId, setSelectedProductId] = useState(defaultProductId || SEEDED_MASTER_PRODUCTS[0].id);
   const [loading, setLoading] = useState(false);
@@ -535,7 +535,7 @@ export default function MultiPlatformIntelligence({
                   fontFamily: "'Geist Mono', monospace",
                 }}
               >
-                Weight: {activeProduct.specifications.weight.split('(')[0].trim()}
+                {t('specs.weight')}: {activeProduct.specifications.weight.split('(')[0].trim()}
               </span>
             )}
           </div>
@@ -577,10 +577,10 @@ export default function MultiPlatformIntelligence({
                 color: '#10B981',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
-                fontFamily: "'Geist Mono', monospace",
+                fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
               }}
             >
-              BEST DEAL IN MARKET
+              {isRtl ? 'أفضل وأرخص سعر بالسوق' : 'BEST DEAL IN MARKET'}
             </span>
             {lowestInStockListing && (
               <span
@@ -592,10 +592,10 @@ export default function MultiPlatformIntelligence({
                   border: '1px solid rgba(16, 185, 129, 0.3)',
                   padding: '2px 8px',
                   borderRadius: '9999px',
-                  fontFamily: "'Geist Mono', monospace",
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                 }}
               >
-                Cheapest at {lowestInStockListing.name}
+                {t('matrix.badges.bestDeal', { retailer: getRetailerName(lowestInStockListing.platform_id || lowestInStockListing.name) }, `Cheapest at ${lowestInStockListing.name}`)}
               </span>
             )}
           </div>
@@ -611,7 +611,7 @@ export default function MultiPlatformIntelligence({
                   letterSpacing: '-0.03em',
                 }}
               >
-                EGP {lowestInStockListing ? lowestInStockListing.current_price.toLocaleString() : 'N/A'}
+                {lowestInStockListing ? formatCurrency(lowestInStockListing.current_price) : 'N/A'}
               </span>
               {lowestInStockListing?.discount_pct > 0 && (
                 <span
@@ -622,12 +622,12 @@ export default function MultiPlatformIntelligence({
                     fontFamily: "'Geist Mono', monospace",
                   }}
                 >
-                  EGP {lowestInStockListing.original_price.toLocaleString()}
+                  {formatCurrency(lowestInStockListing.original_price)}
                 </span>
               )}
             </div>
-            <span style={{ fontSize: '0.75rem', color: '#888888' }}>
-              {lowestInStockListing ? `Includes official ${lowestInStockListing.warranty_info}` : 'Currently monitoring nodes'}
+            <span style={{ fontSize: '0.75rem', color: '#888888', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
+              {lowestInStockListing ? (isRtl ? `يشمل الضمان المعتمد: ${lowestInStockListing.warranty_info}` : `Includes official ${lowestInStockListing.warranty_info}`) : (isRtl ? 'جاري فحص وتحديث المتاجر...' : 'Currently monitoring nodes')}
             </span>
           </div>
 
@@ -690,7 +690,7 @@ export default function MultiPlatformIntelligence({
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'rgba(16, 185, 129, 0.08)')}
               >
                 <BookmarkCheck size={12} color="#10B981" />
-                <span>{isRtl ? 'راقب هذا المنتج' : 'Add to Watchlist'}</span>
+                <span>{t('matrix.actions.addToWatchlist')}</span>
               </button>
             </div>
           )}
@@ -717,19 +717,19 @@ export default function MultiPlatformIntelligence({
                 color: '#888888',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
-                fontFamily: "'Geist Mono', monospace",
+                fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
               }}
             >
-              DOMESTIC ARBITRAGE SPREAD
+              {t('kpis.arbitrageSavings')}
             </span>
             <span
               style={{
                 fontSize: '0.6875rem',
                 color: '#00DF8F',
-                fontFamily: "'Geist Mono', monospace",
+                fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
               }}
             >
-              Max Delta
+              {isRtl ? 'أعلى فارق بالسوق' : 'Max Delta'}
             </span>
           </div>
 
@@ -743,10 +743,10 @@ export default function MultiPlatformIntelligence({
                 letterSpacing: '-0.02em',
               }}
             >
-              EGP {priceSpread.toLocaleString()}
+              {formatCurrency(priceSpread)}
             </div>
-            <span style={{ fontSize: '0.75rem', color: '#888888' }}>
-              Potential savings across Egypt retail platforms
+            <span style={{ fontSize: '0.75rem', color: '#888888', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
+              {t('kpis.arbitrageSavingsSub')}
             </span>
           </div>
 
@@ -757,7 +757,9 @@ export default function MultiPlatformIntelligence({
               fontFamily: "'Geist Mono', monospace",
             }}
           >
-            Range: EGP {lowestInStockListing?.current_price.toLocaleString()} – EGP {highestInStockListing?.current_price.toLocaleString()}
+            {isRtl
+              ? `النطاق: من ${formatCurrency(lowestInStockListing?.current_price)} إلى ${formatCurrency(highestInStockListing?.current_price)}`
+              : `Range: ${formatCurrency(lowestInStockListing?.current_price)} – ${formatCurrency(highestInStockListing?.current_price)}`}
           </div>
         </div>
       </section>
@@ -795,7 +797,7 @@ export default function MultiPlatformIntelligence({
                 letterSpacing: '-0.01em',
               }}
             >
-              Central Comparison Matrix
+              {t('matrix.title', 'Central Comparison Matrix')}
             </h3>
             <span
               style={{
@@ -805,10 +807,10 @@ export default function MultiPlatformIntelligence({
                 border: '1px solid #1F1F1F',
                 padding: '2px 8px',
                 borderRadius: '4px',
-                fontFamily: "'Geist Mono', monospace",
+                fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
               }}
             >
-              {displayedListings.length} of 12 Platforms
+              {isRtl ? `${displayedListings.length} من أصل 12 متجر مصري` : `${displayedListings.length} of 12 Platforms`}
             </span>
           </div>
 
@@ -836,10 +838,10 @@ export default function MultiPlatformIntelligence({
                   borderRadius: '4px',
                   border: 'none',
                   cursor: 'pointer',
-                  fontFamily: "'Geist', sans-serif",
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
                 }}
               >
-                All (12)
+                {t('matrix.actions.filterAll', 'All (12)')}
               </button>
               <button
                 type="button"
@@ -853,10 +855,10 @@ export default function MultiPlatformIntelligence({
                   borderRadius: '4px',
                   border: 'none',
                   cursor: 'pointer',
-                  fontFamily: "'Geist', sans-serif",
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
                 }}
               >
-                In Stock Only
+                {t('matrix.actions.filterInStock', 'In Stock Only')}
               </button>
               <button
                 type="button"
@@ -870,10 +872,10 @@ export default function MultiPlatformIntelligence({
                   borderRadius: '4px',
                   border: 'none',
                   cursor: 'pointer',
-                  fontFamily: "'Geist', sans-serif",
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
                 }}
               >
-                Deals Only
+                {t('matrix.actions.filterDeals', 'Deals Only')}
               </button>
             </div>
 
@@ -893,7 +895,7 @@ export default function MultiPlatformIntelligence({
               <Search size={12} color="#666666" />
               <input
                 type="text"
-                placeholder="Filter platform..."
+                placeholder={t('matrix.searchPlaceholder', 'Filter platform...')}
                 value={platformSearch}
                 onChange={(e) => setPlatformSearch(e.target.value)}
                 style={{
@@ -903,7 +905,8 @@ export default function MultiPlatformIntelligence({
                   fontSize: '0.75rem',
                   outline: 'none',
                   width: '100%',
-                  fontFamily: "'Geist', sans-serif",
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
+                  textAlign: isRtl ? 'right' : 'left',
                 }}
               />
               {platformSearch && (
@@ -945,17 +948,18 @@ export default function MultiPlatformIntelligence({
                   fontSize: '0.6875rem',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
-                  fontFamily: "'Geist Mono', monospace",
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
+                  textAlign: isRtl ? 'right' : 'left',
                 }}
               >
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Platform</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Current Price (EGP)</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Original & Discount %</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Stock Status</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Rating & Reviews</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Warranty Info</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Material / Edition Notes</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500, textAlign: 'right' }}>Action</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{t('matrix.columns.retailer')}</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{t('matrix.columns.currentPrice')}</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{t('matrix.columns.discount')}</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{t('matrix.columns.stock')}</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{t('matrix.columns.rating')}</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{t('matrix.columns.warranty')}</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{t('matrix.columns.materials')}</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500, textAlign: isRtl ? 'left' : 'right' }}>{t('matrix.columns.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -1033,10 +1037,10 @@ export default function MultiPlatformIntelligence({
                               letterSpacing: '-0.02em',
                             }}
                           >
-                            EGP {item.current_price.toLocaleString()}
+                            {formatCurrency(item.current_price)}
                           </span>
                           <span style={{ fontSize: '0.6875rem', color: '#666666' }}>
-                            {isLowest ? '★ Best Deal' : 'Shelf listing'}
+                            {isLowest ? (isRtl ? '★ أرخص سعر' : '★ Best Deal') : (isRtl ? 'سعر الرف' : 'Shelf listing')}
                           </span>
                         </div>
                       ) : (
@@ -1070,12 +1074,12 @@ export default function MultiPlatformIntelligence({
                                   fontFamily: "'Geist Mono', monospace",
                                 }}
                               >
-                                EGP {item.original_price?.toLocaleString()}
+                                {formatCurrency(item.original_price)}
                               </span>
                             </>
                           ) : (
-                            <span style={{ fontSize: '0.75rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
-                              Standard Price
+                            <span style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace" }}>
+                              {isRtl ? 'سعر قياسي' : 'Standard Price'}
                             </span>
                           )}
                         </div>
@@ -1093,10 +1097,10 @@ export default function MultiPlatformIntelligence({
                             fontWeight: 500,
                             color: '#666666',
                             textDecoration: 'line-through',
-                            fontFamily: "'Geist Mono', monospace",
+                            fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                           }}
                         >
-                          Out of Stock
+                          {t('matrix.badges.outOfStock')}
                         </span>
                       ) : isLowStock ? (
                         <span
@@ -1104,10 +1108,10 @@ export default function MultiPlatformIntelligence({
                             fontSize: '0.75rem',
                             fontWeight: 500,
                             color: '#F59E0B',
-                            fontFamily: "'Geist Mono', monospace",
+                            fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                           }}
                         >
-                          Low Stock
+                          {t('matrix.badges.lowStock', { count: 3 })}
                         </span>
                       ) : (
                         <span
@@ -1115,10 +1119,10 @@ export default function MultiPlatformIntelligence({
                             fontSize: '0.75rem',
                             fontWeight: 500,
                             color: '#10B981',
-                            fontFamily: "'Geist Mono', monospace",
+                            fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                           }}
                         >
-                          In Stock
+                          {t('matrix.badges.inStock')}
                         </span>
                       )}
                     </td>
@@ -1360,9 +1364,10 @@ export default function MultiPlatformIntelligence({
                     color: '#EDEDED',
                     margin: 0,
                     letterSpacing: '-0.01em',
+                    fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
                   }}
                 >
-                  Cross-Platform Price History Trajectory
+                  {isRtl ? 'منحنى تتبع أسعار المنتج عبر المتاجر المصرية' : 'Cross-Platform Price History Trajectory'}
                 </h3>
                 <span
                   style={{
@@ -1372,14 +1377,16 @@ export default function MultiPlatformIntelligence({
                     border: '1px solid rgba(16, 185, 129, 0.25)',
                     padding: '1px 6px',
                     borderRadius: '4px',
-                    fontFamily: "'Geist Mono', monospace",
+                    fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                   }}
                 >
-                  LIVE ROLLING BUFFER
+                  {t('nav.liveTelemetry')}
                 </span>
               </div>
-              <p style={{ fontSize: '0.75rem', color: '#888888', margin: '4px 0 0 0' }}>
-                Auditing shelf price fluctuations across domestic platforms vs. 90-day baseline median
+              <p style={{ fontSize: '0.75rem', color: '#888888', margin: '4px 0 0 0', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
+                {isRtl
+                  ? 'رصد ومقارنة أسعار الرف اللحظية عبر المنصات المصرية مقابل متوسط سعر السوق لـ 90 يوماً'
+                  : 'Auditing shelf price fluctuations across domestic platforms vs. 90-day baseline median'}
               </p>
             </div>
 
@@ -1395,6 +1402,9 @@ export default function MultiPlatformIntelligence({
             >
               {['30D', '60D', '90D'].map((range) => {
                 const isSelected = timeRange === range;
+                const rangeLabel = isRtl
+                  ? (range === '30D' ? '30 يوم' : range === '60D' ? '60 يوم' : '90 يوم')
+                  : range;
                 return (
                   <button
                     key={range}
@@ -1409,10 +1419,10 @@ export default function MultiPlatformIntelligence({
                       borderRadius: '4px',
                       border: 'none',
                       cursor: 'pointer',
-                      fontFamily: "'Geist Mono', monospace",
+                      fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                     }}
                   >
-                    {range}
+                    {rangeLabel}
                   </button>
                 );
               })}
@@ -1453,7 +1463,8 @@ export default function MultiPlatformIntelligence({
                             padding: '10px 14px',
                             boxShadow: '0 12px 24px rgba(0, 0, 0, 0.8)',
                             fontSize: '0.75rem',
-                            fontFamily: "'Geist Mono', monospace",
+                            fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
+                            direction: isRtl ? 'rtl' : 'ltr',
                           }}
                         >
                           <div style={{ color: '#888888', marginBottom: '6px', fontWeight: 500 }}>
@@ -1471,7 +1482,7 @@ export default function MultiPlatformIntelligence({
                               }}
                             >
                               <span>{entry.name}:</span>
-                              <span style={{ fontWeight: 600 }}>EGP {entry.value?.toLocaleString()}</span>
+                              <span style={{ fontWeight: 600 }}>{formatCurrency(entry.value)}</span>
                             </div>
                           ))}
                         </div>
@@ -1487,7 +1498,7 @@ export default function MultiPlatformIntelligence({
                   stroke="#444444"
                   strokeDasharray="4 4"
                   label={{
-                    value: `Baseline Median EGP ${discountVerdict.baselineMedian?.toLocaleString()}`,
+                    value: isRtl ? `متوسط السوق: ${formatCurrency(discountVerdict.baselineMedian)}` : `Baseline Median ${formatCurrency(discountVerdict.baselineMedian)}`,
                     fill: '#888888',
                     fontSize: 10,
                     position: 'insideTopRight',
@@ -1499,7 +1510,7 @@ export default function MultiPlatformIntelligence({
                   <Line
                     type="monotone"
                     dataKey="AMZN_EG"
-                    name="Amazon EG"
+                    name={getRetailerName('AMZN_EG')}
                     stroke="#10B981"
                     strokeWidth={2}
                     dot={{ r: 3, fill: '#10B981', strokeWidth: 0 }}
@@ -1510,7 +1521,7 @@ export default function MultiPlatformIntelligence({
                   <Line
                     type="monotone"
                     dataKey="NOON_EG"
-                    name="Noon EG"
+                    name={getRetailerName('NOON_EG')}
                     stroke="#FFE600"
                     strokeWidth={1.5}
                     dot={{ r: 2.5, fill: '#FFE600', strokeWidth: 0 }}
@@ -1520,7 +1531,7 @@ export default function MultiPlatformIntelligence({
                   <Line
                     type="monotone"
                     dataKey="BTECH_EG"
-                    name="B.TECH"
+                    name={getRetailerName('BTECH_EG')}
                     stroke="#38BDF8"
                     strokeWidth={1.5}
                     dot={{ r: 2.5, fill: '#38BDF8', strokeWidth: 0 }}
@@ -1530,7 +1541,7 @@ export default function MultiPlatformIntelligence({
                   <Line
                     type="monotone"
                     dataKey="TRADELINE"
-                    name="Tradeline"
+                    name={getRetailerName('TRADELINE')}
                     stroke="#A78BFA"
                     strokeWidth={1.5}
                     dot={{ r: 2.5, fill: '#A78BFA', strokeWidth: 0 }}
@@ -1540,7 +1551,7 @@ export default function MultiPlatformIntelligence({
                   <Line
                     type="monotone"
                     dataKey="JUMIA_EG"
-                    name="Jumia EG"
+                    name={getRetailerName('JUMIA_EG')}
                     stroke="#FB7185"
                     strokeWidth={1.5}
                     dot={{ r: 2.5, fill: '#FB7185', strokeWidth: 0 }}
@@ -1562,28 +1573,28 @@ export default function MultiPlatformIntelligence({
               paddingTop: '12px',
               fontSize: '0.6875rem',
               color: '#888888',
-              fontFamily: "'Geist Mono', monospace",
+              fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10B981' }} />
-              <span>Amazon EG (Lowest)</span>
+              <span>{getRetailerName('AMZN_EG')} ({isRtl ? 'الأرخص' : 'Lowest'})</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#FFE600' }} />
-              <span>Noon EG</span>
+              <span>{getRetailerName('NOON_EG')}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#38BDF8' }} />
-              <span>B.TECH</span>
+              <span>{getRetailerName('BTECH_EG')}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#FB7185' }} />
-              <span>Jumia EG (Spike Watch)</span>
+              <span>{getRetailerName('JUMIA_EG')}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ width: '12px', height: '2px', backgroundColor: '#555555' }} />
-              <span>90D Median Baseline</span>
+              <span>{t('kpis.baselineMedian')}</span>
             </div>
           </div>
         </div>
@@ -1610,19 +1621,19 @@ export default function MultiPlatformIntelligence({
                   color: discountVerdict.isGenuine ? '#10B981' : '#FB7185',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
-                  fontFamily: "'Geist Mono', monospace",
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                 }}
               >
-                FAKE-DISCOUNT DETECTOR ENGINE
+                {t('radar.title', 'محرك كشف التلاعب بالأسعار')}
               </span>
               <span
                 style={{
                   fontSize: '0.6875rem',
                   color: '#888888',
-                  fontFamily: "'Geist Mono', monospace",
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                 }}
               >
-                TRUTH INDEX: {discountVerdict.score}/100
+                {t('kpis.truthIndex')}: {discountVerdict.score}/100
               </span>
             </div>
 
@@ -1643,7 +1654,7 @@ export default function MultiPlatformIntelligence({
                   fontWeight: 600,
                   fontSize: '0.875rem',
                   color: discountVerdict.isGenuine ? '#10B981' : '#FB7185',
-                  fontFamily: "'Geist Mono', monospace",
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                   letterSpacing: '0.02em',
                 }}
               >
@@ -1652,7 +1663,11 @@ export default function MultiPlatformIntelligence({
                 ) : (
                   <AlertTriangle size={16} color="#FB7185" />
                 )}
-                <span>{discountVerdict.verdict}</span>
+                <span>
+                  {discountVerdict.isGenuine
+                    ? t('matrix.badges.genuineDiscount', 'خصم حقيقي مؤكد (أقل من متوسط السوق)')
+                    : t('matrix.badges.ghostMarkup', 'تنبيه: خصم وهمي (تم رفع السعر قبل التخفيض)')}
+                </span>
               </div>
               <p
                 style={{
@@ -1660,10 +1675,14 @@ export default function MultiPlatformIntelligence({
                   color: '#EDEDED',
                   margin: 0,
                   lineHeight: 1.5,
-                  fontFamily: "'Geist', sans-serif",
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
                 }}
               >
-                {discountVerdict.explanation}
+                {isRtl
+                  ? (discountVerdict.isGenuine
+                      ? `سعر العرض الحالي يقل بمقدار ${formatCurrency(discountVerdict.netGenuineSaving)} عن متوسط سعر السوق الفعلي لآخر 90 يوماً.`
+                      : `تم رصد زيادة مصطنعة في السعر المرجعي بنسبة ${discountVerdict.preSpikeInflatedPct}% قبل إعلان الخصم.`)
+                  : discountVerdict.explanation}
               </p>
             </div>
           </div>
@@ -1679,45 +1698,47 @@ export default function MultiPlatformIntelligence({
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-              <span style={{ fontSize: '0.625rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
-                90-DAY BASELINE MEDIAN
+              <span style={{ fontSize: '0.625rem', color: '#666666', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace" }}>
+                {t('kpis.baselineMedian')}
               </span>
               <span style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>
-                EGP {discountVerdict.baselineMedian?.toLocaleString()}
+                {formatCurrency(discountVerdict.baselineMedian)}
               </span>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-              <span style={{ fontSize: '0.625rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
-                HISTORICAL ALL-TIME LOW
+              <span style={{ fontSize: '0.625rem', color: '#666666', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace" }}>
+                {t('kpis.allTimeLow')}
               </span>
               <span style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
-                EGP {discountVerdict.lowestEver?.toLocaleString()}
+                {formatCurrency(discountVerdict.lowestEver)}
               </span>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-              <span style={{ fontSize: '0.625rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
-                PRE-SALE INFLATION SPIKE
+              <span style={{ fontSize: '0.625rem', color: '#666666', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace" }}>
+                {t('radar.averageGhostMarkup')}
               </span>
               <span
                 style={{
                   fontSize: '0.9375rem',
                   fontWeight: 600,
                   color: discountVerdict.preSpikeInflatedPct > 0 ? '#FB7185' : '#00DF8F',
-                  fontFamily: "'Geist Mono', monospace",
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                 }}
               >
-                {discountVerdict.preSpikeInflatedPct > 0 ? `+${discountVerdict.preSpikeInflatedPct}% Artificial` : '0.0% (Clean)'}
+                {discountVerdict.preSpikeInflatedPct > 0
+                  ? (isRtl ? `+${discountVerdict.preSpikeInflatedPct}% رفع مصطنع` : `+${discountVerdict.preSpikeInflatedPct}% Artificial`)
+                  : (isRtl ? '0.0% (نظيف وطبيعي)' : '0.0% (Clean)')}
               </span>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-              <span style={{ fontSize: '0.625rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
-                GENUINE NET SAVING
+              <span style={{ fontSize: '0.625rem', color: '#666666', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace" }}>
+                {t('kpis.trueSavings')}
               </span>
               <span style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
-                EGP {discountVerdict.netGenuineSaving?.toLocaleString()}
+                {formatCurrency(discountVerdict.netGenuineSaving)}
               </span>
             </div>
           </div>
@@ -1731,9 +1752,14 @@ export default function MultiPlatformIntelligence({
               fontSize: '0.6875rem',
               color: '#888888',
               lineHeight: 1.4,
+              fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
             }}
           >
-            🛡 <strong>Cawlix Forensics Guard:</strong> Continuously correlates seller list prices against NTRA official import manifests & 90-day domestic price curves.
+            {isRtl ? (
+              <span>🛡 <strong>درع كاوليكس للتدقيق الجنائي:</strong> مطابقة رقمية مستمرة لأسعار الرف مع منافذ الاستيراد الرسمية ومنحنيات أسعار السوق المصري لـ 90 يوماً.</span>
+            ) : (
+              <span>🛡 <strong>Cawlix Forensics Guard:</strong> Continuously correlates seller list prices against NTRA official import manifests & 90-day domestic price curves.</span>
+            )}
           </div>
         </div>
       </section>
@@ -1769,19 +1795,20 @@ export default function MultiPlatformIntelligence({
                   color: '#EDEDED',
                   margin: 0,
                   letterSpacing: '-0.01em',
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
                 }}
               >
-                Specifications & Material Composition Breakdown
+                {t('specs.title', 'المواصفات الفنية ومطابقة الجودة')}
               </h3>
             </div>
             <span
               style={{
                 fontSize: '0.6875rem',
                 color: '#888888',
-                fontFamily: "'Geist Mono', monospace",
+                fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
               }}
             >
-              master_products.specifications
+              {isRtl ? 'المواصفات المعتمدة' : 'master_products.specifications'}
             </span>
           </div>
 
@@ -1794,7 +1821,18 @@ export default function MultiPlatformIntelligence({
             }}
           >
             {Object.entries(activeProduct.specifications || {}).map(([key, value]) => {
-              const formattedKey = key
+              const specLabelMap = {
+                chassis_material: t('specs.chassis', 'خامة الهيكل والإطار'),
+                front_glass: t('specs.frontGlass', 'زجاج الشاشة والحماية'),
+                back_glass: t('specs.backGlass', 'خامة الظهر الخلفي'),
+                thermal_system: t('specs.thermal', 'نظام التبريد الداخلي'),
+                water_resistance: t('specs.waterResistance', 'مقاومة الماء والغبار'),
+                processor: t('specs.processor', 'المعالج ووحدة المعالجة'),
+                weight: t('specs.weight', 'الوزن الصافي'),
+                durability_score: t('specs.durabilityScore', 'مؤشر الصلابة ومقاومة الصدمات'),
+                scratch_score: t('specs.scratchScore', 'مؤشر مقاومة الخدوش'),
+              };
+              const formattedKey = specLabelMap[key] || key
                 .replace(/_/g, ' ')
                 .replace(/\b\w/g, (c) => c.toUpperCase());
               return (
@@ -1816,7 +1854,7 @@ export default function MultiPlatformIntelligence({
                       color: '#666666',
                       textTransform: 'uppercase',
                       letterSpacing: '0.04em',
-                      fontFamily: "'Geist Mono', monospace",
+                      fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                     }}
                   >
                     {formattedKey}
@@ -1827,6 +1865,7 @@ export default function MultiPlatformIntelligence({
                       color: '#EDEDED',
                       fontWeight: 500,
                       lineHeight: 1.4,
+                      fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
                     }}
                   >
                     {String(value)}
@@ -1859,10 +1898,10 @@ export default function MultiPlatformIntelligence({
                   color: '#888888',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
-                  fontFamily: "'Geist Mono', monospace",
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                 }}
               >
-                MATERIAL & QUALITY CONSENSUS
+                {isRtl ? 'مطابقة الخامات وجودة التصنيع' : 'MATERIAL & QUALITY CONSENSUS'}
               </span>
               <span
                 style={{
@@ -1872,10 +1911,10 @@ export default function MultiPlatformIntelligence({
                   border: '1px solid rgba(16, 185, 129, 0.25)',
                   padding: '2px 8px',
                   borderRadius: '4px',
-                  fontFamily: "'Geist Mono', monospace",
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                 }}
               >
-                VERIFIED AUTHENTIC
+                {isRtl ? 'خامات أصلية معتمدة' : 'VERIFIED AUTHENTIC'}
               </span>
             </div>
 
@@ -1893,11 +1932,11 @@ export default function MultiPlatformIntelligence({
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Sparkles size={16} color="#10B981" />
-                <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#EDEDED' }}>
-                  Verified Material Summary
+                <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#EDEDED', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
+                  {isRtl ? 'ملخص الخامات وتفاصيل الهيكل' : 'Verified Material Summary'}
                 </span>
               </div>
-              <p style={{ fontSize: '0.75rem', color: '#BBBBBB', margin: 0, lineHeight: 1.5 }}>
+              <p style={{ fontSize: '0.75rem', color: '#BBBBBB', margin: 0, lineHeight: 1.5, fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
                 {activeProduct.material_summary}
               </p>
             </div>
@@ -1906,11 +1945,11 @@ export default function MultiPlatformIntelligence({
             {activeProduct.sentiment_consensus && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.75rem', color: '#888888', fontWeight: 500 }}>
-                    Shopper Sentiment Consensus
+                  <span style={{ fontSize: '0.75rem', color: '#888888', fontWeight: 500, fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
+                    {isRtl ? 'تقييم ومراجعات المشترين الموثقة' : 'Shopper Sentiment Consensus'}
                   </span>
-                  <span style={{ fontSize: '0.6875rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
-                    Based on {activeProduct.sentiment_consensus.total_shopper_reviews?.toLocaleString()} audits
+                  <span style={{ fontSize: '0.6875rem', color: '#666666', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace" }}>
+                    {isRtl ? `بناءً على ${activeProduct.sentiment_consensus.total_shopper_reviews?.toLocaleString()} فحص ومراجعة` : `Based on ${activeProduct.sentiment_consensus.total_shopper_reviews?.toLocaleString()} audits`}
                   </span>
                 </div>
 
@@ -1918,8 +1957,8 @@ export default function MultiPlatformIntelligence({
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {/* Durability */}
                   <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.6875rem', color: '#CCCCCC', marginBottom: '4px' }}>
-                      <span>Durability Consensus</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.6875rem', color: '#CCCCCC', marginBottom: '4px', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
+                      <span>{t('specs.durabilityScore', 'مؤشر الصلابة والمتانة')}</span>
                       <span style={{ color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
                         {activeProduct.sentiment_consensus.durability_consensus}%
                       </span>
@@ -1937,8 +1976,8 @@ export default function MultiPlatformIntelligence({
 
                   {/* Scratch Resistance */}
                   <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.6875rem', color: '#CCCCCC', marginBottom: '4px' }}>
-                      <span>Finish & Scratch Resistance</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.6875rem', color: '#CCCCCC', marginBottom: '4px', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
+                      <span>{t('specs.scratchScore', 'مقاومة الخدوش وجودة الطلاء')}</span>
                       <span style={{ color: '#38BDF8', fontFamily: "'Geist Mono', monospace" }}>
                         {activeProduct.sentiment_consensus.finish_scratch_resistance}%
                       </span>
@@ -1962,9 +2001,12 @@ export default function MultiPlatformIntelligence({
                     color: '#888888',
                     fontStyle: 'italic',
                     lineHeight: 1.45,
-                    borderLeft: '2px solid #2E2E2E',
-                    paddingLeft: '10px',
+                    borderLeft: isRtl ? 'none' : '2px solid #2E2E2E',
+                    borderRight: isRtl ? '2px solid #2E2E2E' : 'none',
+                    paddingLeft: isRtl ? 0 : '10px',
+                    paddingRight: isRtl ? '10px' : 0,
                     marginTop: '4px',
+                    fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
                   }}
                 >
                   "{activeProduct.sentiment_consensus.verdict_summary}"
@@ -1982,11 +2024,11 @@ export default function MultiPlatformIntelligence({
               color: '#666666',
               borderTop: '1px solid #1F1F1F',
               paddingTop: '10px',
-              fontFamily: "'Geist Mono', monospace",
+              fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
             }}
           >
-            <span>PLATFORMS COMPARED: 12</span>
-            <span>NTRA TELECOM CERTIFIED</span>
+            <span>{isRtl ? 'المتاجر المفحوصة: 12 متجر مصري' : 'PLATFORMS COMPARED: 12'}</span>
+            <span>{t('matrix.badges.ntraApproved')}</span>
           </div>
         </div>
       </section>

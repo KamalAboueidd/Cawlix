@@ -43,7 +43,7 @@ export default function Sidebar({
   onShowToast,
   onInspectProduct,
 }) {
-  const { lang, toggleLang, isRtl } = useLanguage();
+  const { lang, toggleLang, isRtl, t } = useLanguage();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [themeMode, setThemeMode] = useState('dark');
   const userMenuRef = useRef(null);
@@ -61,17 +61,17 @@ export default function Sidebar({
 
   const sectors = [
     {
-      title: isRtl ? 'أسطول المراقبة والرصد' : 'TELEMETRY FLEET',
+      title: t('nav.telemetryFleet'),
       items: [
         {
           id: 'overview',
-          label: isRtl ? 'نظرة عامة ومراقبة الأجهزة' : 'Overview / Nodes',
+          label: t('nav.overview'),
           badge: trackedCount > 0 ? (isRtl ? `${trackedCount} منتج` : `${trackedCount} SKUs`) : (isRtl ? 'نشط' : 'ACTIVE'),
           icon: <Activity size={15} />,
         },
         {
           id: 'intelligence',
-          label: isRtl ? 'مصفوفة مقارنة المنصات الـ 12' : 'Market Matrix',
+          label: t('nav.marketMatrix'),
           badge: isRtl ? '12 متجر' : '12 NODES',
           icon: <Layers size={15} />,
         },
@@ -82,19 +82,19 @@ export default function Sidebar({
       items: [
         {
           id: 'arbitrage',
-          label: isRtl ? 'محرك فروق الأسعار وفرص التوفير' : 'Arbitrage Engine',
+          label: t('nav.arbitrageEngine'),
           badge: isRtl ? 'فروق أسعار' : 'SPREADS',
           icon: <TrendingDown size={15} />,
         },
         {
           id: 'retailer-health',
-          label: isRtl ? 'حالة وسرعة تحديث المتاجر' : 'Retailer Health & Latency',
+          label: t('nav.retailerHealth'),
           badge: '12/12',
           icon: <Server size={15} />,
         },
         {
           id: 'forensics',
-          label: isRtl ? 'رادار فحص التلاعب والخصومات الوهمية' : 'Truth Forensics / Radar',
+          label: t('nav.glitchRadar'),
           badge: anomalyCount > 0 ? (isRtl ? `${anomalyCount} تلاعب` : `${anomalyCount} HIKES`) : (isRtl ? 'رادار' : 'RADAR'),
           icon: <ShieldAlert size={15} />,
         },
@@ -105,20 +105,20 @@ export default function Sidebar({
       items: [
         {
           id: 'watchlist',
-          label: isRtl ? 'قائمة المتابعة والتنبيهات المخصصة' : 'Watchlist & Price Targets',
+          label: t('nav.watchlist'),
           badge: watchlistCount > 0 ? `${watchlistCount}` : null,
           icon: <BookmarkCheck size={15} />,
         },
         {
           id: 'reports',
-          label: isRtl ? 'تقارير السوق واستخراج البيانات' : 'Exports & Audit Reports',
+          label: t('nav.reports'),
           badge: isRtl ? 'ملفات البيانات' : 'CSV/JSON',
           icon: <FileSpreadsheet size={15} />,
         },
       ],
     },
     {
-      title: isRtl ? 'النظام والعمليات' : 'SYSTEM',
+      title: t('nav.systemLogs'),
       items: [
         {
           id: 'logs',
@@ -128,7 +128,7 @@ export default function Sidebar({
         },
         {
           id: 'settings',
-          label: isRtl ? 'إعدادات المنصة' : 'Console Settings',
+          label: t('nav.settings'),
           icon: <Settings size={15} />,
         },
       ],
@@ -670,7 +670,7 @@ export default function Sidebar({
                 e.currentTarget.style.color = '#A1A1A1';
               }}
             >
-              <span>Home Page</span>
+              <span>{isRtl ? 'الصفحة الرئيسية' : 'Home Page'}</span>
               <Home size={14} />
             </button>
 
@@ -691,7 +691,7 @@ export default function Sidebar({
                 color: '#A1A1A1',
                 fontSize: '0.8125rem',
                 cursor: 'pointer',
-                textAlign: 'left',
+                textAlign: isRtl ? 'right' : 'left',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = '#141414';
@@ -702,7 +702,7 @@ export default function Sidebar({
                 e.currentTarget.style.color = '#A1A1A1';
               }}
             >
-              <span>Changelog</span>
+              <span>{isRtl ? 'سجل التحديثات' : 'Changelog'}</span>
               <Edit3 size={14} />
             </button>
 
@@ -723,7 +723,7 @@ export default function Sidebar({
                 color: '#A1A1A1',
                 fontSize: '0.8125rem',
                 cursor: 'pointer',
-                textAlign: 'left',
+                textAlign: isRtl ? 'right' : 'left',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = '#141414';
@@ -734,7 +734,7 @@ export default function Sidebar({
                 e.currentTarget.style.color = '#A1A1A1';
               }}
             >
-              <span>Help</span>
+              <span>{isRtl ? 'المساعدة والدعم' : 'Help & Support'}</span>
               <HelpCircle size={14} />
             </button>
 
@@ -755,7 +755,7 @@ export default function Sidebar({
                 color: '#A1A1A1',
                 fontSize: '0.8125rem',
                 cursor: 'pointer',
-                textAlign: 'left',
+                textAlign: isRtl ? 'right' : 'left',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = '#141414';
@@ -766,7 +766,7 @@ export default function Sidebar({
                 e.currentTarget.style.color = '#A1A1A1';
               }}
             >
-              <span>Docs</span>
+              <span>{isRtl ? 'دليل الاستخدام' : 'Documentation'}</span>
               <BookOpen size={14} />
             </button>
 
@@ -785,7 +785,7 @@ export default function Sidebar({
                 color: '#A1A1A1',
                 fontSize: '0.8125rem',
                 cursor: 'pointer',
-                textAlign: 'left',
+                textAlign: isRtl ? 'right' : 'left',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = '#141414';
@@ -796,7 +796,7 @@ export default function Sidebar({
                 e.currentTarget.style.color = '#A1A1A1';
               }}
             >
-              <span>Log Out</span>
+              <span>{t('nav.signOut')}</span>
               <LogOut size={14} />
             </button>
 
@@ -808,7 +808,7 @@ export default function Sidebar({
               onClick={() => {
                 setUserMenuOpen(false);
                 if (onShowToast) {
-                  onShowToast('Institutional Pro', 'Pro subscription unlocks automated 10-second polling & unlimited Brevo SMS dispatching.');
+                  onShowToast('Institutional Pro', isRtl ? 'الباقة الاحترافية تفعل التحديث كل 10 ثوانٍ وتنبيهات الرسائل القصيرة.' : 'Pro subscription unlocks automated 10-second polling & unlimited SMS dispatching.');
                 }
               }}
               style={{
@@ -822,13 +822,13 @@ export default function Sidebar({
                 cursor: 'pointer',
                 width: '100%',
                 marginTop: '2px',
-                fontFamily: "'Geist', sans-serif",
+                fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
                 transition: 'background-color 120ms ease',
               }}
               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#EAEAEA')}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
             >
-              Upgrade to Pro
+              {isRtl ? 'ترقية إلى الباقة الاحترافية' : 'Upgrade to Pro'}
             </button>
 
             <div style={{ height: '1px', backgroundColor: '#1A1A1A', margin: '4px 0' }} />
@@ -842,10 +842,10 @@ export default function Sidebar({
                 padding: '6px 10px',
                 fontSize: '0.75rem',
                 color: realtimeConnected ? '#00DF8F' : '#0070F3',
-                fontFamily: "'Geist', sans-serif",
+                fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
               }}
             >
-              <span>{realtimeConnected ? 'WebSocket sync active' : 'All systems normal.'}</span>
+              <span>{realtimeConnected ? (isRtl ? 'مزامنة لحظية نشطة' : 'WebSocket sync active') : (isRtl ? 'كافة الأنظمة تعمل بكفاءة' : 'All systems normal.')}</span>
               <span
                 style={{
                   width: '6px',
