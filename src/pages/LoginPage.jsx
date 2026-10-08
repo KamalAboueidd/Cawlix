@@ -16,6 +16,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [mode, setMode] = useState('password'); // 'password' | 'magic'
   const [loading, setLoading] = useState(false);
+  const [highlightGoogle, setHighlightGoogle] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
@@ -117,7 +118,18 @@ export default function LoginPage() {
         });
 
         if (error) {
-          setErrorMsg(error.message);
+          if (
+            error.message?.toLowerCase().includes('invalid login credentials') ||
+            error.message?.toLowerCase().includes('invalid credentials')
+          ) {
+            setErrorMsg(
+              "Invalid credentials. If you previously signed up using Google, please use 'Continue with Google' or use 'Forgot password' to set a direct password."
+            );
+            setHighlightGoogle(true);
+            setTimeout(() => setHighlightGoogle(false), 6000);
+          } else {
+            setErrorMsg(error.message);
+          }
         } else if (data?.session) {
           window.location.href = getReturnTo();
         }
@@ -244,8 +256,8 @@ export default function LoginPage() {
             style={{
               width: '100%',
               height: '42px',
-              border: '1px solid #27272A',
-              backgroundColor: '#111111',
+              border: highlightGoogle ? '1px solid #10B981' : '1px solid #27272A',
+              backgroundColor: highlightGoogle ? 'rgba(16, 185, 129, 0.08)' : '#111111',
               color: '#EDEDED',
               fontSize: '0.875rem',
               fontWeight: 500,
@@ -256,15 +268,19 @@ export default function LoginPage() {
               gap: '10px',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.6 : 1,
-              transition: 'background-color 150ms ease, border-color 150ms ease',
+              transition: 'all 200ms ease',
+              boxShadow: highlightGoogle
+                ? '0 0 16px rgba(16, 185, 129, 0.35), 0 0 0 2px rgba(16, 185, 129, 0.25)'
+                : 'none',
+              animation: highlightGoogle ? 'pulseGoogle 1.6s infinite ease-in-out' : 'none',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#18181B';
-              e.currentTarget.style.borderColor = '#3F3F46';
+              e.currentTarget.style.backgroundColor = highlightGoogle ? 'rgba(16, 185, 129, 0.15)' : '#18181B';
+              e.currentTarget.style.borderColor = highlightGoogle ? '#10B981' : '#3F3F46';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#111111';
-              e.currentTarget.style.borderColor = '#27272A';
+              e.currentTarget.style.backgroundColor = highlightGoogle ? 'rgba(16, 185, 129, 0.08)' : '#111111';
+              e.currentTarget.style.borderColor = highlightGoogle ? '#10B981' : '#27272A';
             }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
@@ -435,11 +451,24 @@ export default function LoginPage() {
             <div
               style={{
                 fontSize: '0.8125rem',
-                color: '#EF4444',
-                lineHeight: 1.4,
+                color: highlightGoogle ? '#FBBF24' : '#F87171',
+                backgroundColor: '#0A0A0A',
+                border: highlightGoogle ? '1px solid rgba(245, 158, 11, 0.4)' : '1px solid rgba(239, 68, 68, 0.35)',
+                borderRadius: '8px',
+                padding: '12px 14px',
+                lineHeight: 1.5,
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '10px',
+                boxShadow: highlightGoogle
+                  ? '0 4px 14px rgba(245, 158, 11, 0.08)'
+                  : '0 4px 14px rgba(239, 68, 68, 0.06)',
               }}
             >
-              {errorMsg}
+              <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>
+                {highlightGoogle ? '⚠️' : '✕'}
+              </span>
+              <div style={{ wordBreak: 'break-word' }}>{errorMsg}</div>
             </div>
           )}
 
@@ -447,11 +476,20 @@ export default function LoginPage() {
             <div
               style={{
                 fontSize: '0.8125rem',
-                color: '#10B981',
-                lineHeight: 1.4,
+                color: '#34D399',
+                backgroundColor: '#0A0A0A',
+                border: '1px solid rgba(16, 185, 129, 0.35)',
+                borderRadius: '8px',
+                padding: '12px 14px',
+                lineHeight: 1.5,
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '10px',
+                boxShadow: '0 4px 14px rgba(16, 185, 129, 0.08)',
               }}
             >
-              {successMsg}
+              <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>✓</span>
+              <div style={{ wordBreak: 'break-word' }}>{successMsg}</div>
             </div>
           )}
 
@@ -500,6 +538,23 @@ export default function LoginPage() {
           </p>
         </footer>
       </div>
+
+      <style>{`
+        @keyframes pulseGoogle {
+          0% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5), 0 0 12px rgba(16, 185, 129, 0.3);
+            border-color: rgba(16, 185, 129, 0.95);
+          }
+          70% {
+            box-shadow: 0 0 0 8px rgba(16, 185, 129, 0), 0 0 20px rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.5);
+          }
+          100% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0), 0 0 12px rgba(16, 185, 129, 0.3);
+            border-color: rgba(16, 185, 129, 0.95);
+          }
+        }
+      `}</style>
     </div>
   );
 }

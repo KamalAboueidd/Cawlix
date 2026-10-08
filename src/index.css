@@ -12,11 +12,11 @@
   --surface:          #0A0A0A;
   --surface-elevated: #111111;
 
-  /* Borders */
-  --border:           rgba(255, 255, 255, 0.1);
-  --border-subtle:    rgba(255, 255, 255, 0.06);
-  --border-strong:    rgba(255, 255, 255, 0.2);
-  --border-zinc:      #27272A;
+  /* Borders (Authentic Vercel Pitch-Black Micro-Borders) */
+  --border:           #1F1F1F;
+  --border-subtle:    #1F1F1F;
+  --border-strong:    #2E2E2E;
+  --border-zinc:      #1F1F1F;
 
   /* Brand / Neutral Vercel Palette */
   --brand:            #FFFFFF;
@@ -24,24 +24,24 @@
   --brand-tint:       rgba(255, 255, 255, 0.08);
   --brand-tint-hover: rgba(255, 255, 255, 0.14);
 
-  /* Typography Colors */
+  /* Typography Colors (Vercel Exact Shading) */
   --text-primary:     #EDEDED;
-  --text-secondary:   #A1A1AA;
-  --text-muted:       #888888;
-  --text-subtle:      #666666;
+  --text-secondary:   #888888;
+  --text-muted:       #666666;
+  --text-subtle:      #525252;
   --text-inverse:     #000000;
 
   /* Semantic Telemetry (Subtle Accents Only) */
-  --success:          #10B981;
-  --warn:             #F59E0B;
+  --success:          #00DF8F;
+  --warn:             #F5A623;
   --danger:           #F43F5E;
   --danger-crimson:   #9F1239;
   --danger-tint:      rgba(244, 63, 94, 0.08);
-  --warn-tint:        rgba(245, 158, 11, 0.08);
+  --warn-tint:        rgba(245, 166, 35, 0.08);
 
-  /* Typography scale */
-  --font-sans: 'Inter', 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Geist Mono', monospace;
+  /* Typography scale (Geist First) */
+  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Geist Mono', 'JetBrains Mono', monospace;
 }
 
 /* ── Reset & base ────────────────────────────────────────────────────────────── */

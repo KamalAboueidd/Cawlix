@@ -300,10 +300,10 @@ export default function ForgotPasswordPage() {
         return;
       }
 
-      setSuccessMsg('✓ Password updated successfully. Access granted.');
+      setSuccessMsg('✓ Password set successfully. You can now log in using either Google or your email and password.');
       setTimeout(() => {
         window.location.href = '/console';
-      }, 1200);
+      }, 1400);
     } catch (err) {
       setErrorMsg(err.message || 'Password update failed.');
       setLoading(false);
@@ -453,14 +453,44 @@ export default function ForgotPasswordPage() {
             </div>
 
             {errorMsg && (
-              <div style={{ fontSize: '0.8125rem', color: '#EF4444', lineHeight: 1.4 }}>
-                {errorMsg}
+              <div
+                style={{
+                  fontSize: '0.8125rem',
+                  color: '#F87171',
+                  backgroundColor: '#0A0A0A',
+                  border: '1px solid rgba(239, 68, 68, 0.35)',
+                  borderRadius: '8px',
+                  padding: '12px 14px',
+                  lineHeight: 1.5,
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '10px',
+                  boxShadow: '0 4px 14px rgba(239, 68, 68, 0.06)',
+                }}
+              >
+                <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>✕</span>
+                <div style={{ wordBreak: 'break-word' }}>{errorMsg}</div>
               </div>
             )}
 
             {successMsg && (
-              <div style={{ fontSize: '0.8125rem', color: '#10B981', lineHeight: 1.4 }}>
-                {successMsg}
+              <div
+                style={{
+                  fontSize: '0.8125rem',
+                  color: '#34D399',
+                  backgroundColor: '#0A0A0A',
+                  border: '1px solid rgba(16, 185, 129, 0.35)',
+                  borderRadius: '8px',
+                  padding: '12px 14px',
+                  lineHeight: 1.5,
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '10px',
+                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.08)',
+                }}
+              >
+                <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>✓</span>
+                <div style={{ wordBreak: 'break-word' }}>{successMsg}</div>
               </div>
             )}
 
@@ -654,14 +684,44 @@ export default function ForgotPasswordPage() {
             </div>
 
             {errorMsg && (
-              <div style={{ fontSize: '0.8125rem', color: '#EF4444', lineHeight: 1.4 }}>
-                {errorMsg}
+              <div
+                style={{
+                  fontSize: '0.8125rem',
+                  color: '#F87171',
+                  backgroundColor: '#0A0A0A',
+                  border: '1px solid rgba(239, 68, 68, 0.35)',
+                  borderRadius: '8px',
+                  padding: '12px 14px',
+                  lineHeight: 1.5,
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '10px',
+                  boxShadow: '0 4px 14px rgba(239, 68, 68, 0.06)',
+                }}
+              >
+                <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>✕</span>
+                <div style={{ wordBreak: 'break-word' }}>{errorMsg}</div>
               </div>
             )}
 
             {successMsg && (
-              <div style={{ fontSize: '0.8125rem', color: '#10B981', lineHeight: 1.4 }}>
-                {successMsg}
+              <div
+                style={{
+                  fontSize: '0.8125rem',
+                  color: '#34D399',
+                  backgroundColor: '#0A0A0A',
+                  border: '1px solid rgba(16, 185, 129, 0.35)',
+                  borderRadius: '8px',
+                  padding: '12px 14px',
+                  lineHeight: 1.5,
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '10px',
+                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.08)',
+                }}
+              >
+                <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>✓</span>
+                <div style={{ wordBreak: 'break-word' }}>{successMsg}</div>
               </div>
             )}
 
@@ -945,14 +1005,44 @@ export default function ForgotPasswordPage() {
             </div>
 
             {errorMsg && (
-              <div style={{ fontSize: '0.8125rem', color: '#EF4444', lineHeight: 1.4 }}>
-                {errorMsg}
+              <div
+                style={{
+                  fontSize: '0.8125rem',
+                  color: '#F87171',
+                  backgroundColor: '#0A0A0A',
+                  border: '1px solid rgba(239, 68, 68, 0.35)',
+                  borderRadius: '8px',
+                  padding: '12px 14px',
+                  lineHeight: 1.5,
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '10px',
+                  boxShadow: '0 4px 14px rgba(239, 68, 68, 0.06)',
+                }}
+              >
+                <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>✕</span>
+                <div style={{ wordBreak: 'break-word' }}>{errorMsg}</div>
               </div>
             )}
 
             {successMsg && (
-              <div style={{ fontSize: '0.8125rem', color: '#10B981', lineHeight: 1.4 }}>
-                {successMsg}
+              <div
+                style={{
+                  fontSize: '0.8125rem',
+                  color: '#34D399',
+                  backgroundColor: '#0A0A0A',
+                  border: '1px solid rgba(16, 185, 129, 0.35)',
+                  borderRadius: '8px',
+                  padding: '12px 14px',
+                  lineHeight: 1.5,
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '10px',
+                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.08)',
+                }}
+              >
+                <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>✓</span>
+                <div style={{ wordBreak: 'break-word' }}>{successMsg}</div>
               </div>
             )}
 

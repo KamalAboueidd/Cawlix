@@ -90,6 +90,124 @@ export default function ConsolePage() {
   const [alertTargetPrice, setAlertTargetPrice] = useState('');
   const [alertSavedSuccess, setAlertSavedSuccess] = useState(false);
 
+  // Password & Linked Accounts Management State
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState('');
+  const [googleLinking, setGoogleLinking] = useState(false);
+  const [googleLinkMsg, setGoogleLinkMsg] = useState('');
+
+  const refreshUserData = async () => {
+    try {
+      const { data } = await supabase.auth.getUser();
+      if (data?.user) {
+        setUser(data.user);
+      }
+    } catch (err) {
+      console.error('Failed to refresh user credentials:', err);
+    }
+  };
+
+  const handleSuggestPassword = () => {
+    const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const lower = 'abcdefghijkmnopqrstuvwxyz';
+    const numbers = '23456789';
+    const symbols = '!@#$%^&*-_+=';
+    const pick = (c) => c[Math.floor(Math.random() * c.length)];
+    const res = [pick(upper), pick(lower), pick(numbers), pick(symbols)];
+    const all = upper + lower + numbers + symbols;
+    for (let i = 0; i < 12; i++) res.push(pick(all));
+    for (let i = res.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [res[i], res[j]] = [res[j], res[i]];
+    }
+    const strong = res.join('');
+    setNewPassword(strong);
+    setConfirmPassword(strong);
+    setShowNewPassword(true);
+    setShowConfirmPassword(true);
+    setPasswordError('');
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(strong).catch(() => {});
+    }
+  };
+
+  const getPasswordStrength = (pass) => {
+    if (!pass) return { score: 0, label: '', color: '#27272A' };
+    let score = 0;
+    if (pass.length >= 8) score += 1;
+    if (/[A-Z]/.test(pass) && /[a-z]/.test(pass)) score += 1;
+    if (/[0-9]/.test(pass)) score += 1;
+    if (/[^A-Za-z0-9]/.test(pass)) score += 1;
+    if (score <= 1) return { score: 1, label: 'Weak', color: '#FB7185' };
+    if (score <= 3) return { score: 2, label: 'Moderate', color: '#FBBF24' };
+    return { score: 3, label: 'Strong', color: '#34D399' };
+  };
+
+  const handleSavePassword = async (e) => {
+    e.preventDefault();
+    if (passwordLoading) return;
+    setPasswordError('');
+    setPasswordSuccess('');
+
+    if (!newPassword || newPassword.length < 8) {
+      setPasswordError('Password must contain at least 8 characters.');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError('Passwords do not match. Please verify both fields.');
+      return;
+    }
+
+    setPasswordLoading(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) {
+        setPasswordError(error.message || 'Failed to update password.');
+      } else {
+        setPasswordSuccess('✓ Password set successfully. You can now log in using either Google or your email and password.');
+        await refreshUserData();
+        setTimeout(() => {
+          setPasswordModalOpen(false);
+          setNewPassword('');
+          setConfirmPassword('');
+          setPasswordSuccess('');
+          setPasswordError('');
+        }, 1500);
+      }
+    } catch (err) {
+      setPasswordError(err.message || 'Failed to update password.');
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
+  const handleConnectGoogle = async () => {
+    if (googleLinking) return;
+    setGoogleLinking(true);
+    setGoogleLinkMsg('');
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.href,
+        },
+      });
+      if (error) {
+        setGoogleLinkMsg(error.message || 'Failed to initiate Google link.');
+        setGoogleLinking(false);
+      }
+    } catch (err) {
+      setGoogleLinkMsg(err.message || 'Failed to initiate Google link.');
+      setGoogleLinking(false);
+    }
+  };
+
   // Live Supabase data hydration & Glitch Radar realtime channel
   useEffect(() => {
     let active = true;
@@ -103,7 +221,8 @@ export default function ConsolePage() {
           return;
         }
 
-        const activeUser = sessionData.session.user;
+        const { data: userData } = await supabase.auth.getUser();
+        const activeUser = userData?.user || sessionData.session.user;
         if (!active) return;
         setUser(activeUser);
 
@@ -388,23 +507,34 @@ export default function ConsolePage() {
   const drawerHasAdvantage = drawerNetSaved > 2000;
   const drawerIsMarkup = selectedDrawerItem ? selectedDrawerItem.delta_pct > 0 : false;
 
+  // Identity metadata computation
+  const identities = user?.identities || [];
+  const googleIdentity = identities.find((id) => id.provider === 'google');
+  const isGoogleConnected = Boolean(googleIdentity || user?.app_metadata?.providers?.includes('google'));
+  const googleEmail = googleIdentity?.identity_data?.email || (isGoogleConnected ? user?.email : null);
+
+  const emailIdentity = identities.find((id) => id.provider === 'email');
+  const isEmailPasswordActive = Boolean(emailIdentity || user?.app_metadata?.providers?.includes('email'));
+  const primaryEmail = user?.email || emailIdentity?.identity_data?.email || 'admin@cawlix.com';
+  const pwdStrength = getPasswordStrength(newPassword);
+
   return (
     <div
       style={{
         minHeight: '100vh',
         backgroundColor: '#000000',
         color: '#EDEDED',
-        fontFamily: "'Inter', 'Geist', -apple-system, BlinkMacSystemFont, sans-serif",
+        fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
         display: 'flex',
       }}
     >
-      {/* ── 1. VERCEL-STYLE MINIMALIST PURE BLACK SIDEBAR ── */}
+      {/* ── 1. VERCEL AUTHENTIC PITCH-BLACK SIDEBAR ── */}
       <aside
         style={{
-          width: '232px',
+          width: '240px',
           flexShrink: 0,
           backgroundColor: '#000000',
-          borderRight: 'none',
+          borderRight: '1px solid #1F1F1F',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
@@ -416,72 +546,116 @@ export default function ConsolePage() {
         }}
       >
         <div>
-          {/* Brand Logo & Minimalist Monochrome Badge */}
+          {/* Workspace Switcher (Exact Vercel Aesthetic) */}
           <div
             style={{
-              padding: '18px 16px 14px 16px',
-              borderBottom: 'none',
+              padding: '12px 14px 10px 14px',
+              borderBottom: '1px solid #1F1F1F',
               display: 'flex',
               flexDirection: 'column',
-              gap: '12px',
+              gap: '10px',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <a
-                href="/"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  textDecoration: 'none',
-                  color: '#FFFFFF',
-                }}
-              >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
                 <img
                   src={cawlixLogo}
                   alt="Cawlix Mark"
-                  width={20}
-                  height={20}
-                  style={{ width: '20px', height: '20px', objectFit: 'contain' }}
+                  width={18}
+                  height={18}
+                  style={{ width: '18px', height: '18px', objectFit: 'contain', flexShrink: 0 }}
                 />
                 <span
                   style={{
-                    fontSize: '0.9375rem',
+                    fontSize: '0.8125rem',
                     fontWeight: 600,
-                    letterSpacing: '-0.02em',
-                    color: '#FFFFFF',
+                    color: '#EDEDED',
+                    letterSpacing: '-0.01em',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
                   }}
                 >
-                  Cawlix
+                  {userHandle || 'kamal Aboueid'}
                 </span>
-              </a>
+                <span
+                  style={{
+                    fontSize: '0.6875rem',
+                    fontWeight: 400,
+                    color: '#888888',
+                    border: '1px solid #2A2A2A',
+                    padding: '0 6px',
+                    borderRadius: '9999px',
+                    lineHeight: '1.5',
+                  }}
+                >
+                  Hobby
+                </span>
+              </div>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#666666" strokeWidth="2" style={{ flexShrink: 0 }}>
+                <path d="m7 15 5 5 5-5" />
+                <path d="m7 9 5-5 5 5" />
+              </svg>
+            </div>
 
-              {/* Minimal Monochrome Core Badge */}
-              <span
+            {/* Quick Find Input with 'F' Shortcut */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '4px 8px',
+                borderRadius: '6px',
+                backgroundColor: '#000000',
+                border: '1px solid #1F1F1F',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flex: 1 }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#666666" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Find..."
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#EDEDED',
+                    fontSize: '0.75rem',
+                    fontFamily: "'Geist', sans-serif",
+                    outline: 'none',
+                    width: '100%',
+                  }}
+                />
+              </div>
+              <kbd
                 style={{
                   fontSize: '0.625rem',
-                  fontWeight: 600,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  color: '#A1A1AA',
-                  backgroundColor: '#18181B',
-                  border: 'none',
-                  padding: '2px 6px',
-                  borderRadius: '4px',
+                  fontFamily: "'Geist Mono', monospace",
+                  color: '#666666',
+                  border: '1px solid #262626',
+                  backgroundColor: '#0A0A0A',
+                  padding: '1px 5px',
+                  borderRadius: '3px',
+                  lineHeight: 1.2,
                 }}
               >
-                CORE
-              </span>
+                F
+              </kbd>
             </div>
           </div>
 
           {/* Navigation Links (Pure Monochrome Vercel Style) */}
-          <nav style={{ padding: '12px 10px', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+          <nav style={{ padding: '10px 8px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
             {[
               {
                 id: 'overview',
-                label: 'Overview',
+                label: 'Projects',
                 icon: (
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect width="7" height="9" x="3" y="3" rx="1" />
                     <rect width="7" height="5" x="14" y="3" rx="1" />
                     <rect width="7" height="9" x="14" y="12" rx="1" />
@@ -494,7 +668,7 @@ export default function ConsolePage() {
                 label: 'Telemetry Nodes',
                 badge: '5 ACTIVE',
                 icon: (
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="12" cy="12" r="3" />
                     <circle cx="19" cy="5" r="2" />
                     <circle cx="5" cy="5" r="2" />
@@ -512,7 +686,7 @@ export default function ConsolePage() {
                 label: 'SKU Tracker',
                 badge: trackedItems.length.toString(),
                 icon: (
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="m21 16-4 4-4-4" />
                     <path d="M17 20V4" />
                     <path d="m3 8 4-4 4 4" />
@@ -525,7 +699,7 @@ export default function ConsolePage() {
                 label: 'System Logs',
                 badge: glitchRadarEvents.length ? `${glitchRadarEvents.length}` : null,
                 icon: (
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
                     <polyline points="13 2 13 9 20 9" />
                     <line x1="9" y1="13" x2="15" y2="13" />
@@ -537,7 +711,7 @@ export default function ConsolePage() {
                 id: 'settings',
                 label: 'Settings',
                 icon: (
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
                     <circle cx="12" cy="12" r="3" />
                   </svg>
@@ -555,32 +729,33 @@ export default function ConsolePage() {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     width: '100%',
-                    padding: '8px 10px',
+                    padding: '7px 10px',
                     borderRadius: '6px',
-                    backgroundColor: isActive ? '#18181B' : 'transparent',
+                    backgroundColor: isActive ? '#161616' : 'transparent',
                     border: 'none',
-                    color: isActive ? '#FFFFFF' : '#A1A1AA',
+                    color: isActive ? '#EDEDED' : '#888888',
                     fontSize: '0.8125rem',
-                    fontWeight: isActive ? 600 : 500,
+                    fontWeight: isActive ? 600 : 400,
                     cursor: 'pointer',
                     textAlign: 'left',
                     transition: 'all 120ms ease',
+                    fontFamily: "'Geist', sans-serif",
                   }}
                   onMouseEnter={(e) => {
                     if (!isActive) {
-                      e.currentTarget.style.backgroundColor = 'rgba(24, 24, 27, 0.6)';
+                      e.currentTarget.style.backgroundColor = '#111111';
                       e.currentTarget.style.color = '#EDEDED';
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (!isActive) {
                       e.currentTarget.style.backgroundColor = 'transparent';
-                      e.currentTarget.style.color = '#A1A1AA';
+                      e.currentTarget.style.color = '#888888';
                     }
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span style={{ color: isActive ? '#FFFFFF' : '#71717A' }}>{route.icon}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+                    <span style={{ color: isActive ? '#EDEDED' : '#888888', display: 'flex' }}>{route.icon}</span>
                     <span>{route.label}</span>
                   </div>
                   {route.badge && (
@@ -588,11 +763,12 @@ export default function ConsolePage() {
                       style={{
                         fontSize: '0.625rem',
                         fontWeight: 500,
-                        padding: '2px 6px',
+                        padding: '1px 6px',
                         borderRadius: '9999px',
-                        backgroundColor: '#27272A',
-                        color: '#A1A1AA',
-                        fontFamily: "'JetBrains Mono', monospace",
+                        border: '1px solid #222222',
+                        backgroundColor: '#0A0A0A',
+                        color: '#888888',
+                        fontFamily: "'Geist Mono', monospace",
                       }}
                     >
                       {route.badge}
@@ -607,21 +783,21 @@ export default function ConsolePage() {
         {/* Sidebar Footer */}
         <div
           style={{
-            padding: '14px 16px',
-            borderTop: 'none',
+            padding: '12px 14px',
+            borderTop: '1px solid #1F1F1F',
             display: 'flex',
             flexDirection: 'column',
             gap: '6px',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '0.6875rem', color: '#71717A', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            <span style={{ fontSize: '0.6875rem', color: '#666666', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
               CLUSTER
             </span>
             <span
               style={{
                 fontSize: '0.6875rem',
-                fontFamily: "'JetBrains Mono', monospace",
+                fontFamily: "'Geist Mono', monospace",
                 color: '#EDEDED',
                 fontWeight: 500,
               }}
@@ -629,8 +805,19 @@ export default function ConsolePage() {
               cairo_node_01
             </span>
           </div>
-          <div style={{ fontSize: '0.6875rem', color: '#52525B', lineHeight: 1.4 }}>
-            Direct WebSocket sync active.
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span
+              style={{
+                width: '6px',
+                height: '6px',
+                borderRadius: '50%',
+                backgroundColor: '#00DF8F',
+                boxShadow: '0 0 6px rgba(0, 223, 143, 0.6)',
+              }}
+            />
+            <span style={{ fontSize: '0.6875rem', color: '#666666', lineHeight: 1.4 }}>
+              Direct WebSocket sync active
+            </span>
           </div>
         </div>
       </aside>
@@ -638,12 +825,12 @@ export default function ConsolePage() {
       {/* ── 2. MAIN APPLICATION WORKSPACE ── */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden', backgroundColor: '#000000' }}>
         
-        {/* Topbar: Seamless pitch black, borderless */}
+        {/* Topbar: Vercel Border (#1F1F1F) */}
         <header
           style={{
-            height: '52px',
+            height: '56px',
             backgroundColor: '#000000',
-            borderBottom: 'none',
+            borderBottom: '1px solid #1F1F1F',
             padding: '0 24px',
             display: 'flex',
             alignItems: 'center',
@@ -655,17 +842,26 @@ export default function ConsolePage() {
             boxSizing: 'border-box',
           }}
         >
-          {/* Sleek Dark Search Input with Command ⌘K */}
+          {/* Breadcrumb Workspace Title */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#EDEDED' }}>
+              All Monitored SKUs
+            </span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#666666" strokeWidth="2">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </div>
+
+          {/* Vercel Search Input with '/' Shortcut */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
               flex: 1,
-              maxWidth: '480px',
-              backgroundColor: '#0A0A0A',
-              border: 'none',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
-              borderRadius: '8px',
+              maxWidth: '440px',
+              backgroundColor: '#000000',
+              border: '1px solid #1F1F1F',
+              borderRadius: '6px',
               height: '34px',
               padding: '0 10px',
               gap: '8px',
@@ -676,7 +872,7 @@ export default function ConsolePage() {
               height="14"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#71717A"
+              stroke="#666666"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -690,14 +886,14 @@ export default function ConsolePage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search tracked SKUs, nodes, or retailers..."
+              placeholder="Search SKUs, domestic nodes, or retailers..."
               style={{
                 flex: 1,
                 background: 'transparent',
                 border: 'none',
                 color: '#EDEDED',
                 fontSize: '0.8125rem',
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Geist', sans-serif",
                 outline: 'none',
               }}
             />
@@ -708,7 +904,7 @@ export default function ConsolePage() {
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#71717A',
+                  color: '#666666',
                   cursor: 'pointer',
                   fontSize: '14px',
                 }}
@@ -719,22 +915,22 @@ export default function ConsolePage() {
               <kbd
                 style={{
                   fontSize: '0.6875rem',
-                  fontFamily: "'JetBrains Mono', monospace",
-                  color: '#A1A1AA',
-                  backgroundColor: '#18181B',
+                  fontFamily: "'Geist Mono', monospace",
+                  color: '#666666',
+                  backgroundColor: '#0A0A0A',
+                  border: '1px solid #262626',
                   borderRadius: '4px',
-                  padding: '1px 5px',
+                  padding: '1px 6px',
                   lineHeight: '1.4',
                 }}
               >
-                ⌘K
+                /
               </kbd>
             )}
           </div>
 
           {/* Topbar Right Controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-
             {/* Iconic Vercel High-Contrast Action Button */}
             <button
               type="button"
@@ -751,10 +947,10 @@ export default function ConsolePage() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px',
-                transition: 'background-color 150ms ease, transform 100ms ease',
-                boxShadow: '0 1px 2px rgba(0, 0, 0, 0.4)',
+                transition: 'background-color 150ms ease',
+                fontFamily: "'Geist', sans-serif",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#E4E4E7')}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#EAEAEA')}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
             >
               <span style={{ fontSize: '14px', lineHeight: 1 }}>+</span>
@@ -767,11 +963,11 @@ export default function ConsolePage() {
                 type="button"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 style={{
-                  width: '30px',
-                  height: '30px',
+                  width: '32px',
+                  height: '32px',
                   borderRadius: '50%',
-                  border: '1px solid #27272A',
-                  backgroundColor: '#18181B',
+                  border: '1px solid #1F1F1F',
+                  backgroundColor: '#0A0A0A',
                   color: '#EDEDED',
                   fontSize: '0.75rem',
                   fontWeight: 600,
@@ -779,6 +975,7 @@ export default function ConsolePage() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
+                  fontFamily: "'Geist Mono', monospace",
                 }}
               >
                 {userHandle.charAt(0).toUpperCase()}
@@ -789,23 +986,23 @@ export default function ConsolePage() {
                   style={{
                     position: 'absolute',
                     right: 0,
-                    top: '38px',
+                    top: '40px',
                     width: '210px',
-                    backgroundColor: '#0A0A0A',
-                    border: '1px solid #27272A',
+                    backgroundColor: '#000000',
+                    border: '1px solid #1F1F1F',
                     borderRadius: '8px',
                     padding: '4px',
-                    boxShadow: '0 16px 32px rgba(0, 0, 0, 0.8)',
+                    boxShadow: '0 16px 32px rgba(0, 0, 0, 0.9)',
                     zIndex: 100,
                   }}
                 >
-                  <div style={{ padding: '8px 10px', borderBottom: '1px solid #27272A' }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#FFFFFF' }}>{userHandle}</div>
+                  <div style={{ padding: '8px 10px', borderBottom: '1px solid #1F1F1F' }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#EDEDED' }}>{userHandle}</div>
                     <div
                       style={{
                         fontSize: '0.6875rem',
-                        color: '#71717A',
-                        fontFamily: "'JetBrains Mono', monospace",
+                        color: '#666666',
+                        fontFamily: "'Geist Mono', monospace",
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                       }}
@@ -820,32 +1017,23 @@ export default function ConsolePage() {
                         display: 'block',
                         padding: '6px 10px',
                         fontSize: '0.8125rem',
-                        color: '#D4D4D8',
+                        color: '#888888',
                         textDecoration: 'none',
                         borderRadius: '4px',
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#18181B')}
-                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = '#111111';
+                        e.currentTarget.style.color = '#EDEDED';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.color = '#888888';
+                      }}
                     >
                       Public Live Tracker
                     </a>
-                    <a
-                      href="/docs"
-                      style={{
-                        display: 'block',
-                        padding: '6px 10px',
-                        fontSize: '0.8125rem',
-                        color: '#D4D4D8',
-                        textDecoration: 'none',
-                        borderRadius: '4px',
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#18181B')}
-                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-                    >
-                      Documentation
-                    </a>
                   </div>
-                  <div style={{ borderTop: '1px solid #27272A', paddingTop: '4px' }}>
+                  <div style={{ borderTop: '1px solid #1F1F1F', paddingTop: '4px' }}>
                     <button
                       type="button"
                       onClick={handleSignOut}
@@ -874,19 +1062,19 @@ export default function ConsolePage() {
 
         {/* ── 3. WORKSPACE CANVAS CONTENT ── */}
         <main style={{ flex: 1, padding: '24px 28px', boxSizing: 'border-box' }}>
-          <div style={{ maxWidth: '1360px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '22px' }}>
+          <div style={{ maxWidth: '1360px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
             
             {/* View Header with Subdued Controls */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '12px' }}>
               <div>
-                <h1 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#FFFFFF', margin: '0 0 4px 0', letterSpacing: '-0.02em' }}>
+                <h1 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#EDEDED', margin: '0 0 4px 0', letterSpacing: '-0.02em' }}>
                   {activeTab === 'overview' && 'Telemetry Control Dashboard'}
                   {activeTab === 'nodes' && 'Domestic Telemetry Nodes'}
                   {activeTab === 'tracker' && 'Tracked SKU Surveillance'}
                   {activeTab === 'logs' && 'System Logs & Glitch Radar Feed'}
                   {activeTab === 'settings' && 'Telemetry Engine Configuration'}
                 </h1>
-                <p style={{ fontSize: '0.8125rem', color: '#71717A', margin: 0 }}>
+                <p style={{ fontSize: '0.8125rem', color: '#888888', margin: 0 }}>
                   {activeTab === 'overview' && 'Real-time retail price monitoring, baseline forensics, and arbitrage analytics.'}
                   {activeTab === 'nodes' && 'Active scraping infrastructure and network latency health for domestic retailers.'}
                   {activeTab === 'tracker' && 'Continuous 90-day rolling baseline tracking for targeted Cairo retail items.'}
@@ -902,16 +1090,16 @@ export default function ConsolePage() {
                   alignItems: 'center',
                   backgroundColor: '#000000',
                   borderRadius: '6px',
+                  border: '1px solid #1F1F1F',
                   padding: '2px',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
                 }}
               >
                 <button
                   type="button"
                   onClick={() => setActiveTab('overview')}
                   style={{
-                    backgroundColor: activeTab === 'overview' ? '#18181B' : 'transparent',
-                    color: activeTab === 'overview' ? '#FFFFFF' : '#A1A1AA',
+                    backgroundColor: activeTab === 'overview' ? '#161616' : 'transparent',
+                    color: activeTab === 'overview' ? '#EDEDED' : '#888888',
                     fontSize: '0.75rem',
                     fontWeight: 500,
                     padding: '4px 10px',
@@ -919,6 +1107,7 @@ export default function ConsolePage() {
                     border: 'none',
                     cursor: 'pointer',
                     transition: 'all 120ms ease',
+                    fontFamily: "'Geist', sans-serif",
                   }}
                 >
                   Overview
@@ -927,8 +1116,8 @@ export default function ConsolePage() {
                   type="button"
                   onClick={() => setActiveTab('tracker')}
                   style={{
-                    backgroundColor: activeTab === 'tracker' ? '#18181B' : 'transparent',
-                    color: activeTab === 'tracker' ? '#FFFFFF' : '#A1A1AA',
+                    backgroundColor: activeTab === 'tracker' ? '#161616' : 'transparent',
+                    color: activeTab === 'tracker' ? '#EDEDED' : '#888888',
                     fontSize: '0.75rem',
                     fontWeight: 500,
                     padding: '4px 10px',
@@ -936,6 +1125,7 @@ export default function ConsolePage() {
                     border: 'none',
                     cursor: 'pointer',
                     transition: 'all 120ms ease',
+                    fontFamily: "'Geist', sans-serif",
                   }}
                 >
                   Tracker
@@ -944,8 +1134,8 @@ export default function ConsolePage() {
                   type="button"
                   onClick={() => setActiveTab('logs')}
                   style={{
-                    backgroundColor: activeTab === 'logs' ? '#18181B' : 'transparent',
-                    color: activeTab === 'logs' ? '#FFFFFF' : '#A1A1AA',
+                    backgroundColor: activeTab === 'logs' ? '#161616' : 'transparent',
+                    color: activeTab === 'logs' ? '#EDEDED' : '#888888',
                     fontSize: '0.75rem',
                     fontWeight: 500,
                     padding: '4px 10px',
@@ -953,6 +1143,7 @@ export default function ConsolePage() {
                     border: 'none',
                     cursor: 'pointer',
                     transition: 'all 120ms ease',
+                    fontFamily: "'Geist', sans-serif",
                   }}
                 >
                   Glitch Radar
@@ -960,7 +1151,7 @@ export default function ConsolePage() {
               </div>
             </div>
 
-            {/* ── 4. METRIC CARDS (Vercel Pure Black #000000 + Borderless + Subtle Shadow) ── */}
+            {/* ── 4. METRIC CARDS (Vercel #000000 + 1px solid #1F1F1F) ── */}
             {(activeTab === 'overview' || activeTab === 'tracker') && (
               <section
                 style={{
@@ -973,22 +1164,21 @@ export default function ConsolePage() {
                 <div
                   style={{
                     backgroundColor: '#000000',
-                    border: 'none',
-                    borderRadius: '12px',
-                    padding: '20px',
+                    border: '1px solid #1F1F1F',
+                    borderRadius: '8px',
+                    padding: '18px',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '8px',
-                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
                   }}
                 >
                   <span
                     style={{
-                      fontSize: '0.75rem',
+                      fontSize: '0.6875rem',
                       fontWeight: 500,
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
-                      color: '#A1A1AA',
+                      color: '#888888',
                     }}
                   >
                     TOTAL MONITORED SKUS
@@ -998,8 +1188,8 @@ export default function ConsolePage() {
                       style={{
                         fontSize: '1.5rem',
                         fontWeight: 600,
-                        color: '#FFFFFF',
-                        fontFamily: "'JetBrains Mono', monospace",
+                        color: '#EDEDED',
+                        fontFamily: "'Geist Mono', monospace",
                         letterSpacing: '-0.02em',
                       }}
                     >
@@ -1007,20 +1197,20 @@ export default function ConsolePage() {
                     </span>
                     <span
                       style={{
-                        fontSize: '0.75rem',
+                        fontSize: '0.6875rem',
                         fontWeight: 500,
-                        color: '#34D399',
-                        backgroundColor: 'rgba(6, 78, 59, 0.4)',
-                        border: '1px solid rgba(6, 95, 70, 0.4)',
+                        color: '#00DF8F',
+                        backgroundColor: '#0A0A0A',
+                        border: '1px solid #222222',
                         padding: '2px 8px',
                         borderRadius: '4px',
-                        fontFamily: "'JetBrains Mono', monospace",
+                        fontFamily: "'Geist Mono', monospace",
                       }}
                     >
                       +12.4%
                     </span>
                   </div>
-                  <span style={{ fontSize: '0.75rem', color: '#71717A' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#666666' }}>
                     Active 90-day price baseline monitoring
                   </span>
                 </div>
@@ -1029,22 +1219,21 @@ export default function ConsolePage() {
                 <div
                   style={{
                     backgroundColor: '#000000',
-                    border: 'none',
-                    borderRadius: '12px',
-                    padding: '20px',
+                    border: '1px solid #1F1F1F',
+                    borderRadius: '8px',
+                    padding: '18px',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '8px',
-                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
                   }}
                 >
                   <span
                     style={{
-                      fontSize: '0.75rem',
+                      fontSize: '0.6875rem',
                       fontWeight: 500,
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
-                      color: '#A1A1AA',
+                      color: '#888888',
                     }}
                   >
                     DOMESTIC RETAILERS MONITORED
@@ -1054,8 +1243,8 @@ export default function ConsolePage() {
                       style={{
                         fontSize: '1.5rem',
                         fontWeight: 600,
-                        color: '#FFFFFF',
-                        fontFamily: "'JetBrains Mono', monospace",
+                        color: '#EDEDED',
+                        fontFamily: "'Geist Mono', monospace",
                         letterSpacing: '-0.02em',
                       }}
                     >
@@ -1063,20 +1252,20 @@ export default function ConsolePage() {
                     </span>
                     <span
                       style={{
-                        fontSize: '0.75rem',
+                        fontSize: '0.6875rem',
                         fontWeight: 500,
-                        color: '#34D399',
-                        backgroundColor: 'rgba(6, 78, 59, 0.4)',
-                        border: '1px solid rgba(6, 95, 70, 0.4)',
+                        color: '#0070F3',
+                        backgroundColor: '#0A0A0A',
+                        border: '1px solid #222222',
                         padding: '2px 8px',
                         borderRadius: '4px',
-                        fontFamily: "'JetBrains Mono', monospace",
+                        fontFamily: "'Geist Mono', monospace",
                       }}
                     >
                       100% ACTIVE
                     </span>
                   </div>
-                  <span style={{ fontSize: '0.75rem', color: '#71717A' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#666666' }}>
                     Amazon, Noon, B.TECH, 2B, Raya & Jumia
                   </span>
                 </div>
@@ -1085,22 +1274,21 @@ export default function ConsolePage() {
                 <div
                   style={{
                     backgroundColor: '#000000',
-                    border: 'none',
-                    borderRadius: '12px',
-                    padding: '20px',
+                    border: '1px solid #1F1F1F',
+                    borderRadius: '8px',
+                    padding: '18px',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '8px',
-                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
                   }}
                 >
                   <span
                     style={{
-                      fontSize: '0.75rem',
+                      fontSize: '0.6875rem',
                       fontWeight: 500,
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
-                      color: '#A1A1AA',
+                      color: '#888888',
                     }}
                   >
                     GLITCH ANOMALIES INTERCEPTED
@@ -1110,8 +1298,8 @@ export default function ConsolePage() {
                       style={{
                         fontSize: '1.5rem',
                         fontWeight: 600,
-                        color: '#FFFFFF',
-                        fontFamily: "'JetBrains Mono', monospace",
+                        color: '#EDEDED',
+                        fontFamily: "'Geist Mono', monospace",
                         letterSpacing: '-0.02em',
                       }}
                     >
@@ -1119,20 +1307,20 @@ export default function ConsolePage() {
                     </span>
                     <span
                       style={{
-                        fontSize: '0.75rem',
+                        fontSize: '0.6875rem',
                         fontWeight: 500,
                         color: '#FB7185',
-                        backgroundColor: 'rgba(76, 5, 25, 0.4)',
-                        border: '1px solid rgba(159, 18, 57, 0.4)',
+                        backgroundColor: '#0A0A0A',
+                        border: '1px solid #222222',
                         padding: '2px 8px',
                         borderRadius: '4px',
-                        fontFamily: "'JetBrains Mono', monospace",
+                        fontFamily: "'Geist Mono', monospace",
                       }}
                     >
                       -47.1% MAX
                     </span>
                   </div>
-                  <span style={{ fontSize: '0.75rem', color: '#71717A' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#666666' }}>
                     Zero-margin flash crashes captured
                   </span>
                 </div>
@@ -1141,22 +1329,21 @@ export default function ConsolePage() {
                 <div
                   style={{
                     backgroundColor: '#000000',
-                    border: 'none',
-                    borderRadius: '12px',
-                    padding: '20px',
+                    border: '1px solid #1F1F1F',
+                    borderRadius: '8px',
+                    padding: '18px',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '8px',
-                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
                   }}
                 >
                   <span
                     style={{
-                      fontSize: '0.75rem',
+                      fontSize: '0.6875rem',
                       fontWeight: 500,
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
-                      color: '#A1A1AA',
+                      color: '#888888',
                     }}
                   >
                     ESTIMATED ARBITRAGE SAVINGS
@@ -1166,8 +1353,8 @@ export default function ConsolePage() {
                       style={{
                         fontSize: '1.5rem',
                         fontWeight: 600,
-                        color: '#FFFFFF',
-                        fontFamily: "'JetBrains Mono', monospace",
+                        color: '#EDEDED',
+                        fontFamily: "'Geist Mono', monospace",
                         letterSpacing: '-0.02em',
                       }}
                     >
@@ -1175,20 +1362,20 @@ export default function ConsolePage() {
                     </span>
                     <span
                       style={{
-                        fontSize: '0.75rem',
+                        fontSize: '0.6875rem',
                         fontWeight: 500,
-                        color: '#34D399',
-                        backgroundColor: 'rgba(6, 78, 59, 0.4)',
-                        border: '1px solid rgba(6, 95, 70, 0.4)',
+                        color: '#00DF8F',
+                        backgroundColor: '#0A0A0A',
+                        border: '1px solid #222222',
                         padding: '2px 8px',
                         borderRadius: '4px',
-                        fontFamily: "'JetBrains Mono', monospace",
+                        fontFamily: "'Geist Mono', monospace",
                       }}
                     >
                       +18.5%
                     </span>
                   </div>
-                  <span style={{ fontSize: '0.75rem', color: '#71717A' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#666666' }}>
                     Landed CIF benchmark advantage
                   </span>
                 </div>
@@ -1212,9 +1399,8 @@ export default function ConsolePage() {
                       key={node.id}
                       style={{
                         backgroundColor: '#000000',
-                        border: 'none',
-                        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
-                        borderRadius: '12px',
+                        border: '1px solid #1F1F1F',
+                        borderRadius: '8px',
                         padding: '18px',
                         display: 'flex',
                         flexDirection: 'column',
@@ -1223,18 +1409,23 @@ export default function ConsolePage() {
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <div>
-                          <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#FFFFFF' }}>{node.name}</div>
-                          <div style={{ fontSize: '0.75rem', color: '#71717A', fontFamily: "'JetBrains Mono', monospace" }}>{node.domain}</div>
+                          <div style={{ fontSize: '0.875rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist', sans-serif" }}>
+                            {node.name}
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: '#888888', fontFamily: "'Geist Mono', monospace", marginTop: '2px' }}>
+                            {node.domain}
+                          </div>
                         </div>
                         <span
                           style={{
                             fontSize: '0.625rem',
                             fontWeight: 500,
-                            padding: '2px 7px',
+                            padding: '2px 8px',
                             borderRadius: '9999px',
-                            backgroundColor: '#18181B',
-                            border: 'none',
-                            color: '#34D399',
+                            backgroundColor: '#0A0A0A',
+                            border: '1px solid #222222',
+                            color: '#00DF8F',
+                            fontFamily: "'Geist Mono', monospace",
                           }}
                         >
                           {node.status}
@@ -1246,25 +1437,31 @@ export default function ConsolePage() {
                           display: 'grid',
                           gridTemplateColumns: '1fr 1fr 1fr',
                           gap: '8px',
-                          paddingTop: '10px',
-                          borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+                          paddingTop: '12px',
+                          borderTop: '1px solid #1F1F1F',
                         }}
                       >
                         <div>
-                          <div style={{ fontSize: '0.6875rem', color: '#71717A', textTransform: 'uppercase' }}>PING</div>
-                          <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace" }}>
+                          <div style={{ fontSize: '0.6875rem', color: '#666666', textTransform: 'uppercase', fontFamily: "'Geist', sans-serif" }}>
+                            PING
+                          </div>
+                          <div style={{ fontSize: '0.8125rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist Mono', monospace", marginTop: '2px' }}>
                             {node.ping}
                           </div>
                         </div>
                         <div>
-                          <div style={{ fontSize: '0.6875rem', color: '#71717A', textTransform: 'uppercase' }}>THROUGHPUT</div>
-                          <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace" }}>
+                          <div style={{ fontSize: '0.6875rem', color: '#666666', textTransform: 'uppercase', fontFamily: "'Geist', sans-serif" }}>
+                            THROUGHPUT
+                          </div>
+                          <div style={{ fontSize: '0.8125rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist Mono', monospace", marginTop: '2px' }}>
                             {node.throughput}
                           </div>
                         </div>
                         <div>
-                          <div style={{ fontSize: '0.6875rem', color: '#71717A', textTransform: 'uppercase' }}>UPTIME</div>
-                          <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#34D399', fontFamily: "'JetBrains Mono', monospace" }}>
+                          <div style={{ fontSize: '0.6875rem', color: '#666666', textTransform: 'uppercase', fontFamily: "'Geist', sans-serif" }}>
+                            UPTIME
+                          </div>
+                          <div style={{ fontSize: '0.8125rem', fontWeight: 500, color: '#00DF8F', fontFamily: "'Geist Mono', monospace", marginTop: '2px' }}>
                             {node.successRate}
                           </div>
                         </div>
@@ -1285,9 +1482,8 @@ export default function ConsolePage() {
                     justifyContent: 'space-between',
                     padding: '12px 16px',
                     backgroundColor: '#000000',
-                    border: 'none',
-                    borderRadius: '10px',
-                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
+                    border: '1px solid #1F1F1F',
+                    borderRadius: '8px',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -1296,14 +1492,14 @@ export default function ConsolePage() {
                         width: '6px',
                         height: '6px',
                         borderRadius: '50%',
-                        backgroundColor: '#10B981',
+                        backgroundColor: '#00DF8F',
                       }}
                     />
                     <div>
-                      <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#FFFFFF' }}>
+                      <div style={{ fontSize: '0.8125rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist', sans-serif" }}>
                         REALTIME POSTGRES MUTATION STREAM
                       </div>
-                      <div style={{ fontSize: '0.6875rem', color: '#71717A', fontFamily: "'JetBrains Mono', monospace" }}>
+                      <div style={{ fontSize: '0.6875rem', color: '#888888', fontFamily: "'Geist Mono', monospace" }}>
                         channel: realtime:glitch_radar_events
                       </div>
                     </div>
@@ -1311,10 +1507,10 @@ export default function ConsolePage() {
                   <span
                     style={{
                       fontSize: '0.6875rem',
-                      fontFamily: "'JetBrains Mono', monospace",
+                      fontFamily: "'Geist Mono', monospace",
                       color: '#EDEDED',
-                      backgroundColor: '#18181B',
-                      border: 'none',
+                      backgroundColor: '#0A0A0A',
+                      border: '1px solid #222222',
                       padding: '3px 8px',
                       borderRadius: '4px',
                     }}
@@ -1327,10 +1523,9 @@ export default function ConsolePage() {
                 <div
                   style={{
                     backgroundColor: '#000000',
-                    border: 'none',
-                    borderRadius: '12px',
+                    border: '1px solid #1F1F1F',
+                    borderRadius: '8px',
                     overflow: 'hidden',
-                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
                   }}
                 >
                   {glitchRadarEvents.map((evt, idx) => (
@@ -1354,17 +1549,19 @@ export default function ConsolePage() {
                         display: 'grid',
                         gridTemplateColumns: '2.5fr 1fr 1.2fr 1fr 1fr',
                         alignItems: 'center',
-                        padding: '14px 18px',
-                        borderBottom: idx < glitchRadarEvents.length - 1 ? '1px solid rgba(255, 255, 255, 0.05)' : 'none',
+                        padding: '13px 18px',
+                        borderBottom: idx < glitchRadarEvents.length - 1 ? '1px solid #1F1F1F' : 'none',
                         cursor: 'pointer',
                         transition: 'background-color 100ms ease',
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(24, 24, 27, 0.4)')}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#0D0D0D')}
                       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                     >
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                        <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#FFFFFF' }}>{evt.title}</span>
-                        <span style={{ fontSize: '0.6875rem', color: '#71717A', fontFamily: "'JetBrains Mono', monospace" }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', paddingRight: '12px', minWidth: 0 }}>
+                        <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist', sans-serif", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {evt.title}
+                        </span>
+                        <span style={{ fontSize: '0.6875rem', color: '#888888', fontFamily: "'Geist Mono', monospace" }}>
                           {evt.sku}
                         </span>
                       </div>
@@ -1372,37 +1569,37 @@ export default function ConsolePage() {
                         <span
                           style={{
                             fontSize: '0.6875rem',
-                            fontFamily: "'JetBrains Mono', monospace",
-                            padding: '2px 7px',
-                            backgroundColor: '#18181B',
-                            border: 'none',
+                            fontFamily: "'Geist Mono', monospace",
+                            padding: '2px 8px',
+                            backgroundColor: '#0A0A0A',
+                            border: '1px solid #222222',
                             borderRadius: '4px',
-                            color: '#D4D4D8',
+                            color: '#888888',
                           }}
                         >
                           {evt.retailer}
                         </span>
                       </div>
-                      <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.875rem', fontWeight: 600, color: '#FFFFFF' }}>
+                      <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: '0.875rem', fontWeight: 500, color: '#EDEDED' }}>
                         EGP {evt.current_price_egp?.toLocaleString()}
                       </div>
                       <div>
                         <span
                           style={{
-                            fontSize: '0.75rem',
+                            fontSize: '0.6875rem',
                             fontWeight: 500,
-                            fontFamily: "'JetBrains Mono', monospace",
+                            fontFamily: "'Geist Mono', monospace",
                             color: '#FB7185',
-                            backgroundColor: 'rgba(76, 5, 25, 0.4)',
-                            border: '1px solid rgba(159, 18, 57, 0.4)',
-                            padding: '2px 7px',
+                            backgroundColor: '#0A0A0A',
+                            border: '1px solid #222222',
+                            padding: '2px 8px',
                             borderRadius: '4px',
                           }}
                         >
                           {evt.drop_pct}%
                         </span>
                       </div>
-                      <div style={{ fontSize: '0.75rem', color: '#71717A', fontFamily: "'JetBrains Mono', monospace", textAlign: 'right' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#666666', fontFamily: "'Geist Mono', monospace", textAlign: 'right' }}>
                         {evt.detected_at}
                       </div>
                     </div>
@@ -1413,34 +1610,323 @@ export default function ConsolePage() {
 
             {/* TAB: Settings */}
             {activeTab === 'settings' && (
-              <section style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <section style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {/* 1. Authentication & Linked Accounts Card */}
                 <div
                   style={{
                     backgroundColor: '#000000',
-                    border: 'none',
-                    borderRadius: '12px',
+                    border: '1px solid #1F1F1F',
+                    borderRadius: '8px',
+                    padding: '24px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '20px',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+                    <div>
+                      <h3 style={{ fontSize: '0.9375rem', fontWeight: 500, color: '#EDEDED', margin: 0, fontFamily: "'Geist', sans-serif" }}>
+                        AUTHENTICATION & LINKED ACCOUNTS
+                      </h3>
+                      <p style={{ fontSize: '0.8125rem', color: '#888888', marginTop: '4px', marginBottom: 0, fontFamily: "'Geist', sans-serif" }}>
+                        Manage connected login providers, multi-factor credentials, and dual-authentication redundancy.
+                      </p>
+                    </div>
+                    <span
+                      style={{
+                        fontSize: '0.6875rem',
+                        fontFamily: "'Geist Mono', monospace",
+                        padding: '3px 8px',
+                        borderRadius: '4px',
+                        backgroundColor: '#0A0A0A',
+                        border: '1px solid #222222',
+                        color: '#888888',
+                      }}
+                    >
+                      {identities.length} {identities.length === 1 ? 'PROVIDER LINKED' : 'PROVIDERS LINKED'}
+                    </span>
+                  </div>
+
+                  {/* Provider List */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {/* Provider 1: Email / Password */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '14px 16px',
+                        backgroundColor: '#0A0A0A',
+                        border: '1px solid #1F1F1F',
+                        borderRadius: '6px',
+                        gap: '14px',
+                        flexWrap: 'wrap',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                        <div
+                          style={{
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: '6px',
+                            backgroundColor: '#000000',
+                            border: '1px solid #222222',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#EDEDED',
+                            flexShrink: 0,
+                          }}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                          </svg>
+                        </div>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist', sans-serif" }}>
+                              Email / Password
+                            </span>
+                            <span
+                              style={{
+                                fontSize: '0.6875rem',
+                                fontWeight: 500,
+                                padding: '2px 8px',
+                                borderRadius: '4px',
+                                fontFamily: "'Geist Mono', monospace",
+                                backgroundColor: '#000000',
+                                color: isEmailPasswordActive ? '#00DF8F' : '#666666',
+                                border: isEmailPasswordActive ? '1px solid #222222' : '1px solid #1F1F1F',
+                              }}
+                            >
+                              {isEmailPasswordActive ? 'Active' : 'Not set'}
+                            </span>
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: '#888888', fontFamily: "'Geist Mono', monospace", marginTop: '2px' }}>
+                            {primaryEmail}
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPasswordError('');
+                          setPasswordSuccess('');
+                          setNewPassword('');
+                          setConfirmPassword('');
+                          setPasswordModalOpen(true);
+                        }}
+                        style={{
+                          padding: '6px 12px',
+                          fontSize: '0.75rem',
+                          fontWeight: 500,
+                          backgroundColor: '#000000',
+                          border: '1px solid #222222',
+                          borderRadius: '6px',
+                          color: '#EDEDED',
+                          cursor: 'pointer',
+                          transition: 'all 120ms ease',
+                          fontFamily: "'Geist', sans-serif",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#111111';
+                          e.currentTarget.style.borderColor = '#333333';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = '#000000';
+                          e.currentTarget.style.borderColor = '#222222';
+                        }}
+                      >
+                        {isEmailPasswordActive ? 'Change Password' : 'Set Password'}
+                      </button>
+                    </div>
+
+                    {/* Provider 2: Google OAuth */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '14px 16px',
+                        backgroundColor: '#0A0A0A',
+                        border: '1px solid #1F1F1F',
+                        borderRadius: '6px',
+                        gap: '14px',
+                        flexWrap: 'wrap',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                        <div
+                          style={{
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: '6px',
+                            backgroundColor: '#000000',
+                            border: '1px solid #222222',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                          }}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+                          </svg>
+                        </div>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist', sans-serif" }}>
+                              Google OAuth
+                            </span>
+                            <span
+                              style={{
+                                fontSize: '0.6875rem',
+                                fontWeight: 500,
+                                padding: '2px 8px',
+                                borderRadius: '4px',
+                                fontFamily: "'Geist Mono', monospace",
+                                backgroundColor: '#000000',
+                                color: isGoogleConnected ? '#00DF8F' : '#F5A623',
+                                border: '1px solid #222222',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                              }}
+                            >
+                              {isGoogleConnected ? (
+                                <>
+                                  <span>✓</span>
+                                  <span>Connected {googleEmail ? `(${googleEmail})` : ''}</span>
+                                </>
+                              ) : (
+                                'Not Connected'
+                              )}
+                            </span>
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: '#888888', fontFamily: "'Geist Mono', monospace", marginTop: '2px' }}>
+                            {isGoogleConnected ? 'Seamless 1-click single sign-on enabled' : 'Not linked to this session'}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        {isGoogleConnected ? (
+                          <div
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              padding: '5px 10px',
+                              borderRadius: '6px',
+                              backgroundColor: '#000000',
+                              border: '1px solid #222222',
+                              color: '#00DF8F',
+                              fontSize: '0.75rem',
+                              fontWeight: 500,
+                              fontFamily: "'Geist Mono', monospace",
+                            }}
+                          >
+                            <span>✓</span>
+                            <span>Verified</span>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            disabled={googleLinking}
+                            onClick={handleConnectGoogle}
+                            style={{
+                              padding: '6px 14px',
+                              fontSize: '0.75rem',
+                              fontWeight: 500,
+                              backgroundColor: '#FFFFFF',
+                              border: 'none',
+                              borderRadius: '6px',
+                              color: '#000000',
+                              cursor: googleLinking ? 'not-allowed' : 'pointer',
+                              opacity: googleLinking ? 0.6 : 1,
+                              transition: 'opacity 150ms ease',
+                              fontFamily: "'Geist', sans-serif",
+                            }}
+                          >
+                            {googleLinking ? 'Connecting...' : 'Connect Google'}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {googleLinkMsg && (
+                      <div
+                        style={{
+                          fontSize: '0.8125rem',
+                          color: '#FB7185',
+                          backgroundColor: '#0A0A0A',
+                          border: '1px solid #222222',
+                          borderRadius: '6px',
+                          padding: '10px 12px',
+                          fontFamily: "'Geist', sans-serif",
+                        }}
+                      >
+                        {googleLinkMsg}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Redundant Access Guarantee Box */}
+                  <div
+                    style={{
+                      backgroundColor: '#000000',
+                      border: '1px solid #1F1F1F',
+                      borderRadius: '6px',
+                      padding: '14px 16px',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '12px',
+                    }}
+                  >
+                    <span style={{ fontSize: '1.125rem', lineHeight: 1 }}>🛡️</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                      <span style={{ fontSize: '0.8125rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist', sans-serif" }}>
+                        Redundant Access Guarantee
+                      </span>
+                      <p style={{ fontSize: '0.75rem', color: '#888888', margin: 0, lineHeight: 1.5, fontFamily: "'Geist', sans-serif" }}>
+                        By linking both Google OAuth and Email/Password credentials, you maintain dual redundant access to the Cawlix Telemetry Console. If Google OAuth experiences downtime or identity token invalidation, you can immediately sign in using your direct password hash without disruption.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. Active Telemetry Session Card */}
+                <div
+                  style={{
+                    backgroundColor: '#000000',
+                    border: '1px solid #1F1F1F',
+                    borderRadius: '8px',
                     padding: '22px',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '14px',
-                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.4)',
                   }}
                 >
-                  <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#FFFFFF', margin: 0 }}>
+                  <h3 style={{ fontSize: '0.875rem', fontWeight: 500, color: '#EDEDED', margin: 0, fontFamily: "'Geist', sans-serif" }}>
                     ACTIVE TELEMETRY SESSION
                   </h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.8125rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                      <span style={{ color: '#71717A' }}>USER IDENTIFIER</span>
-                      <span style={{ fontFamily: "'JetBrains Mono', monospace", color: '#EDEDED' }}>{user?.id || 'anon-session'}</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.8125rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #1F1F1F' }}>
+                      <span style={{ color: '#666666', fontFamily: "'Geist', sans-serif" }}>USER IDENTIFIER</span>
+                      <span style={{ fontFamily: "'Geist Mono', monospace", color: '#EDEDED' }}>{user?.id || 'anon-session'}</span>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                      <span style={{ color: '#71717A' }}>PRIMARY EMAIL</span>
-                      <span style={{ fontFamily: "'JetBrains Mono', monospace", color: '#EDEDED' }}>{user?.email || 'admin@cawlix.com'}</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #1F1F1F' }}>
+                      <span style={{ color: '#666666', fontFamily: "'Geist', sans-serif" }}>PRIMARY EMAIL</span>
+                      <span style={{ fontFamily: "'Geist Mono', monospace", color: '#EDEDED' }}>{user?.email || 'admin@cawlix.com'}</span>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                      <span style={{ color: '#71717A' }}>POSTGRES REPLICATION</span>
-                      <span style={{ fontFamily: "'JetBrains Mono', monospace", color: '#34D399', fontWeight: 500 }}>CONNECTED (WSS)</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #1F1F1F' }}>
+                      <span style={{ color: '#666666', fontFamily: "'Geist', sans-serif" }}>POSTGRES REPLICATION</span>
+                      <span style={{ fontFamily: "'Geist Mono', monospace", color: '#00DF8F', fontWeight: 500 }}>CONNECTED (WSS)</span>
                     </div>
                   </div>
                 </div>
@@ -1452,28 +1938,27 @@ export default function ConsolePage() {
               <section
                 style={{
                   backgroundColor: '#000000',
-                  border: 'none',
-                  borderRadius: '12px',
+                  border: '1px solid #1F1F1F',
+                  borderRadius: '8px',
                   overflow: 'hidden',
                   display: 'flex',
                   flexDirection: 'column',
-                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
                 }}
               >
-                {/* Table Header: Pure Vercel subtle row */}
+                {/* Table Header: Authentic Vercel Subtle Row */}
                 <div
                   style={{
                     display: 'grid',
                     gridTemplateColumns: '2.5fr 1fr 1.2fr 1fr 1fr 0.8fr',
                     alignItems: 'center',
                     padding: '11px 18px',
-                    backgroundColor: 'transparent',
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+                    backgroundColor: '#000000',
+                    borderBottom: '1px solid #1F1F1F',
                     fontSize: '0.6875rem',
                     fontWeight: 500,
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
-                    color: '#A1A1AA',
+                    color: '#888888',
                   }}
                 >
                   <span>ITEM / TITLE</span>
@@ -1497,7 +1982,7 @@ export default function ConsolePage() {
                         animation: 'spin 1s linear infinite',
                       }}
                     />
-                    <span style={{ fontSize: '0.8125rem', color: '#71717A' }}>
+                    <span style={{ fontSize: '0.8125rem', color: '#666666' }}>
                       Probing domestic nodes...
                     </span>
                   </div>
@@ -1513,10 +1998,10 @@ export default function ConsolePage() {
                       gap: '12px',
                     }}
                   >
-                    <span style={{ fontSize: '0.9375rem', fontWeight: 500, color: '#FFFFFF' }}>
+                    <span style={{ fontSize: '0.9375rem', fontWeight: 500, color: '#EDEDED' }}>
                       No matching tracked SKUs detected
                     </span>
-                    <span style={{ fontSize: '0.8125rem', color: '#71717A', maxWidth: '380px' }}>
+                    <span style={{ fontSize: '0.8125rem', color: '#666666', maxWidth: '380px' }}>
                       Add a new domestic SKU to begin 90-day forensic price tracking.
                     </span>
                     <button
@@ -1532,16 +2017,17 @@ export default function ConsolePage() {
                         border: 'none',
                         cursor: 'pointer',
                         marginTop: '4px',
+                        fontFamily: "'Geist', sans-serif",
                       }}
                     >
                       Track Your First SKU
                     </button>
                   </div>
                 ) : (
-                  /* Table Rows: ultra-subtle dividers hover:bg-zinc-900/30 */
+                  /* Table Rows: Vercel Micro-Border (#1F1F1F) + Subtle Hover */
                   filteredItems.map((item, idx) => {
                     const isMarkup = item.delta_pct > 0;
-                    const deltaColor = isMarkup ? '#FB7185' : '#34D399';
+                    const deltaColor = isMarkup ? '#FB7185' : '#00DF8F';
                     const deltaSign = item.delta_pct > 0 ? `+${item.delta_pct}%` : `${item.delta_pct}%`;
 
                     return (
@@ -1553,11 +2039,11 @@ export default function ConsolePage() {
                           gridTemplateColumns: '2.5fr 1fr 1.2fr 1fr 1fr 0.8fr',
                           alignItems: 'center',
                           padding: '13px 18px',
-                          borderBottom: idx < filteredItems.length - 1 ? '1px solid rgba(255, 255, 255, 0.05)' : 'none',
+                          borderBottom: idx < filteredItems.length - 1 ? '1px solid #1F1F1F' : 'none',
                           cursor: 'pointer',
                           transition: 'background-color 100ms ease',
                         }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(24, 24, 27, 0.3)')}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#0D0D0D')}
                         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                       >
                         {/* ITEM / TITLE */}
@@ -1566,19 +2052,21 @@ export default function ConsolePage() {
                             style={{
                               fontSize: '0.875rem',
                               fontWeight: 500,
-                              color: '#FFFFFF',
+                              color: '#EDEDED',
                               whiteSpace: 'nowrap',
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
+                              letterSpacing: '-0.01em',
+                              fontFamily: "'Geist', sans-serif",
                             }}
                           >
                             {item.title}
                           </span>
                           <span
                             style={{
-                              fontSize: '0.6875rem',
-                              color: '#71717A',
-                              fontFamily: "'JetBrains Mono', monospace",
+                              fontSize: '0.75rem',
+                              color: '#888888',
+                              fontFamily: "'Geist Mono', monospace",
                             }}
                           >
                             {item.sku}
@@ -1591,12 +2079,12 @@ export default function ConsolePage() {
                             style={{
                               fontSize: '0.6875rem',
                               fontWeight: 500,
-                              fontFamily: "'JetBrains Mono', monospace",
+                              fontFamily: "'Geist Mono', monospace",
                               padding: '2px 7px',
                               borderRadius: '4px',
-                              backgroundColor: '#18181B',
-                              border: '1px solid #27272A',
-                              color: '#D4D4D8',
+                              backgroundColor: '#0A0A0A',
+                              border: '1px solid #222222',
+                              color: '#888888',
                             }}
                           >
                             {item.node}
@@ -1609,8 +2097,8 @@ export default function ConsolePage() {
                             style={{
                               fontSize: '0.875rem',
                               fontWeight: 600,
-                              color: '#FFFFFF',
-                              fontFamily: "'JetBrains Mono', monospace",
+                              color: '#EDEDED',
+                              fontFamily: "'Geist Mono', monospace",
                             }}
                           >
                             EGP {item.current_price_egp?.toLocaleString()}
@@ -1620,24 +2108,36 @@ export default function ConsolePage() {
                               fontSize: '0.6875rem',
                               fontWeight: 500,
                               color: deltaColor,
-                              fontFamily: "'JetBrains Mono', monospace",
+                              fontFamily: "'Geist Mono', monospace",
                             }}
                           >
                             {deltaSign}
                           </span>
                         </div>
 
-                        {/* STATUS */}
-                        <div style={{ textAlign: 'center' }}>
+                        {/* STATUS (Iconic Vercel Checkmark Circle) */}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                          <div
+                            style={{
+                              width: '18px',
+                              height: '18px',
+                              borderRadius: '50%',
+                              border: '1px solid #222222',
+                              backgroundColor: '#0A0A0A',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0070F3" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          </div>
                           <span
                             style={{
                               fontSize: '0.6875rem',
-                              fontWeight: 500,
-                              padding: '2px 8px',
-                              borderRadius: '4px',
-                              backgroundColor: item.status === 'Active' ? 'rgba(6, 78, 59, 0.3)' : 'rgba(120, 53, 15, 0.3)',
-                              border: item.status === 'Active' ? '1px solid rgba(6, 95, 70, 0.4)' : '1px solid rgba(180, 83, 9, 0.4)',
-                              color: item.status === 'Active' ? '#34D399' : '#FBBF24',
+                              fontFamily: "'Geist Mono', monospace",
+                              color: '#888888',
                             }}
                           >
                             {item.status}
@@ -1648,37 +2148,40 @@ export default function ConsolePage() {
                         <div
                           style={{
                             fontSize: '0.75rem',
-                            color: '#71717A',
-                            fontFamily: "'JetBrains Mono', monospace",
+                            color: '#666666',
+                            fontFamily: "'Geist Mono', monospace",
                             textAlign: 'right',
                           }}
                         >
                           {item.last_ping}
                         </div>
 
-                        {/* ACTIONS: Sleek Ghost Button */}
+                        {/* ACTIONS: Vercel Ghost Button */}
                         <div style={{ textAlign: 'right' }}>
                           <button
                             type="button"
                             onClick={(e) => handleReaudit(e, item)}
                             style={{
-                              backgroundColor: 'rgba(24, 24, 27, 0.5)',
-                              border: '1px solid #3F3F46',
+                              backgroundColor: 'transparent',
+                              border: '1px solid #222222',
                               borderRadius: '6px',
                               padding: '4px 10px',
-                              color: '#D4D4D8',
+                              color: '#888888',
                               fontSize: '0.75rem',
                               fontWeight: 500,
                               cursor: 'pointer',
                               transition: 'all 120ms ease',
+                              fontFamily: "'Geist', sans-serif",
                             }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = '#27272A';
-                              e.currentTarget.style.color = '#FFFFFF';
+                              e.currentTarget.style.backgroundColor = '#111111';
+                              e.currentTarget.style.borderColor = '#333333';
+                              e.currentTarget.style.color = '#EDEDED';
                             }}
                             onMouseLeave={(e) => {
-                              e.currentTarget.style.backgroundColor = 'rgba(24, 24, 27, 0.5)';
-                              e.currentTarget.style.color = '#D4D4D8';
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                              e.currentTarget.style.borderColor = '#222222';
+                              e.currentTarget.style.color = '#888888';
                             }}
                           >
                             {probingSkuId === item.id ? 'Probing...' : 'Re-audit'}
@@ -1726,8 +2229,8 @@ export default function ConsolePage() {
               width: '100%',
               maxWidth: '540px',
               height: '100%',
-              backgroundColor: '#0A0A0A',
-              borderLeft: '1px solid #27272A',
+              backgroundColor: '#000000',
+              borderLeft: '1px solid #1F1F1F',
               boxShadow: '-20px 0 40px rgba(0, 0, 0, 0.9)',
               zIndex: 101,
               overflowY: 'auto',
@@ -1740,7 +2243,7 @@ export default function ConsolePage() {
             <div
               style={{
                 height: '50px',
-                borderBottom: '1px solid #27272A',
+                borderBottom: '1px solid #1F1F1F',
                 padding: '0 20px',
                 display: 'flex',
                 alignItems: 'center',
@@ -1752,8 +2255,8 @@ export default function ConsolePage() {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10B981' }} />
-                <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#A1A1AA', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#00DF8F' }} />
+                <span style={{ fontSize: '0.6875rem', fontWeight: 500, color: '#888888', letterSpacing: '0.05em', textTransform: 'uppercase', fontFamily: "'Geist', sans-serif" }}>
                   FORENSIC TELEMETRY PROBE
                 </span>
               </div>
@@ -1762,13 +2265,22 @@ export default function ConsolePage() {
                 onClick={() => setSelectedDrawerItem(null)}
                 style={{
                   background: 'none',
-                  border: '1px solid #27272A',
+                  border: '1px solid #222222',
                   borderRadius: '4px',
-                  color: '#71717A',
+                  color: '#888888',
                   fontSize: '0.6875rem',
-                  fontFamily: "'JetBrains Mono', monospace",
+                  fontFamily: "'Geist Mono', monospace",
                   padding: '2px 7px',
                   cursor: 'pointer',
+                  transition: 'all 120ms ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#EDEDED';
+                  e.currentTarget.style.borderColor = '#333333';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = '#888888';
+                  e.currentTarget.style.borderColor = '#222222';
                 }}
               >
                 ESC
@@ -1779,14 +2291,14 @@ export default function ConsolePage() {
             <div style={{ padding: '22px', display: 'flex', flexDirection: 'column', gap: '22px' }}>
               
               {/* Module 1: Header */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingBottom: '18px', borderBottom: '1px solid #27272A' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingBottom: '18px', borderBottom: '1px solid #1F1F1F' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.75rem' }}>
-                  <span style={{ color: '#FFFFFF', fontWeight: 600, fontFamily: "'JetBrains Mono', monospace" }}>{selectedDrawerItem.sku}</span>
-                  <span style={{ color: '#52525B' }}>·</span>
-                  <span style={{ color: '#A1A1AA', fontWeight: 500, fontFamily: "'JetBrains Mono', monospace" }}>{selectedDrawerItem.node}</span>
-                  <span style={{ color: '#52525B', fontSize: '0.6875rem' }}>({selectedDrawerItem.domain})</span>
+                  <span style={{ color: '#EDEDED', fontWeight: 500, fontFamily: "'Geist Mono', monospace" }}>{selectedDrawerItem.sku}</span>
+                  <span style={{ color: '#444444' }}>·</span>
+                  <span style={{ color: '#888888', fontWeight: 500, fontFamily: "'Geist Mono', monospace" }}>{selectedDrawerItem.node}</span>
+                  <span style={{ color: '#666666', fontSize: '0.6875rem', fontFamily: "'Geist Mono', monospace" }}>({selectedDrawerItem.domain})</span>
                 </div>
-                <h2 style={{ fontSize: '1.0625rem', fontWeight: 600, color: '#FFFFFF', margin: 0, lineHeight: 1.4 }}>
+                <h2 style={{ fontSize: '1.0625rem', fontWeight: 500, color: '#EDEDED', margin: 0, lineHeight: 1.4, fontFamily: "'Geist', sans-serif" }}>
                   {selectedDrawerItem.title}
                 </h2>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', paddingTop: '4px' }}>
@@ -1794,11 +2306,11 @@ export default function ConsolePage() {
                     href={getStoreUrl(selectedDrawerItem)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ fontSize: '0.75rem', color: '#EDEDED', textDecoration: 'underline', fontWeight: 500 }}
+                    style={{ fontSize: '0.75rem', color: '#EDEDED', textDecoration: 'underline', fontWeight: 500, fontFamily: "'Geist', sans-serif" }}
                   >
                     Open Node in Store ↗
                   </a>
-                  <span style={{ fontSize: '0.6875rem', color: '#71717A', fontFamily: "'JetBrains Mono', monospace" }}>
+                  <span style={{ fontSize: '0.6875rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
                     Verified: {selectedDrawerItem.last_ping}
                   </span>
                 </div>
@@ -1806,7 +2318,7 @@ export default function ConsolePage() {
 
               {/* Module 2: Forensic Price Diagnostic */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <span style={{ fontSize: '0.6875rem', fontWeight: 600, letterSpacing: '0.05em', color: '#71717A', textTransform: 'uppercase' }}>
+                <span style={{ fontSize: '0.6875rem', fontWeight: 500, letterSpacing: '0.05em', color: '#888888', textTransform: 'uppercase', fontFamily: "'Geist', sans-serif" }}>
                   FORENSIC PRICE DIAGNOSTIC
                 </span>
 
@@ -1815,28 +2327,28 @@ export default function ConsolePage() {
                     display: 'grid',
                     gridTemplateColumns: '1fr 1fr',
                     gap: '14px',
-                    border: '1px solid #27272A',
+                    border: '1px solid #1F1F1F',
                     borderRadius: '8px',
                     padding: '16px',
                     backgroundColor: '#000000',
                   }}
                 >
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                    <span style={{ fontSize: '0.6875rem', color: '#71717A', textTransform: 'uppercase' }}>CURRENT SHELF PRICE</span>
-                    <span style={{ fontSize: '1.125rem', fontWeight: 600, color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace" }}>
+                    <span style={{ fontSize: '0.6875rem', color: '#666666', textTransform: 'uppercase', fontFamily: "'Geist', sans-serif" }}>CURRENT SHELF PRICE</span>
+                    <span style={{ fontSize: '1.125rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>
                       EGP {selectedDrawerItem.current_price_egp?.toLocaleString()}
                     </span>
-                    <span style={{ fontSize: '0.6875rem', marginTop: '2px', color: drawerIsMarkup ? '#FB7185' : '#34D399', fontFamily: "'JetBrains Mono', monospace", fontWeight: 500 }}>
+                    <span style={{ fontSize: '0.6875rem', marginTop: '2px', color: drawerIsMarkup ? '#FB7185' : '#00DF8F', fontFamily: "'Geist Mono', monospace", fontWeight: 500 }}>
                       {drawerIsMarkup ? `+${selectedDrawerItem.delta_pct}% OVER BASELINE` : `${selectedDrawerItem.delta_pct}% UNDER BASELINE`}
                     </span>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                    <span style={{ fontSize: '0.6875rem', color: '#71717A', textTransform: 'uppercase' }}>90-DAY BASELINE MEDIAN</span>
-                    <span style={{ fontSize: '1.125rem', fontWeight: 600, color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace" }}>
+                    <span style={{ fontSize: '0.6875rem', color: '#666666', textTransform: 'uppercase', fontFamily: "'Geist', sans-serif" }}>90-DAY BASELINE MEDIAN</span>
+                    <span style={{ fontSize: '1.125rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>
                       EGP {selectedDrawerItem.baseline_price_egp?.toLocaleString()}
                     </span>
-                    <span style={{ fontSize: '0.6875rem', marginTop: '2px', color: '#71717A' }}>
+                    <span style={{ fontSize: '0.6875rem', marginTop: '2px', color: '#666666', fontFamily: "'Geist', sans-serif" }}>
                       Rolling Cairo benchmark
                     </span>
                   </div>
@@ -1844,8 +2356,8 @@ export default function ConsolePage() {
 
                 <div
                   style={{
-                    border: '1px solid #27272A',
-                    borderLeft: `3px solid ${drawerIsMarkup ? '#FB7185' : '#34D399'}`,
+                    border: '1px solid #1F1F1F',
+                    borderLeft: `3px solid ${drawerIsMarkup ? '#FB7185' : '#00DF8F'}`,
                     borderRadius: '6px',
                     padding: '12px 14px',
                     fontSize: '0.8125rem',
@@ -1853,10 +2365,10 @@ export default function ConsolePage() {
                     backgroundColor: '#000000',
                   }}
                 >
-                  <div style={{ fontWeight: 600, marginBottom: '2px', color: drawerIsMarkup ? '#FB7185' : '#34D399' }}>
+                  <div style={{ fontWeight: 500, marginBottom: '2px', color: drawerIsMarkup ? '#FB7185' : '#00DF8F', fontFamily: "'Geist', sans-serif" }}>
                     TRUTH INDEX VERDICT
                   </div>
-                  <div style={{ color: '#A1A1AA' }}>
+                  <div style={{ color: '#888888', fontFamily: "'Geist', sans-serif" }}>
                     {drawerIsMarkup
                       ? 'CRITICAL GHOST MARKUP — Price artificially inflated prior to promotional cycle to manufacture synthetic discount magnitude.'
                       : 'VERIFIED REAL DEAL — Authentic markdown verified below 90-day rolling domestic shelf median.'}
@@ -1866,13 +2378,13 @@ export default function ConsolePage() {
 
               {/* Module 3: 90-Day Trend Sparkline */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <span style={{ fontSize: '0.6875rem', fontWeight: 600, letterSpacing: '0.05em', color: '#71717A', textTransform: 'uppercase' }}>
+                <span style={{ fontSize: '0.6875rem', fontWeight: 500, letterSpacing: '0.05em', color: '#888888', textTransform: 'uppercase', fontFamily: "'Geist', sans-serif" }}>
                   90-DAY PRICE TRAJECTORY & SPIKE ANALYSIS
                 </span>
 
                 <div
                   style={{
-                    border: '1px solid #27272A',
+                    border: '1px solid #1F1F1F',
                     borderRadius: '8px',
                     padding: '14px',
                     backgroundColor: '#000000',
@@ -1883,19 +2395,19 @@ export default function ConsolePage() {
                 >
                   <div style={{ width: '100%', height: '80px' }}>
                     <svg width="100%" height="80" viewBox="0 0 480 80" preserveAspectRatio="none" fill="none">
-                      <line x1="10" y1="45" x2="470" y2="45" stroke="#27272A" strokeWidth="1" strokeDasharray="4 4" />
+                      <line x1="10" y1="45" x2="470" y2="45" stroke="#1F1F1F" strokeWidth="1" strokeDasharray="4 4" />
                       <path
                         d={drawerIsMarkup ? 'M 20 45 L 140 45 L 220 44 L 300 18 L 380 14 L 460 14' : 'M 20 34 L 140 34 L 220 36 L 300 56 L 380 60 L 460 60'}
-                        stroke={drawerIsMarkup ? '#FB7185' : '#34D399'}
+                        stroke={drawerIsMarkup ? '#FB7185' : '#00DF8F'}
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       />
-                      <circle cx="460" cy={drawerIsMarkup ? 14 : 60} r="3.5" fill={drawerIsMarkup ? '#FB7185' : '#34D399'} />
+                      <circle cx="460" cy={drawerIsMarkup ? 14 : 60} r="3.5" fill={drawerIsMarkup ? '#FB7185' : '#00DF8F'} />
                     </svg>
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.6875rem', color: '#71717A', fontFamily: "'JetBrains Mono', monospace" }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.6875rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
                     <span>90D AGO</span>
                     <span>45D (PRE-SALE SPIKE)</span>
                     <span>TODAY: EGP {selectedDrawerItem.current_price_egp?.toLocaleString()}</span>
@@ -1905,38 +2417,38 @@ export default function ConsolePage() {
 
               {/* Module 4: Landed Cost & Arbitrage Benchmark */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <span style={{ fontSize: '0.6875rem', fontWeight: 600, letterSpacing: '0.05em', color: '#71717A', textTransform: 'uppercase' }}>
+                <span style={{ fontSize: '0.6875rem', fontWeight: 500, letterSpacing: '0.05em', color: '#888888', textTransform: 'uppercase', fontFamily: "'Geist', sans-serif" }}>
                   LANDED IMPORT COST & ARBITRAGE BENCHMARK
                 </span>
 
                 <div
                   style={{
-                    border: '1px solid #27272A',
+                    border: '1px solid #1F1F1F',
                     borderRadius: '8px',
                     overflow: 'hidden',
                     backgroundColor: '#000000',
                     fontSize: '0.75rem',
                   }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', borderBottom: '1px solid #18181B' }}>
-                    <span style={{ color: '#71717A' }}>Domestic Cairo Retail Shelf</span>
-                    <span style={{ color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace", fontWeight: 500 }}>EGP {drawerDomestic.toLocaleString()}</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', borderBottom: '1px solid #1F1F1F' }}>
+                    <span style={{ color: '#888888', fontFamily: "'Geist', sans-serif" }}>Domestic Cairo Retail Shelf</span>
+                    <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace", fontWeight: 500 }}>EGP {drawerDomestic.toLocaleString()}</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', borderBottom: '1px solid #18181B' }}>
-                    <span style={{ color: '#71717A' }}>Declared CIF Cargo Import (USD converted)</span>
-                    <span style={{ color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace" }}>EGP {drawerCif.toLocaleString()} (${drawerBaseUsd})</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', borderBottom: '1px solid #1F1F1F' }}>
+                    <span style={{ color: '#888888', fontFamily: "'Geist', sans-serif" }}>Declared CIF Cargo Import (USD converted)</span>
+                    <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>EGP {drawerCif.toLocaleString()} (${drawerBaseUsd})</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', borderBottom: '1px solid #18181B' }}>
-                    <span style={{ color: '#71717A' }}>Customs Duty (10%)</span>
-                    <span style={{ color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace" }}>EGP {drawerCustoms.toLocaleString()}</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', borderBottom: '1px solid #1F1F1F' }}>
+                    <span style={{ color: '#888888', fontFamily: "'Geist', sans-serif" }}>Customs Duty (10%)</span>
+                    <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>EGP {drawerCustoms.toLocaleString()}</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', borderBottom: '1px solid #18181B' }}>
-                    <span style={{ color: '#71717A' }}>Value-Added Tax (14% VAT)</span>
-                    <span style={{ color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace" }}>EGP {drawerVat.toLocaleString()}</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', borderBottom: '1px solid #1F1F1F' }}>
+                    <span style={{ color: '#888888', fontFamily: "'Geist', sans-serif" }}>Value-Added Tax (14% VAT)</span>
+                    <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>EGP {drawerVat.toLocaleString()}</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', backgroundColor: '#18181B', fontWeight: 600 }}>
-                    <span style={{ color: '#FFFFFF' }}>Total Landed Cost Settlement</span>
-                    <span style={{ color: '#FFFFFF', fontFamily: "'JetBrains Mono', monospace" }}>EGP {drawerTotalLanded.toLocaleString()}</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', backgroundColor: '#0A0A0A', fontWeight: 500 }}>
+                    <span style={{ color: '#EDEDED', fontFamily: "'Geist', sans-serif" }}>Total Landed Cost Settlement</span>
+                    <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>EGP {drawerTotalLanded.toLocaleString()}</span>
                   </div>
                 </div>
 
@@ -1944,7 +2456,7 @@ export default function ConsolePage() {
                   style={{
                     padding: '10px 12px',
                     borderRadius: '6px',
-                    border: '1px solid #27272A',
+                    border: '1px solid #1F1F1F',
                     backgroundColor: '#000000',
                     fontSize: '0.75rem',
                     display: 'flex',
@@ -1952,10 +2464,10 @@ export default function ConsolePage() {
                     justifyContent: 'space-between',
                   }}
                 >
-                  <span style={{ fontWeight: 600, color: drawerHasAdvantage ? '#34D399' : '#EDEDED' }}>
+                  <span style={{ fontWeight: 500, color: drawerHasAdvantage ? '#00DF8F' : '#EDEDED', fontFamily: "'Geist', sans-serif" }}>
                     {drawerHasAdvantage ? 'IMPORT RECOMMENDED' : 'BUY LOCAL PREFERRED'}
                   </span>
-                  <span style={{ fontFamily: "'JetBrains Mono', monospace", color: '#A1A1AA' }}>
+                  <span style={{ fontFamily: "'Geist Mono', monospace", color: '#888888' }}>
                     {drawerHasAdvantage ? `+EGP ${drawerNetSaved.toLocaleString()} margin saved` : 'Domestic shelf is optimal'}
                   </span>
                 </div>
@@ -1963,7 +2475,7 @@ export default function ConsolePage() {
 
               {/* Module 5: Alert Trigger Settings */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <span style={{ fontSize: '0.6875rem', fontWeight: 600, letterSpacing: '0.05em', color: '#71717A', textTransform: 'uppercase' }}>
+                <span style={{ fontSize: '0.6875rem', fontWeight: 500, letterSpacing: '0.05em', color: '#888888', textTransform: 'uppercase', fontFamily: "'Geist', sans-serif" }}>
                   PRICE ALERT NOTIFICATION TRIGGER
                 </span>
 
@@ -1974,7 +2486,7 @@ export default function ConsolePage() {
                       display: 'flex',
                       alignItems: 'center',
                       backgroundColor: '#000000',
-                      border: '1px solid #27272A',
+                      border: '1px solid #1F1F1F',
                       borderRadius: '6px',
                       height: '38px',
                       overflow: 'hidden',
@@ -1984,14 +2496,14 @@ export default function ConsolePage() {
                       style={{
                         fontSize: '0.75rem',
                         fontWeight: 500,
-                        color: '#71717A',
+                        color: '#666666',
                         padding: '0 12px',
-                        backgroundColor: '#18181B',
+                        backgroundColor: '#0A0A0A',
                         height: '100%',
                         display: 'flex',
                         alignItems: 'center',
-                        fontFamily: "'JetBrains Mono', monospace",
-                        borderRight: '1px solid #27272A',
+                        fontFamily: "'Geist Mono', monospace",
+                        borderRight: '1px solid #1F1F1F',
                       }}
                     >
                       EGP
@@ -2010,7 +2522,7 @@ export default function ConsolePage() {
                         padding: '0 12px',
                         outline: 'none',
                         height: '100%',
-                        fontFamily: "'JetBrains Mono', monospace",
+                        fontFamily: "'Geist Mono', monospace",
                       }}
                     />
                   </div>
@@ -2019,7 +2531,7 @@ export default function ConsolePage() {
                     type="button"
                     onClick={handleSaveAlert}
                     style={{
-                      backgroundColor: alertSavedSuccess ? '#34D399' : '#FFFFFF',
+                      backgroundColor: alertSavedSuccess ? '#00DF8F' : '#FFFFFF',
                       color: '#000000',
                       fontSize: '0.75rem',
                       fontWeight: 500,
@@ -2030,6 +2542,7 @@ export default function ConsolePage() {
                       cursor: 'pointer',
                       whiteSpace: 'nowrap',
                       transition: 'background-color 150ms ease',
+                      fontFamily: "'Geist', sans-serif",
                     }}
                   >
                     {alertSavedSuccess ? '✓ Saved' : 'Save Alert Rule'}
@@ -2052,6 +2565,386 @@ export default function ConsolePage() {
         }}
       />
 
+      {/* Password Management Modal */}
+      {passwordModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1000,
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '16px',
+            boxSizing: 'border-box',
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !passwordLoading) {
+              setPasswordModalOpen(false);
+            }
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: '#000000',
+              border: '1px solid #1F1F1F',
+              borderRadius: '8px',
+              maxWidth: '440px',
+              width: '100%',
+              padding: '24px',
+              boxSizing: 'border-box',
+              boxShadow: '0 24px 60px rgba(0, 0, 0, 0.95)',
+              position: 'relative',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '18px',
+            }}
+          >
+            {/* Modal Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <h2 style={{ fontSize: '1.0625rem', fontWeight: 500, color: '#EDEDED', margin: 0, fontFamily: "'Geist', sans-serif" }}>
+                  {isEmailPasswordActive ? 'Change Password' : 'Set Direct Password'}
+                </h2>
+                <p style={{ fontSize: '0.8125rem', color: '#888888', marginTop: '4px', marginBottom: 0, fontFamily: "'Geist', sans-serif" }}>
+                  {isEmailPasswordActive
+                    ? 'Enter a new master password for email credential login.'
+                    : 'Set a direct password so you can log in with both Google and email.'}
+                </p>
+              </div>
+              <button
+                type="button"
+                disabled={passwordLoading}
+                onClick={() => setPasswordModalOpen(false)}
+                aria-label="Close"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#666666',
+                  fontSize: '1.25rem',
+                  cursor: 'pointer',
+                  padding: '4px',
+                  lineHeight: 1,
+                  transition: 'color 120ms ease',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#EDEDED')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#666666')}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Form */}
+            <form onSubmit={handleSavePassword} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {/* New Password */}
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <label
+                    htmlFor="settings-new-password"
+                    style={{
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      color: '#666666',
+                      letterSpacing: '0.04em',
+                      textTransform: 'uppercase',
+                      margin: 0,
+                      fontFamily: "'Geist', sans-serif",
+                    }}
+                  >
+                    NEW PASSWORD
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleSuggestPassword}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#00DF8F',
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      padding: 0,
+                      textDecoration: 'underline',
+                      fontFamily: "'Geist', sans-serif",
+                    }}
+                  >
+                    Suggest Strong
+                  </button>
+                </div>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    id="settings-new-password"
+                    type={showNewPassword ? 'text' : 'password'}
+                    required
+                    value={newPassword}
+                    onChange={(e) => {
+                      setNewPassword(e.target.value);
+                      setPasswordError('');
+                    }}
+                    placeholder="••••••••••••"
+                    style={{
+                      backgroundColor: '#000000',
+                      border: '1px solid #1F1F1F',
+                      color: '#EDEDED',
+                      fontSize: '0.875rem',
+                      padding: '0 40px 0 12px',
+                      height: '40px',
+                      borderRadius: '6px',
+                      outline: 'none',
+                      width: '100%',
+                      boxSizing: 'border-box',
+                      transition: 'border-color 150ms ease',
+                      fontFamily: "'Geist Mono', monospace",
+                    }}
+                    onFocus={(e) => (e.target.style.borderColor = '#333333')}
+                    onBlur={(e) => (e.target.style.borderColor = '#1F1F1F')}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword((prev) => !prev)}
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      color: '#666666',
+                      cursor: 'pointer',
+                      padding: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {showNewPassword ? (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                        <line x1="1" y1="1" x2="23" y2="23" />
+                      </svg>
+                    ) : (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+
+                {/* Password Strength Indicator */}
+                {newPassword && (
+                  <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ display: 'flex', gap: '4px', flex: 1 }}>
+                      <div
+                        style={{
+                          height: '3px',
+                          flex: 1,
+                          borderRadius: '2px',
+                          backgroundColor: pwdStrength.score >= 1 ? pwdStrength.color : '#1F1F1F',
+                          transition: 'background-color 200ms ease',
+                        }}
+                      />
+                      <div
+                        style={{
+                          height: '3px',
+                          flex: 1,
+                          borderRadius: '2px',
+                          backgroundColor: pwdStrength.score >= 2 ? pwdStrength.color : '#1F1F1F',
+                          transition: 'background-color 200ms ease',
+                        }}
+                      />
+                      <div
+                        style={{
+                          height: '3px',
+                          flex: 1,
+                          borderRadius: '2px',
+                          backgroundColor: pwdStrength.score >= 3 ? pwdStrength.color : '#1F1F1F',
+                          transition: 'background-color 200ms ease',
+                        }}
+                      />
+                    </div>
+                    <span style={{ fontSize: '0.6875rem', color: pwdStrength.color, fontWeight: 500, fontFamily: "'Geist Mono', monospace" }}>
+                      {pwdStrength.label}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Confirm Password */}
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <label
+                  htmlFor="settings-confirm-password"
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 500,
+                    color: '#666666',
+                    letterSpacing: '0.04em',
+                    textTransform: 'uppercase',
+                    marginBottom: '8px',
+                    display: 'block',
+                    fontFamily: "'Geist', sans-serif",
+                  }}
+                >
+                  CONFIRM PASSWORD
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    id="settings-confirm-password"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      setPasswordError('');
+                    }}
+                    placeholder="••••••••••••"
+                    style={{
+                      backgroundColor: '#000000',
+                      border: '1px solid #1F1F1F',
+                      color: '#EDEDED',
+                      fontSize: '0.875rem',
+                      padding: '0 40px 0 12px',
+                      height: '40px',
+                      borderRadius: '6px',
+                      outline: 'none',
+                      width: '100%',
+                      boxSizing: 'border-box',
+                      transition: 'border-color 150ms ease',
+                      fontFamily: "'Geist Mono', monospace",
+                    }}
+                    onFocus={(e) => (e.target.style.borderColor = '#333333')}
+                    onBlur={(e) => (e.target.style.borderColor = '#1F1F1F')}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      color: '#666666',
+                      cursor: 'pointer',
+                      padding: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {showConfirmPassword ? (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                        <line x1="1" y1="1" x2="23" y2="23" />
+                      </svg>
+                    ) : (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {passwordError && (
+                <div
+                  style={{
+                    fontSize: '0.8125rem',
+                    color: '#FB7185',
+                    backgroundColor: '#0A0A0A',
+                    border: '1px solid #222222',
+                    borderRadius: '6px',
+                    padding: '10px 12px',
+                    lineHeight: 1.5,
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '10px',
+                    fontFamily: "'Geist', sans-serif",
+                  }}
+                >
+                  <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>✕</span>
+                  <div style={{ wordBreak: 'break-word' }}>{passwordError}</div>
+                </div>
+              )}
+
+              {passwordSuccess && (
+                <div
+                  style={{
+                    fontSize: '0.8125rem',
+                    color: '#00DF8F',
+                    backgroundColor: '#0A0A0A',
+                    border: '1px solid #222222',
+                    borderRadius: '6px',
+                    padding: '10px 12px',
+                    lineHeight: 1.5,
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '10px',
+                    fontFamily: "'Geist', sans-serif",
+                  }}
+                >
+                  <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>✓</span>
+                  <div style={{ wordBreak: 'break-word' }}>{passwordSuccess}</div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '6px' }}>
+                <button
+                  type="button"
+                  disabled={passwordLoading}
+                  onClick={() => setPasswordModalOpen(false)}
+                  style={{
+                    padding: '7px 14px',
+                    fontSize: '0.8125rem',
+                    backgroundColor: 'transparent',
+                    border: '1px solid #222222',
+                    color: '#888888',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    transition: 'all 120ms ease',
+                    fontFamily: "'Geist', sans-serif",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = '#EDEDED';
+                    e.currentTarget.style.borderColor = '#333333';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = '#888888';
+                    e.currentTarget.style.borderColor = '#222222';
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={passwordLoading}
+                  style={{
+                    padding: '7px 16px',
+                    fontSize: '0.8125rem',
+                    fontWeight: 500,
+                    backgroundColor: '#FFFFFF',
+                    border: 'none',
+                    color: '#000000',
+                    borderRadius: '6px',
+                    cursor: passwordLoading ? 'not-allowed' : 'pointer',
+                    opacity: passwordLoading ? 0.6 : 1,
+                    transition: 'opacity 150ms ease',
+                    fontFamily: "'Geist', sans-serif",
+                  }}
+                >
+                  {passwordLoading ? 'Saving...' : 'Save Password'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       <style>{`
         @keyframes pulseDot {
           0%, 100% { opacity: 1; transform: scale(1); }
@@ -2061,7 +2954,8 @@ export default function ConsolePage() {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
         }
-      `}</style>
+      `}
+      </style>
     </div>
   );
 }

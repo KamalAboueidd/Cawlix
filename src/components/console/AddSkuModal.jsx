@@ -191,9 +191,9 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
     >
       <div
         style={{
-          backgroundColor: '#0A0A0A',
-          border: '1px solid #27272A',
-          borderRadius: '12px',
+          backgroundColor: '#000000',
+          border: '1px solid #1F1F1F',
+          borderRadius: '8px',
           maxWidth: '520px',
           width: '100%',
           padding: '24px',
@@ -207,10 +207,10 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
           <div>
-            <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#FFFFFF', letterSpacing: '-0.015em' }}>
+            <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 500, color: '#EDEDED', letterSpacing: '-0.015em', fontFamily: "'Geist', sans-serif" }}>
               Track Target SKU Node
             </h2>
-            <p style={{ margin: '6px 0 0 0', fontSize: '0.8125rem', color: '#888888', lineHeight: 1.45 }}>
+            <p style={{ margin: '6px 0 0 0', fontSize: '0.8125rem', color: '#888888', lineHeight: 1.45, fontFamily: "'Geist', sans-serif" }}>
               Enter an Egyptian retail node URL or canonical identifier to begin continuous telemetry ingestion.
             </p>
           </div>
@@ -219,16 +219,25 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
             onClick={onClose}
             style={{
               background: 'transparent',
-              border: '1px solid #27272A',
-              color: '#71717A',
-              fontFamily: "'JetBrains Mono', monospace",
+              border: '1px solid #222222',
+              color: '#888888',
+              fontFamily: "'Geist Mono', monospace",
               fontSize: '10px',
               fontWeight: 500,
-              padding: '2px 6px',
+              padding: '2px 7px',
               borderRadius: '4px',
               cursor: 'pointer',
               lineHeight: 1.2,
               flexShrink: 0,
+              transition: 'all 120ms ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = '#EDEDED';
+              e.currentTarget.style.borderColor = '#333333';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = '#888888';
+              e.currentTarget.style.borderColor = '#222222';
             }}
             title="Press Escape to close"
           >
@@ -240,9 +249,14 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
         {errorMsg && (
           <div
             style={{
-              color: '#EF4444',
+              color: '#FB7185',
+              backgroundColor: '#0A0A0A',
+              border: '1px solid #222222',
+              borderRadius: '6px',
+              padding: '10px 12px',
               fontSize: '0.8125rem',
               lineHeight: 1.4,
+              fontFamily: "'Geist', sans-serif",
             }}
           >
             {errorMsg}
@@ -257,11 +271,12 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
               htmlFor="sku-url-input-jsx"
               style={{
                 fontSize: '0.75rem',
-                color: '#A1A1AA',
+                color: '#666666',
                 textTransform: 'uppercase',
                 letterSpacing: '0.04em',
                 marginBottom: '8px',
                 fontWeight: 500,
+                fontFamily: "'Geist', sans-serif",
               }}
             >
               RETAIL NODE URL OR CANONICAL SKU
@@ -275,7 +290,7 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
               placeholder="https://www.amazon.eg/dp/... or B0CHX..."
               style={{
                 backgroundColor: '#000000',
-                border: '1px solid #27272A',
+                border: '1px solid #1F1F1F',
                 fontSize: '0.8125rem',
                 color: '#EDEDED',
                 padding: '0 12px',
@@ -285,9 +300,10 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                 outline: 'none',
                 boxSizing: 'border-box',
                 transition: 'border-color 150ms ease',
+                fontFamily: "'Geist Mono', monospace",
               }}
-              onFocus={(e) => (e.target.style.borderColor = '#71717A')}
-              onBlur={(e) => (e.target.style.borderColor = '#27272A')}
+              onFocus={(e) => (e.target.style.borderColor = '#333333')}
+              onBlur={(e) => (e.target.style.borderColor = '#1F1F1F')}
               autoComplete="off"
             />
           </div>
@@ -297,11 +313,12 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
             <label
               style={{
                 fontSize: '0.75rem',
-                color: '#A1A1AA',
+                color: '#666666',
                 textTransform: 'uppercase',
                 letterSpacing: '0.04em',
                 marginBottom: '8px',
                 fontWeight: 500,
+                fontFamily: "'Geist', sans-serif",
               }}
             >
               DOMESTIC RETAIL NODE
@@ -315,10 +332,10 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                     type="button"
                     onClick={() => setSelectedNode(node.id)}
                     style={{
-                      backgroundColor: isActive ? '#18181B' : '#000000',
-                      border: `1px solid ${isActive ? '#FFFFFF' : '#27272A'}`,
-                      color: isActive ? '#FFFFFF' : '#888888',
-                      fontFamily: "'JetBrains Mono', monospace",
+                      backgroundColor: isActive ? '#111111' : '#000000',
+                      border: `1px solid ${isActive ? '#333333' : '#222222'}`,
+                      color: isActive ? '#EDEDED' : '#888888',
+                      fontFamily: "'Geist Mono', monospace",
                       fontSize: '11px',
                       fontWeight: isActive ? 600 : 500,
                       padding: '5px 10px',
@@ -340,11 +357,12 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
               htmlFor="target-alert-price-jsx"
               style={{
                 fontSize: '0.75rem',
-                color: '#A1A1AA',
+                color: '#666666',
                 textTransform: 'uppercase',
                 letterSpacing: '0.04em',
                 marginBottom: '8px',
                 fontWeight: 500,
+                fontFamily: "'Geist', sans-serif",
               }}
             >
               TARGET ALERT THRESHOLD (EGP)
@@ -354,7 +372,7 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                 display: 'flex',
                 alignItems: 'center',
                 backgroundColor: '#000000',
-                border: '1px solid #27272A',
+                border: '1px solid #1F1F1F',
                 borderRadius: '6px',
                 height: '40px',
                 overflow: 'hidden',
@@ -364,14 +382,14 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                 style={{
                   fontSize: '11px',
                   fontWeight: 500,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  color: '#71717A',
+                  fontFamily: "'Geist Mono', monospace",
+                  color: '#666666',
                   padding: '0 12px',
-                  backgroundColor: '#18181B',
+                  backgroundColor: '#0A0A0A',
                   height: '100%',
                   display: 'flex',
                   alignItems: 'center',
-                  borderRight: '1px solid #27272A',
+                  borderRight: '1px solid #1F1F1F',
                   userSelect: 'none',
                 }}
               >
@@ -390,7 +408,7 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                   background: 'transparent',
                   border: 'none',
                   fontSize: '0.8125rem',
-                  fontFamily: "'JetBrains Mono', monospace",
+                  fontFamily: "'Geist Mono', monospace",
                   color: '#EDEDED',
                   padding: '0 12px',
                   height: '100%',
@@ -404,8 +422,8 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
           <div
             style={{
               padding: '10px 12px',
-              backgroundColor: '#111111',
-              border: '1px solid #27272A',
+              backgroundColor: '#000000',
+              border: '1px solid #1F1F1F',
               borderRadius: '6px',
             }}
           >
@@ -429,9 +447,8 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                   height: '14px',
                   cursor: 'pointer',
                 }}
-              >
-              </input>
-              <span style={{ fontSize: '0.75rem', color: '#A1A1AA', lineHeight: 1.4 }}>
+              />
+              <span style={{ fontSize: '0.75rem', color: '#888888', lineHeight: 1.4, fontFamily: "'Geist', sans-serif" }}>
                 Instant Webhook/Email dispatch if a sub-second price glitch (&gt;30% drop) is detected.
               </span>
             </label>
@@ -446,7 +463,7 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
               gap: '12px',
               marginTop: '4px',
               paddingTop: '16px',
-              borderTop: '1px solid #27272A',
+              borderTop: '1px solid #1F1F1F',
             }}
           >
             <button
@@ -454,12 +471,22 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
               onClick={onClose}
               style={{
                 background: 'transparent',
-                border: 'none',
+                border: '1px solid #222222',
                 fontSize: '0.8125rem',
                 color: '#888888',
                 cursor: 'pointer',
-                padding: '6px 10px',
-                borderRadius: '4px',
+                padding: '6px 14px',
+                borderRadius: '6px',
+                transition: 'all 120ms ease',
+                fontFamily: "'Geist', sans-serif",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = '#EDEDED';
+                e.currentTarget.style.borderColor = '#333333';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = '#888888';
+                e.currentTarget.style.borderColor = '#222222';
               }}
             >
               Cancel
@@ -481,13 +508,8 @@ export default function AddSkuModal({ isOpen, onClose, onSuccess }) {
                 alignItems: 'center',
                 gap: '8px',
                 opacity: isSubmitting ? 0.7 : 1,
-                transition: 'background-color 150ms ease',
-              }}
-              onMouseEnter={(e) => {
-                if (!isSubmitting) e.currentTarget.style.backgroundColor = '#E4E4E7';
-              }}
-              onMouseLeave={(e) => {
-                if (!isSubmitting) e.currentTarget.style.backgroundColor = '#FFFFFF';
+                transition: 'opacity 150ms ease',
+                fontFamily: "'Geist', sans-serif",
               }}
             >
               <span>{isSubmitting ? 'Initializing Telemetry...' : 'Initialize Telemetry'}</span>
