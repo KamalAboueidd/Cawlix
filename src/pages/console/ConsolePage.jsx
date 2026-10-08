@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import AddSkuModal from '../../components/console/AddSkuModal';
+import MultiPlatformIntelligence from '../../components/console/MultiPlatformIntelligence';
 import cawlixLogo from '../../assets/ICon.png';
 
 // Domestic telemetry nodes cluster definitions
@@ -42,7 +43,14 @@ export default function ConsolePage() {
 
   const [trackedItems, setTrackedItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'nodes' | 'tracker' | 'logs' | 'settings'
+  const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const paramTab = new URLSearchParams(window.location.search).get('tab');
+      if (paramTab) return paramTab;
+      if (window.location.pathname.includes('/intelligence')) return 'intelligence';
+    }
+    return 'overview';
+  }); // 'overview' | 'intelligence' | 'nodes' | 'tracker' | 'logs' | 'settings'
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [probingSkuId, setProbingSkuId] = useState(null);
@@ -664,6 +672,18 @@ export default function ConsolePage() {
                 ),
               },
               {
+                id: 'intelligence',
+                label: 'Market Matrix',
+                badge: '12 PLATFORMS',
+                icon: (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect width="18" height="18" x="3" y="3" rx="2" />
+                    <path d="M3 9h18" />
+                    <path d="M9 21V9" />
+                  </svg>
+                ),
+              },
+              {
                 id: 'nodes',
                 label: 'Telemetry Nodes',
                 badge: '5 ACTIVE',
@@ -1069,6 +1089,7 @@ export default function ConsolePage() {
               <div>
                 <h1 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#EDEDED', margin: '0 0 4px 0', letterSpacing: '-0.02em' }}>
                   {activeTab === 'overview' && 'Telemetry Control Dashboard'}
+                  {activeTab === 'intelligence' && 'Multi-Platform E-Commerce Intelligence'}
                   {activeTab === 'nodes' && 'Domestic Telemetry Nodes'}
                   {activeTab === 'tracker' && 'Tracked SKU Surveillance'}
                   {activeTab === 'logs' && 'System Logs & Glitch Radar Feed'}
@@ -1076,6 +1097,7 @@ export default function ConsolePage() {
                 </h1>
                 <p style={{ fontSize: '0.8125rem', color: '#888888', margin: 0 }}>
                   {activeTab === 'overview' && 'Real-time retail price monitoring, baseline forensics, and arbitrage analytics.'}
+                  {activeTab === 'intelligence' && 'Unified comparison matrix, fake-discount forensic auditor, and material specs across 12 Egyptian platforms.'}
                   {activeTab === 'nodes' && 'Active scraping infrastructure and network latency health for domestic retailers.'}
                   {activeTab === 'tracker' && 'Continuous 90-day rolling baseline tracking for targeted Cairo retail items.'}
                   {activeTab === 'logs' && 'High-frequency price anomaly intercepts and database mutation events.'}
@@ -1111,6 +1133,24 @@ export default function ConsolePage() {
                   }}
                 >
                   Overview
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('intelligence')}
+                  style={{
+                    backgroundColor: activeTab === 'intelligence' ? '#161616' : 'transparent',
+                    color: activeTab === 'intelligence' ? '#EDEDED' : '#888888',
+                    fontSize: '0.75rem',
+                    fontWeight: 500,
+                    padding: '4px 10px',
+                    borderRadius: '4px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'all 120ms ease',
+                    fontFamily: "'Geist', sans-serif",
+                  }}
+                >
+                  Market Matrix
                 </button>
                 <button
                   type="button"
@@ -1384,6 +1424,11 @@ export default function ConsolePage() {
 
             {/* ── 5. TAB VIEWS ── */}
 
+            {/* TAB: Multi-Platform Market Matrix (12 Egyptian Platforms) */}
+            {activeTab === 'intelligence' && (
+              <MultiPlatformIntelligence />
+            )}
+
             {/* TAB: Telemetry Nodes */}
             {activeTab === 'nodes' && (
               <section style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
@@ -1626,10 +1671,10 @@ export default function ConsolePage() {
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
                     <div>
                       <h3 style={{ fontSize: '0.9375rem', fontWeight: 500, color: '#EDEDED', margin: 0, fontFamily: "'Geist', sans-serif" }}>
-                        AUTHENTICATION & LINKED ACCOUNTS
+                        Authentication & Connected Accounts
                       </h3>
                       <p style={{ fontSize: '0.8125rem', color: '#888888', marginTop: '4px', marginBottom: 0, fontFamily: "'Geist', sans-serif" }}>
-                        Manage connected login providers, multi-factor credentials, and dual-authentication redundancy.
+                        Linking multiple sign-in methods allows redundant access to your Cawlix workspace.
                       </p>
                     </div>
                     <span
@@ -1686,7 +1731,7 @@ export default function ConsolePage() {
                         <div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist', sans-serif" }}>
-                              Email / Password
+                              Email & Password
                             </span>
                             <span
                               style={{
@@ -1696,11 +1741,15 @@ export default function ConsolePage() {
                                 borderRadius: '4px',
                                 fontFamily: "'Geist Mono', monospace",
                                 backgroundColor: '#000000',
-                                color: isEmailPasswordActive ? '#00DF8F' : '#666666',
+                                color: isEmailPasswordActive ? '#10B981' : '#666666',
                                 border: isEmailPasswordActive ? '1px solid #222222' : '1px solid #1F1F1F',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
                               }}
                             >
-                              {isEmailPasswordActive ? 'Active' : 'Not set'}
+                              {isEmailPasswordActive && <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#10B981' }} />}
+                              {isEmailPasswordActive ? 'Active' : 'Unset'}
                             </span>
                           </div>
                           <div style={{ fontSize: '0.75rem', color: '#888888', fontFamily: "'Geist Mono', monospace", marginTop: '2px' }}>
@@ -1739,7 +1788,7 @@ export default function ConsolePage() {
                           e.currentTarget.style.borderColor = '#222222';
                         }}
                       >
-                        {isEmailPasswordActive ? 'Change Password' : 'Set Password'}
+                        {isEmailPasswordActive ? 'Update Password' : 'Set Password'}
                       </button>
                     </div>
 
@@ -1791,20 +1840,20 @@ export default function ConsolePage() {
                                 borderRadius: '4px',
                                 fontFamily: "'Geist Mono', monospace",
                                 backgroundColor: '#000000',
-                                color: isGoogleConnected ? '#00DF8F' : '#F5A623',
-                                border: '1px solid #222222',
+                                color: isGoogleConnected ? '#10B981' : '#666666',
+                                border: isGoogleConnected ? '1px solid #222222' : '1px solid #1F1F1F',
                                 display: 'inline-flex',
                                 alignItems: 'center',
-                                gap: '4px',
+                                gap: '6px',
                               }}
                             >
                               {isGoogleConnected ? (
                                 <>
-                                  <span>✓</span>
+                                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10B981', display: 'inline-block' }} />
                                   <span>Connected {googleEmail ? `(${googleEmail})` : ''}</span>
                                 </>
                               ) : (
-                                'Not Connected'
+                                'Not connected'
                               )}
                             </span>
                           </div>
@@ -2314,6 +2363,45 @@ export default function ConsolePage() {
                     Verified: {selectedDrawerItem.last_ping}
                   </span>
                 </div>
+
+                {/* Direct Action: Inspect 12 Egyptian Platforms Matrix */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedDrawerItem(null);
+                    setActiveTab('intelligence');
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    width: '100%',
+                    padding: '8px 14px',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                    color: '#10B981',
+                    fontWeight: 600,
+                    fontSize: '0.75rem',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontFamily: "'Geist', sans-serif",
+                    transition: 'all 150ms ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(16, 185, 129, 0.18)';
+                    e.currentTarget.style.borderColor = '#10B981';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+                    e.currentTarget.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                  }}
+                >
+                  <span>Compare Across 12 Egyptian Platforms</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </button>
               </div>
 
               {/* Module 2: Forensic Price Diagnostic */}

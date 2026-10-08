@@ -76,7 +76,7 @@ export default function LoginPage() {
     setErrorMsg('');
     setLoading(true);
     try {
-      const redirectUrl = `${window.location.origin}${getReturnTo()}`;
+      const redirectUrl = `${window.location.origin}/dashboard`;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: { redirectTo: redirectUrl },
@@ -123,7 +123,7 @@ export default function LoginPage() {
             error.message?.toLowerCase().includes('invalid credentials')
           ) {
             setErrorMsg(
-              "Invalid credentials. If you previously signed up using Google, please use 'Continue with Google' or use 'Forgot password' to set a direct password."
+              "Invalid credentials. If you previously registered using Google, please use 'Continue with Google' or use 'Forgot password' to set a local password."
             );
             setHighlightGoogle(true);
             setTimeout(() => setHighlightGoogle(false), 6000);
@@ -131,12 +131,12 @@ export default function LoginPage() {
             setErrorMsg(error.message);
           }
         } else if (data?.session) {
-          window.location.href = getReturnTo();
+          window.location.href = getReturnTo() === '/console' ? '/dashboard' : getReturnTo();
         }
       } else {
         const { error } = await supabase.auth.signInWithOtp({
           email: cleanEmail,
-          options: { emailRedirectTo: `${window.location.origin}${getReturnTo()}` },
+          options: { emailRedirectTo: `${window.location.origin}/dashboard` },
         });
         if (error) {
           setErrorMsg(error.message);
@@ -162,7 +162,7 @@ export default function LoginPage() {
         alignItems: 'center',
         padding: '40px 16px 28px 16px',
         boxSizing: 'border-box',
-        fontFamily: "'Inter', 'Geist', system-ui, -apple-system, sans-serif",
+        fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
         color: '#EDEDED',
       }}
     >
@@ -200,6 +200,7 @@ export default function LoginPage() {
               fontWeight: 600,
               color: '#FFFFFF',
               letterSpacing: '-0.02em',
+              fontFamily: "'Geist', sans-serif",
             }}
           >
             Cawlix
@@ -212,10 +213,10 @@ export default function LoginPage() {
         style={{
           maxWidth: '400px',
           width: '100%',
-          border: '1px solid #27272A',
-          borderRadius: '12px',
+          border: '1px solid #1F1F1F',
+          borderRadius: '8px',
           padding: '32px',
-          backgroundColor: '#0A0A0A',
+          backgroundColor: '#000000',
           boxSizing: 'border-box',
           marginBottom: 'auto',
           boxShadow: '0 24px 48px -12px rgba(0, 0, 0, 0.9)',
@@ -226,10 +227,11 @@ export default function LoginPage() {
           <h1
             style={{
               fontSize: '1.25rem',
-              fontWeight: 600,
-              color: '#FFFFFF',
+              fontWeight: 500,
+              color: '#EDEDED',
               letterSpacing: '-0.02em',
               margin: 0,
+              fontFamily: "'Geist', sans-serif",
             }}
           >
             Sign in to Cawlix
@@ -241,6 +243,7 @@ export default function LoginPage() {
               marginTop: '6px',
               marginBottom: 0,
               lineHeight: 1.5,
+              fontFamily: "'Geist', sans-serif",
             }}
           >
             Enter your telemetry terminal and monitoring engine.
@@ -256,8 +259,8 @@ export default function LoginPage() {
             style={{
               width: '100%',
               height: '42px',
-              border: highlightGoogle ? '1px solid #10B981' : '1px solid #27272A',
-              backgroundColor: highlightGoogle ? 'rgba(16, 185, 129, 0.08)' : '#111111',
+              border: highlightGoogle ? '1px solid #10B981' : '1px solid #222222',
+              backgroundColor: highlightGoogle ? 'rgba(16, 185, 129, 0.08)' : '#0A0A0A',
               color: '#EDEDED',
               fontSize: '0.875rem',
               fontWeight: 500,
@@ -269,18 +272,19 @@ export default function LoginPage() {
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.6 : 1,
               transition: 'all 200ms ease',
+              fontFamily: "'Geist', sans-serif",
               boxShadow: highlightGoogle
                 ? '0 0 16px rgba(16, 185, 129, 0.35), 0 0 0 2px rgba(16, 185, 129, 0.25)'
                 : 'none',
               animation: highlightGoogle ? 'pulseGoogle 1.6s infinite ease-in-out' : 'none',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = highlightGoogle ? 'rgba(16, 185, 129, 0.15)' : '#18181B';
-              e.currentTarget.style.borderColor = highlightGoogle ? '#10B981' : '#3F3F46';
+              e.currentTarget.style.backgroundColor = highlightGoogle ? 'rgba(16, 185, 129, 0.15)' : '#111111';
+              e.currentTarget.style.borderColor = highlightGoogle ? '#10B981' : '#333333';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = highlightGoogle ? 'rgba(16, 185, 129, 0.08)' : '#111111';
-              e.currentTarget.style.borderColor = highlightGoogle ? '#10B981' : '#27272A';
+              e.currentTarget.style.backgroundColor = highlightGoogle ? 'rgba(16, 185, 129, 0.08)' : '#0A0A0A';
+              e.currentTarget.style.borderColor = highlightGoogle ? '#10B981' : '#222222';
             }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
@@ -295,15 +299,16 @@ export default function LoginPage() {
 
         {/* Institutional Divider */}
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '22px 0' }}>
-          <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: '1px', backgroundColor: '#27272A' }} />
+          <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: '1px', backgroundColor: '#1F1F1F' }} />
           <span
             style={{
               position: 'relative',
-              backgroundColor: '#0A0A0A',
+              backgroundColor: '#000000',
               padding: '0 10px',
               fontSize: '0.75rem',
-              color: '#71717A',
+              color: '#666666',
               fontWeight: 500,
+              fontFamily: "'Geist Mono', monospace",
             }}
           >
             OR
@@ -311,7 +316,7 @@ export default function LoginPage() {
         </div>
 
         {/* Auth Method Tabs */}
-        <div style={{ display: 'flex', borderBottom: '1px solid #27272A', marginBottom: '18px', gap: '20px' }}>
+        <div style={{ display: 'flex', borderBottom: '1px solid #1F1F1F', marginBottom: '18px', gap: '20px' }}>
           <button
             type="button"
             onClick={() => setMode('password')}
@@ -319,12 +324,13 @@ export default function LoginPage() {
               background: 'transparent',
               border: 'none',
               fontSize: '0.8125rem',
-              fontWeight: mode === 'password' ? 600 : 400,
-              color: mode === 'password' ? '#FFFFFF' : '#71717A',
-              borderBottom: mode === 'password' ? '2px solid #FFFFFF' : '2px solid transparent',
+              fontWeight: mode === 'password' ? 500 : 400,
+              color: mode === 'password' ? '#EDEDED' : '#666666',
+              borderBottom: mode === 'password' ? '2px solid #EDEDED' : '2px solid transparent',
               padding: '0 0 8px 0',
               cursor: 'pointer',
               transition: 'color 150ms ease',
+              fontFamily: "'Geist', sans-serif",
             }}
           >
             Credentials
@@ -336,12 +342,13 @@ export default function LoginPage() {
               background: 'transparent',
               border: 'none',
               fontSize: '0.8125rem',
-              fontWeight: mode === 'magic' ? 600 : 400,
-              color: mode === 'magic' ? '#FFFFFF' : '#71717A',
-              borderBottom: mode === 'magic' ? '2px solid #FFFFFF' : '2px solid transparent',
+              fontWeight: mode === 'magic' ? 500 : 400,
+              color: mode === 'magic' ? '#EDEDED' : '#666666',
+              borderBottom: mode === 'magic' ? '2px solid #EDEDED' : '2px solid transparent',
               padding: '0 0 8px 0',
               cursor: 'pointer',
               transition: 'color 150ms ease',
+              fontFamily: "'Geist', sans-serif",
             }}
           >
             Magic Link
@@ -356,11 +363,12 @@ export default function LoginPage() {
               style={{
                 fontSize: '0.75rem',
                 fontWeight: 500,
-                color: '#A1A1AA',
+                color: '#666666',
                 letterSpacing: '0.04em',
                 textTransform: 'uppercase',
                 marginBottom: '8px',
                 display: 'block',
+                fontFamily: "'Geist', sans-serif",
               }}
             >
               WORK OR PERSONAL EMAIL
@@ -374,19 +382,20 @@ export default function LoginPage() {
               placeholder="name@domain.com"
               style={{
                 backgroundColor: '#000000',
-                border: '1px solid #27272A',
+                border: '1px solid #1F1F1F',
                 color: '#EDEDED',
                 fontSize: '0.875rem',
                 padding: '0 12px',
-                height: '42px',
+                height: '40px',
                 borderRadius: '6px',
                 outline: 'none',
                 width: '100%',
                 boxSizing: 'border-box',
                 transition: 'border-color 150ms ease',
+                fontFamily: "'Geist Mono', monospace",
               }}
-              onFocus={(e) => (e.target.style.borderColor = '#71717A')}
-              onBlur={(e) => (e.target.style.borderColor = '#27272A')}
+              onFocus={(e) => (e.target.style.borderColor = '#333333')}
+              onBlur={(e) => (e.target.style.borderColor = '#1F1F1F')}
             />
           </div>
 
@@ -398,11 +407,12 @@ export default function LoginPage() {
                   style={{
                     fontSize: '0.75rem',
                     fontWeight: 500,
-                    color: '#A1A1AA',
+                    color: '#666666',
                     letterSpacing: '0.04em',
                     textTransform: 'uppercase',
                     marginBottom: 0,
                     display: 'block',
+                    fontFamily: "'Geist', sans-serif",
                   }}
                 >
                   PASSWORD
@@ -414,8 +424,9 @@ export default function LoginPage() {
                     color: '#888888',
                     textDecoration: 'none',
                     transition: 'color 150ms ease',
+                    fontFamily: "'Geist', sans-serif",
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = '#FFFFFF')}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = '#EDEDED')}
                   onMouseLeave={(e) => (e.currentTarget.style.color = '#888888')}
                 >
                   Forgot password?
@@ -430,19 +441,20 @@ export default function LoginPage() {
                 placeholder="••••••••••••"
                 style={{
                   backgroundColor: '#000000',
-                  border: '1px solid #27272A',
+                  border: '1px solid #1F1F1F',
                   color: '#EDEDED',
                   fontSize: '0.875rem',
                   padding: '0 12px',
-                  height: '42px',
+                  height: '40px',
                   borderRadius: '6px',
                   outline: 'none',
                   width: '100%',
                   boxSizing: 'border-box',
                   transition: 'border-color 150ms ease',
+                  fontFamily: "'Geist Mono', monospace",
                 }}
-                onFocus={(e) => (e.target.style.borderColor = '#71717A')}
-                onBlur={(e) => (e.target.style.borderColor = '#27272A')}
+                onFocus={(e) => (e.target.style.borderColor = '#333333')}
+                onBlur={(e) => (e.target.style.borderColor = '#1F1F1F')}
               />
             </div>
           )}
@@ -451,18 +463,16 @@ export default function LoginPage() {
             <div
               style={{
                 fontSize: '0.8125rem',
-                color: highlightGoogle ? '#FBBF24' : '#F87171',
-                backgroundColor: '#0A0A0A',
-                border: highlightGoogle ? '1px solid rgba(245, 158, 11, 0.4)' : '1px solid rgba(239, 68, 68, 0.35)',
-                borderRadius: '8px',
+                color: highlightGoogle ? '#F59E0B' : '#EF4444',
+                backgroundColor: highlightGoogle ? 'rgba(245, 158, 11, 0.08)' : 'rgba(239, 68, 68, 0.08)',
+                border: highlightGoogle ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid rgba(239, 68, 68, 0.25)',
+                borderRadius: '6px',
                 padding: '12px 14px',
                 lineHeight: 1.5,
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: '10px',
-                boxShadow: highlightGoogle
-                  ? '0 4px 14px rgba(245, 158, 11, 0.08)'
-                  : '0 4px 14px rgba(239, 68, 68, 0.06)',
+                fontFamily: "'Geist', sans-serif",
               }}
             >
               <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>
@@ -476,16 +486,16 @@ export default function LoginPage() {
             <div
               style={{
                 fontSize: '0.8125rem',
-                color: '#34D399',
-                backgroundColor: '#0A0A0A',
-                border: '1px solid rgba(16, 185, 129, 0.35)',
-                borderRadius: '8px',
+                color: '#10B981',
+                backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                border: '1px solid rgba(16, 185, 129, 0.25)',
+                borderRadius: '6px',
                 padding: '12px 14px',
                 lineHeight: 1.5,
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: '10px',
-                boxShadow: '0 4px 14px rgba(16, 185, 129, 0.08)',
+                fontFamily: "'Geist', sans-serif",
               }}
             >
               <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>✓</span>

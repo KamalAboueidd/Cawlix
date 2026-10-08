@@ -300,10 +300,11 @@ export default function ForgotPasswordPage() {
         return;
       }
 
-      setSuccessMsg('✓ Password set successfully. You can now log in using either Google or your email and password.');
-      setTimeout(() => {
-        window.location.href = '/console';
-      }, 1400);
+        setSuccessMsg('Password established successfully. You can now access Cawlix using either Google or your email and password.');
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 1500);
+      }
     } catch (err) {
       setErrorMsg(err.message || 'Password update failed.');
       setLoading(false);
@@ -321,7 +322,7 @@ export default function ForgotPasswordPage() {
         alignItems: 'center',
         padding: '40px 16px 28px 16px',
         boxSizing: 'border-box',
-        fontFamily: "'Inter', 'Geist', system-ui, -apple-system, sans-serif",
+        fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
         color: '#EDEDED',
       }}
     >
@@ -359,6 +360,7 @@ export default function ForgotPasswordPage() {
               fontWeight: 600,
               color: '#FFFFFF',
               letterSpacing: '-0.02em',
+              fontFamily: "'Geist', sans-serif",
             }}
           >
             Cawlix
@@ -371,10 +373,10 @@ export default function ForgotPasswordPage() {
         style={{
           maxWidth: '420px',
           width: '100%',
-          border: '1px solid #27272A',
-          borderRadius: '12px',
+          border: '1px solid #1F1F1F',
+          borderRadius: '8px',
           padding: '32px',
-          backgroundColor: '#0A0A0A',
+          backgroundColor: '#000000',
           boxSizing: 'border-box',
           marginBottom: 'auto',
           boxShadow: '0 24px 48px -12px rgba(0, 0, 0, 0.9)',
@@ -385,10 +387,11 @@ export default function ForgotPasswordPage() {
           <h1
             style={{
               fontSize: '1.25rem',
-              fontWeight: 600,
-              color: '#FFFFFF',
+              fontWeight: 500,
+              color: '#EDEDED',
               letterSpacing: '-0.02em',
               margin: 0,
+              fontFamily: "'Geist', sans-serif",
             }}
           >
             {step === 'request' && 'Reset Password'}
@@ -402,6 +405,7 @@ export default function ForgotPasswordPage() {
               marginTop: '8px',
               marginBottom: 0,
               lineHeight: 1.5,
+              fontFamily: "'Geist', sans-serif",
             }}
           >
             {step === 'request' && 'Enter your account email to receive a 6-digit verification code.'}
@@ -419,10 +423,11 @@ export default function ForgotPasswordPage() {
                 style={{
                   fontSize: '0.75rem',
                   fontWeight: 500,
-                  color: '#A1A1AA',
+                  color: '#666666',
                   letterSpacing: '0.04em',
                   textTransform: 'uppercase',
                   marginBottom: '8px',
+                  fontFamily: "'Geist', sans-serif",
                 }}
               >
                 ACCOUNT EMAIL
@@ -436,18 +441,19 @@ export default function ForgotPasswordPage() {
                 placeholder="name@domain.com"
                 style={{
                   backgroundColor: '#000000',
-                  border: '1px solid #27272A',
+                  border: '1px solid #1F1F1F',
                   color: '#EDEDED',
                   fontSize: '0.875rem',
                   padding: '0 12px',
-                  height: '42px',
+                  height: '40px',
                   borderRadius: '6px',
                   outline: 'none',
                   width: '100%',
                   boxSizing: 'border-box',
                   transition: 'border-color 150ms ease',
+                  fontFamily: "'Geist Mono', monospace",
                 }}
-                onFocus={(e) => (e.target.style.borderColor = '#71717A')}
+                onFocus={(e) => (e.target.style.borderColor = '#333333')}
                 onBlur={(e) => (e.target.style.borderColor = '#27272A')}
               />
             </div>

@@ -83,7 +83,7 @@ function AppRoutes() {
     return <TrackerPage />;
   }
 
-  if (cleanRoute === '/console' || cleanRoute.startsWith('/console/')) {
+  if (cleanRoute === '/console' || cleanRoute.startsWith('/console/') || cleanRoute === '/dashboard' || cleanRoute.startsWith('/dashboard/')) {
     return (
       <ProtectedRoute>
         <ConsolePage />

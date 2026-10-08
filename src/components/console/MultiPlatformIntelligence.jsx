@@ -1,0 +1,1765 @@
+import { useState, useMemo, useEffect } from 'react';
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ReferenceLine,
+  CartesianGrid,
+} from 'recharts';
+import {
+  PLATFORMS_REGISTRY,
+  SEEDED_MASTER_PRODUCTS,
+  getMarketIntelligenceProducts,
+  evaluateDiscountIntegrity,
+} from '../../services/marketIntelligenceData';
+import {
+  AlertTriangle,
+  ExternalLink,
+  Layers,
+  Sparkles,
+  CheckCircle2,
+  Search,
+} from 'lucide-react';
+
+export default function MultiPlatformIntelligence({ defaultProductId = null, onSelectSku = null }) {
+  const [products, setProducts] = useState(SEEDED_MASTER_PRODUCTS);
+  const [loading, setLoading] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(defaultProductId || SEEDED_MASTER_PRODUCTS[0].id);
+  const [timeRange, setTimeRange] = useState('90D'); // '30D' | '60D' | '90D'
+  const [stockFilter, setStockFilter] = useState('ALL'); // 'ALL' | 'IN_STOCK' | 'DEALS_ONLY'
+  const [platformSearch, setPlatformSearch] = useState('');
+  const [focusedPlatform, setFocusedPlatform] = useState(null);
+
+  // Load live Supabase data on mount
+  useEffect(() => {
+    async function loadData() {
+      setLoading(true);
+      try {
+        const liveProducts = await getMarketIntelligenceProducts();
+        if (liveProducts && liveProducts.length > 0) {
+          setProducts(liveProducts);
+          if (!defaultProductId && !selectedProductId) {
+            setSelectedProductId(liveProducts[0].id);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching market intelligence data:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, [defaultProductId]);
+
+  // Current active product
+  const activeProduct = useMemo(() => {
+    return products.find((p) => p.id === selectedProductId) || products[0];
+  }, [products, selectedProductId]);
+
+  // Merged platform listings with registry details
+  const enrichedListings = useMemo(() => {
+    if (!activeProduct) return [];
+
+    const listingsMap = new Map();
+    (activeProduct.platform_listings || []).forEach((item) => {
+      listingsMap.set(item.platform_id, item);
+    });
+
+    return PLATFORMS_REGISTRY.map((platform) => {
+      const listing = listingsMap.get(platform.id) || {
+        platform_id: platform.id,
+        current_price: 0,
+        original_price: 0,
+        discount_pct: 0,
+        stock_status: 'OUT_OF_STOCK',
+        rating: 0,
+        reviews_count: 0,
+        warranty_info: 'Platform status unavailable',
+        material_notes: 'Listing not currently indexed',
+        listing_url: platform.url,
+      };
+
+      return {
+        ...platform,
+        ...listing,
+        hasListing: listing.current_price > 0,
+      };
+    });
+  }, [activeProduct]);
+
+  // Identify lowest price listing among in-stock items
+  const lowestInStockListing = useMemo(() => {
+    const validInStock = enrichedListings.filter(
+      (item) => (item.stock_status === 'IN_STOCK' || item.stock_status === 'LOW_STOCK') && item.current_price > 0
+    );
+    if (!validInStock.length) return null;
+    return [...validInStock].sort((a, b) => a.current_price - b.current_price)[0];
+  }, [enrichedListings]);
+
+  // Identify highest price listing among in-stock items for spread calculation
+  const highestInStockListing = useMemo(() => {
+    const validInStock = enrichedListings.filter(
+      (item) => (item.stock_status === 'IN_STOCK' || item.stock_status === 'LOW_STOCK') && item.current_price > 0
+    );
+    if (!validInStock.length) return null;
+    return [...validInStock].sort((a, b) => b.current_price - a.current_price)[0];
+  }, [enrichedListings]);
+
+  // Calculate market price spread (Arbitrage gap)
+  const priceSpread = useMemo(() => {
+    if (!lowestInStockListing || !highestInStockListing) return 0;
+    return Math.max(0, highestInStockListing.current_price - lowestInStockListing.current_price);
+  }, [lowestInStockListing, highestInStockListing]);
+
+  // Truth index / Fake-discount detector verdict
+  const discountVerdict = useMemo(() => {
+    return evaluateDiscountIntegrity(activeProduct, lowestInStockListing);
+  }, [activeProduct, lowestInStockListing]);
+
+  // Filtered listings for Central Comparison Matrix
+  const displayedListings = useMemo(() => {
+    let list = [...enrichedListings];
+
+    if (stockFilter === 'IN_STOCK') {
+      list = list.filter((i) => i.stock_status === 'IN_STOCK' || i.stock_status === 'LOW_STOCK');
+    } else if (stockFilter === 'DEALS_ONLY') {
+      list = list.filter((i) => i.discount_pct > 0 && i.current_price > 0);
+    }
+
+    if (platformSearch.trim()) {
+      const q = platformSearch.toLowerCase().trim();
+      list = list.filter(
+        (i) =>
+          i.name.toLowerCase().includes(q) ||
+          i.domain.toLowerCase().includes(q) ||
+          (i.warranty_info && i.warranty_info.toLowerCase().includes(q)) ||
+          (i.material_notes && i.material_notes.toLowerCase().includes(q))
+      );
+    }
+
+    // Sort: In-Stock first (sorted by price ascending), then Out of Stock
+    return list.sort((a, b) => {
+      const aInStock = (a.stock_status === 'IN_STOCK' || a.stock_status === 'LOW_STOCK') && a.current_price > 0;
+      const bInStock = (b.stock_status === 'IN_STOCK' || b.stock_status === 'LOW_STOCK') && b.current_price > 0;
+
+      if (aInStock && !bInStock) return -1;
+      if (!aInStock && bInStock) return 1;
+      if (aInStock && bInStock) return a.current_price - b.current_price;
+      return 0;
+    });
+  }, [enrichedListings, stockFilter, platformSearch]);
+
+  // Slice price history based on selected time range
+  const chartData = useMemo(() => {
+    if (!activeProduct?.price_history) return [];
+    const allPoints = activeProduct.price_history;
+    if (timeRange === '30D') {
+      return allPoints.slice(-4);
+    }
+    if (timeRange === '60D') {
+      return allPoints.slice(-6);
+    }
+    return allPoints;
+  }, [activeProduct, timeRange]);
+
+  // Top tracked platforms for multi-line comparison in Recharts
+  const activeComparisonPlatforms = useMemo(() => {
+    const candidateIds = ['AMZN_EG', 'NOON_EG', 'BTECH_EG', 'TRADELINE', 'JUMIA_EG', 'RAYA_EG'];
+    return candidateIds.filter((id) => enrichedListings.some((l) => l.platform_id === id && l.current_price > 0));
+  }, [enrichedListings]);
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '24px',
+        width: '100%',
+        backgroundColor: '#000000',
+        color: '#EDEDED',
+        fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+      }}
+    >
+      {/* ── TOP BAR: MASTER PRODUCT SELECTOR & TELEMETRY CLUSTER STATUS ── */}
+      <section
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px',
+          borderBottom: '1px solid #1F1F1F',
+          paddingBottom: '20px',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '12px',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span
+              style={{
+                fontSize: '0.6875rem',
+                fontWeight: 600,
+                color: '#10B981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                border: '1px solid rgba(16, 185, 129, 0.25)',
+                padding: '2px 8px',
+                borderRadius: '4px',
+                letterSpacing: '0.04em',
+                fontFamily: "'Geist Mono', monospace",
+              }}
+            >
+              12 DOMESTIC NODES SYNCHRONIZED
+            </span>
+            <span style={{ fontSize: '0.75rem', color: '#666666' }}>·</span>
+            <span style={{ fontSize: '0.75rem', color: '#888888', fontFamily: "'Geist Mono', monospace" }}>
+              Active Cairo & Giza Shelf Audits
+            </span>
+          </div>
+
+          {/* Quick Refresh Status */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span
+              style={{
+                display: 'inline-block',
+                width: '6px',
+                height: '6px',
+                borderRadius: '50%',
+                backgroundColor: '#10B981',
+                boxShadow: '0 0 6px rgba(16, 185, 129, 0.6)',
+              }}
+            />
+            <span style={{ fontSize: '0.6875rem', color: '#888888', fontFamily: "'Geist Mono', monospace" }}>
+              REALTIME WEBSOCKET FEED
+            </span>
+          </div>
+        </div>
+
+        {/* Master Product Selection Pills (Vercel Tabs) */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            overflowX: 'auto',
+            paddingBottom: '4px',
+          }}
+        >
+          {products.map((item) => {
+            const isSelected = item.id === selectedProductId;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setSelectedProductId(item.id)}
+                style={{
+                  backgroundColor: isSelected ? '#161616' : '#000000',
+                  color: isSelected ? '#EDEDED' : '#888888',
+                  border: isSelected ? '1px solid #333333' : '1px solid #1F1F1F',
+                  padding: '7px 14px',
+                  borderRadius: '6px',
+                  fontSize: '0.8125rem',
+                  fontWeight: isSelected ? 600 : 400,
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  transition: 'all 120ms ease',
+                  fontFamily: "'Geist', sans-serif",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSelected) e.currentTarget.style.borderColor = '#2A2A2A';
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSelected) e.currentTarget.style.borderColor = '#1F1F1F';
+                }}
+              >
+                <span>{item.title.split(' ')[0]} {item.model || item.title.split(' ')[1]}</span>
+                {isSelected && (
+                  <span
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      borderRadius: '50%',
+                      backgroundColor: '#10B981',
+                    }}
+                  />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ── PRODUCT HERO HEADER & SUMMARY METRICS BANNER ── */}
+      <section
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '16px',
+        }}
+      >
+        {/* Product Identity Card */}
+        <div
+          style={{
+            gridColumn: 'span 2',
+            backgroundColor: '#0A0A0A',
+            border: '1px solid #1F1F1F',
+            borderRadius: '8px',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            gap: '12px',
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              <span
+                style={{
+                  fontSize: '0.6875rem',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  color: '#888888',
+                  fontFamily: "'Geist Mono', monospace",
+                }}
+              >
+                {activeProduct.brand} · {activeProduct.category}
+              </span>
+              <span style={{ fontSize: '0.6875rem', color: '#555555' }}>|</span>
+              <span
+                style={{
+                  fontSize: '0.6875rem',
+                  color: '#888888',
+                  fontFamily: "'Geist Mono', monospace",
+                }}
+              >
+                BARCODE: {activeProduct.barcode}
+              </span>
+            </div>
+
+            <h2
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: 600,
+                color: '#EDEDED',
+                margin: 0,
+                letterSpacing: '-0.02em',
+              }}
+            >
+              {activeProduct.title}
+            </h2>
+
+            <p style={{ fontSize: '0.8125rem', color: '#888888', margin: 0, lineHeight: 1.5 }}>
+              {activeProduct.material_summary}
+            </p>
+          </div>
+
+          {/* Quick specs pill strip */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', paddingTop: '6px' }}>
+            {activeProduct.specifications?.water_resistance && (
+              <span
+                style={{
+                  fontSize: '0.6875rem',
+                  color: '#EDEDED',
+                  backgroundColor: '#000000',
+                  border: '1px solid #1F1F1F',
+                  padding: '3px 8px',
+                  borderRadius: '4px',
+                  fontFamily: "'Geist Mono', monospace",
+                }}
+              >
+                {activeProduct.specifications.water_resistance.split('(')[0].trim()}
+              </span>
+            )}
+            {activeProduct.specifications?.chassis_material && (
+              <span
+                style={{
+                  fontSize: '0.6875rem',
+                  color: '#EDEDED',
+                  backgroundColor: '#000000',
+                  border: '1px solid #1F1F1F',
+                  padding: '3px 8px',
+                  borderRadius: '4px',
+                  fontFamily: "'Geist Mono', monospace",
+                }}
+              >
+                {activeProduct.specifications.chassis_material.split('(')[0].trim()}
+              </span>
+            )}
+            {activeProduct.specifications?.weight && (
+              <span
+                style={{
+                  fontSize: '0.6875rem',
+                  color: '#888888',
+                  backgroundColor: '#000000',
+                  border: '1px solid #1F1F1F',
+                  padding: '3px 8px',
+                  borderRadius: '4px',
+                  fontFamily: "'Geist Mono', monospace",
+                }}
+              >
+                Weight: {activeProduct.specifications.weight.split('(')[0].trim()}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Lowest Price ("Best Deal") Stat Card */}
+        <div
+          style={{
+            backgroundColor: '#0A0A0A',
+            border: '1px solid #10B981',
+            borderRadius: '8px',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            gap: '10px',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          {/* Subtle Emerald glow backdrop */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              width: '120px',
+              height: '120px',
+              background: 'radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(0, 0, 0, 0) 70%)',
+              pointerEvents: 'none',
+            }}
+          />
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <span
+              style={{
+                fontSize: '0.6875rem',
+                fontWeight: 600,
+                color: '#10B981',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                fontFamily: "'Geist Mono', monospace",
+              }}
+            >
+              BEST DEAL IN MARKET
+            </span>
+            {lowestInStockListing && (
+              <span
+                style={{
+                  fontSize: '0.6875rem',
+                  fontWeight: 600,
+                  backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                  color: '#10B981',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                  padding: '2px 8px',
+                  borderRadius: '9999px',
+                  fontFamily: "'Geist Mono', monospace",
+                }}
+              >
+                Cheapest at {lowestInStockListing.name}
+              </span>
+            )}
+          </div>
+
+          <div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+              <span
+                style={{
+                  fontSize: '1.875rem',
+                  fontWeight: 700,
+                  color: '#10B981',
+                  fontFamily: "'Geist Mono', monospace",
+                  letterSpacing: '-0.03em',
+                }}
+              >
+                EGP {lowestInStockListing ? lowestInStockListing.current_price.toLocaleString() : 'N/A'}
+              </span>
+              {lowestInStockListing?.discount_pct > 0 && (
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    color: '#888888',
+                    textDecoration: 'line-through',
+                    fontFamily: "'Geist Mono', monospace",
+                  }}
+                >
+                  EGP {lowestInStockListing.original_price.toLocaleString()}
+                </span>
+              )}
+            </div>
+            <span style={{ fontSize: '0.75rem', color: '#888888' }}>
+              {lowestInStockListing ? `Includes official ${lowestInStockListing.warranty_info}` : 'Currently monitoring nodes'}
+            </span>
+          </div>
+
+          {lowestInStockListing && (
+            <a
+              href={lowestInStockListing.listing_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontSize: '0.75rem',
+                color: '#EDEDED',
+                textDecoration: 'none',
+                fontWeight: 500,
+                padding: '6px 10px',
+                borderRadius: '5px',
+                backgroundColor: '#000000',
+                border: '1px solid #1F1F1F',
+                alignSelf: 'flex-start',
+                transition: 'border-color 150ms ease',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#10B981')}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#1F1F1F')}
+            >
+              <span>Direct Link to {lowestInStockListing.name}</span>
+              <ExternalLink size={12} color="#10B981" />
+            </a>
+          )}
+        </div>
+
+        {/* Arbitrage Spread Stat Card */}
+        <div
+          style={{
+            backgroundColor: '#0A0A0A',
+            border: '1px solid #1F1F1F',
+            borderRadius: '8px',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            gap: '10px',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span
+              style={{
+                fontSize: '0.6875rem',
+                fontWeight: 600,
+                color: '#888888',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                fontFamily: "'Geist Mono', monospace",
+              }}
+            >
+              DOMESTIC ARBITRAGE SPREAD
+            </span>
+            <span
+              style={{
+                fontSize: '0.6875rem',
+                color: '#00DF8F',
+                fontFamily: "'Geist Mono', monospace",
+              }}
+            >
+              Max Delta
+            </span>
+          </div>
+
+          <div>
+            <div
+              style={{
+                fontSize: '1.75rem',
+                fontWeight: 600,
+                color: '#EDEDED',
+                fontFamily: "'Geist Mono', monospace",
+                letterSpacing: '-0.02em',
+              }}
+            >
+              EGP {priceSpread.toLocaleString()}
+            </div>
+            <span style={{ fontSize: '0.75rem', color: '#888888' }}>
+              Potential savings across Egypt retail platforms
+            </span>
+          </div>
+
+          <div
+            style={{
+              fontSize: '0.6875rem',
+              color: '#666666',
+              fontFamily: "'Geist Mono', monospace",
+            }}
+          >
+            Range: EGP {lowestInStockListing?.current_price.toLocaleString()} – EGP {highestInStockListing?.current_price.toLocaleString()}
+          </div>
+        </div>
+      </section>
+
+      {/* ── DELIVERABLE A: CENTRAL PRODUCT COMPARISON MATRIX (ITEM INSPECTOR VIEW) ── */}
+      <section
+        style={{
+          backgroundColor: '#0A0A0A',
+          border: '1px solid #1F1F1F',
+          borderRadius: '8px',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        {/* Table Controls & Filter Header */}
+        <div
+          style={{
+            padding: '16px 20px',
+            borderBottom: '1px solid #1F1F1F',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '12px',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <h3
+              style={{
+                fontSize: '0.9375rem',
+                fontWeight: 600,
+                color: '#EDEDED',
+                margin: 0,
+                letterSpacing: '-0.01em',
+              }}
+            >
+              Central Comparison Matrix
+            </h3>
+            <span
+              style={{
+                fontSize: '0.6875rem',
+                color: '#888888',
+                backgroundColor: '#000000',
+                border: '1px solid #1F1F1F',
+                padding: '2px 8px',
+                borderRadius: '4px',
+                fontFamily: "'Geist Mono', monospace",
+              }}
+            >
+              {displayedListings.length} of 12 Platforms
+            </span>
+          </div>
+
+          {/* Filter and Search Bar */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            {/* Filter segmented buttons */}
+            <div
+              style={{
+                display: 'flex',
+                backgroundColor: '#000000',
+                border: '1px solid #1F1F1F',
+                borderRadius: '6px',
+                padding: '2px',
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setStockFilter('ALL')}
+                style={{
+                  backgroundColor: stockFilter === 'ALL' ? '#161616' : 'transparent',
+                  color: stockFilter === 'ALL' ? '#EDEDED' : '#888888',
+                  fontSize: '0.6875rem',
+                  fontWeight: 500,
+                  padding: '3px 9px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontFamily: "'Geist', sans-serif",
+                }}
+              >
+                All (12)
+              </button>
+              <button
+                type="button"
+                onClick={() => setStockFilter('IN_STOCK')}
+                style={{
+                  backgroundColor: stockFilter === 'IN_STOCK' ? '#161616' : 'transparent',
+                  color: stockFilter === 'IN_STOCK' ? '#EDEDED' : '#888888',
+                  fontSize: '0.6875rem',
+                  fontWeight: 500,
+                  padding: '3px 9px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontFamily: "'Geist', sans-serif",
+                }}
+              >
+                In Stock Only
+              </button>
+              <button
+                type="button"
+                onClick={() => setStockFilter('DEALS_ONLY')}
+                style={{
+                  backgroundColor: stockFilter === 'DEALS_ONLY' ? '#161616' : 'transparent',
+                  color: stockFilter === 'DEALS_ONLY' ? '#EDEDED' : '#888888',
+                  fontSize: '0.6875rem',
+                  fontWeight: 500,
+                  padding: '3px 9px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontFamily: "'Geist', sans-serif",
+                }}
+              >
+                Deals Only
+              </button>
+            </div>
+
+            {/* Platform filter search input */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                backgroundColor: '#000000',
+                border: '1px solid #1F1F1F',
+                borderRadius: '6px',
+                padding: '4px 8px',
+                gap: '6px',
+                width: '180px',
+              }}
+            >
+              <Search size={12} color="#666666" />
+              <input
+                type="text"
+                placeholder="Filter platform..."
+                value={platformSearch}
+                onChange={(e) => setPlatformSearch(e.target.value)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#EDEDED',
+                  fontSize: '0.75rem',
+                  outline: 'none',
+                  width: '100%',
+                  fontFamily: "'Geist', sans-serif",
+                }}
+              />
+              {platformSearch && (
+                <button
+                  type="button"
+                  onClick={() => setPlatformSearch('')}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#666666',
+                    cursor: 'pointer',
+                    fontSize: '12px',
+                    padding: 0,
+                  }}
+                >
+                  &times;
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Matrix Table */}
+        <div style={{ overflowX: 'auto', width: '100%' }}>
+          <table
+            style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+              textAlign: 'left',
+              fontSize: '0.8125rem',
+            }}
+          >
+            <thead>
+              <tr
+                style={{
+                  backgroundColor: '#000000',
+                  borderBottom: '1px solid #1F1F1F',
+                  color: '#888888',
+                  fontSize: '0.6875rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  fontFamily: "'Geist Mono', monospace",
+                }}
+              >
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Platform</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Current Price (EGP)</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Original & Discount %</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Stock Status</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Rating & Reviews</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Warranty Info</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Material / Edition Notes</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500, textAlign: 'right' }}>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {displayedListings.map((item) => {
+                const isLowest = lowestInStockListing && item.platform_id === lowestInStockListing.platform_id;
+                const isOutOfStock = item.stock_status === 'OUT_OF_STOCK' || item.current_price === 0;
+                const isLowStock = item.stock_status === 'LOW_STOCK';
+
+                return (
+                  <tr
+                    key={item.platform_id}
+                    style={{
+                      borderBottom: '1px solid #141414',
+                      backgroundColor: isLowest ? 'rgba(16, 185, 129, 0.04)' : '#000000',
+                      borderLeft: isLowest ? '3px solid #10B981' : '3px solid transparent',
+                      opacity: isOutOfStock ? 0.45 : 1,
+                      transition: 'background-color 120ms ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isLowest) e.currentTarget.style.backgroundColor = '#0A0A0A';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isLowest) e.currentTarget.style.backgroundColor = '#000000';
+                    }}
+                  >
+                    {/* Platform details */}
+                    <td style={{ padding: '14px 18px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span
+                            style={{
+                              fontWeight: 600,
+                              color: isOutOfStock ? '#777777' : '#EDEDED',
+                              letterSpacing: '-0.01em',
+                            }}
+                          >
+                            {item.name}
+                          </span>
+                          {isLowest && (
+                            <span
+                              style={{
+                                fontSize: '0.625rem',
+                                fontWeight: 600,
+                                color: '#10B981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                                border: '1px solid rgba(16, 185, 129, 0.3)',
+                                padding: '1px 6px',
+                                borderRadius: '4px',
+                                letterSpacing: '0.02em',
+                                fontFamily: "'Geist Mono', monospace",
+                              }}
+                            >
+                              Cheapest at {item.name}
+                            </span>
+                          )}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span style={{ fontSize: '0.6875rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
+                            {item.domain}
+                          </span>
+                          <span style={{ fontSize: '0.625rem', color: '#444444' }}>•</span>
+                          <span style={{ fontSize: '0.625rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
+                            {item.ping}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Current Price (EGP, Tabular Nums) */}
+                    <td style={{ padding: '14px 18px' }}>
+                      {item.current_price > 0 ? (
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <span
+                            style={{
+                              fontSize: isLowest ? '1.0625rem' : '0.9375rem',
+                              fontWeight: isLowest ? 700 : 600,
+                              color: isLowest ? '#10B981' : '#EDEDED',
+                              fontFamily: "'Geist Mono', monospace",
+                              letterSpacing: '-0.02em',
+                            }}
+                          >
+                            EGP {item.current_price.toLocaleString()}
+                          </span>
+                          <span style={{ fontSize: '0.6875rem', color: '#666666' }}>
+                            {isLowest ? '★ Best Deal' : 'Shelf listing'}
+                          </span>
+                        </div>
+                      ) : (
+                        <span style={{ color: '#555555', fontFamily: "'Geist Mono', monospace", fontSize: '0.75rem' }}>
+                          —
+                        </span>
+                      )}
+                    </td>
+
+                    {/* Original Price & Discount % Badge */}
+                    <td style={{ padding: '14px 18px' }}>
+                      {item.current_price > 0 ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          {item.discount_pct > 0 ? (
+                            <>
+                              <span
+                                style={{
+                                  fontSize: '0.6875rem',
+                                  fontWeight: 600,
+                                  color: item.is_suspicious_markup ? '#FB7185' : '#10B981',
+                                  backgroundColor: item.is_suspicious_markup
+                                    ? 'rgba(251, 113, 133, 0.1)'
+                                    : 'rgba(16, 185, 129, 0.1)',
+                                  border: item.is_suspicious_markup
+                                    ? '1px solid rgba(251, 113, 133, 0.25)'
+                                    : '1px solid rgba(16, 185, 129, 0.25)',
+                                  padding: '2px 7px',
+                                  borderRadius: '9999px',
+                                  fontFamily: "'Geist Mono', monospace",
+                                }}
+                              >
+                                -{item.discount_pct}%
+                              </span>
+                              <span
+                                style={{
+                                  fontSize: '0.75rem',
+                                  color: '#666666',
+                                  textDecoration: 'line-through',
+                                  fontFamily: "'Geist Mono', monospace",
+                                }}
+                              >
+                                EGP {item.original_price?.toLocaleString()}
+                              </span>
+                            </>
+                          ) : (
+                            <span style={{ fontSize: '0.75rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
+                              Standard Price
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <span style={{ color: '#555555', fontSize: '0.75rem' }}>—</span>
+                      )}
+                    </td>
+
+                    {/* Stock Status */}
+                    <td style={{ padding: '14px 18px' }}>
+                      {isOutOfStock ? (
+                        <span
+                          style={{
+                            fontSize: '0.6875rem',
+                            fontWeight: 500,
+                            color: '#666666',
+                            textDecoration: 'line-through',
+                            backgroundColor: '#0F0F0F',
+                            border: '1px solid #222222',
+                            padding: '2px 8px',
+                            borderRadius: '4px',
+                            fontFamily: "'Geist Mono', monospace",
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                          }}
+                        >
+                          Out of Stock
+                        </span>
+                      ) : isLowStock ? (
+                        <span
+                          style={{
+                            fontSize: '0.6875rem',
+                            fontWeight: 500,
+                            color: '#F59E0B',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            border: '1px solid rgba(245, 158, 11, 0.25)',
+                            padding: '2px 8px',
+                            borderRadius: '4px',
+                            fontFamily: "'Geist Mono', monospace",
+                          }}
+                        >
+                          Low Stock
+                        </span>
+                      ) : (
+                        <span
+                          style={{
+                            fontSize: '0.6875rem',
+                            fontWeight: 500,
+                            color: '#10B981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                            border: '1px solid rgba(16, 185, 129, 0.2)',
+                            padding: '2px 8px',
+                            borderRadius: '4px',
+                            fontFamily: "'Geist Mono', monospace",
+                          }}
+                        >
+                          In Stock
+                        </span>
+                      )}
+                    </td>
+
+                    {/* Rating & Reviews */}
+                    <td style={{ padding: '14px 18px' }}>
+                      {item.rating > 0 ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span style={{ color: '#F59E0B', fontSize: '0.75rem' }}>★</span>
+                          <span
+                            style={{
+                              fontWeight: 600,
+                              color: '#EDEDED',
+                              fontFamily: "'Geist Mono', monospace",
+                            }}
+                          >
+                            {item.rating.toFixed(1)}
+                          </span>
+                          <span style={{ fontSize: '0.6875rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
+                            ({item.reviews_count.toLocaleString()})
+                          </span>
+                        </div>
+                      ) : (
+                        <span style={{ color: '#555555', fontSize: '0.75rem' }}>No reviews</span>
+                      )}
+                    </td>
+
+                    {/* Warranty */}
+                    <td style={{ padding: '14px 18px', maxWidth: '180px' }}>
+                      <span
+                        style={{
+                          fontSize: '0.75rem',
+                          color: isOutOfStock ? '#666666' : '#BBBBBB',
+                          lineHeight: 1.4,
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        {item.warranty_info}
+                      </span>
+                    </td>
+
+                    {/* Material & Edition Summary Notes */}
+                    <td style={{ padding: '14px 18px', maxWidth: '200px' }}>
+                      <span
+                        style={{
+                          fontSize: '0.75rem',
+                          color: isOutOfStock ? '#666666' : '#888888',
+                          lineHeight: 1.4,
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        {item.material_notes}
+                      </span>
+                    </td>
+
+                    {/* Action */}
+                    <td style={{ padding: '14px 18px', textAlign: 'right' }}>
+                      <a
+                        href={item.listing_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          fontSize: '0.75rem',
+                          color: isLowest ? '#10B981' : isOutOfStock ? '#666666' : '#EDEDED',
+                          textDecoration: 'none',
+                          fontWeight: 500,
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          border: isLowest ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid #222222',
+                          backgroundColor: '#000000',
+                          transition: 'all 120ms ease',
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderColor = isLowest ? '#10B981' : '#444444';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderColor = isLowest ? 'rgba(16, 185, 129, 0.4)' : '#222222';
+                        }}
+                      >
+                        <span>Visit</span>
+                        <ExternalLink size={10} />
+                      </a>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* ── DELIVERABLE B: PRICE HISTORY & FAKE-DISCOUNT DETECTOR CHART ── */}
+      <section
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gap: '20px',
+        }}
+      >
+        {/* Time-Series Price Fluctuation Chart */}
+        <div
+          style={{
+            gridColumn: 'span 2',
+            backgroundColor: '#0A0A0A',
+            border: '1px solid #1F1F1F',
+            borderRadius: '8px',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
+          }}
+        >
+          {/* Header & 30D/60D/90D Toggle */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '12px',
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h3
+                  style={{
+                    fontSize: '0.9375rem',
+                    fontWeight: 600,
+                    color: '#EDEDED',
+                    margin: 0,
+                    letterSpacing: '-0.01em',
+                  }}
+                >
+                  Cross-Platform Price History Trajectory
+                </h3>
+                <span
+                  style={{
+                    fontSize: '0.625rem',
+                    color: '#10B981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    border: '1px solid rgba(16, 185, 129, 0.25)',
+                    padding: '1px 6px',
+                    borderRadius: '4px',
+                    fontFamily: "'Geist Mono', monospace",
+                  }}
+                >
+                  LIVE ROLLING BUFFER
+                </span>
+              </div>
+              <p style={{ fontSize: '0.75rem', color: '#888888', margin: '4px 0 0 0' }}>
+                Auditing shelf price fluctuations across domestic platforms vs. 90-day baseline median
+              </p>
+            </div>
+
+            {/* Timeframe Selector */}
+            <div
+              style={{
+                display: 'flex',
+                backgroundColor: '#000000',
+                border: '1px solid #1F1F1F',
+                borderRadius: '6px',
+                padding: '2px',
+              }}
+            >
+              {['30D', '60D', '90D'].map((range) => {
+                const isSelected = timeRange === range;
+                return (
+                  <button
+                    key={range}
+                    type="button"
+                    onClick={() => setTimeRange(range)}
+                    style={{
+                      backgroundColor: isSelected ? '#161616' : 'transparent',
+                      color: isSelected ? '#EDEDED' : '#888888',
+                      fontSize: '0.6875rem',
+                      fontWeight: isSelected ? 600 : 400,
+                      padding: '4px 10px',
+                      borderRadius: '4px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontFamily: "'Geist Mono', monospace",
+                    }}
+                  >
+                    {range}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Recharts High-Contrast Pitch-Black LineChart */}
+          <div style={{ width: '100%', height: '280px', marginTop: '8px' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData} margin={{ top: 10, right: 20, left: 20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1A1A1A" vertical={false} />
+                <XAxis
+                  dataKey="date"
+                  stroke="#555555"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={{ stroke: '#222222' }}
+                  fontFamily="'Geist Mono', monospace"
+                />
+                <YAxis
+                  stroke="#555555"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={{ stroke: '#222222' }}
+                  domain={['auto', 'auto']}
+                  tickFormatter={(val) => `${(val / 1000).toFixed(0)}k`}
+                  fontFamily="'Geist Mono', monospace"
+                />
+                <Tooltip
+                  content={({ active, payload, label }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div
+                          style={{
+                            backgroundColor: '#000000',
+                            border: '1px solid #2A2A2A',
+                            borderRadius: '6px',
+                            padding: '10px 14px',
+                            boxShadow: '0 12px 24px rgba(0, 0, 0, 0.8)',
+                            fontSize: '0.75rem',
+                            fontFamily: "'Geist Mono', monospace",
+                          }}
+                        >
+                          <div style={{ color: '#888888', marginBottom: '6px', fontWeight: 500 }}>
+                            {label}
+                          </div>
+                          {payload.map((entry) => (
+                            <div
+                              key={entry.dataKey}
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                gap: '16px',
+                                color: entry.color,
+                                padding: '2px 0',
+                              }}
+                            >
+                              <span>{entry.name}:</span>
+                              <span style={{ fontWeight: 600 }}>EGP {entry.value?.toLocaleString()}</span>
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+
+                {/* 90-Day Baseline Median Reference Line */}
+                <ReferenceLine
+                  y={discountVerdict.baselineMedian}
+                  stroke="#444444"
+                  strokeDasharray="4 4"
+                  label={{
+                    value: `Baseline Median EGP ${discountVerdict.baselineMedian?.toLocaleString()}`,
+                    fill: '#888888',
+                    fontSize: 10,
+                    position: 'insideTopRight',
+                  }}
+                />
+
+                {/* Platform specific lines */}
+                {activeComparisonPlatforms.includes('AMZN_EG') && (
+                  <Line
+                    type="monotone"
+                    dataKey="AMZN_EG"
+                    name="Amazon EG"
+                    stroke="#10B981"
+                    strokeWidth={2}
+                    dot={{ r: 3, fill: '#10B981', strokeWidth: 0 }}
+                    activeDot={{ r: 5 }}
+                  />
+                )}
+                {activeComparisonPlatforms.includes('NOON_EG') && (
+                  <Line
+                    type="monotone"
+                    dataKey="NOON_EG"
+                    name="Noon EG"
+                    stroke="#FFE600"
+                    strokeWidth={1.5}
+                    dot={{ r: 2.5, fill: '#FFE600', strokeWidth: 0 }}
+                  />
+                )}
+                {activeComparisonPlatforms.includes('BTECH_EG') && (
+                  <Line
+                    type="monotone"
+                    dataKey="BTECH_EG"
+                    name="B.TECH"
+                    stroke="#38BDF8"
+                    strokeWidth={1.5}
+                    dot={{ r: 2.5, fill: '#38BDF8', strokeWidth: 0 }}
+                  />
+                )}
+                {activeComparisonPlatforms.includes('TRADELINE') && (
+                  <Line
+                    type="monotone"
+                    dataKey="TRADELINE"
+                    name="Tradeline"
+                    stroke="#A78BFA"
+                    strokeWidth={1.5}
+                    dot={{ r: 2.5, fill: '#A78BFA', strokeWidth: 0 }}
+                  />
+                )}
+                {activeComparisonPlatforms.includes('JUMIA_EG') && (
+                  <Line
+                    type="monotone"
+                    dataKey="JUMIA_EG"
+                    name="Jumia EG"
+                    stroke="#FB7185"
+                    strokeWidth={1.5}
+                    dot={{ r: 2.5, fill: '#FB7185', strokeWidth: 0 }}
+                  />
+                )}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Chart Legend Strip */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '16px',
+              flexWrap: 'wrap',
+              borderTop: '1px solid #191919',
+              paddingTop: '12px',
+              fontSize: '0.6875rem',
+              color: '#888888',
+              fontFamily: "'Geist Mono', monospace",
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10B981' }} />
+              <span>Amazon EG (Lowest)</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#FFE600' }} />
+              <span>Noon EG</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#38BDF8' }} />
+              <span>B.TECH</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#FB7185' }} />
+              <span>Jumia EG (Spike Watch)</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ width: '12px', height: '2px', backgroundColor: '#555555' }} />
+              <span>90D Median Baseline</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Fake-Discount Detector Verdict Panel */}
+        <div
+          style={{
+            backgroundColor: '#0A0A0A',
+            border: discountVerdict.isGenuine
+              ? '1px solid rgba(16, 185, 129, 0.3)'
+              : '1px solid rgba(251, 113, 133, 0.4)',
+            borderRadius: '8px',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            gap: '16px',
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span
+                style={{
+                  fontSize: '0.6875rem',
+                  fontWeight: 600,
+                  color: discountVerdict.isGenuine ? '#10B981' : '#FB7185',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  fontFamily: "'Geist Mono', monospace",
+                }}
+              >
+                FAKE-DISCOUNT DETECTOR ENGINE
+              </span>
+              <span
+                style={{
+                  fontSize: '0.6875rem',
+                  color: '#888888',
+                  fontFamily: "'Geist Mono', monospace",
+                }}
+              >
+                TRUTH INDEX: {discountVerdict.score}/100
+              </span>
+            </div>
+
+            {/* Verdict Badge */}
+            <div
+              style={{
+                backgroundColor: discountVerdict.isGenuine
+                  ? 'rgba(16, 185, 129, 0.1)'
+                  : 'rgba(251, 113, 133, 0.1)',
+                border: discountVerdict.isGenuine
+                  ? '1px solid rgba(16, 185, 129, 0.25)'
+                  : '1px solid rgba(251, 113, 133, 0.3)',
+                borderRadius: '6px',
+                padding: '12px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '6px',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontWeight: 600,
+                  fontSize: '0.8125rem',
+                  color: discountVerdict.isGenuine ? '#10B981' : '#FB7185',
+                  fontFamily: "'Geist', sans-serif",
+                }}
+              >
+                {discountVerdict.isGenuine ? (
+                  <CheckCircle2 size={16} color="#10B981" />
+                ) : (
+                  <AlertTriangle size={16} color="#FB7185" />
+                )}
+                <span>{discountVerdict.verdict}</span>
+              </div>
+              <p
+                style={{
+                  fontSize: '0.75rem',
+                  color: '#EDEDED',
+                  margin: 0,
+                  lineHeight: 1.45,
+                }}
+              >
+                {discountVerdict.explanation}
+              </p>
+            </div>
+          </div>
+
+          {/* Forensics Metric Grid */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '10px',
+              borderTop: '1px solid #1F1F1F',
+              paddingTop: '14px',
+            }}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              <span style={{ fontSize: '0.625rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
+                90-DAY BASELINE MEDIAN
+              </span>
+              <span style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>
+                EGP {discountVerdict.baselineMedian?.toLocaleString()}
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              <span style={{ fontSize: '0.625rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
+                HISTORICAL ALL-TIME LOW
+              </span>
+              <span style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
+                EGP {discountVerdict.lowestEver?.toLocaleString()}
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              <span style={{ fontSize: '0.625rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
+                PRE-SALE INFLATION SPIKE
+              </span>
+              <span
+                style={{
+                  fontSize: '0.9375rem',
+                  fontWeight: 600,
+                  color: discountVerdict.preSpikeInflatedPct > 0 ? '#FB7185' : '#00DF8F',
+                  fontFamily: "'Geist Mono', monospace",
+                }}
+              >
+                {discountVerdict.preSpikeInflatedPct > 0 ? `+${discountVerdict.preSpikeInflatedPct}% Artificial` : '0.0% (Clean)'}
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              <span style={{ fontSize: '0.625rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
+                GENUINE NET SAVING
+              </span>
+              <span style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
+                EGP {discountVerdict.netGenuineSaving?.toLocaleString()}
+              </span>
+            </div>
+          </div>
+
+          <div
+            style={{
+              padding: '8px 10px',
+              backgroundColor: '#000000',
+              border: '1px solid #1F1F1F',
+              borderRadius: '6px',
+              fontSize: '0.6875rem',
+              color: '#888888',
+              lineHeight: 1.4,
+            }}
+          >
+            🛡 <strong>Cawlix Forensics Guard:</strong> Continuously correlates seller list prices against NTRA official import manifests & 90-day domestic price curves.
+          </div>
+        </div>
+      </section>
+
+      {/* ── DELIVERABLE C: SPECIFICATIONS & MATERIAL BREAKDOWN CARD ── */}
+      <section
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gap: '20px',
+        }}
+      >
+        {/* Specifications Key-Value Grid */}
+        <div
+          style={{
+            gridColumn: 'span 2',
+            backgroundColor: '#0A0A0A',
+            border: '1px solid #1F1F1F',
+            borderRadius: '8px',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '16px',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Layers size={16} color="#EDEDED" />
+              <h3
+                style={{
+                  fontSize: '0.9375rem',
+                  fontWeight: 600,
+                  color: '#EDEDED',
+                  margin: 0,
+                  letterSpacing: '-0.01em',
+                }}
+              >
+                Specifications & Material Composition Breakdown
+              </h3>
+            </div>
+            <span
+              style={{
+                fontSize: '0.6875rem',
+                color: '#888888',
+                fontFamily: "'Geist Mono', monospace",
+              }}
+            >
+              master_products.specifications
+            </span>
+          </div>
+
+          {/* Structured Key-Value Grid */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+              gap: '12px',
+            }}
+          >
+            {Object.entries(activeProduct.specifications || {}).map(([key, value]) => {
+              const formattedKey = key
+                .replace(/_/g, ' ')
+                .replace(/\b\w/g, (c) => c.toUpperCase());
+              return (
+                <div
+                  key={key}
+                  style={{
+                    backgroundColor: '#000000',
+                    border: '1px solid #1F1F1F',
+                    borderRadius: '6px',
+                    padding: '10px 14px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '4px',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '0.6875rem',
+                      color: '#666666',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.04em',
+                      fontFamily: "'Geist Mono', monospace",
+                    }}
+                  >
+                    {formattedKey}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '0.8125rem',
+                      color: '#EDEDED',
+                      fontWeight: 500,
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {String(value)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Verified Material Composition & User-Sentiment Consensus Chip */}
+        <div
+          style={{
+            backgroundColor: '#0A0A0A',
+            border: '1px solid #1F1F1F',
+            borderRadius: '8px',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            gap: '16px',
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span
+                style={{
+                  fontSize: '0.6875rem',
+                  fontWeight: 600,
+                  color: '#888888',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  fontFamily: "'Geist Mono', monospace",
+                }}
+              >
+                MATERIAL & QUALITY CONSENSUS
+              </span>
+              <span
+                style={{
+                  fontSize: '0.6875rem',
+                  color: '#10B981',
+                  backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                  border: '1px solid rgba(16, 185, 129, 0.25)',
+                  padding: '2px 8px',
+                  borderRadius: '4px',
+                  fontFamily: "'Geist Mono', monospace",
+                }}
+              >
+                VERIFIED AUTHENTIC
+              </span>
+            </div>
+
+            {/* High-Contrast Summary Chip */}
+            <div
+              style={{
+                backgroundColor: '#000000',
+                border: '1px solid #222222',
+                borderRadius: '6px',
+                padding: '14px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Sparkles size={16} color="#10B981" />
+                <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#EDEDED' }}>
+                  Verified Material Summary
+                </span>
+              </div>
+              <p style={{ fontSize: '0.75rem', color: '#BBBBBB', margin: 0, lineHeight: 1.5 }}>
+                {activeProduct.material_summary}
+              </p>
+            </div>
+
+            {/* User Sentiment Quality Consensus */}
+            {activeProduct.sentiment_consensus && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#888888', fontWeight: 500 }}>
+                    Shopper Sentiment Consensus
+                  </span>
+                  <span style={{ fontSize: '0.6875rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
+                    Based on {activeProduct.sentiment_consensus.total_shopper_reviews?.toLocaleString()} audits
+                  </span>
+                </div>
+
+                {/* Progress Meters */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {/* Durability */}
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.6875rem', color: '#CCCCCC', marginBottom: '4px' }}>
+                      <span>Durability Consensus</span>
+                      <span style={{ color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
+                        {activeProduct.sentiment_consensus.durability_consensus}%
+                      </span>
+                    </div>
+                    <div style={{ width: '100%', height: '4px', backgroundColor: '#1A1A1A', borderRadius: '2px', overflow: 'hidden' }}>
+                      <div
+                        style={{
+                          width: `${activeProduct.sentiment_consensus.durability_consensus}%`,
+                          height: '100%',
+                          backgroundColor: '#10B981',
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Scratch Resistance */}
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.6875rem', color: '#CCCCCC', marginBottom: '4px' }}>
+                      <span>Finish & Scratch Resistance</span>
+                      <span style={{ color: '#38BDF8', fontFamily: "'Geist Mono', monospace" }}>
+                        {activeProduct.sentiment_consensus.finish_scratch_resistance}%
+                      </span>
+                    </div>
+                    <div style={{ width: '100%', height: '4px', backgroundColor: '#1A1A1A', borderRadius: '2px', overflow: 'hidden' }}>
+                      <div
+                        style={{
+                          width: `${activeProduct.sentiment_consensus.finish_scratch_resistance}%`,
+                          height: '100%',
+                          backgroundColor: '#38BDF8',
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sentiment summary quote */}
+                <div
+                  style={{
+                    fontSize: '0.75rem',
+                    color: '#888888',
+                    fontStyle: 'italic',
+                    lineHeight: 1.45,
+                    borderLeft: '2px solid #2E2E2E',
+                    paddingLeft: '10px',
+                    marginTop: '4px',
+                  }}
+                >
+                  "{activeProduct.sentiment_consensus.verdict_summary}"
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              fontSize: '0.6875rem',
+              color: '#666666',
+              borderTop: '1px solid #1F1F1F',
+              paddingTop: '10px',
+              fontFamily: "'Geist Mono', monospace",
+            }}
+          >
+            <span>PLATFORMS COMPARED: 12</span>
+            <span>NTRA TELECOM CERTIFIED</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
