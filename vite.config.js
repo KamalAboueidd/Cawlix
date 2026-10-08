@@ -55,6 +55,8 @@ function apiDevServerPlugin() {
                 2
               )
             );
+          }
+
           if (url.pathname === '/api/v1/scraper/fetch') {
             const targetUrl = url.searchParams.get('url');
             if (!targetUrl) {

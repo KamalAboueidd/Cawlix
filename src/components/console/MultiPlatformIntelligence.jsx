@@ -15,6 +15,7 @@ import {
   getMarketIntelligenceProducts,
   evaluateDiscountIntegrity,
 } from '../../services/marketIntelligenceData';
+import { auditProductListing } from '../../services/auditDispatcher';
 import {
   AlertTriangle,
   ExternalLink,
@@ -22,9 +23,15 @@ import {
   Sparkles,
   CheckCircle2,
   Search,
+  RefreshCw,
+  Check,
 } from 'lucide-react';
 
-export default function MultiPlatformIntelligence({ defaultProductId = null, onSelectSku = null }) {
+export default function MultiPlatformIntelligence({
+  defaultProductId = null,
+  onSelectSku = null,
+  resolvedProduct = null,
+}) {
   const [products, setProducts] = useState(SEEDED_MASTER_PRODUCTS);
   const [loading, setLoading] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(defaultProductId || SEEDED_MASTER_PRODUCTS[0].id);
@@ -32,6 +39,86 @@ export default function MultiPlatformIntelligence({ defaultProductId = null, onS
   const [stockFilter, setStockFilter] = useState('ALL'); // 'ALL' | 'IN_STOCK' | 'DEALS_ONLY'
   const [platformSearch, setPlatformSearch] = useState('');
   const [focusedPlatform, setFocusedPlatform] = useState(null);
+  const [probingListingId, setProbingListingId] = useState(null);
+  const [flashingListingIds, setFlashingListingIds] = useState({});
+  const [auditToast, setAuditToast] = useState(null);
+
+  // Sync resolvedProduct prop when passed from universal search
+  useEffect(() => {
+    if (resolvedProduct && resolvedProduct.id) {
+      setProducts((prev) => {
+        const exists = prev.some((p) => p.id === resolvedProduct.id);
+        return exists
+          ? prev.map((p) => (p.id === resolvedProduct.id ? resolvedProduct : p))
+          : [resolvedProduct, ...prev];
+      });
+      setSelectedProductId(resolvedProduct.id);
+    }
+  }, [resolvedProduct]);
+
+  useEffect(() => {
+    if (defaultProductId) {
+      setSelectedProductId(defaultProductId);
+    }
+  }, [defaultProductId]);
+
+  // Handle direct re-audit on a specific platform listing
+  const handleReAuditListing = async (listing) => {
+    const listingKey = listing.platform_id || listing.id;
+    if (probingListingId) return;
+    setProbingListingId(listingKey);
+    try {
+      const telemetry = await auditProductListing(
+        listing.id || `${activeProduct?.id}_${listing.platform_id}`,
+        listing.listing_url || listing.url,
+        listing.platform_id,
+        { previousPrice: listing.current_price }
+      );
+
+      setFlashingListingIds((prev) => ({ ...prev, [listingKey]: true }));
+      setTimeout(() => {
+        setFlashingListingIds((prev) => ({ ...prev, [listingKey]: false }));
+      }, 2400);
+
+      setProducts((prev) =>
+        prev.map((p) => {
+          if (!activeProduct || p.id !== activeProduct.id) return p;
+          const updatedListings = (p.platform_listings || []).map((l) => {
+            if (l.platform_id === listing.platform_id) {
+              return {
+                ...l,
+                current_price: telemetry.currentPrice,
+                original_price: telemetry.originalPrice || l.original_price,
+                stock_status: telemetry.inStock ? 'IN_STOCK' : 'OUT_OF_STOCK',
+                rating: telemetry.rating || l.rating,
+                reviews_count: telemetry.reviewsCount || l.reviews_count,
+                warranty_info: telemetry.warrantyInfo || l.warranty_info,
+                scraped_at: 'just now',
+                isAudited: true,
+              };
+            }
+            return l;
+          });
+          return { ...p, platform_listings: updatedListings };
+        })
+      );
+
+      setAuditToast({
+        type: 'success',
+        message: `Audited ${listing.name}: EGP ${telemetry.currentPrice.toLocaleString()} (${telemetry.priceDeltaPct >= 0 ? '+' : ''}${telemetry.priceDeltaPct}%)`,
+      });
+      setTimeout(() => setAuditToast(null), 3500);
+    } catch (err) {
+      console.error('[Platform Card Re-Audit Error]:', err);
+      setAuditToast({
+        type: 'error',
+        message: `Probe failed for ${listing.name}: ${err?.message || 'Connection timed out'}`,
+      });
+      setTimeout(() => setAuditToast(null), 4000);
+    } finally {
+      setProbingListingId(null);
+    }
+  };
 
   // Load live Supabase data on mount
   useEffect(() => {
@@ -1046,34 +1133,94 @@ export default function MultiPlatformIntelligence({ defaultProductId = null, onS
 
                     {/* Action */}
                     <td style={{ padding: '14px 18px', textAlign: 'right' }}>
-                      <a
-                        href={item.listing_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          fontSize: '0.75rem',
-                          color: isLowest ? '#10B981' : isOutOfStock ? '#666666' : '#EDEDED',
-                          textDecoration: 'none',
-                          fontWeight: 500,
-                          padding: '4px 8px',
-                          borderRadius: '4px',
-                          border: isLowest ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid #222222',
-                          backgroundColor: '#000000',
-                          transition: 'all 120ms ease',
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.borderColor = isLowest ? '#10B981' : '#444444';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.borderColor = isLowest ? 'rgba(16, 185, 129, 0.4)' : '#222222';
-                        }}
-                      >
-                        <span>Visit</span>
-                        <ExternalLink size={10} />
-                      </a>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', justifyContent: 'flex-end' }}>
+                        {/* Live Re-Audit Trigger */}
+                        <button
+                          type="button"
+                          onClick={() => handleReAuditListing(item)}
+                          disabled={probingListingId === (item.platform_id || item.id)}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            fontSize: '0.6875rem',
+                            color: probingListingId === (item.platform_id || item.id)
+                              ? '#F59E0B'
+                              : flashingListingIds[item.platform_id || item.id]
+                              ? '#10B981'
+                              : '#EDEDED',
+                            backgroundColor: '#0A0A0A',
+                            border: probingListingId === (item.platform_id || item.id)
+                              ? '1px solid rgba(245, 158, 11, 0.4)'
+                              : flashingListingIds[item.platform_id || item.id]
+                              ? '1px solid #10B981'
+                              : '1px solid #222222',
+                            padding: '4px 8px',
+                            borderRadius: '4px',
+                            cursor: probingListingId === (item.platform_id || item.id) ? 'not-allowed' : 'pointer',
+                            fontFamily: "'Geist Mono', monospace",
+                            transition: 'all 120ms ease',
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!probingListingId) e.currentTarget.style.borderColor = '#444444';
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!probingListingId && !flashingListingIds[item.platform_id || item.id]) {
+                              e.currentTarget.style.borderColor = '#222222';
+                            }
+                          }}
+                        >
+                          <RefreshCw
+                            size={10}
+                            style={{
+                              animation: probingListingId === (item.platform_id || item.id) ? 'spin 1s linear infinite' : 'none',
+                            }}
+                            color={
+                              probingListingId === (item.platform_id || item.id)
+                                ? '#F59E0B'
+                                : flashingListingIds[item.platform_id || item.id]
+                                ? '#10B981'
+                                : '#888888'
+                            }
+                          />
+                          <span>
+                            {probingListingId === (item.platform_id || item.id)
+                              ? 'Probing...'
+                              : flashingListingIds[item.platform_id || item.id]
+                              ? 'Audited ✓'
+                              : 'Re-audit'}
+                          </span>
+                        </button>
+
+                        <a
+                          href={item.listing_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            fontSize: '0.75rem',
+                            color: isLowest ? '#10B981' : isOutOfStock ? '#666666' : '#EDEDED',
+                            textDecoration: 'none',
+                            fontWeight: 500,
+                            padding: '4px 8px',
+                            borderRadius: '4px',
+                            border: isLowest ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid #222222',
+                            backgroundColor: '#000000',
+                            transition: 'all 120ms ease',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = isLowest ? '#10B981' : '#444444';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = isLowest ? 'rgba(16, 185, 129, 0.4)' : '#222222';
+                          }}
+                        >
+                          <span>Visit</span>
+                          <ExternalLink size={10} />
+                        </a>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -1760,6 +1907,36 @@ export default function MultiPlatformIntelligence({ defaultProductId = null, onS
           </div>
         </div>
       </section>
+
+      {/* Realtime Re-Audit Toast Notification */}
+      {auditToast && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '24px',
+            right: '24px',
+            backgroundColor: '#000000',
+            border: auditToast.type === 'success' ? '1px solid #10B981' : '1px solid #FB7185',
+            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.8)',
+            borderRadius: '6px',
+            padding: '10px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            zIndex: 99999,
+            fontSize: '0.8125rem',
+            color: '#EDEDED',
+            fontFamily: "'Geist', sans-serif",
+          }}
+        >
+          {auditToast.type === 'success' ? (
+            <CheckCircle2 size={16} color="#10B981" />
+          ) : (
+            <AlertTriangle size={16} color="#FB7185" />
+          )}
+          <span>{auditToast.message}</span>
+        </div>
+      )}
     </div>
   );
 }

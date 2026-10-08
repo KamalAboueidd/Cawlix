@@ -15,7 +15,7 @@
  * 12. Carrefour Egypt (CARREFOUR_EG)
  */
 
-import { supabase } from '../lib/supabaseClient';
+import { supabase } from '../lib/supabaseClient.js';
 
 export const PLATFORMS_REGISTRY = [
   {

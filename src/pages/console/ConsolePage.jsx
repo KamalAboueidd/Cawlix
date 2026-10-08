@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import AddSkuModal from '../../components/console/AddSkuModal';
 import MultiPlatformIntelligence from '../../components/console/MultiPlatformIntelligence';
+import TelemetryControlDashboard from '../../components/console/TelemetryControlDashboard';
 import { auditProductListing } from '../../services/auditDispatcher';
 import cawlixLogo from '../../assets/ICon.png';
 
@@ -59,6 +60,8 @@ export default function ConsolePage() {
   const [skuErrorMap, setSkuErrorMap] = useState({});
   const [reAuditToast, setReAuditToast] = useState(null);
   const [realtimeConnected, setRealtimeConnected] = useState(false);
+  const [selectedIntelligenceProduct, setSelectedIntelligenceProduct] = useState(null);
+  const [selectedIntelligenceProductId, setSelectedIntelligenceProductId] = useState(null);
 
   // Glitch Radar & Live Events State
   const [glitchRadarEvents, setGlitchRadarEvents] = useState([
@@ -915,82 +918,16 @@ export default function ConsolePage() {
             </svg>
           </div>
 
-          {/* Vercel Search Input with '/' Shortcut */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              flex: 1,
-              maxWidth: '440px',
-              backgroundColor: '#000000',
-              border: '1px solid #1F1F1F',
-              borderRadius: '6px',
-              height: '34px',
-              padding: '0 10px',
-              gap: '8px',
+          {/* Universal Real-Time Search & Multi-Platform Command Palette */}
+          <TelemetryControlDashboard
+            onSelectProduct={(product) => {
+              if (!product) return;
+              setSelectedIntelligenceProduct(product);
+              setSelectedIntelligenceProductId(product.id);
+              setActiveTab('intelligence');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#666666"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{ flexShrink: 0 }}
-            >
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input
-              id="telemetry-search-input"
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search SKUs, domestic nodes, or retailers..."
-              style={{
-                flex: 1,
-                background: 'transparent',
-                border: 'none',
-                color: '#EDEDED',
-                fontSize: '0.8125rem',
-                fontFamily: "'Geist', sans-serif",
-                outline: 'none',
-              }}
-            />
-            {searchQuery ? (
-              <button
-                type="button"
-                onClick={() => setSearchQuery('')}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#666666',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                }}
-              >
-                &times;
-              </button>
-            ) : (
-              <kbd
-                style={{
-                  fontSize: '0.6875rem',
-                  fontFamily: "'Geist Mono', monospace",
-                  color: '#666666',
-                  backgroundColor: '#0A0A0A',
-                  border: '1px solid #262626',
-                  borderRadius: '4px',
-                  padding: '1px 6px',
-                  lineHeight: '1.4',
-                }}
-              >
-                /
-              </kbd>
-            )}
-          </div>
+          />
 
           {/* Topbar Right Controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -1469,7 +1406,10 @@ export default function ConsolePage() {
 
             {/* TAB: Multi-Platform Market Matrix (12 Egyptian Platforms) */}
             {activeTab === 'intelligence' && (
-              <MultiPlatformIntelligence />
+              <MultiPlatformIntelligence
+                defaultProductId={selectedIntelligenceProductId}
+                resolvedProduct={selectedIntelligenceProduct}
+              />
             )}
 
             {/* TAB: Telemetry Nodes */}
