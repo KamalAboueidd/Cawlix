@@ -11,12 +11,11 @@ import {
   AlertTriangle,
   ArrowRight,
   ExternalLink,
-  Layers,
   CheckCircle2,
-  Clock,
   Loader2,
   Zap,
 } from 'lucide-react';
+import { sanitizeRetailerUrl } from '../../utils/urlSanitizer';
 
 /**
  * Institutional Pitch-Black Telemetry Control & Universal Search Dashboard (CAWLIX)
@@ -774,6 +773,31 @@ export default function TelemetryControlDashboard({
                           {resolvedResult.metrics.cheapestNode.deltaSavingsPct}%)
                         </span>
                       )}
+                      <a
+                        href={sanitizeRetailerUrl({
+                          url: resolvedResult.metrics.cheapestNode.listingUrl || resolvedResult.metrics.cheapestNode.url,
+                          platformId: resolvedResult.metrics.cheapestNode.platformId,
+                          productTitle: resolvedResult.title,
+                          sku: resolvedResult.barcode || resolvedResult.id,
+                        })}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          fontSize: '0.625rem',
+                          color: '#10B981',
+                          textDecoration: 'none',
+                          fontWeight: 500,
+                          marginTop: '3px',
+                          alignSelf: 'flex-start',
+                        }}
+                      >
+                        <span>Direct Store Link</span>
+                        <ExternalLink size={9} />
+                      </a>
                     </div>
                   )}
 
@@ -818,6 +842,31 @@ export default function TelemetryControlDashboard({
                       >
                         {resolvedResult.metrics.domesticGuaranteeLeader.warrantyInfo}
                       </span>
+                      <a
+                        href={sanitizeRetailerUrl({
+                          url: resolvedResult.metrics.domesticGuaranteeLeader.listingUrl || resolvedResult.metrics.domesticGuaranteeLeader.url,
+                          platformId: resolvedResult.metrics.domesticGuaranteeLeader.platformId,
+                          productTitle: resolvedResult.title,
+                          sku: resolvedResult.barcode || resolvedResult.id,
+                        })}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          fontSize: '0.625rem',
+                          color: '#00DF8F',
+                          textDecoration: 'none',
+                          fontWeight: 500,
+                          marginTop: '3px',
+                          alignSelf: 'flex-start',
+                        }}
+                      >
+                        <span>Inspect on {resolvedResult.metrics.domesticGuaranteeLeader.platformName.split(' ')[0]}</span>
+                        <ExternalLink size={9} />
+                      </a>
                     </div>
                   )}
 

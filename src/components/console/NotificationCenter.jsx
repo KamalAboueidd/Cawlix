@@ -10,7 +10,9 @@ import {
   Check,
   Trash2,
   ArrowRight,
+  ExternalLink,
 } from 'lucide-react';
+import { sanitizeRetailerUrl } from '../../utils/urlSanitizer.js';
 
 /**
  * Institutional Pitch-Black Notification Center (CAWLIX)
@@ -342,18 +344,56 @@ export default function NotificationCenter({ onInspectProduct = null, placement 
                         </span>
                       </div>
 
-                      <span
-                        style={{
-                          fontSize: '0.6875rem',
-                          color: '#888888',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '3px',
-                        }}
-                      >
-                        <span>Inspect</span>
-                        <ArrowRight size={10} />
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span
+                          style={{
+                            fontSize: '0.6875rem',
+                            color: '#888888',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '3px',
+                          }}
+                        >
+                          <span>Inspect</span>
+                          <ArrowRight size={10} />
+                        </span>
+
+                        <a
+                          href={sanitizeRetailerUrl({
+                            url: alert.listingUrl || alert.productUrl,
+                            platformId: alert.retailerId || alert.retailerName,
+                            productTitle: alert.productTitle,
+                            sku: alert.sku || alert.productId,
+                          })}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          title={`Open directly on ${alert.retailerName || 'retailer'}`}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '3px 6px',
+                            borderRadius: '3px',
+                            backgroundColor: '#161616',
+                            border: '1px solid #282828',
+                            color: '#EDEDED',
+                            textDecoration: 'none',
+                            fontSize: '0.625rem',
+                            transition: 'all 120ms ease',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = '#10B981';
+                            e.currentTarget.style.color = '#10B981';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = '#282828';
+                            e.currentTarget.style.color = '#EDEDED';
+                          }}
+                        >
+                          <ExternalLink size={10} />
+                        </a>
+                      </div>
                     </div>
                   </div>
                 );

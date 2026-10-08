@@ -16,6 +16,7 @@ import {
   evaluateDiscountIntegrity,
 } from '../../services/marketIntelligenceData';
 import { auditProductListing } from '../../services/auditDispatcher';
+import { sanitizeRetailerUrl } from '../../utils/urlSanitizer';
 import {
   AlertTriangle,
   ExternalLink,
@@ -24,17 +25,15 @@ import {
   CheckCircle2,
   Search,
   RefreshCw,
-  Check,
 } from 'lucide-react';
 
 export default function MultiPlatformIntelligence({
   defaultProductId = null,
-  onSelectSku = null,
   resolvedProduct = null,
 }) {
   const [products, setProducts] = useState(SEEDED_MASTER_PRODUCTS);
-  const [loading, setLoading] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(defaultProductId || SEEDED_MASTER_PRODUCTS[0].id);
+  const [loading, setLoading] = useState(false);
   const [timeRange, setTimeRange] = useState('90D'); // '30D' | '60D' | '90D'
   const [stockFilter, setStockFilter] = useState('ALL'); // 'ALL' | 'IN_STOCK' | 'DEALS_ONLY'
   const [platformSearch, setPlatformSearch] = useState('');
@@ -323,7 +322,7 @@ export default function MultiPlatformIntelligence({
               }}
             />
             <span style={{ fontSize: '0.6875rem', color: '#888888', fontFamily: "'Geist Mono', monospace" }}>
-              REALTIME WEBSOCKET FEED
+              {loading ? 'SYNCING CATALOG...' : 'REALTIME WEBSOCKET FEED'}
             </span>
           </div>
         </div>
@@ -592,9 +591,15 @@ export default function MultiPlatformIntelligence({
 
           {lowestInStockListing && (
             <a
-              href={lowestInStockListing.listing_url}
+              href={sanitizeRetailerUrl({
+                url: lowestInStockListing.listing_url || lowestInStockListing.url || lowestInStockListing.product_url,
+                platformId: lowestInStockListing.platform_id,
+                productTitle: activeProduct.title,
+                sku: activeProduct.barcode || activeProduct.id,
+              })}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -1165,9 +1170,15 @@ export default function MultiPlatformIntelligence({
                         </button>
 
                         <a
-                          href={item.listing_url}
+                          href={sanitizeRetailerUrl({
+                            url: item.listing_url || item.url || item.product_url,
+                            platformId: item.platform_id,
+                            productTitle: activeProduct.title,
+                            sku: activeProduct.barcode || activeProduct.id,
+                          })}
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
                           style={{
                             display: 'inline-flex',
                             alignItems: 'center',
@@ -1189,7 +1200,7 @@ export default function MultiPlatformIntelligence({
                             e.currentTarget.style.borderColor = isLowest ? 'rgba(16, 185, 129, 0.4)' : '#222222';
                           }}
                         >
-                          <span>Visit</span>
+                          <span>Visit Store</span>
                           <ExternalLink size={10} />
                         </a>
                       </div>
