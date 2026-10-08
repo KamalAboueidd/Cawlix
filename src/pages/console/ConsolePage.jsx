@@ -14,6 +14,8 @@ import { runFleetAudit, startBackgroundWorker, stopBackgroundWorker } from '../.
 import { SEEDED_MASTER_PRODUCTS } from '../../services/marketIntelligenceData';
 import { auditProductListing } from '../../services/auditDispatcher';
 import { sanitizeRetailerUrl } from '../../utils/urlSanitizer';
+import { useLanguage } from '../../context/LanguageContext';
+import { mirrorTrackedProducts, addToUserWatchlist } from '../../services/dataWiringService';
 
 const VALID_CONSOLE_TABS = [
   'overview',
@@ -41,6 +43,7 @@ const CLUSTER_NODES = [
 
 export default function ConsolePage() {
   const { signOut } = useAuth();
+  const { lang, toggleLang, isRtl, dir, t, getRetailerName } = useLanguage();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -365,6 +368,11 @@ export default function ConsolePage() {
         const activeUser = userData?.user || sessionData.session.user;
         if (!active) return;
         setUser(activeUser);
+
+        // Mirror active catalog products to tracked_products database table
+        mirrorTrackedProducts(SEEDED_MASTER_PRODUCTS).catch((e) => {
+          console.warn('[DataWiring] Auto-mirroring tracked products:', e?.message);
+        });
 
         // Fetch User Watchlist joined with products
         const { data, error } = await supabase
@@ -710,10 +718,18 @@ export default function ConsolePage() {
   const handleSaveAlert = async () => {
     if (!selectedDrawerItem) return;
     try {
+      const targetPrice = alertTargetPrice ? parseFloat(alertTargetPrice) : null;
+      await addToUserWatchlist({
+        userId: user?.id,
+        sku: selectedDrawerItem.sku,
+        productId: selectedDrawerItem.id,
+        targetPrice,
+      });
+
       if (selectedDrawerItem.watchlist_id) {
         await supabase
           .from('user_watchlists')
-          .update({ target_price: alertTargetPrice ? parseFloat(alertTargetPrice) : null })
+          .update({ target_price: targetPrice })
           .eq('id', selectedDrawerItem.watchlist_id);
       }
       setAlertSavedSuccess(true);
@@ -802,8 +818,8 @@ export default function ConsolePage() {
         >
           {/* Breadcrumb Workspace Title */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#EDEDED' }}>
-              All Monitored SKUs
+            <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#EDEDED', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+              {t('all_monitored_skus')}
             </span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#666666" strokeWidth="2">
               <path d="m6 9 6 6 6-6" />
@@ -824,6 +840,31 @@ export default function ConsolePage() {
 
           {/* Topbar Right Controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {/* Persistent Language Switcher Toggle (🇸🇦 عربي / 🇬🇧 English) */}
+            <button
+              type="button"
+              onClick={toggleLang}
+              style={{
+                backgroundColor: '#0A0A0A',
+                color: '#EDEDED',
+                fontSize: '0.8125rem',
+                fontWeight: 500,
+                padding: '6px 12px',
+                borderRadius: '6px',
+                border: '1px solid #222222',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 150ms ease',
+                fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+              }}
+              title={isRtl ? 'Switch to English' : 'التحويل إلى اللغة العربية'}
+            >
+              <span style={{ fontSize: '13px' }}>{isRtl ? '🇬🇧' : '🇸🇦'}</span>
+              <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>{isRtl ? 'English' : 'عربي'}</span>
+            </button>
+
             {/* Run Fleet Audit Manual Trigger Button */}
             <button
               type="button"
@@ -846,9 +887,9 @@ export default function ConsolePage() {
                 alignItems: 'center',
                 gap: '6px',
                 transition: 'all 150ms ease',
-                fontFamily: "'Geist', sans-serif",
+                fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
               }}
-              title="Trigger background telemetry audit across all 12 Egyptian nodes"
+              title={isRtl ? 'تحديث وفحص جميع المتاجر الـ 12 فورياً' : 'Trigger background telemetry audit across all 12 Egyptian nodes'}
             >
               <svg
                 width="13"
@@ -861,12 +902,14 @@ export default function ConsolePage() {
               >
                 <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
               </svg>
-              <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: '0.75rem' }}>
+              <span style={{ fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace", fontSize: '0.75rem' }}>
                 {fleetAuditCompleted
-                  ? 'Fleet Audited ✓'
+                  ? t('fleet_audited')
                   : fleetAuditProgress
-                  ? `Auditing ${fleetAuditProgress.current}/${fleetAuditProgress.total} nodes...`
-                  : 'Run Fleet Audit'}
+                  ? isRtl
+                    ? `جاري فحص ${fleetAuditProgress.current}/${fleetAuditProgress.total} متجر...`
+                    : `Auditing ${fleetAuditProgress.current}/${fleetAuditProgress.total} nodes...`
+                  : t('run_fleet_audit')}
               </span>
             </button>
 
@@ -887,13 +930,13 @@ export default function ConsolePage() {
                 alignItems: 'center',
                 gap: '6px',
                 transition: 'background-color 150ms ease',
-                fontFamily: "'Geist', sans-serif",
+                fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
               }}
               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#EAEAEA')}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
             >
               <span style={{ fontSize: '14px', lineHeight: 1 }}>+</span>
-              <span>Add Target SKU</span>
+              <span>{t('add_target_sku')}</span>
             </button>
           </div>
         </header>
@@ -905,33 +948,33 @@ export default function ConsolePage() {
             {/* View Header with Subdued Controls */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '12px' }}>
               <div>
-                <h1 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#EDEDED', margin: '0 0 4px 0', letterSpacing: '-0.02em', fontFamily: "'Geist', sans-serif" }}>
-                  {activeTab === 'overview' && 'Telemetry Control Dashboard'}
-                  {activeTab === 'intelligence' && 'Multi-Platform E-Commerce Intelligence'}
-                  {activeTab === 'arbitrage' && 'Cross-Retailer Arbitrage Engine'}
-                  {activeTab === 'retailer-health' && 'Retailer Infrastructure & Latency Radar'}
-                  {activeTab === 'forensics' && 'Truth Forensics & Glitch Radar'}
-                  {activeTab === 'watchlist' && 'Custom Watchlist & Target Price Triggers'}
-                  {activeTab === 'reports' && 'Intelligence Exports & Compliance Audit Reports'}
-                  {activeTab === 'analytics' && 'Price Analytics & Arbitrage Matrix'}
-                  {activeTab === 'nodes' && 'Domestic Telemetry Nodes'}
-                  {activeTab === 'tracker' && 'Tracked SKU Surveillance'}
-                  {activeTab === 'logs' && 'System Logs & Glitch Radar Feed'}
-                  {activeTab === 'settings' && 'Telemetry Engine Configuration'}
+                <h1 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#EDEDED', margin: '0 0 4px 0', letterSpacing: '-0.02em', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                  {activeTab === 'overview' && (isRtl ? 'لوحة المراقبة والتحكم بالأسعار' : 'Telemetry Control Dashboard')}
+                  {activeTab === 'intelligence' && (isRtl ? 'مصفوفة مقارنة المنصات الـ 12' : 'Multi-Platform E-Commerce Intelligence')}
+                  {activeTab === 'arbitrage' && (isRtl ? 'محرك فروق الأسعار وفرص التوفير' : 'Cross-Retailer Arbitrage Engine')}
+                  {activeTab === 'retailer-health' && (isRtl ? 'حالة وسرعة تحديث المتاجر' : 'Retailer Infrastructure & Latency Radar')}
+                  {activeTab === 'forensics' && (isRtl ? 'رادار فحص التلاعب والخصومات الوهمية' : 'Truth Forensics & Glitch Radar')}
+                  {activeTab === 'watchlist' && (isRtl ? 'قائمة المتابعة والتنبيهات المخصصة' : 'Custom Watchlist & Target Price Triggers')}
+                  {activeTab === 'reports' && (isRtl ? 'تقارير السوق واستخراج البيانات' : 'Intelligence Exports & Compliance Audit Reports')}
+                  {activeTab === 'analytics' && (isRtl ? 'تحليلات الأسعار ومصفوفة الفروق' : 'Price Analytics & Arbitrage Matrix')}
+                  {activeTab === 'nodes' && (isRtl ? 'محطات الرصد المصرية' : 'Domestic Telemetry Nodes')}
+                  {activeTab === 'tracker' && (isRtl ? 'مراقبة المنتجات المستهدفة' : 'Tracked SKU Surveillance')}
+                  {activeTab === 'logs' && (isRtl ? 'سجل العمليات وأحداث الرادار' : 'System Logs & Glitch Radar Feed')}
+                  {activeTab === 'settings' && (isRtl ? 'إعدادات المنصة وأمان الحساب' : 'Telemetry Engine Configuration')}
                 </h1>
-                <p style={{ fontSize: '0.8125rem', color: '#888888', margin: 0 }}>
-                  {activeTab === 'overview' && 'Real-time retail price monitoring, baseline forensics, and arbitrage analytics.'}
-                  {activeTab === 'intelligence' && 'Unified comparison matrix, fake-discount forensic auditor, and material specs across 12 Egyptian platforms.'}
-                  {activeTab === 'arbitrage' && 'Automated domestic shelf divergence discovery calculating real-time margin spreads across 12 verified Egyptian platforms.'}
-                  {activeTab === 'retailer-health' && 'Real-time probe health, schema extraction vectors, and 90-day truth integrity scores across all 12 domestic Egyptian retailers.'}
-                  {activeTab === 'forensics' && 'Automated interception of artificial reference price inflation, ghost markups, and deceptive discount anomalies.'}
-                  {activeTab === 'watchlist' && 'Algorithmic limit order monitoring, real-time inventory restock interception, and multi-channel notification dispatch rules.'}
-                  {activeTab === 'reports' && 'Machine-readable arbitrage feeds, raw cross-retailer CSV exports, and official price integrity audit reports.'}
-                  {activeTab === 'analytics' && 'Multi-retailer price variance distribution, algorithmic margin tracking, and buy-box arbitrage windows.'}
-                  {activeTab === 'nodes' && 'Active scraping infrastructure and network latency health for domestic retailers.'}
-                  {activeTab === 'tracker' && 'Continuous 90-day rolling baseline tracking for targeted Cairo retail items.'}
-                  {activeTab === 'logs' && 'High-frequency price anomaly intercepts and database mutation events.'}
-                  {activeTab === 'settings' && 'Account security, webhook configurations, and node credentials.'}
+                <p style={{ fontSize: '0.8125rem', color: '#888888', margin: 0, fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                  {activeTab === 'overview' && (isRtl ? 'مراقبة حية لأسعار التجزئة بالسوق المصري، فحص الخصومات الحقيقية، وهوامش التوفير.' : 'Real-time retail price monitoring, baseline forensics, and arbitrage analytics.')}
+                  {activeTab === 'intelligence' && (isRtl ? 'مصفوفة مقارنة موحدة وكشف الخصم الوهمي ومطابقة مواصفات الأجهزة عبر 12 منصة مصرية.' : 'Unified comparison matrix, fake-discount forensic auditor, and material specs across 12 Egyptian platforms.')}
+                  {activeTab === 'arbitrage' && (isRtl ? 'اكتشاف آلي لفروق الأسعار بين المتاجر وحساب هوامش الربح الفورية عبر المنصات الـ 12.' : 'Automated domestic shelf divergence discovery calculating real-time margin spreads across 12 verified Egyptian platforms.')}
+                  {activeTab === 'retailer-health' && (isRtl ? 'فحص جاهزية محركات المتاجر، سرعة الاستجابة، ومؤشرات مصداقية العروض لآخر 90 يوماً.' : 'Real-time probe health, schema extraction vectors, and 90-day truth integrity scores across all 12 domestic Egyptian retailers.')}
+                  {activeTab === 'forensics' && (isRtl ? 'رصد وتوثيق حالات رفع السعر قبل التخفيض واعتراض العروض المضللة والخصومات الوهمية.' : 'Automated interception of artificial reference price inflation, ghost markups, and deceptive discount anomalies.')}
+                  {activeTab === 'watchlist' && (isRtl ? 'تنبيهات فورية عند وصول المنتج لسعر الشراء المستهدف أو حدوث هبوط مفاجئ بالأسعار.' : 'Algorithmic limit order monitoring, real-time inventory restock interception, and multi-channel notification dispatch rules.')}
+                  {activeTab === 'reports' && (isRtl ? 'تصدير بيانات الأسعار بصيغة CSV وتقارير رسمية لفحص نزاهة العروض بالسوق.' : 'Machine-readable arbitrage feeds, raw cross-retailer CSV exports, and official price integrity audit reports.')}
+                  {activeTab === 'analytics' && (isRtl ? 'توزيع فروق الأسعار، تتبع حركة هوامش الربح، وأفضل توقيتات الشراء بالسوق المصري.' : 'Multi-retailer price variance distribution, algorithmic margin tracking, and buy-box arbitrage windows.')}
+                  {activeTab === 'nodes' && (isRtl ? 'بنية الربط الشبكي وسرعة الاتصال بالمتاجر المصرية المعتمدة.' : 'Active scraping infrastructure and network latency health for domestic retailers.')}
+                  {activeTab === 'tracker' && (isRtl ? 'تتبع مستمر لمتوسط الأسعار لآخر 90 يوماً لأبرز الأجهزة والسلع بالقاهرة.' : 'Continuous 90-day rolling baseline tracking for targeted Cairo retail items.')}
+                  {activeTab === 'logs' && (isRtl ? 'سجل مباشر باعتراض تقلبات الأسعار والخصومات الحادة بالأسواق.' : 'High-frequency price anomaly intercepts and database mutation events.')}
+                  {activeTab === 'settings' && (isRtl ? 'أمان الحساب، إعدادات التنبيهات والبريد الإلكتروني، وبيانات الربط.' : 'Account security, webhook configurations, and node credentials.')}
                 </p>
               </div>
 
@@ -959,10 +1002,10 @@ export default function ConsolePage() {
                     border: 'none',
                     cursor: 'pointer',
                     transition: 'all 120ms ease',
-                    fontFamily: "'Geist', sans-serif",
+                    fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                   }}
                 >
-                  Overview
+                  {isRtl ? 'نظرة عامة' : 'Overview'}
                 </button>
                 <button
                   type="button"
@@ -977,10 +1020,10 @@ export default function ConsolePage() {
                     border: 'none',
                     cursor: 'pointer',
                     transition: 'all 120ms ease',
-                    fontFamily: "'Geist', sans-serif",
+                    fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                   }}
                 >
-                  Market Matrix
+                  {isRtl ? 'مصفوفة المنصات الـ 12' : 'Market Matrix'}
                 </button>
                 <button
                   type="button"
@@ -995,10 +1038,10 @@ export default function ConsolePage() {
                     border: 'none',
                     cursor: 'pointer',
                     transition: 'all 120ms ease',
-                    fontFamily: "'Geist', sans-serif",
+                    fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                   }}
                 >
-                  Analytics
+                  {isRtl ? 'التحليلات' : 'Analytics'}
                 </button>
                 <button
                   type="button"
@@ -1013,10 +1056,10 @@ export default function ConsolePage() {
                     border: 'none',
                     cursor: 'pointer',
                     transition: 'all 120ms ease',
-                    fontFamily: "'Geist', sans-serif",
+                    fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                   }}
                 >
-                  Tracker
+                  {isRtl ? 'قائمة التتبع' : 'Tracker'}
                 </button>
                 <button
                   type="button"
@@ -1031,10 +1074,10 @@ export default function ConsolePage() {
                     border: 'none',
                     cursor: 'pointer',
                     transition: 'all 120ms ease',
-                    fontFamily: "'Geist', sans-serif",
+                    fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                   }}
                 >
-                  Glitch Radar
+                  {isRtl ? 'رادار العروض' : 'Glitch Radar'}
                 </button>
               </div>
             </div>
@@ -1060,17 +1103,38 @@ export default function ConsolePage() {
                     gap: '8px',
                   }}
                 >
-                  <span
-                    style={{
-                      fontSize: '0.6875rem',
-                      fontWeight: 500,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                      color: '#888888',
-                    }}
-                  >
-                    TOTAL MONITORED SKUS
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span
+                      style={{
+                        fontSize: '0.6875rem',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        color: '#888888',
+                        fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                      }}
+                    >
+                      {isRtl ? 'المنتجات قيد المراقبة' : 'TOTAL MONITORED SKUS'}
+                    </span>
+                    <span
+                      title={isRtl ? 'عدد الأجهزة والمنتجات التي يجري تتبع أسعارها وفحصها لحظياً عبر المتاجر.' : 'Total monitored SKUs undergoing real-time domestic price tracking.'}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '16px',
+                        height: '16px',
+                        borderRadius: '50%',
+                        backgroundColor: '#111111',
+                        border: '1px solid #262626',
+                        color: '#888888',
+                        fontSize: '0.625rem',
+                        cursor: 'help',
+                      }}
+                    >
+                      ?
+                    </span>
+                  </div>
                   <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
                     <span
                       style={{
@@ -1098,8 +1162,8 @@ export default function ConsolePage() {
                       +12.4%
                     </span>
                   </div>
-                  <span style={{ fontSize: '0.75rem', color: '#666666' }}>
-                    Active 90-day price baseline monitoring
+                  <span style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                    {isRtl ? 'مراقبة مستمرة لمتوسط السعر لآخر 90 يوماً' : 'Active 90-day price baseline monitoring'}
                   </span>
                 </div>
 
@@ -1115,17 +1179,38 @@ export default function ConsolePage() {
                     gap: '8px',
                   }}
                 >
-                  <span
-                    style={{
-                      fontSize: '0.6875rem',
-                      fontWeight: 500,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                      color: '#888888',
-                    }}
-                  >
-                    DOMESTIC RETAILERS MONITORED
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span
+                      style={{
+                        fontSize: '0.6875rem',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        color: '#888888',
+                        fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                      }}
+                    >
+                      {isRtl ? 'المتاجر المصرية المتصلة' : 'DOMESTIC RETAILERS MONITORED'}
+                    </span>
+                    <span
+                      title={isRtl ? 'عدد منصات ومتاجر التجزئة المصرية الـ 12 المتصلة بالرادار حالياً.' : 'Connected domestic Egyptian retailer nodes.'}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '16px',
+                        height: '16px',
+                        borderRadius: '50%',
+                        backgroundColor: '#111111',
+                        border: '1px solid #262626',
+                        color: '#888888',
+                        fontSize: '0.625rem',
+                        cursor: 'help',
+                      }}
+                    >
+                      ?
+                    </span>
+                  </div>
                   <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
                     <span
                       style={{
@@ -1136,7 +1221,7 @@ export default function ConsolePage() {
                         letterSpacing: '-0.02em',
                       }}
                     >
-                      6
+                      12
                     </span>
                     <span
                       style={{
@@ -1150,11 +1235,11 @@ export default function ConsolePage() {
                         fontFamily: "'Geist Mono', monospace",
                       }}
                     >
-                      100% ACTIVE
+                      {isRtl ? '100% نشط' : '100% ACTIVE'}
                     </span>
                   </div>
-                  <span style={{ fontSize: '0.75rem', color: '#666666' }}>
-                    Amazon, Noon, B.TECH, 2B, Raya & Jumia
+                  <span style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                    {isRtl ? 'أمازون، نون، بي تك، تريد لاين، جوميا، تو بي، راية...' : 'Amazon, Noon, B.TECH, Tradeline, Jumia, 2B, Raya...'}
                   </span>
                 </div>
 
@@ -1170,17 +1255,38 @@ export default function ConsolePage() {
                     gap: '8px',
                   }}
                 >
-                  <span
-                    style={{
-                      fontSize: '0.6875rem',
-                      fontWeight: 500,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                      color: '#888888',
-                    }}
-                  >
-                    GLITCH ANOMALIES INTERCEPTED
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span
+                      style={{
+                        fontSize: '0.6875rem',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        color: '#888888',
+                        fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                      }}
+                    >
+                      {isRtl ? 'عروض وتلاعبات تم رصدها' : 'GLITCH ANOMALIES INTERCEPTED'}
+                    </span>
+                    <span
+                      title={isRtl ? 'هذا المؤشر يفحص إذا كان الخصم حقيقياً أم قام المتجر برفع السعر مؤخراً لإيهامك بالتخفيض، أو حدوث خطأ تسعير مفاجئ.' : 'Tracks synthetic reference price inflation, ghost markups, and zero-margin price crashes.'}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '16px',
+                        height: '16px',
+                        borderRadius: '50%',
+                        backgroundColor: '#111111',
+                        border: '1px solid #262626',
+                        color: '#888888',
+                        fontSize: '0.625rem',
+                        cursor: 'help',
+                      }}
+                    >
+                      ?
+                    </span>
+                  </div>
                   <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
                     <span
                       style={{
@@ -1208,8 +1314,8 @@ export default function ConsolePage() {
                       -47.1% MAX
                     </span>
                   </div>
-                  <span style={{ fontSize: '0.75rem', color: '#666666' }}>
-                    Zero-margin flash crashes captured
+                  <span style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                    {isRtl ? 'خصومات وهمية وانهيارات سعرية مفاجئة' : 'Zero-margin flash crashes captured'}
                   </span>
                 </div>
 
@@ -1225,17 +1331,38 @@ export default function ConsolePage() {
                     gap: '8px',
                   }}
                 >
-                  <span
-                    style={{
-                      fontSize: '0.6875rem',
-                      fontWeight: 500,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                      color: '#888888',
-                    }}
-                  >
-                    ESTIMATED ARBITRAGE SAVINGS
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span
+                      style={{
+                        fontSize: '0.6875rem',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        color: '#888888',
+                        fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                      }}
+                    >
+                      {isRtl ? 'إجمالي وفر الأسعار المتاح بالسوق' : 'ESTIMATED ARBITRAGE SAVINGS'}
+                    </span>
+                    <span
+                      title={isRtl ? 'فارق السعر ومكسب التجارة بين أرخص وأغلى متجر مصري لنفس السلعة الأصلية.' : 'Arbitrage spread between lowest and highest domestic price across identical authentic listings.'}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '16px',
+                        height: '16px',
+                        borderRadius: '50%',
+                        backgroundColor: '#111111',
+                        border: '1px solid #262626',
+                        color: '#888888',
+                        fontSize: '0.625rem',
+                        cursor: 'help',
+                      }}
+                    >
+                      ?
+                    </span>
+                  </div>
                   <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
                     <span
                       style={{
@@ -1263,8 +1390,8 @@ export default function ConsolePage() {
                       +18.5%
                     </span>
                   </div>
-                  <span style={{ fontSize: '0.75rem', color: '#666666' }}>
-                    Landed CIF benchmark advantage
+                  <span style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                    {isRtl ? 'فارق السعر ومكسب الشراء من أرخص متجر' : 'Landed CIF benchmark advantage'}
                   </span>
                 </div>
               </section>
@@ -2118,12 +2245,12 @@ export default function ConsolePage() {
                     color: '#888888',
                   }}
                 >
-                  <span>ITEM / TITLE</span>
-                  <span>STORE</span>
-                  <span style={{ textAlign: 'right' }}>PRICE & DELTA</span>
-                  <span style={{ textAlign: 'center' }}>STATUS</span>
-                  <span style={{ textAlign: 'right' }}>LAST UPDATED</span>
-                  <span style={{ textAlign: 'right' }}>ACTIONS</span>
+                  <span style={{ fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>{t('item_title')}</span>
+                  <span style={{ fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>{t('store')}</span>
+                  <span style={{ textAlign: isRtl ? 'left' : 'right', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>{t('price_delta')}</span>
+                  <span style={{ textAlign: 'center', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>{t('status')}</span>
+                  <span style={{ textAlign: isRtl ? 'left' : 'right', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>{t('last_updated')}</span>
+                  <span style={{ textAlign: isRtl ? 'left' : 'right', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>{t('actions')}</span>
                 </div>
 
                 {/* Loading State */}
@@ -2236,7 +2363,7 @@ export default function ConsolePage() {
                             style={{
                               fontSize: '0.6875rem',
                               fontWeight: 500,
-                              fontFamily: "'Geist Mono', monospace",
+                              fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace",
                               padding: '2px 7px',
                               borderRadius: '4px',
                               backgroundColor: '#0A0A0A',
@@ -2244,7 +2371,7 @@ export default function ConsolePage() {
                               color: '#888888',
                             }}
                           >
-                            {item.node}
+                            {getRetailerName(item.node, lang)}
                           </span>
                         </div>
 
@@ -2392,10 +2519,10 @@ export default function ConsolePage() {
                                 >
                                   <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                                 </svg>
-                                <span>Syncing...</span>
+                                <span>{isRtl ? 'جاري الفحص...' : 'Syncing...'}</span>
                               </>
                             ) : (
-                              <span>Re-audit</span>
+                              <span>{t('reaudit_node')}</span>
                             )}
                           </button>
 
@@ -2529,10 +2656,12 @@ export default function ConsolePage() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.75rem' }}>
                   <span style={{ color: '#EDEDED', fontWeight: 500, fontFamily: "'Geist Mono', monospace" }}>{selectedDrawerItem.sku}</span>
                   <span style={{ color: '#444444' }}>·</span>
-                  <span style={{ color: '#888888', fontWeight: 500, fontFamily: "'Geist Mono', monospace" }}>{selectedDrawerItem.node}</span>
+                  <span style={{ color: '#888888', fontWeight: 500, fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace" }}>
+                    {getRetailerName(selectedDrawerItem.node, lang)}
+                  </span>
                   <span style={{ color: '#666666', fontSize: '0.6875rem', fontFamily: "'Geist Mono', monospace" }}>({selectedDrawerItem.domain})</span>
                 </div>
-                <h2 style={{ fontSize: '1.0625rem', fontWeight: 500, color: '#EDEDED', margin: 0, lineHeight: 1.4, fontFamily: "'Geist', sans-serif" }}>
+                <h2 style={{ fontSize: '1.0625rem', fontWeight: 500, color: '#EDEDED', margin: 0, lineHeight: 1.4, fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                   {selectedDrawerItem.title}
                 </h2>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', paddingTop: '4px' }}>
@@ -2541,12 +2670,12 @@ export default function ConsolePage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    style={{ fontSize: '0.75rem', color: '#EDEDED', textDecoration: 'underline', fontWeight: 500, fontFamily: "'Geist', sans-serif" }}
+                    style={{ fontSize: '0.75rem', color: '#EDEDED', textDecoration: 'underline', fontWeight: 500, fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}
                   >
-                    Inspect on {selectedDrawerItem.node || 'Retailer'} ↗
+                    {isRtl ? `معاينة السعر في ${getRetailerName(selectedDrawerItem.node, lang)} ↗` : `Inspect on ${selectedDrawerItem.node || 'Retailer'} ↗`}
                   </a>
-                  <span style={{ fontSize: '0.6875rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
-                    Verified: {selectedDrawerItem.last_ping}
+                  <span style={{ fontSize: '0.6875rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace" }}>
+                    {isRtl ? `آخر فحص: ${selectedDrawerItem.last_ping}` : `Verified: ${selectedDrawerItem.last_ping}`}
                   </span>
                 </div>
 
@@ -2569,7 +2698,7 @@ export default function ConsolePage() {
                       fontSize: '0.75rem',
                       borderRadius: '6px',
                       cursor: probingSkuId === (selectedDrawerItem.id || selectedDrawerItem.sku) ? 'wait' : 'pointer',
-                      fontFamily: "'Geist', sans-serif",
+                      fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                       transition: 'all 120ms ease',
                     }}
                     onMouseEnter={(e) => {
@@ -2590,10 +2719,10 @@ export default function ConsolePage() {
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ animation: 'spin 0.8s linear infinite' }}>
                           <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                         </svg>
-                        <span>Syncing...</span>
+                        <span>{isRtl ? 'جاري الفحص...' : 'Syncing...'}</span>
                       </>
                     ) : (
-                      <span>↻ Re-audit Node</span>
+                      <span>{isRtl ? '↻ فحص وتحديث السعر الآن' : '↻ Re-audit Node'}</span>
                     )}
                   </button>
 
@@ -2616,7 +2745,7 @@ export default function ConsolePage() {
                       fontSize: '0.75rem',
                       borderRadius: '6px',
                       cursor: 'pointer',
-                      fontFamily: "'Geist', sans-serif",
+                      fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                       transition: 'all 150ms ease',
                     }}
                     onMouseEnter={(e) => {
@@ -2628,7 +2757,7 @@ export default function ConsolePage() {
                       e.currentTarget.style.borderColor = 'rgba(16, 185, 129, 0.3)';
                     }}
                   >
-                    <span>12-Platform Matrix</span>
+                    <span>{isRtl ? 'مصفوفة المنصات الـ 12' : '12-Platform Matrix'}</span>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <path d="m9 18 6-6-6-6" />
                     </svg>
@@ -2638,8 +2767,8 @@ export default function ConsolePage() {
 
               {/* Module 2: Forensic Price Diagnostic */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <span style={{ fontSize: '0.6875rem', fontWeight: 500, letterSpacing: '0.05em', color: '#888888', textTransform: 'uppercase', fontFamily: "'Geist', sans-serif" }}>
-                  FORENSIC PRICE DIAGNOSTIC
+                <span style={{ fontSize: '0.6875rem', fontWeight: 500, letterSpacing: '0.05em', color: '#888888', textTransform: 'uppercase', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                  {isRtl ? 'تشخيص مصداقية السعر والخصم' : 'FORENSIC PRICE DIAGNOSTIC'}
                 </span>
 
                 <div
@@ -2654,22 +2783,32 @@ export default function ConsolePage() {
                   }}
                 >
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                    <span style={{ fontSize: '0.6875rem', color: '#666666', textTransform: 'uppercase', fontFamily: "'Geist', sans-serif" }}>CURRENT SHELF PRICE</span>
+                    <span style={{ fontSize: '0.6875rem', color: '#666666', textTransform: 'uppercase', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                      {isRtl ? 'سعر الرف الحالي' : 'CURRENT SHELF PRICE'}
+                    </span>
                     <span style={{ fontSize: '1.125rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>
                       EGP {selectedDrawerItem.current_price_egp?.toLocaleString()}
                     </span>
-                    <span style={{ fontSize: '0.6875rem', marginTop: '2px', color: drawerIsMarkup ? '#FB7185' : '#00DF8F', fontFamily: "'Geist Mono', monospace", fontWeight: 500 }}>
-                      {drawerIsMarkup ? `+${selectedDrawerItem.delta_pct}% OVER BASELINE` : `${selectedDrawerItem.delta_pct}% UNDER BASELINE`}
+                    <span style={{ fontSize: '0.6875rem', marginTop: '2px', color: drawerIsMarkup ? '#FB7185' : '#00DF8F', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace", fontWeight: 500 }}>
+                      {drawerIsMarkup
+                        ? isRtl
+                          ? `+${selectedDrawerItem.delta_pct}% أعلى من السعر الحقيقي`
+                          : `+${selectedDrawerItem.delta_pct}% OVER BASELINE`
+                        : isRtl
+                        ? `${selectedDrawerItem.delta_pct}% أقل من السعر الحقيقي`
+                        : `${selectedDrawerItem.delta_pct}% UNDER BASELINE`}
                     </span>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                    <span style={{ fontSize: '0.6875rem', color: '#666666', textTransform: 'uppercase', fontFamily: "'Geist', sans-serif" }}>90-DAY BASELINE MEDIAN</span>
+                    <span style={{ fontSize: '0.6875rem', color: '#666666', textTransform: 'uppercase', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                      {isRtl ? 'متوسط سعر السوق الحقيقي (آخر 90 يوم)' : '90-DAY BASELINE MEDIAN'}
+                    </span>
                     <span style={{ fontSize: '1.125rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>
                       EGP {selectedDrawerItem.baseline_price_egp?.toLocaleString()}
                     </span>
-                    <span style={{ fontSize: '0.6875rem', marginTop: '2px', color: '#666666', fontFamily: "'Geist', sans-serif" }}>
-                      Rolling Cairo benchmark
+                    <span style={{ fontSize: '0.6875rem', marginTop: '2px', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                      {isRtl ? 'المتوسط الحسابي المعتمد بالسوق' : 'Rolling Cairo benchmark'}
                     </span>
                   </div>
                 </div>
@@ -2685,12 +2824,16 @@ export default function ConsolePage() {
                     backgroundColor: '#000000',
                   }}
                 >
-                  <div style={{ fontWeight: 500, marginBottom: '2px', color: drawerIsMarkup ? '#FB7185' : '#00DF8F', fontFamily: "'Geist', sans-serif" }}>
-                    TRUTH INDEX VERDICT
+                  <div style={{ fontWeight: 500, marginBottom: '2px', color: drawerIsMarkup ? '#FB7185' : '#00DF8F', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                    {isRtl ? 'مؤشر مصداقية الخصم (Truth Index)' : 'TRUTH INDEX VERDICT'}
                   </div>
-                  <div style={{ color: '#888888', fontFamily: "'Geist', sans-serif" }}>
+                  <div style={{ color: '#888888', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                     {drawerIsMarkup
-                      ? 'CRITICAL GHOST MARKUP — Price artificially inflated prior to promotional cycle to manufacture synthetic discount magnitude.'
+                      ? isRtl
+                        ? 'خصم وهمي (رفع السعر قبل التخفيض) — قام المتجر برفع السعر مؤخراً لإيهام المشتري بنسبة تخفيض غير حقيقية.'
+                        : 'CRITICAL GHOST MARKUP — Price artificially inflated prior to promotional cycle to manufacture synthetic discount magnitude.'
+                      : isRtl
+                      ? 'تخفيض حقيقي ومؤكد — السعر الحالي أقل فعلياً من متوسط سعر السوق الحقيقي لآخر 90 يوماً.'
                       : 'VERIFIED REAL DEAL — Authentic markdown verified below 90-day rolling domestic shelf median.'}
                   </div>
                 </div>
@@ -2698,8 +2841,8 @@ export default function ConsolePage() {
 
               {/* Module 3: 90-Day Trend Sparkline */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <span style={{ fontSize: '0.6875rem', fontWeight: 500, letterSpacing: '0.05em', color: '#888888', textTransform: 'uppercase', fontFamily: "'Geist', sans-serif" }}>
-                  90-DAY PRICE TRAJECTORY & SPIKE ANALYSIS
+                <span style={{ fontSize: '0.6875rem', fontWeight: 500, letterSpacing: '0.05em', color: '#888888', textTransform: 'uppercase', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                  {isRtl ? 'مسار السعر وتحليل الارتفاع المفاجئ (90 يوماً)' : '90-DAY PRICE TRAJECTORY & SPIKE ANALYSIS'}
                 </span>
 
                 <div
@@ -2727,18 +2870,18 @@ export default function ConsolePage() {
                     </svg>
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.6875rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
-                    <span>90D AGO</span>
-                    <span>45D (PRE-SALE SPIKE)</span>
-                    <span>TODAY: EGP {selectedDrawerItem.current_price_egp?.toLocaleString()}</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.6875rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace" }}>
+                    <span>{isRtl ? 'منذ 90 يوماً' : '90D AGO'}</span>
+                    <span>{isRtl ? 'منذ 45 يوماً (رفع السعر قبل العرض)' : '45D (PRE-SALE SPIKE)'}</span>
+                    <span>{isRtl ? `اليوم: ${selectedDrawerItem.current_price_egp?.toLocaleString()} ج.م` : `TODAY: EGP ${selectedDrawerItem.current_price_egp?.toLocaleString()}`}</span>
                   </div>
                 </div>
               </div>
 
               {/* Module 4: Landed Cost & Arbitrage Benchmark */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <span style={{ fontSize: '0.6875rem', fontWeight: 500, letterSpacing: '0.05em', color: '#888888', textTransform: 'uppercase', fontFamily: "'Geist', sans-serif" }}>
-                  LANDED IMPORT COST & ARBITRAGE BENCHMARK
+                <span style={{ fontSize: '0.6875rem', fontWeight: 500, letterSpacing: '0.05em', color: '#888888', textTransform: 'uppercase', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                  {isRtl ? 'تكلفة الاستيراد الشاملة ومقارنة السوق المحلي' : 'LANDED IMPORT COST & ARBITRAGE BENCHMARK'}
                 </span>
 
                 <div
@@ -2751,23 +2894,33 @@ export default function ConsolePage() {
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', borderBottom: '1px solid #1F1F1F' }}>
-                    <span style={{ color: '#888888', fontFamily: "'Geist', sans-serif" }}>Domestic Cairo Retail Shelf</span>
+                    <span style={{ color: '#888888', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                      {isRtl ? 'سعر السوق المحلي بالقاهرة' : 'Domestic Cairo Retail Shelf'}
+                    </span>
                     <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace", fontWeight: 500 }}>EGP {drawerDomestic.toLocaleString()}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', borderBottom: '1px solid #1F1F1F' }}>
-                    <span style={{ color: '#888888', fontFamily: "'Geist', sans-serif" }}>Declared CIF Cargo Import (USD converted)</span>
+                    <span style={{ color: '#888888', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                      {isRtl ? 'تكلفة الشحن والاستيراد (CIF بالدولار)' : 'Declared CIF Cargo Import (USD converted)'}
+                    </span>
                     <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>EGP {drawerCif.toLocaleString()} (${drawerBaseUsd})</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', borderBottom: '1px solid #1F1F1F' }}>
-                    <span style={{ color: '#888888', fontFamily: "'Geist', sans-serif" }}>Customs Duty (10%)</span>
+                    <span style={{ color: '#888888', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                      {isRtl ? 'الجمارك وضريبة الوارد (10%)' : 'Customs Duty (10%)'}
+                    </span>
                     <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>EGP {drawerCustoms.toLocaleString()}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', borderBottom: '1px solid #1F1F1F' }}>
-                    <span style={{ color: '#888888', fontFamily: "'Geist', sans-serif" }}>Value-Added Tax (14% VAT)</span>
+                    <span style={{ color: '#888888', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                      {isRtl ? 'ضريبة القيمة المضافة (14%)' : 'Value-Added Tax (14% VAT)'}
+                    </span>
                     <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>EGP {drawerVat.toLocaleString()}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', backgroundColor: '#0A0A0A', fontWeight: 500 }}>
-                    <span style={{ color: '#EDEDED', fontFamily: "'Geist', sans-serif" }}>Total Landed Cost Settlement</span>
+                    <span style={{ color: '#EDEDED', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                      {isRtl ? 'إجمالي التكلفة الشاملة المستخلصة' : 'Total Landed Cost Settlement'}
+                    </span>
                     <span style={{ color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>EGP {drawerTotalLanded.toLocaleString()}</span>
                   </div>
                 </div>
@@ -2784,19 +2937,25 @@ export default function ConsolePage() {
                     justifyContent: 'space-between',
                   }}
                 >
-                  <span style={{ fontWeight: 500, color: drawerHasAdvantage ? '#00DF8F' : '#EDEDED', fontFamily: "'Geist', sans-serif" }}>
-                    {drawerHasAdvantage ? 'IMPORT RECOMMENDED' : 'BUY LOCAL PREFERRED'}
+                  <span style={{ fontWeight: 500, color: drawerHasAdvantage ? '#00DF8F' : '#EDEDED', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                    {drawerHasAdvantage ? (isRtl ? 'الاستيراد المباشر أوفر' : 'IMPORT RECOMMENDED') : (isRtl ? 'الشراء المحلي أفضل' : 'BUY LOCAL PREFERRED')}
                   </span>
-                  <span style={{ fontFamily: "'Geist Mono', monospace", color: '#888888' }}>
-                    {drawerHasAdvantage ? `+EGP ${drawerNetSaved.toLocaleString()} margin saved` : 'Domestic shelf is optimal'}
+                  <span style={{ fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace", color: '#888888' }}>
+                    {drawerHasAdvantage
+                      ? isRtl
+                        ? `+${drawerNetSaved.toLocaleString()} ج.م وفر متاح`
+                        : `+EGP ${drawerNetSaved.toLocaleString()} margin saved`
+                      : isRtl
+                      ? 'سعر السوق المحلي هو الأفضل حالياً'
+                      : 'Domestic shelf is optimal'}
                   </span>
                 </div>
               </div>
 
               {/* Module 5: Alert Trigger Settings */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <span style={{ fontSize: '0.6875rem', fontWeight: 500, letterSpacing: '0.05em', color: '#888888', textTransform: 'uppercase', fontFamily: "'Geist', sans-serif" }}>
-                  PRICE ALERT NOTIFICATION TRIGGER
+                <span style={{ fontSize: '0.6875rem', fontWeight: 500, letterSpacing: '0.05em', color: '#888888', textTransform: 'uppercase', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                  {isRtl ? 'قائمة المتابعة والتنبيهات المخصصة' : 'PRICE ALERT NOTIFICATION TRIGGER'}
                 </span>
 
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -2823,7 +2982,8 @@ export default function ConsolePage() {
                         display: 'flex',
                         alignItems: 'center',
                         fontFamily: "'Geist Mono', monospace",
-                        borderRight: '1px solid #1F1F1F',
+                        borderRight: isRtl ? 'none' : '1px solid #1F1F1F',
+                        borderLeft: isRtl ? '1px solid #1F1F1F' : 'none',
                       }}
                     >
                       EGP
@@ -2832,7 +2992,7 @@ export default function ConsolePage() {
                       type="number"
                       value={alertTargetPrice}
                       onChange={(e) => setAlertTargetPrice(e.target.value)}
-                      placeholder="e.g. 75000"
+                      placeholder={isRtl ? 'سعر الشراء المستهدف (مثال: 75000)' : 'e.g. 75000'}
                       style={{
                         flex: 1,
                         background: 'transparent',
@@ -2842,7 +3002,7 @@ export default function ConsolePage() {
                         padding: '0 12px',
                         outline: 'none',
                         height: '100%',
-                        fontFamily: "'Geist Mono', monospace",
+                        fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace",
                       }}
                     />
                   </div>
@@ -2854,7 +3014,7 @@ export default function ConsolePage() {
                       backgroundColor: alertSavedSuccess ? '#00DF8F' : '#FFFFFF',
                       color: '#000000',
                       fontSize: '0.75rem',
-                      fontWeight: 500,
+                      fontWeight: 600,
                       padding: '0 14px',
                       height: '38px',
                       borderRadius: '6px',
@@ -2862,10 +3022,16 @@ export default function ConsolePage() {
                       cursor: 'pointer',
                       whiteSpace: 'nowrap',
                       transition: 'background-color 150ms ease',
-                      fontFamily: "'Geist', sans-serif",
+                      fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                     }}
                   >
-                    {alertSavedSuccess ? '✓ Saved' : 'Save Alert Rule'}
+                    {alertSavedSuccess
+                      ? isRtl
+                        ? '✓ تم الحفظ في قائمة المراقبة'
+                        : '✓ Saved'
+                      : isRtl
+                      ? 'راقب هذا المنتج'
+                      : 'Save Alert Rule'}
                   </button>
                 </div>
               </div>

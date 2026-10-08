@@ -4,6 +4,7 @@ import {
   CheckCircle2,
   RefreshCw,
 } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 // Enriched telemetry node configurations
 const INITIAL_NODES_DATA = [
@@ -178,6 +179,7 @@ const INITIAL_NODES_DATA = [
 ];
 
 export default function RetailerHealth({ onShowToast = null }) {
+  const { lang, isRtl, t, getRetailerName } = useLanguage();
   const [nodes, setNodes] = useState(INITIAL_NODES_DATA);
   const [probingNodeId, setProbingNodeId] = useState(null);
   const [flashingNodeId, setFlashingNodeId] = useState(null);
@@ -252,19 +254,19 @@ export default function RetailerHealth({ onShowToast = null }) {
             gap: '8px',
           }}
         >
-          <span style={{ fontSize: '0.6875rem', fontWeight: 500, color: '#888888', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Geist Mono', monospace" }}>
-            DOMESTIC FLEET STATUS
+          <span style={{ fontSize: '0.6875rem', fontWeight: 500, color: '#888888', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace" }}>
+            {isRtl ? 'حالة شبكة المتاجر المصرية' : 'DOMESTIC FLEET STATUS'}
           </span>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '1.5rem', fontWeight: 600, color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
-              12 / 12 NODES
+              {isRtl ? '12 / 12 متجر' : '12 / 12 NODES'}
             </span>
             <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
-              100% ONLINE
+              {isRtl ? '100% متصل ومحدث' : '100% ONLINE'}
             </span>
           </div>
-          <span style={{ fontSize: '0.75rem', color: '#666666' }}>
-            Continuous real-time shelf scraping active
+          <span style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+            {isRtl ? 'فحص دوري مستمر لأسعار الرفوف' : 'Continuous real-time shelf scraping active'}
           </span>
         </div>
 
@@ -279,19 +281,19 @@ export default function RetailerHealth({ onShowToast = null }) {
             gap: '8px',
           }}
         >
-          <span style={{ fontSize: '0.6875rem', fontWeight: 500, color: '#888888', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Geist Mono', monospace" }}>
-            MEAN INGESTION LATENCY
+          <span style={{ fontSize: '0.6875rem', fontWeight: 500, color: '#888888', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace" }}>
+            {isRtl ? 'متوسط سرعة الاستجابة' : 'MEAN INGESTION LATENCY'}
           </span>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '1.5rem', fontWeight: 600, color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>
               {avgPing} ms
             </span>
             <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#00DF8F', fontFamily: "'Geist Mono', monospace" }}>
-              OPTIMAL
+              {isRtl ? 'ممتاز' : 'OPTIMAL'}
             </span>
           </div>
-          <span style={{ fontSize: '0.75rem', color: '#666666' }}>
-            Average round-trip response time
+          <span style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+            {isRtl ? 'زمن الاستجابة للطلب بالمللي ثانية' : 'Average round-trip response time'}
           </span>
         </div>
 
@@ -306,19 +308,19 @@ export default function RetailerHealth({ onShowToast = null }) {
             gap: '8px',
           }}
         >
-          <span style={{ fontSize: '0.6875rem', fontWeight: 500, color: '#888888', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Geist Mono', monospace" }}>
-            FLEET TRUTH SCORE (90D)
+          <span style={{ fontSize: '0.6875rem', fontWeight: 500, color: '#888888', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace" }}>
+            {isRtl ? 'مؤشر مصداقية العروض (90 يوم)' : 'FLEET TRUTH SCORE (90D)'}
           </span>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '1.5rem', fontWeight: 600, color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
               {avgTruthScore}%
             </span>
             <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
-              GENUINE
+              {isRtl ? 'خصومات حقيقية' : 'GENUINE'}
             </span>
           </div>
-          <span style={{ fontSize: '0.75rem', color: '#666666' }}>
-            Percentage of markdowns verified without ghost inflation
+          <span style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+            {isRtl ? 'نسبة التخفيضات الموثقة دون خصم وهمي' : 'Percentage of markdowns verified without ghost inflation'}
           </span>
         </div>
 
@@ -333,8 +335,8 @@ export default function RetailerHealth({ onShowToast = null }) {
             gap: '8px',
           }}
         >
-          <span style={{ fontSize: '0.6875rem', fontWeight: 500, color: '#888888', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Geist Mono', monospace" }}>
-            AGGREGATED UPTIME
+          <span style={{ fontSize: '0.6875rem', fontWeight: 500, color: '#888888', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace" }}>
+            {isRtl ? 'نسبة استقرار الاتصال' : 'AGGREGATED UPTIME'}
           </span>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '1.5rem', fontWeight: 600, color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>
@@ -350,7 +352,7 @@ export default function RetailerHealth({ onShowToast = null }) {
                 color: '#38BDF8',
                 fontSize: '0.6875rem',
                 cursor: 'pointer',
-                fontFamily: "'Geist Mono', monospace",
+                fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace",
                 display: 'flex',
                 alignItems: 'center',
                 gap: '4px',
@@ -358,11 +360,11 @@ export default function RetailerHealth({ onShowToast = null }) {
               }}
             >
               <RefreshCw size={10} style={{ animation: probingNodeId === 'ALL' ? 'spin 1s linear infinite' : 'none' }} />
-              <span>Probe Fleet</span>
+              <span>{isRtl ? 'فحص المتاجر' : 'Probe Fleet'}</span>
             </button>
           </div>
-          <span style={{ fontSize: '0.75rem', color: '#666666' }}>
-            Zero connection timeouts in last 72 hours
+          <span style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+            {isRtl ? 'صفر انقطاعات أو تأخيرات خلال 72 ساعة' : 'Zero connection timeouts in last 72 hours'}
           </span>
         </div>
       </div>
@@ -399,8 +401,8 @@ export default function RetailerHealth({ onShowToast = null }) {
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#EDEDED', fontFamily: "'Geist', sans-serif" }}>
-                      {node.name}
+                    <span style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#EDEDED', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                      {getRetailerName(node.id, lang)}
                     </span>
                     <span
                       style={{
@@ -433,15 +435,15 @@ export default function RetailerHealth({ onShowToast = null }) {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '4px',
-                    fontFamily: "'Geist Mono', monospace",
+                    fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace",
                     transition: 'all 100ms ease',
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#141414')}
                   onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#0A0A0A')}
-                  title="Ping retailer node"
+                  title={isRtl ? 'فحص سرعة استجابة المتجر الآن' : 'Ping retailer node'}
                 >
                   <RefreshCw size={10} style={{ animation: isProbing ? 'spin 1s linear infinite' : 'none' }} />
-                  <span>Ping</span>
+                  <span>{isRtl ? 'فحص الآن' : 'Ping'}</span>
                 </button>
               </div>
 
@@ -456,8 +458,8 @@ export default function RetailerHealth({ onShowToast = null }) {
                 }}
               >
                 <div>
-                  <span style={{ fontSize: '0.625rem', color: '#666666', textTransform: 'uppercase', fontFamily: "'Geist Mono', monospace" }}>
-                    INGESTION LATENCY
+                  <span style={{ fontSize: '0.625rem', color: '#666666', textTransform: 'uppercase', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace" }}>
+                    {isRtl ? 'سرعة الاستجابة' : 'INGESTION LATENCY'}
                   </span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
                     <span style={{ fontSize: '0.875rem', fontWeight: 600, color: pingColor, fontFamily: "'Geist Mono', monospace" }}>
@@ -470,8 +472,8 @@ export default function RetailerHealth({ onShowToast = null }) {
                 </div>
 
                 <div>
-                  <span style={{ fontSize: '0.625rem', color: '#666666', textTransform: 'uppercase', fontFamily: "'Geist Mono', monospace" }}>
-                    90D TRUTH SCORE
+                  <span style={{ fontSize: '0.625rem', color: '#666666', textTransform: 'uppercase', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace" }}>
+                    {isRtl ? 'مؤشر النزاهة 90 يوم' : '90D TRUTH SCORE'}
                   </span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
                     <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
@@ -482,8 +484,8 @@ export default function RetailerHealth({ onShowToast = null }) {
                 </div>
 
                 <div style={{ gridColumn: 'span 2' }}>
-                  <span style={{ fontSize: '0.625rem', color: '#666666', textTransform: 'uppercase', fontFamily: "'Geist Mono', monospace" }}>
-                    INGESTION VECTOR
+                  <span style={{ fontSize: '0.625rem', color: '#666666', textTransform: 'uppercase', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace" }}>
+                    {isRtl ? 'آلية جلب وتحديث البيانات' : 'INGESTION VECTOR'}
                   </span>
                   <div style={{ fontSize: '0.75rem', color: '#EDEDED', fontFamily: "'Geist Mono', monospace", marginTop: '2px' }}>
                     {node.ingestionMethod}
@@ -491,10 +493,10 @@ export default function RetailerHealth({ onShowToast = null }) {
                 </div>
 
                 <div style={{ gridColumn: 'span 2' }}>
-                  <span style={{ fontSize: '0.625rem', color: '#666666', textTransform: 'uppercase', fontFamily: "'Geist Mono', monospace" }}>
-                    WARRANTY STRICTNESS
+                  <span style={{ fontSize: '0.625rem', color: '#666666', textTransform: 'uppercase', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace" }}>
+                    {isRtl ? 'نوع الضمان المعتمد' : 'WARRANTY STRICTNESS'}
                   </span>
-                  <div style={{ fontSize: '0.75rem', color: '#888888', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#888888', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                     <ShieldCheck size={12} color="#10B981" />
                     <span>{node.warrantyStrictness}</span>
                   </div>
@@ -511,11 +513,11 @@ export default function RetailerHealth({ onShowToast = null }) {
                   paddingTop: '8px',
                   fontSize: '0.6875rem',
                   color: '#555555',
-                  fontFamily: "'Geist Mono', monospace",
+                  fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace",
                 }}
               >
-                <span>Throughput: {node.throughput}</span>
-                <span>Uptime: {node.uptime}</span>
+                <span>{isRtl ? `معدل الفحص: ${node.throughput}` : `Throughput: ${node.throughput}`}</span>
+                <span>{isRtl ? `الاستقرار: ${node.uptime}` : `Uptime: ${node.uptime}`}</span>
               </div>
             </div>
           );

@@ -9,8 +9,10 @@ import {
   Search,
 } from 'lucide-react';
 import { SEEDED_MASTER_PRODUCTS, PLATFORMS_REGISTRY } from '../../services/marketIntelligenceData.js';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function WatchlistManager({ onInspectProduct = null, onShowToast = null }) {
+  const { lang, isRtl, t, getRetailerName } = useLanguage();
   // Pre-seeded trader watchlist rules
   const [watchlist, setWatchlist] = useState([
     {
@@ -143,7 +145,7 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
             type="text"
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
-            placeholder="Search tracked watchlist SKUs..."
+            placeholder={isRtl ? 'ابحث في قائمة المتابعة والتنبيهات...' : 'Search tracked watchlist SKUs...'}
             style={{
               background: 'transparent',
               border: 'none',
@@ -151,7 +153,7 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
               fontSize: '0.8125rem',
               outline: 'none',
               width: '100%',
-              fontFamily: "'Geist', sans-serif",
+              fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
             }}
           />
         </div>
@@ -171,14 +173,14 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
-            fontFamily: "'Geist', sans-serif",
+            fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
             transition: 'background-color 120ms ease',
           }}
           onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#EAEAEA')}
           onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
         >
           <Plus size={14} />
-          <span>Add Target Trigger</span>
+          <span>{isRtl ? 'إضافة تنبيه سعر مستهدف' : 'Add Target Trigger'}</span>
         </button>
       </div>
 
@@ -192,7 +194,7 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
         }}
       >
         <div style={{ overflowX: 'auto', width: '100%' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.8125rem' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: isRtl ? 'right' : 'left', fontSize: '0.8125rem' }}>
             <thead>
               <tr
                 style={{
@@ -201,15 +203,15 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
                   fontSize: '0.6875rem',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
-                  fontFamily: "'Geist Mono', monospace",
+                  fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace",
                 }}
               >
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Monitored SKU</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Live Best Price</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Limit Target Price</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Distance to Target</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Dispatch Channels</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500, textAlign: 'right' }}>Actions</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{isRtl ? 'المنتج قيد المراقبة' : 'Monitored SKU'}</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{isRtl ? 'أرخص سعر حالياً' : 'Live Best Price'}</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{isRtl ? 'سعر الشراء المستهدف' : 'Limit Target Price'}</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{isRtl ? 'فارق الوصول للهدف' : 'Distance to Target'}</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{isRtl ? 'قنوات التنبيه' : 'Dispatch Channels'}</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500, textAlign: isRtl ? 'left' : 'right' }}>{isRtl ? 'الإجراءات' : 'Actions'}</th>
               </tr>
             </thead>
             <tbody>
@@ -269,8 +271,8 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
                           <span style={{ fontSize: '0.9375rem', fontWeight: 700, color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>
                             EGP {item.currentLowestPrice.toLocaleString()}
                           </span>
-                          <span style={{ fontSize: '0.6875rem', color: '#10B981' }}>
-                            via {item.cheapestPlatform}
+                          <span style={{ fontSize: '0.6875rem', color: '#10B981', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace" }}>
+                            {isRtl ? `عبر ${getRetailerName(item.cheapestPlatform, lang)}` : `via ${getRetailerName(item.cheapestPlatform, lang)}`}
                           </span>
                         </div>
                       </td>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AuthProvider, ProtectedRoute, PublicOnlyRoute } from './context/AuthContext';
+import { LanguageProvider } from './context/LanguageContext';
 import LandingPage from './pages/LandingPage';
 import PricingPage from './pages/PricingPage';
 import TrueCostPage from './pages/engines/TrueCostPage';
@@ -128,9 +129,11 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AppRoutes />
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </LanguageProvider>
   );
 }
 

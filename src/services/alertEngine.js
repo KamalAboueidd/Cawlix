@@ -6,6 +6,7 @@
 
 import { sendBrevoAlertEmail } from './emailService.js';
 import { PLATFORMS_REGISTRY } from './marketIntelligenceData.js';
+import { recordGlitchRadarEvent } from './dataWiringService.js';
 
 const ALERTS_STORAGE_KEY = 'cawlix_in_app_alerts';
 
@@ -232,6 +233,20 @@ export function evaluatePriceUpdate({
   // Add to in-app notification center
   alertsState = [newAlert, ...alertsState.slice(0, 49)];
   persistAlerts();
+
+  // Wire to glitch_radar_events table
+  if (triggeredType === 'PRICE_CRASH' || deltaPct >= 10.0 || isATL) {
+    recordGlitchRadarEvent({
+      sku: product.barcode || product.sku || product.id,
+      title: product.title,
+      retailer: platformId,
+      currentPrice,
+      baselinePrice: baselineMedian || oldP,
+      deltaPct,
+      anomalyType: triggeredType === 'PRICE_CRASH' ? 'FLASH_CRASH' : 'GHOST_MARKUP',
+      severity,
+    }).catch(() => {});
+  }
 
   // Dispatch Brevo email if recipient email is available
   if (userEmail) {

@@ -25,12 +25,18 @@ import {
   CheckCircle2,
   Search,
   RefreshCw,
+  BookmarkCheck,
+  HelpCircle,
 } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext.jsx';
+import { addToUserWatchlist } from '../../services/dataWiringService.js';
+import { supabase } from '../../lib/supabaseClient.js';
 
 export default function MultiPlatformIntelligence({
   defaultProductId = null,
   resolvedProduct = null,
 }) {
+  const { lang, t, isRtl, getRetailerName } = useLanguage();
   const [products, setProducts] = useState(SEEDED_MASTER_PRODUCTS);
   const [selectedProductId, setSelectedProductId] = useState(defaultProductId || SEEDED_MASTER_PRODUCTS[0].id);
   const [loading, setLoading] = useState(false);
@@ -115,6 +121,42 @@ export default function MultiPlatformIntelligence({
       setTimeout(() => setAuditToast(null), 4000);
     } finally {
       setProbingListingId(null);
+    }
+  };
+
+  const handleWatchlistToggle = async (product, listing = null) => {
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const user = sessionData?.session?.user;
+      if (!user) {
+        setAuditToast({
+          type: 'error',
+          message: isRtl ? 'يرجى تسجيل الدخول لإضافة المنتج لقائمة المراقبة والتنبيهات' : 'Authentication required to watch SKU',
+        });
+        setTimeout(() => setAuditToast(null), 3000);
+        return;
+      }
+
+      const targetVal = listing?.current_price
+        ? Math.round(listing.current_price * 0.95)
+        : Math.round((product?.current_price || 50000) * 0.95);
+
+      await addToUserWatchlist({
+        userId: user.id,
+        sku: product.barcode || product.id,
+        productId: product.id,
+        targetPrice: targetVal,
+      });
+
+      setAuditToast({
+        type: 'success',
+        message: isRtl
+          ? `تم تفعيل مراقبة (${product.title}) عند سعر هدف ${targetVal.toLocaleString()} ج.م`
+          : `Active tracking initiated for ${product.title} at EGP ${targetVal.toLocaleString()}`,
+      });
+      setTimeout(() => setAuditToast(null), 3500);
+    } catch (err) {
+      console.warn('Watchlist toggle error:', err);
     }
   };
 
@@ -590,37 +632,67 @@ export default function MultiPlatformIntelligence({
           </div>
 
           {lowestInStockListing && (
-            <a
-              href={sanitizeRetailerUrl({
-                url: lowestInStockListing.listing_url || lowestInStockListing.url || lowestInStockListing.product_url,
-                platformId: lowestInStockListing.platform_id,
-                productTitle: activeProduct.title,
-                sku: activeProduct.barcode || activeProduct.id,
-              })}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontSize: '0.75rem',
-                color: '#EDEDED',
-                textDecoration: 'none',
-                fontWeight: 500,
-                padding: '6px 10px',
-                borderRadius: '5px',
-                backgroundColor: '#000000',
-                border: '1px solid #1F1F1F',
-                alignSelf: 'flex-start',
-                transition: 'border-color 150ms ease',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#10B981')}
-              onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#1F1F1F')}
-            >
-              <span>Direct Link to {lowestInStockListing.name}</span>
-              <ExternalLink size={12} color="#10B981" />
-            </a>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              <a
+                href={sanitizeRetailerUrl({
+                  url: lowestInStockListing.listing_url || lowestInStockListing.url || lowestInStockListing.product_url,
+                  platformId: lowestInStockListing.platform_id,
+                  productTitle: activeProduct.title,
+                  sku: activeProduct.barcode || activeProduct.id,
+                })}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontSize: '0.75rem',
+                  color: '#EDEDED',
+                  textDecoration: 'none',
+                  fontWeight: 500,
+                  padding: '6px 10px',
+                  borderRadius: '5px',
+                  backgroundColor: '#000000',
+                  border: '1px solid #1F1F1F',
+                  transition: 'border-color 150ms ease',
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#10B981')}
+                onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#1F1F1F')}
+              >
+                <span>{isRtl ? `زيارة ${getRetailerName(lowestInStockListing.platform_id || lowestInStockListing.name)}` : `Direct Link to ${lowestInStockListing.name}`}</span>
+                <ExternalLink size={12} color="#10B981" />
+              </a>
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleWatchlistToggle(activeProduct, lowestInStockListing);
+                }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontSize: '0.75rem',
+                  color: '#10B981',
+                  fontWeight: 500,
+                  padding: '6px 10px',
+                  borderRadius: '5px',
+                  backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                  cursor: 'pointer',
+                  transition: 'all 150ms ease',
+                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(16, 185, 129, 0.16)')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'rgba(16, 185, 129, 0.08)')}
+              >
+                <BookmarkCheck size={12} color="#10B981" />
+                <span>{isRtl ? 'راقب هذا المنتج' : 'Add to Watchlist'}</span>
+              </button>
+            </div>
           )}
         </div>
 
@@ -1162,10 +1234,10 @@ export default function MultiPlatformIntelligence({
                           />
                           <span>
                             {probingListingId === (item.platform_id || item.id)
-                              ? 'Probing...'
+                              ? (isRtl ? 'جاري الفحص...' : 'Probing...')
                               : flashingListingIds[item.platform_id || item.id]
-                              ? 'Audited ✓'
-                              : 'Re-audit'}
+                              ? (isRtl ? 'تم الفحص ✓' : 'Audited ✓')
+                              : (isRtl ? 'فحص وتحديث' : 'Re-audit')}
                           </span>
                         </button>
 
@@ -1192,6 +1264,7 @@ export default function MultiPlatformIntelligence({
                             border: isLowest ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid #222222',
                             backgroundColor: '#000000',
                             transition: 'all 120ms ease',
+                            fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
                           }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.borderColor = isLowest ? '#10B981' : '#444444';
@@ -1200,9 +1273,43 @@ export default function MultiPlatformIntelligence({
                             e.currentTarget.style.borderColor = isLowest ? 'rgba(16, 185, 129, 0.4)' : '#222222';
                           }}
                         >
-                          <span>Visit Store</span>
+                          <span>{isRtl ? 'زيارة المتجر' : 'Visit Store'}</span>
                           <ExternalLink size={10} />
                         </a>
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleWatchlistToggle(activeProduct, item);
+                          }}
+                          title={isRtl ? 'راقب هذا المنتج وحدد سعراً مستهدفاً' : 'Add to Watchlist'}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            fontSize: '0.75rem',
+                            color: '#888888',
+                            padding: '4px 8px',
+                            borderRadius: '4px',
+                            border: '1px solid #222222',
+                            backgroundColor: '#000000',
+                            cursor: 'pointer',
+                            transition: 'all 120ms ease',
+                            fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = '#10B981';
+                            e.currentTarget.style.color = '#10B981';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = '#222222';
+                            e.currentTarget.style.color = '#888888';
+                          }}
+                        >
+                          <BookmarkCheck size={10} />
+                          <span>{isRtl ? 'مراقبة' : 'Watch'}</span>
+                        </button>
                       </div>
                     </td>
                   </tr>

@@ -4,11 +4,14 @@ import {
   RefreshCw,
   Search,
   CheckCircle2,
+  HelpCircle,
 } from 'lucide-react';
 import { SEEDED_MASTER_PRODUCTS, PLATFORMS_REGISTRY } from '../../services/marketIntelligenceData.js';
 import { sanitizeRetailerUrl } from '../../utils/urlSanitizer.js';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function ArbitrageEngine({ onInspectProduct = null, onShowToast = null }) {
+  const { lang, t, isRtl, getRetailerName } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('ALL');
   const [sortBy, setSortBy] = useState('SPREAD_EGP'); // 'SPREAD_EGP' | 'MARGIN_PCT' | 'PRICE_ASC'
@@ -168,21 +171,27 @@ export default function ArbitrageEngine({ onInspectProduct = null, onShowToast =
             display: 'flex',
             flexDirection: 'column',
             gap: '8px',
+            fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
           }}
         >
-          <span style={{ fontSize: '0.6875rem', fontWeight: 500, color: '#888888', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Geist Mono', monospace" }}>
-            CUMULATIVE ARBITRAGE POOL
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#888888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              {isRtl ? 'إجمالي وفر الأسعار المتاح بالسوق' : 'CUMULATIVE ARBITRAGE POOL'}
+            </span>
+            <span title={t('tip_arbitrage_margin')} style={{ cursor: 'help', color: '#666666' }}>
+              <HelpCircle size={13} />
+            </span>
+          </div>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '1.5rem', fontWeight: 600, color: '#10B981', fontFamily: "'Geist Mono', monospace", letterSpacing: '-0.02em' }}>
-              EGP {totalArbitragePool.toLocaleString()}
+              {totalArbitragePool.toLocaleString()} {isRtl ? 'ج.م' : 'EGP'}
             </span>
-            <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
-              LIVE SPREAD
+            <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#10B981', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace" }}>
+              {isRtl ? 'فروق حية' : 'LIVE SPREAD'}
             </span>
           </div>
           <span style={{ fontSize: '0.75rem', color: '#666666' }}>
-            Aggregated buy/sell differential across catalog
+            {isRtl ? 'إجمالي الوفر المحسوب بين أرخص وأغلى متجر' : 'Aggregated buy/sell differential across catalog'}
           </span>
         </div>
 
@@ -195,21 +204,22 @@ export default function ArbitrageEngine({ onInspectProduct = null, onShowToast =
             display: 'flex',
             flexDirection: 'column',
             gap: '8px',
+            fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
           }}
         >
-          <span style={{ fontSize: '0.6875rem', fontWeight: 500, color: '#888888', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Geist Mono', monospace" }}>
-            PEAK SINGLE SPREAD
+          <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#888888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            {isRtl ? 'أعلى فارق سعر لمنتج واحد' : 'PEAK SINGLE SPREAD'}
           </span>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '1.5rem', fontWeight: 600, color: '#EDEDED', fontFamily: "'Geist Mono', monospace", letterSpacing: '-0.02em' }}>
-              EGP {maxSingleOpportunity.toLocaleString()}
+              {maxSingleOpportunity.toLocaleString()} {isRtl ? 'ج.م' : 'EGP'}
             </span>
-            <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#00DF8F', fontFamily: "'Geist Mono', monospace" }}>
-              MAX SPREAD
+            <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#00DF8F', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace" }}>
+              {isRtl ? 'أقصى فارق' : 'MAX SPREAD'}
             </span>
           </div>
           <span style={{ fontSize: '0.75rem', color: '#666666' }}>
-            Largest price disparity detected on single SKU
+            {isRtl ? 'أكبر فجوة سعرية مسجلة لمنتج واحد' : 'Largest price disparity detected on single SKU'}
           </span>
         </div>
 
@@ -222,21 +232,22 @@ export default function ArbitrageEngine({ onInspectProduct = null, onShowToast =
             display: 'flex',
             flexDirection: 'column',
             gap: '8px',
+            fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
           }}
         >
-          <span style={{ fontSize: '0.6875rem', fontWeight: 500, color: '#888888', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: "'Geist Mono', monospace" }}>
-            AVERAGE DOMESTIC MARGIN
+          <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#888888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            {isRtl ? 'متوسط نسبة فارق السعر' : 'AVERAGE DOMESTIC MARGIN'}
           </span>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '1.5rem', fontWeight: 600, color: '#38BDF8', fontFamily: "'Geist Mono', monospace", letterSpacing: '-0.02em' }}>
               +{avgMarginPct}%
             </span>
-            <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#38BDF8', fontFamily: "'Geist Mono', monospace" }}>
-              ACROSS NODES
+            <span style={{ fontSize: '0.6875rem', fontWeight: 600, color: '#38BDF8', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace" }}>
+              {isRtl ? 'بين المتاجر' : 'ACROSS NODES'}
             </span>
           </div>
           <span style={{ fontSize: '0.75rem', color: '#666666' }}>
-            Mean percentage arbitrage gap between retailers
+            {isRtl ? 'متوسط نسبة الربح والوفر بين المتاجر الـ 12' : 'Mean percentage arbitrage gap between retailers'}
           </span>
         </div>
 
@@ -383,12 +394,12 @@ export default function ArbitrageEngine({ onInspectProduct = null, onShowToast =
                   fontFamily: "'Geist Mono', monospace",
                 }}
               >
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Target SKU & EAN-13</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Cheapest Node (Buy At)</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Highest Node (Sell / Benchmark)</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Net Arbitrage Margin</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>Liquidity / Stock</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500, textAlign: 'right' }}>Actions</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{isRtl ? 'المنتج والمواصفات' : 'Target SKU & EAN-13'}</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{isRtl ? 'أرخص متجر (شراء)' : 'Cheapest Node (Buy At)'}</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{isRtl ? 'أعلى متجر (سعر السوق)' : 'Highest Node (Sell / Benchmark)'}</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{isRtl ? 'فارق السعر ومكسب التجارة' : 'Net Arbitrage Margin'}</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{isRtl ? 'حالة التوفر بالمخزون' : 'Liquidity / Stock'}</th>
+                <th style={{ padding: '12px 18px', fontWeight: 500, textAlign: isRtl ? 'left' : 'right' }}>{isRtl ? 'الإجراء' : 'Actions'}</th>
               </tr>
             </thead>
             <tbody>
@@ -523,9 +534,9 @@ export default function ArbitrageEngine({ onInspectProduct = null, onShowToast =
                               e.currentTarget.style.borderColor = '#222222';
                               e.currentTarget.style.color = '#EDEDED';
                             }}
-                            title={`Acquire on ${item.cheapest.platformName}`}
+                            title={`Acquire on ${getRetailerName(item.cheapest.platformId || item.cheapest.platformName)}`}
                           >
-                            <span>Acquire via {item.cheapest.platformName.split(' ')[0]}</span>
+                            <span>{isRtl ? `شراء عبر ${getRetailerName(item.cheapest.platformId || item.cheapest.platformName)}` : `Acquire via ${item.cheapest.platformName.split(' ')[0]}`}</span>
                             <ExternalLink size={10} color="#888888" />
                           </a>
 

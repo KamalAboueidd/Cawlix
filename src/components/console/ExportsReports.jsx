@@ -11,8 +11,10 @@ import {
   Filter,
 } from 'lucide-react';
 import { SEEDED_MASTER_PRODUCTS, PLATFORMS_REGISTRY } from '../../services/marketIntelligenceData.js';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function ExportsReports({ onShowToast = null }) {
+  const { lang, isRtl, t, getRetailerName } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [inStockOnly, setInStockOnly] = useState(false);
   const [isExportingCsv, setIsExportingCsv] = useState(false);
@@ -342,7 +344,7 @@ export default function ExportsReports({ onShowToast = null }) {
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '0.6875rem', textTransform: 'uppercase', color: '#888888', fontWeight: 600, letterSpacing: '0.05em' }}>
-              Monitored Telemetry SKUs
+              {lang === 'ar' ? 'المنتجات قيد المراقبة' : 'Monitored Telemetry SKUs'}
             </span>
             <Layers size={14} color="#888888" />
           </div>
@@ -351,11 +353,11 @@ export default function ExportsReports({ onShowToast = null }) {
               {SEEDED_MASTER_PRODUCTS.length}
             </span>
             <span style={{ fontSize: '0.75rem', color: '#10B981', fontFamily: "'Geist', sans-serif" }}>
-              {totalMonitoredListings} live nodes
+              {totalMonitoredListings} {lang === 'ar' ? 'نقطة رصد' : 'live nodes'}
             </span>
           </div>
           <div style={{ fontSize: '0.6875rem', color: '#666666' }}>
-            Active across 12 domestic retailers
+            {lang === 'ar' ? 'نشط عبر 12 منصة تجارة إلكترونية مصرية' : 'Active across 12 domestic retailers'}
           </div>
         </div>
 
@@ -372,7 +374,7 @@ export default function ExportsReports({ onShowToast = null }) {
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '0.6875rem', textTransform: 'uppercase', color: '#888888', fontWeight: 600, letterSpacing: '0.05em' }}>
-              Market Integrity Index
+              {lang === 'ar' ? 'مؤشر نزاهة الأسعار' : 'Market Integrity Index'}
             </span>
             <ShieldCheck size={14} color="#10B981" />
           </div>
@@ -381,11 +383,11 @@ export default function ExportsReports({ onShowToast = null }) {
               96.2%
             </span>
             <span style={{ fontSize: '0.75rem', color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>
-              Grade AAA
+              {lang === 'ar' ? 'تصنيف ممتاز AAA' : 'Grade AAA'}
             </span>
           </div>
           <div style={{ fontSize: '0.6875rem', color: '#666666' }}>
-            Audited against 90-day pricing baselines
+            {lang === 'ar' ? 'مفحوص مقابل متوسط سعر السوق الحقيقي (آخر 90 يوم)' : 'Audited against 90-day pricing baselines'}
           </div>
         </div>
 
@@ -402,7 +404,7 @@ export default function ExportsReports({ onShowToast = null }) {
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '0.6875rem', textTransform: 'uppercase', color: '#888888', fontWeight: 600, letterSpacing: '0.05em' }}>
-              Flagged Deceptive Discounts
+              {lang === 'ar' ? 'عروض وتلاعبات تم رصدها' : 'Flagged Deceptive Discounts'}
             </span>
             <AlertTriangle size={14} color="#FB7185" />
           </div>
@@ -411,11 +413,11 @@ export default function ExportsReports({ onShowToast = null }) {
               {auditedIncidents.length}
             </span>
             <span style={{ fontSize: '0.75rem', color: '#FB7185', fontFamily: "'Geist', sans-serif" }}>
-              Incidents
+              {lang === 'ar' ? 'حالات رصد' : 'Incidents'}
             </span>
           </div>
           <div style={{ fontSize: '0.6875rem', color: '#666666' }}>
-            Ghost markups & artificial anchor prices
+            {lang === 'ar' ? 'خصومات وهمية وأسعار مرجعية مصطنعة' : 'Ghost markups & artificial anchor prices'}
           </div>
         </div>
 
@@ -432,7 +434,7 @@ export default function ExportsReports({ onShowToast = null }) {
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '0.6875rem', textTransform: 'uppercase', color: '#888888', fontWeight: 600, letterSpacing: '0.05em' }}>
-              Compliance Standard
+              {lang === 'ar' ? 'معايير حماية المستهلك' : 'Compliance Standard'}
             </span>
             <Clock size={14} color="#888888" />
           </div>
@@ -441,11 +443,11 @@ export default function ExportsReports({ onShowToast = null }) {
               CPA-EG
             </span>
             <span style={{ fontSize: '0.75rem', color: '#10B981', fontFamily: "'Geist', sans-serif" }}>
-              Law 181/2018
+              {lang === 'ar' ? 'قانون 181/2018' : 'Law 181/2018'}
             </span>
           </div>
           <div style={{ fontSize: '0.6875rem', color: '#666666' }}>
-            Egyptian Consumer Protection Agency verified
+            {lang === 'ar' ? 'متوافق مع معايير جهاز حماية المستهلك المصري' : 'Egyptian Consumer Protection Agency verified'}
           </div>
         </div>
       </div>
@@ -585,19 +587,25 @@ export default function ExportsReports({ onShowToast = null }) {
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Filter size={13} color="#888888" />
-            <span style={{ fontSize: '0.75rem', color: '#888888' }}>Export Scope:</span>
+            <span style={{ fontSize: '0.75rem', color: '#888888' }}>{lang === 'ar' ? 'نطاق التصدير:' : 'Export Scope:'}</span>
           </div>
 
           <div style={{ display: 'flex', gap: '6px' }}>
-            {['ALL', 'Smartphones', 'Laptops & Computing', 'Electronics', 'Coffee & Appliances'].map((cat) => (
+            {[
+              { id: 'ALL', en: 'All Categories', ar: 'كل الأقسام' },
+              { id: 'Smartphones', en: 'Smartphones', ar: 'الهواتف الذكية' },
+              { id: 'Laptops & Computing', en: 'Laptops & Computing', ar: 'اللابتوب والكمبيوتر' },
+              { id: 'Electronics', en: 'Electronics', ar: 'الإلكترونيات' },
+              { id: 'Coffee & Appliances', en: 'Coffee & Appliances', ar: 'الأجهزة المنزلية' },
+            ].map((cat) => (
               <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
                 style={{
-                  background: selectedCategory === cat ? '#1F1F1F' : 'transparent',
-                  color: selectedCategory === cat ? '#EDEDED' : '#888888',
+                  background: selectedCategory === cat.id ? '#1F1F1F' : 'transparent',
+                  color: selectedCategory === cat.id ? '#EDEDED' : '#888888',
                   border: '1px solid',
-                  borderColor: selectedCategory === cat ? '#333333' : '#1F1F1F',
+                  borderColor: selectedCategory === cat.id ? '#333333' : '#1F1F1F',
                   borderRadius: '4px',
                   padding: '4px 10px',
                   fontSize: '0.6875rem',
@@ -606,7 +614,7 @@ export default function ExportsReports({ onShowToast = null }) {
                   transition: 'all 0.15s ease',
                 }}
               >
-                {cat === 'ALL' ? 'All Categories' : cat}
+                {lang === 'ar' ? cat.ar : cat.en}
               </button>
             ))}
           </div>
@@ -616,7 +624,7 @@ export default function ExportsReports({ onShowToast = null }) {
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              marginLeft: 'auto',
+              marginInlineStart: 'auto',
               cursor: 'pointer',
               fontSize: '0.75rem',
               color: '#888888',
@@ -631,7 +639,7 @@ export default function ExportsReports({ onShowToast = null }) {
                 cursor: 'pointer',
               }}
             />
-            <span>In-Stock Listings Only</span>
+            <span>{lang === 'ar' ? 'المنتجات المتوفرة فقط' : 'In-Stock Listings Only'}</span>
           </label>
         </div>
       </div>
@@ -676,7 +684,7 @@ export default function ExportsReports({ onShowToast = null }) {
                   fontWeight: 600,
                 }}
               >
-                OFFICIAL AUDIT REPORT
+                {lang === 'ar' ? 'تقرير فحص رسمي معتمد' : 'OFFICIAL AUDIT REPORT'}
               </span>
               <span style={{ fontSize: '0.75rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
                 REF: CWX-AUD-2026-Q4-EG
@@ -692,10 +700,12 @@ export default function ExportsReports({ onShowToast = null }) {
                 fontFamily: "'Geist', sans-serif",
               }}
             >
-              Egyptian Retail Price Integrity & Anti-Deception Audit
+              {lang === 'ar' ? 'تقرير نزاهة أسعار التجزئة ومكافحة الخصومات الوهمية بمصر' : 'Egyptian Retail Price Integrity & Anti-Deception Audit'}
             </h2>
             <p style={{ fontSize: '0.8125rem', color: '#888888', margin: 0, maxWidth: '750px', lineHeight: 1.5 }}>
-              Audited analysis of reference price anchoring, deceptive pre-promotional markup patterns, and true domestic shelf discounts across Egypt’s major 12 electronic commerce platforms in compliance with Egyptian Consumer Protection Agency standards.
+              {lang === 'ar'
+                ? 'فحص شامل لرفع الأسعار قبل التخفيضات (الخصومات الوهمية) ومقارنة التخفيضات الحقيقية عبر أكبر 12 منصة تجارة إلكترونية في مصر طبقاً لمعايير جهاز حماية المستهلك المصري.'
+                : 'Audited analysis of reference price anchoring, deceptive pre-promotional markup patterns, and true domestic shelf discounts across Egypt’s major 12 electronic commerce platforms in compliance with Egyptian Consumer Protection Agency standards.'}
             </p>
           </div>
 
@@ -703,20 +713,20 @@ export default function ExportsReports({ onShowToast = null }) {
             style={{
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'flex-end',
+              alignItems: isRtl ? 'flex-start' : 'flex-end',
               gap: '4px',
               fontFamily: "'Geist Mono', monospace",
               fontSize: '0.75rem',
             }}
           >
             <span style={{ color: '#888888' }}>
-              Generated: <strong style={{ color: '#EDEDED' }}>{new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</strong>
+              {lang === 'ar' ? 'تاريخ التقرير:' : 'Generated:'} <strong style={{ color: '#EDEDED' }}>{new Date().toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</strong>
             </span>
             <span style={{ color: '#888888' }}>
-              Telemetry Nodes: <strong style={{ color: '#EDEDED' }}>12 Active domestic retailers</strong>
+              {lang === 'ar' ? 'المتاجر المفحوصة:' : 'Telemetry Nodes:'} <strong style={{ color: '#EDEDED' }}>{lang === 'ar' ? '12 متجر إلكتروني مصري نشط' : '12 Active domestic retailers'}</strong>
             </span>
             <span style={{ color: '#888888' }}>
-              Audit Window: <strong style={{ color: '#EDEDED' }}>Past 90 Days Rolling</strong>
+              {lang === 'ar' ? 'فترة الرصد:' : 'Audit Window:'} <strong style={{ color: '#EDEDED' }}>{lang === 'ar' ? 'آخر 90 يوماً متواصلة' : 'Past 90 Days Rolling'}</strong>
             </span>
           </div>
         </div>
@@ -725,22 +735,22 @@ export default function ExportsReports({ onShowToast = null }) {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
             <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#EDEDED', margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              1. Domestic Retailer Price Integrity Scorecard (90 Days)
+              {lang === 'ar' ? '1. تقرير نزاهة أسعار المتاجر المصرية (آخر 90 يوماً)' : '1. Domestic Retailer Price Integrity Scorecard (90 Days)'}
             </h3>
-            <span style={{ fontSize: '0.75rem', color: '#666666' }}>12 Audited Egyptian Nodes</span>
+            <span style={{ fontSize: '0.75rem', color: '#666666' }}>{lang === 'ar' ? '12 منصة مصرية مفحوصة' : '12 Audited Egyptian Nodes'}</span>
           </div>
 
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.8125rem' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: isRtl ? 'right' : 'left', fontSize: '0.8125rem' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #1F1F1F', color: '#888888', fontSize: '0.6875rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  <th style={{ padding: '8px 12px 8px 0', fontWeight: 600 }}>Retailer Node</th>
-                  <th style={{ padding: '8px 12px', fontWeight: 600 }}>Market Tier</th>
-                  <th style={{ padding: '8px 12px', fontWeight: 600, textAlign: 'right' }}>Audited SKUs</th>
-                  <th style={{ padding: '8px 12px', fontWeight: 600, textAlign: 'right' }}>Ghost Markups</th>
-                  <th style={{ padding: '8px 12px', fontWeight: 600, textAlign: 'right' }}>Integrity Index</th>
-                  <th style={{ padding: '8px 12px', fontWeight: 600, textAlign: 'center' }}>Grade</th>
-                  <th style={{ padding: '8px 0 8px 12px', fontWeight: 600, textAlign: 'right' }}>Regulatory Status</th>
+                  <th style={{ padding: isRtl ? '8px 0 8px 12px' : '8px 12px 8px 0', fontWeight: 600 }}>{lang === 'ar' ? 'المتجر الإلكتروني' : 'Retailer Node'}</th>
+                  <th style={{ padding: '8px 12px', fontWeight: 600 }}>{lang === 'ar' ? 'تصنيف المتجر' : 'Market Tier'}</th>
+                  <th style={{ padding: '8px 12px', fontWeight: 600, textAlign: isRtl ? 'left' : 'right' }}>{lang === 'ar' ? 'المنتجات المفحوصة' : 'Audited SKUs'}</th>
+                  <th style={{ padding: '8px 12px', fontWeight: 600, textAlign: isRtl ? 'left' : 'right' }}>{lang === 'ar' ? 'خصومات وهمية' : 'Ghost Markups'}</th>
+                  <th style={{ padding: '8px 12px', fontWeight: 600, textAlign: isRtl ? 'left' : 'right' }}>{lang === 'ar' ? 'مؤشر النزاهة' : 'Integrity Index'}</th>
+                  <th style={{ padding: '8px 12px', fontWeight: 600, textAlign: 'center' }}>{lang === 'ar' ? 'التقييم' : 'Grade'}</th>
+                  <th style={{ padding: isRtl ? '8px 12px 8px 0' : '8px 0 8px 12px', fontWeight: 600, textAlign: isRtl ? 'left' : 'right' }}>{lang === 'ar' ? 'الحالة القانونية' : 'Regulatory Status'}</th>
                 </tr>
               </thead>
               <tbody>
@@ -752,22 +762,22 @@ export default function ExportsReports({ onShowToast = null }) {
                       fontFamily: "'Geist', sans-serif",
                     }}
                   >
-                    <td style={{ padding: '10px 12px 10px 0', color: '#EDEDED', fontWeight: 500 }}>
+                    <td style={{ padding: isRtl ? '10px 0 10px 12px' : '10px 12px 10px 0', color: '#EDEDED', fontWeight: 500 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span>{node.name}</span>
+                        <span>{getRetailerName(node.id, lang)}</span>
                         <span style={{ fontSize: '0.6875rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>({node.domain})</span>
                       </div>
                     </td>
                     <td style={{ padding: '10px 12px', color: '#888888', fontSize: '0.75rem' }}>
                       {node.tier}
                     </td>
-                    <td style={{ padding: '10px 12px', color: '#EDEDED', textAlign: 'right', fontFamily: "'Geist Mono', monospace" }}>
+                    <td style={{ padding: '10px 12px', color: '#EDEDED', textAlign: isRtl ? 'left' : 'right', fontFamily: "'Geist Mono', monospace" }}>
                       {node.monitoredSkus}
                     </td>
                     <td
                       style={{
                         padding: '10px 12px',
-                        textAlign: 'right',
+                        textAlign: isRtl ? 'left' : 'right',
                         fontFamily: "'Geist Mono', monospace",
                         color: node.ghostMarkups > 5 ? '#FB7185' : node.ghostMarkups > 0 ? '#F59E0B' : '#10B981',
                         fontWeight: 600,
@@ -778,7 +788,7 @@ export default function ExportsReports({ onShowToast = null }) {
                     <td
                       style={{
                         padding: '10px 12px',
-                        textAlign: 'right',
+                        textAlign: isRtl ? 'left' : 'right',
                         fontFamily: "'Geist Mono', monospace",
                         color: node.integrity >= 98 ? '#10B981' : node.integrity >= 92 ? '#EDEDED' : '#F59E0B',
                         fontWeight: 600,
@@ -798,7 +808,7 @@ export default function ExportsReports({ onShowToast = null }) {
                         {node.grade}
                       </span>
                     </td>
-                    <td style={{ padding: '10px 0 10px 12px', textAlign: 'right' }}>
+                    <td style={{ padding: isRtl ? '10px 12px 10px 0' : '10px 0 10px 12px', textAlign: isRtl ? 'left' : 'right' }}>
                       <span
                         style={{
                           fontSize: '0.6875rem',
@@ -809,7 +819,7 @@ export default function ExportsReports({ onShowToast = null }) {
                           borderRadius: '4px',
                         }}
                       >
-                        {node.status}
+                        {node.status === 'COMPLIANT' ? (lang === 'ar' ? 'ملتزم قانونياً' : 'COMPLIANT') : (lang === 'ar' ? 'قيد الملاحظة' : 'UNDER OBSERVATION')}
                       </span>
                     </td>
                   </tr>
@@ -823,9 +833,9 @@ export default function ExportsReports({ onShowToast = null }) {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
             <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#EDEDED', margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              2. Forensic Intercept Log: Artificial Anchor Prices & Ghost Markups
+              {lang === 'ar' ? '2. سجل رصد التلاعب: الأسعار الوهمية والخصومات المصطنعة' : '2. Forensic Intercept Log: Artificial Anchor Prices & Ghost Markups'}
             </h3>
-            <span style={{ fontSize: '0.75rem', color: '#FB7185' }}>{auditedIncidents.length} Critical Flagged Cases</span>
+            <span style={{ fontSize: '0.75rem', color: '#FB7185' }}>{auditedIncidents.length} {lang === 'ar' ? 'حالات حرجة تم رصدها' : 'Critical Flagged Cases'}</span>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -851,7 +861,7 @@ export default function ExportsReports({ onShowToast = null }) {
                     </span>
                     <span style={{ fontSize: '0.75rem', color: '#888888' }}>•</span>
                     <span style={{ fontSize: '0.75rem', color: '#EDEDED', fontWeight: 500 }}>
-                      {inc.retailer}
+                      {getRetailerName(inc.retailer, lang)}
                     </span>
                     <span style={{ fontSize: '0.6875rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
                       ({inc.date})
@@ -861,7 +871,7 @@ export default function ExportsReports({ onShowToast = null }) {
                     {inc.sku}
                   </div>
                   <div style={{ fontSize: '0.6875rem', color: '#FB7185', fontFamily: "'Geist Mono', monospace" }}>
-                    Violation Type: {inc.flag}
+                    {lang === 'ar' ? 'نوع المخالفة: خصم وهمي (رفع السعر قبل التخفيض)' : `Violation Type: ${inc.flag}`}
                   </div>
                 </div>
 
@@ -874,20 +884,20 @@ export default function ExportsReports({ onShowToast = null }) {
                     fontSize: '0.75rem',
                   }}
                 >
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ color: '#666666', fontSize: '0.6875rem' }}>Claimed Was / Shelf Price</div>
+                  <div style={{ textAlign: isRtl ? 'left' : 'right' }}>
+                    <div style={{ color: '#666666', fontSize: '0.6875rem' }}>{lang === 'ar' ? 'السعر المعلن قبل / بعد الخصم' : 'Claimed Was / Shelf Price'}</div>
                     <div style={{ color: '#888888' }}>
-                      <span style={{ textDecoration: 'line-through' }}>EGP {inc.claimedOriginal.toLocaleString()}</span> → <strong style={{ color: '#EDEDED' }}>EGP {inc.currentPrice.toLocaleString()}</strong>
+                      <span style={{ textDecoration: 'line-through' }}>{inc.claimedOriginal.toLocaleString()} {lang === 'ar' ? 'ج.م' : 'EGP'}</span> → <strong style={{ color: '#EDEDED' }}>{inc.currentPrice.toLocaleString()} {lang === 'ar' ? 'ج.م' : 'EGP'}</strong>
                     </div>
                   </div>
 
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ color: '#666666', fontSize: '0.6875rem' }}>Genuine 30D Base</div>
-                    <div style={{ color: '#F59E0B' }}>EGP {inc.genuinePreSalePrice.toLocaleString()}</div>
+                  <div style={{ textAlign: isRtl ? 'left' : 'right' }}>
+                    <div style={{ color: '#666666', fontSize: '0.6875rem' }}>{lang === 'ar' ? 'سعر السوق الحقيقي (30 يوم)' : 'Genuine 30D Base'}</div>
+                    <div style={{ color: '#F59E0B' }}>{inc.genuinePreSalePrice.toLocaleString()} {lang === 'ar' ? 'ج.م' : 'EGP'}</div>
                   </div>
 
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ color: '#666666', fontSize: '0.6875rem' }}>Claimed vs Real Delta</div>
+                  <div style={{ textAlign: isRtl ? 'left' : 'right' }}>
+                    <div style={{ color: '#666666', fontSize: '0.6875rem' }}>{lang === 'ar' ? 'الخصم المعلن مقابل الحقيقي' : 'Claimed vs Real Delta'}</div>
                     <div style={{ color: '#888888' }}>
                       <span style={{ color: '#F59E0B' }}>{inc.claimedDiscount}</span> vs <strong style={{ color: '#FB7185' }}>{inc.realDiscount}</strong>
                     </div>
@@ -914,11 +924,13 @@ export default function ExportsReports({ onShowToast = null }) {
           }}
         >
           <div>
-            EGYPTIAN CONSUMER PROTECTION LAW NO. 181/2018 (ARTICLES 9 & 10 CONCERNING DECEPTIVE TRADE PRACTICES).
+            {lang === 'ar'
+              ? 'قانون حماية المستهلك المصري رقم 181 لسنة 2018 (المادتان 9 و 10 بشأن حظر الإعلانات المضللة والخداع التجاري).'
+              : 'EGYPTIAN CONSUMER PROTECTION LAW NO. 181/2018 (ARTICLES 9 & 10 CONCERNING DECEPTIVE TRADE PRACTICES).'}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#10B981' }}>
             <CheckCircle2 size={12} color="#10B981" />
-            <span>CRYPTOGRAPHIC HASH VERIFIED TELEMETRY SNAPSHOT</span>
+            <span>{lang === 'ar' ? 'سجل بيانات موثق ومفحوص تقنياً' : 'CRYPTOGRAPHIC HASH VERIFIED TELEMETRY SNAPSHOT'}</span>
           </div>
         </div>
       </div>

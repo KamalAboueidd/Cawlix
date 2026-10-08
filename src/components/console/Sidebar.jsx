@@ -19,9 +19,11 @@ import {
   HelpCircle,
   BookOpen,
   LogOut,
+  Languages,
 } from 'lucide-react';
 import NotificationCenter from './NotificationCenter.jsx';
 import cawlixLogo from '../../assets/ICon.png';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 /**
  * Institutional Pitch-Black Sidebar Navigation (CAWLIX)
@@ -41,6 +43,7 @@ export default function Sidebar({
   onShowToast,
   onInspectProduct,
 }) {
+  const { lang, toggleLang, isRtl } = useLanguage();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [themeMode, setThemeMode] = useState('dark');
   const userMenuRef = useRef(null);
@@ -58,74 +61,74 @@ export default function Sidebar({
 
   const sectors = [
     {
-      title: 'TELEMETRY FLEET',
+      title: isRtl ? 'أسطول المراقبة والرصد' : 'TELEMETRY FLEET',
       items: [
         {
           id: 'overview',
-          label: 'Overview / Nodes',
-          badge: trackedCount > 0 ? `${trackedCount} SKUs` : 'ACTIVE',
+          label: isRtl ? 'نظرة عامة ومراقبة الأجهزة' : 'Overview / Nodes',
+          badge: trackedCount > 0 ? (isRtl ? `${trackedCount} منتج` : `${trackedCount} SKUs`) : (isRtl ? 'نشط' : 'ACTIVE'),
           icon: <Activity size={15} />,
         },
         {
           id: 'intelligence',
-          label: 'Market Matrix',
-          badge: '12 NODES',
+          label: isRtl ? 'مصفوفة مقارنة المنصات الـ 12' : 'Market Matrix',
+          badge: isRtl ? '12 متجر' : '12 NODES',
           icon: <Layers size={15} />,
         },
       ],
     },
     {
-      title: 'MARKET ARBITRAGE & FORENSICS',
+      title: isRtl ? 'فروق الأسعار وتحليل التلاعب' : 'MARKET ARBITRAGE & FORENSICS',
       items: [
         {
           id: 'arbitrage',
-          label: 'Arbitrage Engine',
-          badge: 'SPREADS',
+          label: isRtl ? 'محرك فروق الأسعار وفرص التوفير' : 'Arbitrage Engine',
+          badge: isRtl ? 'فروق أسعار' : 'SPREADS',
           icon: <TrendingDown size={15} />,
         },
         {
           id: 'retailer-health',
-          label: 'Retailer Health & Latency',
+          label: isRtl ? 'حالة وسرعة تحديث المتاجر' : 'Retailer Health & Latency',
           badge: '12/12',
           icon: <Server size={15} />,
         },
         {
           id: 'forensics',
-          label: 'Truth Forensics / Radar',
-          badge: anomalyCount > 0 ? `${anomalyCount} HIKES` : 'RADAR',
+          label: isRtl ? 'رادار فحص التلاعب والخصومات الوهمية' : 'Truth Forensics / Radar',
+          badge: anomalyCount > 0 ? (isRtl ? `${anomalyCount} تلاعب` : `${anomalyCount} HIKES`) : (isRtl ? 'رادار' : 'RADAR'),
           icon: <ShieldAlert size={15} />,
         },
       ],
     },
     {
-      title: 'TRADER WORKSPACE',
+      title: isRtl ? 'قوائم المتابعة والتقارير' : 'TRADER WORKSPACE',
       items: [
         {
           id: 'watchlist',
-          label: 'Watchlist & Price Targets',
+          label: isRtl ? 'قائمة المتابعة والتنبيهات المخصصة' : 'Watchlist & Price Targets',
           badge: watchlistCount > 0 ? `${watchlistCount}` : null,
           icon: <BookmarkCheck size={15} />,
         },
         {
           id: 'reports',
-          label: 'Exports & Audit Reports',
-          badge: 'CSV/JSON',
+          label: isRtl ? 'تقارير السوق واستخراج البيانات' : 'Exports & Audit Reports',
+          badge: isRtl ? 'ملفات البيانات' : 'CSV/JSON',
           icon: <FileSpreadsheet size={15} />,
         },
       ],
     },
     {
-      title: 'SYSTEM',
+      title: isRtl ? 'النظام والعمليات' : 'SYSTEM',
       items: [
         {
           id: 'logs',
-          label: 'System Telemetry Logs',
+          label: isRtl ? 'سجل العمليات والتدقيق' : 'System Telemetry Logs',
           badge: anomalyCount ? `${anomalyCount}` : null,
           icon: <Terminal size={15} />,
         },
         {
           id: 'settings',
-          label: 'Console Settings',
+          label: isRtl ? 'إعدادات المنصة' : 'Console Settings',
           icon: <Settings size={15} />,
         },
       ],
@@ -140,7 +143,7 @@ export default function Sidebar({
         maxHeight: '100vh',
         flexShrink: 0,
         backgroundColor: '#000000',
-        borderRight: '1px solid #1F1F1F',
+        borderInlineEnd: '1px solid #1F1F1F',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
@@ -255,9 +258,9 @@ export default function Sidebar({
                       fontSize: '0.8125rem',
                       fontWeight: isActive ? 500 : 400,
                       cursor: 'pointer',
-                      textAlign: 'left',
+                      textAlign: 'start',
                       transition: 'all 120ms ease',
-                      fontFamily: "'Geist', sans-serif",
+                      fontFamily: isRtl ? "'Cairo', 'Alexandria', sans-serif" : "'Geist', sans-serif",
                     }}
                     onMouseEnter={(e) => {
                       if (!isActive) {
@@ -534,6 +537,37 @@ export default function Sidebar({
             >
               <span>Feedback</span>
               <Smile size={14} />
+            </button>
+
+            {/* Language Switcher */}
+            <button
+              type="button"
+              onClick={() => {
+                toggleLang();
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '7px 10px',
+                borderRadius: '5px',
+                background: 'none',
+                border: 'none',
+                color: '#EDEDED',
+                fontSize: '0.8125rem',
+                cursor: 'pointer',
+                textAlign: 'start',
+                fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#141414';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
+              <span>{isRtl ? 'اللغة: عربي 🇸🇦' : 'Language: English 🇬🇧'}</span>
+              <Languages size={14} color="#10B981" />
             </button>
 
             {/* Theme Toggle */}

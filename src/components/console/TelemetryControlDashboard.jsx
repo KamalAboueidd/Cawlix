@@ -16,6 +16,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { sanitizeRetailerUrl } from '../../utils/urlSanitizer';
+import { useLanguage } from '../../context/LanguageContext';
 
 /**
  * Institutional Pitch-Black Telemetry Control & Universal Search Dashboard (CAWLIX)
@@ -27,6 +28,7 @@ export default function TelemetryControlDashboard({
   className = '',
   placeholder = 'Search SKUs, domestic nodes, or retailers...',
 }) {
+  const { lang, isRtl, t, getRetailerName } = useLanguage();
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -269,14 +271,14 @@ export default function TelemetryControlDashboard({
             setIsOpen(true);
           }}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder}
+          placeholder={isRtl ? 'ابحث عن اسم المنتج، الموديل، الباركود، أو المتجر...' : placeholder}
           style={{
             flex: 1,
             background: 'transparent',
             border: 'none',
             color: '#EDEDED',
             fontSize: '0.8125rem',
-            fontFamily: "'Geist', sans-serif",
+            fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
             outline: 'none',
           }}
         />
@@ -437,7 +439,7 @@ export default function TelemetryControlDashboard({
                     textTransform: 'uppercase',
                   }}
                 >
-                  GLITCH RADAR
+                  {isRtl ? 'رادار العروض والتلاعب' : 'GLITCH RADAR'}
                 </span>
                 <span
                   style={{
@@ -465,7 +467,7 @@ export default function TelemetryControlDashboard({
                   {anomalyDetectionsCount}
                 </span>
                 <span style={{ fontSize: '0.625rem', color: '#666666' }}>
-                  Truth Index verified
+                  {isRtl ? 'مؤشر النزاهة موثق' : 'Truth Index verified'}
                 </span>
               </div>
             </div>
@@ -492,7 +494,7 @@ export default function TelemetryControlDashboard({
                     textTransform: 'uppercase',
                   }}
                 >
-                  EST. ARBITRAGE SAVINGS
+                  {isRtl ? 'إجمالي وفر الأسعار' : 'EST. ARBITRAGE SAVINGS'}
                 </span>
                 <span
                   style={{
@@ -501,7 +503,7 @@ export default function TelemetryControlDashboard({
                     fontFamily: "'Geist Mono', monospace",
                   }}
                 >
-                  MAX SPREAD
+                  {isRtl ? 'أعلى فارق' : 'MAX SPREAD'}
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
@@ -516,7 +518,7 @@ export default function TelemetryControlDashboard({
                   EGP {(totalArbitrageSavings / 1000).toFixed(1)}K
                 </span>
                 <span style={{ fontSize: '0.625rem', color: '#666666' }}>
-                  catalog delta
+                  {isRtl ? 'فارق الكتالوج' : 'catalog delta'}
                 </span>
               </div>
             </div>
@@ -536,7 +538,7 @@ export default function TelemetryControlDashboard({
                   padding: '4px 8px',
                 }}
               >
-                Local Master SKUs ({localResults.length})
+                {isRtl ? `منتجات الكتالوج (${localResults.length})` : `Local Master SKUs (${localResults.length})`}
               </div>
 
               {localResults.map((item, idx) => {
@@ -615,11 +617,12 @@ export default function TelemetryControlDashboard({
                               border: '1px solid rgba(16, 185, 129, 0.25)',
                               borderRadius: '4px',
                               padding: '1px 6px',
-                              fontFamily: "'Geist Mono', monospace",
+                              fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace",
                             }}
                           >
-                            Cheapest at {item.lowestPlatformName || item.lowestPlatformId}: EGP{' '}
-                            {item.lowestPrice.toLocaleString()}
+                            {isRtl
+                              ? `أرخص متجر حالياً في ${getRetailerName(item.lowestPlatformName || item.lowestPlatformId, lang)}: ${item.lowestPrice.toLocaleString()} ج.م`
+                              : `Cheapest at ${getRetailerName(item.lowestPlatformName || item.lowestPlatformId, lang)}: EGP ${item.lowestPrice.toLocaleString()}`}
                           </span>
                         </div>
                       )}
@@ -647,7 +650,7 @@ export default function TelemetryControlDashboard({
                   alignItems: 'center',
                 }}
               >
-                <span>Universal Multi-Platform Resolution (12 Nodes)</span>
+                <span>{isRtl ? 'مطابقة المنصات الـ 12 الموحدة' : 'Universal Multi-Platform Resolution (12 Nodes)'}</span>
                 <span style={{ color: '#10B981' }}>
                   {resolvedResult.source === 'LOCAL_CATALOG' ? 'Catalog Correlated' : 'Real-time Ingest'}
                 </span>
@@ -682,10 +685,10 @@ export default function TelemetryControlDashboard({
                           backgroundColor: '#1F1F1F',
                           padding: '1px 6px',
                           borderRadius: '3px',
-                          fontFamily: "'Geist Mono', monospace",
+                          fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace",
                         }}
                       >
-                        MASTER ENTITY
+                        {isRtl ? 'المنتج المعتمد' : 'MASTER ENTITY'}
                       </span>
                       <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#EDEDED' }}>
                         {resolvedResult.masterProduct.title}
@@ -706,7 +709,7 @@ export default function TelemetryControlDashboard({
                       flexShrink: 0,
                     }}
                   >
-                    <span>Market Matrix</span>
+                    <span>{isRtl ? 'مصفوفة المنصات الـ 12' : 'Market Matrix'}</span>
                     <ArrowRight size={12} />
                   </span>
                 </div>
@@ -740,15 +743,15 @@ export default function TelemetryControlDashboard({
                             fontWeight: 600,
                             color: '#10B981',
                             textTransform: 'uppercase',
-                            fontFamily: "'Geist Mono', monospace",
+                            fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace",
                           }}
                         >
-                          CHEAPEST NODE (BEST DEAL)
+                          {isRtl ? 'أرخص متجر حالياً' : 'CHEAPEST NODE (BEST DEAL)'}
                         </span>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
                         <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#EDEDED' }}>
-                          {resolvedResult.metrics.cheapestNode.platformName}
+                          {getRetailerName(resolvedResult.metrics.cheapestNode.platformId || resolvedResult.metrics.cheapestNode.platformName, lang)}
                         </span>
                         <span
                           style={{
@@ -766,11 +769,12 @@ export default function TelemetryControlDashboard({
                           style={{
                             fontSize: '0.625rem',
                             color: '#888888',
-                            fontFamily: "'Geist Mono', monospace",
+                            fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace",
                           }}
                         >
-                          EGP {resolvedResult.metrics.cheapestNode.deltaSavings.toLocaleString()} below median (-
-                          {resolvedResult.metrics.cheapestNode.deltaSavingsPct}%)
+                          {isRtl
+                            ? `${resolvedResult.metrics.cheapestNode.deltaSavings.toLocaleString()} ج.م أقل من متوسط السوق (-${resolvedResult.metrics.cheapestNode.deltaSavingsPct}%)`
+                            : `EGP ${resolvedResult.metrics.cheapestNode.deltaSavings.toLocaleString()} below median (-${resolvedResult.metrics.cheapestNode.deltaSavingsPct}%)`}
                         </span>
                       )}
                       <a
@@ -795,7 +799,7 @@ export default function TelemetryControlDashboard({
                           alignSelf: 'flex-start',
                         }}
                       >
-                        <span>Direct Store Link</span>
+                        <span>{isRtl ? 'الرابط المباشر للمتجر' : 'Direct Store Link'}</span>
                         <ExternalLink size={9} />
                       </a>
                     </div>
