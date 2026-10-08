@@ -115,7 +115,19 @@ export function ProtectedRoute({ children }) {
     const returnPath = typeof window !== 'undefined'
       ? `${window.location.pathname}${window.location.search}`
       : '/console';
-    const targetUrl = `/login?returnTo=${encodeURIComponent(returnPath)}`;
+
+    const hash = typeof window !== 'undefined' ? window.location.hash : '';
+    const search = typeof window !== 'undefined' ? window.location.search : '';
+    const hashParams = new URLSearchParams(hash.replace(/^#/, ''));
+    const searchParams = new URLSearchParams(search);
+    const errorDesc = hashParams.get('error_description') || searchParams.get('error_description');
+    const errorCode = hashParams.get('error_code') || searchParams.get('error_code') || hashParams.get('error') || searchParams.get('error');
+
+    let targetUrl = `/login?returnTo=${encodeURIComponent(returnPath)}`;
+    if (errorDesc || errorCode) {
+      targetUrl = `/login?error=${encodeURIComponent(errorCode || 'oauth_error')}&error_description=${encodeURIComponent(errorDesc || '')}`;
+    }
+
     if (typeof window !== 'undefined') {
       window.location.replace(targetUrl);
     }

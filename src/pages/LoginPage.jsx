@@ -19,6 +19,39 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
+  // Check for OAuth / Redirect error from URL hash or query params
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+
+    const error = searchParams.get('error') || hashParams.get('error');
+    const errorCode = searchParams.get('error_code') || hashParams.get('error_code');
+    const errorDescription = searchParams.get('error_description') || hashParams.get('error_description');
+
+    if (error || errorCode || errorDescription) {
+      const rawMsg = errorDescription || error || 'Authentication failed.';
+      const cleanMsg = decodeURIComponent(rawMsg.replace(/\+/g, ' '));
+
+      if (
+        errorCode === 'identity_already_exists' ||
+        cleanMsg.toLowerCase().includes('already exists') ||
+        cleanMsg.toLowerCase().includes('already registered')
+      ) {
+        setErrorMsg('This email is already registered with a password. Please sign in using your email and password below.');
+        setMode('password');
+      } else {
+        setErrorMsg(cleanMsg);
+      }
+
+      // Clean the URL without reload
+      if (typeof window !== 'undefined' && window.history?.replaceState) {
+        const returnToVal = searchParams.get('returnTo');
+        const cleanUrl = window.location.pathname + (returnToVal ? `?returnTo=${encodeURIComponent(returnToVal)}` : '');
+        window.history.replaceState(null, '', cleanUrl);
+      }
+    }
+  }, []);
+
   // Session Check & Auto-Redirect on page mount
   useEffect(() => {
     let active = true;
@@ -134,23 +167,6 @@ export default function LoginPage() {
             padding: '8px 16px',
             borderRadius: '8px',
             cursor: 'pointer',
-            transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1), opacity 150ms ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            const icon = e.currentTarget.querySelector('.brand-logo-img');
-            if (icon) {
-              icon.style.transform = 'scale(1.12) rotate(-6deg)';
-              icon.style.filter = 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.45))';
-            }
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            const icon = e.currentTarget.querySelector('.brand-logo-img');
-            if (icon) {
-              icon.style.transform = 'scale(1) rotate(0deg)';
-              icon.style.filter = 'none';
-            }
           }}
         >
           <img
@@ -164,7 +180,6 @@ export default function LoginPage() {
               height: '26px',
               objectFit: 'contain',
               display: 'block',
-              transition: 'transform 250ms cubic-bezier(0.16, 1, 0.3, 1), filter 250ms ease',
             }}
           />
           <span

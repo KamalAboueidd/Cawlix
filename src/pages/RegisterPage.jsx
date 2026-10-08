@@ -48,6 +48,38 @@ export default function RegisterPage() {
 
   const inputRefs = useRef([]);
 
+  // Check for OAuth / Redirect error from URL hash or query params
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+
+    const error = searchParams.get('error') || hashParams.get('error');
+    const errorCode = searchParams.get('error_code') || hashParams.get('error_code');
+    const errorDescription = searchParams.get('error_description') || hashParams.get('error_description');
+
+    if (error || errorCode || errorDescription) {
+      const rawMsg = errorDescription || error || 'Authentication failed.';
+      const cleanMsg = decodeURIComponent(rawMsg.replace(/\+/g, ' '));
+
+      if (
+        errorCode === 'identity_already_exists' ||
+        cleanMsg.toLowerCase().includes('already exists') ||
+        cleanMsg.toLowerCase().includes('already registered')
+      ) {
+        setErrorMsg('This email is already registered. Please sign in with your password.');
+      } else {
+        setErrorMsg(cleanMsg);
+      }
+
+      // Clean the URL without reload
+      if (typeof window !== 'undefined' && window.history?.replaceState) {
+        const returnToVal = searchParams.get('returnTo');
+        const cleanUrl = window.location.pathname + (returnToVal ? `?returnTo=${encodeURIComponent(returnToVal)}` : '');
+        window.history.replaceState(null, '', cleanUrl);
+      }
+    }
+  }, []);
+
   // Session Check & Auto-Redirect on page mount
   useEffect(() => {
     let active = true;
@@ -159,10 +191,23 @@ export default function RegisterPage() {
       const { data, error } = await supabase.auth.signUp({
         email: cleanEmail,
         password,
+        options: {
+          emailRedirectTo: `${window.location.origin}${getReturnTo()}`,
+        },
       });
 
       if (error) {
-        setErrorMsg(error.message);
+        if (
+          error.message?.toLowerCase().includes('already registered') ||
+          error.message?.toLowerCase().includes('already exists')
+        ) {
+          setErrorMsg('An account with this email already exists. Please sign in with your credentials.');
+        } else {
+          setErrorMsg(error.message);
+        }
+      } else if (data?.user && (!data.user.identities || data.user.identities.length === 0)) {
+        // When email confirmations are enabled and user already exists, Supabase returns 0 identities
+        setErrorMsg('An account with this email already exists. Please sign in with your credentials.');
       } else if (data?.session) {
         window.location.href = getReturnTo();
       } else {
@@ -297,6 +342,9 @@ export default function RegisterPage() {
       const { error } = await supabase.auth.resend({
         type: 'signup',
         email: cleanEmail,
+        options: {
+          emailRedirectTo: `${window.location.origin}${getReturnTo()}`,
+        },
       });
 
       if (error) {
@@ -329,7 +377,7 @@ export default function RegisterPage() {
         color: '#EDEDED',
       }}
     >
-      {/* Top Anchor Brand with Interactive Hover Motion */}
+      {/* Top Anchor Brand */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
         <a
           href="/"
@@ -342,23 +390,6 @@ export default function RegisterPage() {
             padding: '8px 16px',
             borderRadius: '8px',
             cursor: 'pointer',
-            transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1), opacity 150ms ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            const icon = e.currentTarget.querySelector('.brand-logo-img');
-            if (icon) {
-              icon.style.transform = 'scale(1.12) rotate(-6deg)';
-              icon.style.filter = 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.45))';
-            }
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            const icon = e.currentTarget.querySelector('.brand-logo-img');
-            if (icon) {
-              icon.style.transform = 'scale(1) rotate(0deg)';
-              icon.style.filter = 'none';
-            }
           }}
         >
           <img
@@ -372,7 +403,6 @@ export default function RegisterPage() {
               height: '26px',
               objectFit: 'contain',
               display: 'block',
-              transition: 'transform 250ms cubic-bezier(0.16, 1, 0.3, 1), filter 250ms ease',
             }}
           />
           <span

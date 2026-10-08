@@ -126,7 +126,10 @@ export default function ForgotPasswordPage() {
 
     setLoading(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail);
+      const redirectTo = `${window.location.origin}/forgot-password`;
+      const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
+        redirectTo,
+      });
       if (error) {
         setErrorMsg(error.message);
       } else {
@@ -150,7 +153,10 @@ export default function ForgotPasswordPage() {
     setLoading(true);
     try {
       const cleanEmail = email.trim().toLowerCase();
-      const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail);
+      const redirectTo = `${window.location.origin}/forgot-password`;
+      const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
+        redirectTo,
+      });
       if (error) {
         setErrorMsg(error.message);
       } else {
@@ -319,7 +325,7 @@ export default function ForgotPasswordPage() {
         color: '#EDEDED',
       }}
     >
-      {/* Top Brand Mark with Interactive Hover Motion */}
+      {/* Top Brand Mark */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
         <a
           href="/"
@@ -332,23 +338,6 @@ export default function ForgotPasswordPage() {
             padding: '8px 16px',
             borderRadius: '8px',
             cursor: 'pointer',
-            transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1), opacity 150ms ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            const icon = e.currentTarget.querySelector('.brand-logo-img');
-            if (icon) {
-              icon.style.transform = 'scale(1.12) rotate(-6deg)';
-              icon.style.filter = 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.45))';
-            }
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            const icon = e.currentTarget.querySelector('.brand-logo-img');
-            if (icon) {
-              icon.style.transform = 'scale(1) rotate(0deg)';
-              icon.style.filter = 'none';
-            }
           }}
         >
           <img
@@ -362,7 +351,6 @@ export default function ForgotPasswordPage() {
               height: '26px',
               objectFit: 'contain',
               display: 'block',
-              transition: 'transform 250ms cubic-bezier(0.16, 1, 0.3, 1), filter 250ms ease',
             }}
           />
           <span
