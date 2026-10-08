@@ -11,9 +11,33 @@ const getReturnTo = () => {
   return target && target.startsWith('/') ? target : '/console';
 };
 
+// Cryptographically secure strong password generator
+function generateStrongPassword() {
+  const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+  const lower = 'abcdefghijkmnopqrstuvwxyz';
+  const numbers = '23456789';
+  const symbols = '!@#$%^&*-_+=';
+
+  const pick = (chars) => chars[Math.floor(Math.random() * chars.length)];
+  const res = [pick(upper), pick(lower), pick(numbers), pick(symbols)];
+  const all = upper + lower + numbers + symbols;
+
+  for (let i = 0; i < 12; i++) {
+    res.push(pick(all));
+  }
+
+  for (let i = res.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [res[i], res[j]] = [res[j], res[i]];
+  }
+
+  return res.join('');
+}
+
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [step, setStep] = useState('form'); // 'form' | 'otp'
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [resendCooldown, setResendCooldown] = useState(60);
@@ -59,6 +83,36 @@ export default function RegisterPage() {
       }, 50);
     }
   }, [step]);
+
+  // Password strength calculation
+  const getPasswordStrength = (pass) => {
+    if (!pass) return { score: 0, label: '', color: '#27272A' };
+    let score = 0;
+    if (pass.length >= 8) score += 1;
+    if (/[A-Z]/.test(pass) && /[a-z]/.test(pass)) score += 1;
+    if (/[0-9]/.test(pass)) score += 1;
+    if (/[^A-Za-z0-9]/.test(pass)) score += 1;
+
+    if (score <= 1) return { score: 1, label: 'Weak', color: '#FB7185' };
+    if (score <= 3) return { score: 2, label: 'Moderate', color: '#FBBF24' };
+    return { score: 3, label: 'Strong', color: '#34D399' };
+  };
+
+  const strength = getPasswordStrength(password);
+
+  const handleSuggestPassword = async () => {
+    const strong = generateStrongPassword();
+    setPassword(strong);
+    setShowPassword(true);
+    setErrorMsg('');
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(strong);
+      }
+    } catch {
+      // ignore clipboard error
+    }
+  };
 
   const handleGoogleSignup = async () => {
     if (loading) return;
@@ -442,35 +496,137 @@ export default function RegisterPage() {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <label htmlFor="react-reg-password" style={{ fontSize: '0.75rem', fontWeight: 500, color: '#A1A1AA', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '8px', display: 'block' }}>
-                  CREATE PASSWORD
-                </label>
-                <input
-                  id="react-reg-password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  style={{
-                    backgroundColor: '#000000',
-                    border: '1px solid #27272A',
-                    color: '#EDEDED',
-                    fontSize: '0.875rem',
-                    padding: '0 12px',
-                    height: '42px',
-                    borderRadius: '6px',
-                    outline: 'none',
-                    width: '100%',
-                    boxSizing: 'border-box',
-                    transition: 'border-color 150ms ease',
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = '#71717A'}
-                  onBlur={(e) => e.target.style.borderColor = '#27272A'}
-                />
-                <span style={{ fontSize: '0.6875rem', color: '#71717A', marginTop: '6px' }}>
-                  Minimum 8 characters with letters and numbers.
-                </span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <label
+                    htmlFor="react-reg-password"
+                    style={{
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      color: '#A1A1AA',
+                      letterSpacing: '0.04em',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    CREATE PASSWORD
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleSuggestPassword}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#10B981',
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      padding: '2px 0',
+                      transition: 'opacity 150ms ease',
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.75')}
+                    onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+                    title="Generate a high-entropy password"
+                  >
+                    Suggest Strong Password
+                  </button>
+                </div>
+
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                  <input
+                    id="react-reg-password"
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••••••"
+                    style={{
+                      backgroundColor: '#000000',
+                      border: '1px solid #27272A',
+                      color: '#EDEDED',
+                      fontSize: '0.875rem',
+                      padding: '0 40px 0 12px',
+                      height: '42px',
+                      borderRadius: '6px',
+                      outline: 'none',
+                      width: '100%',
+                      boxSizing: 'border-box',
+                      fontFamily: showPassword ? "'JetBrains Mono', monospace" : 'inherit',
+                      transition: 'border-color 150ms ease',
+                    }}
+                    onFocus={(e) => (e.target.style.borderColor = '#71717A')}
+                    onBlur={(e) => (e.target.style.borderColor = '#27272A')}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      background: 'none',
+                      border: 'none',
+                      color: '#71717A',
+                      cursor: 'pointer',
+                      padding: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {showPassword ? (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" strokeLinecap="round" strokeLinejoin="round" />
+                        <line x1="2" y1="2" x2="22" y2="22" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    ) : (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" strokeLinecap="round" strokeLinejoin="round" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+
+                {/* Password strength visualizer */}
+                {password && (
+                  <div style={{ marginTop: '6px' }}>
+                    <div style={{ display: 'flex', gap: '4px', height: '3px', marginBottom: '4px' }}>
+                      <div
+                        style={{
+                          flex: 1,
+                          height: '100%',
+                          borderRadius: '2px',
+                          backgroundColor: strength.score >= 1 ? strength.color : '#27272A',
+                        }}
+                      />
+                      <div
+                        style={{
+                          flex: 1,
+                          height: '100%',
+                          borderRadius: '2px',
+                          backgroundColor: strength.score >= 2 ? strength.color : '#27272A',
+                        }}
+                      />
+                      <div
+                        style={{
+                          flex: 1,
+                          height: '100%',
+                          borderRadius: '2px',
+                          backgroundColor: strength.score >= 3 ? strength.color : '#27272A',
+                        }}
+                      />
+                    </div>
+                    <span style={{ fontSize: '0.6875rem', color: strength.color, fontWeight: 500 }}>
+                      Entropy: {strength.label}
+                    </span>
+                  </div>
+                )}
+                {!password && (
+                  <span style={{ fontSize: '0.6875rem', color: '#71717A', marginTop: '6px' }}>
+                    Minimum 8 characters with letters and numbers.
+                  </span>
+                )}
               </div>
 
               {errorMsg && (
@@ -553,8 +709,10 @@ export default function RegisterPage() {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(6, 1fr)',
+                gridTemplateColumns: 'repeat(6, minmax(0, 1fr))',
                 gap: '8px',
+                width: '100%',
+                boxSizing: 'border-box',
                 marginBottom: '18px',
               }}
               onPaste={handleOtpPaste}
@@ -572,6 +730,7 @@ export default function RegisterPage() {
                   onKeyDown={(e) => handleOtpKeyDown(idx, e)}
                   style={{
                     width: '100%',
+                    minWidth: 0,
                     height: '46px',
                     backgroundColor: '#000000',
                     border: digit ? '1px solid #EDEDED' : '1px solid #27272A',
@@ -583,6 +742,7 @@ export default function RegisterPage() {
                     borderRadius: '6px',
                     outline: 'none',
                     boxSizing: 'border-box',
+                    padding: 0,
                     transition: 'border-color 150ms ease',
                   }}
                   onFocus={(e) => (e.target.style.borderColor = '#FFFFFF')}
