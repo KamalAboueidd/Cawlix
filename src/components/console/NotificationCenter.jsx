@@ -23,7 +23,18 @@ export default function NotificationCenter({ onInspectProduct = null, placement 
   const { lang, isRtl, t, formatCurrency, getRetailerName } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [alerts, setAlerts] = useState([]);
+  const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef(null);
+
+  // Mobile detection for responsive flyout positioning
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(typeof window !== 'undefined' && window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Subscribe to real-time alerts
   useEffect(() => {
@@ -56,7 +67,7 @@ export default function NotificationCenter({ onInspectProduct = null, placement 
 
   return (
     <div ref={containerRef} style={{ position: 'relative' }}>
-      {/* Header Bell Trigger Button (Borderless & Background-free) */}
+      {/* Header Bell Trigger Button */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -67,34 +78,55 @@ export default function NotificationCenter({ onInspectProduct = null, placement 
           justifyContent: 'center',
           width: '28px',
           height: '28px',
-          borderRadius: '50%',
-          backgroundColor: 'transparent',
+          borderRadius: '6px',
+          backgroundColor: isOpen ? '#161616' : 'transparent',
           border: 'none',
           color: unreadCount > 0 ? '#10B981' : '#888888',
           cursor: 'pointer',
           padding: 0,
-          transition: 'all 150ms ease',
+          transition: 'all 120ms ease',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = '#161616';
+          e.currentTarget.style.color = unreadCount > 0 ? '#10B981' : '#EDEDED';
+        }}
+        onMouseLeave={(e) => {
+          if (!isOpen) {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = unreadCount > 0 ? '#10B981' : '#888888';
+          }
         }}
         aria-label="Price Drop Notifications"
-        title="Price Drop & Arbitrage Alerts"
+        title={t('alerts.title')}
       >
-        <Bell size={16} />
+        <Bell size={15} />
 
-        {/* Unread Simple Clean Green Indicator */}
+        {/* Unread Clean Pill Badge */}
         {unreadCount > 0 && (
           <span
             style={{
               position: 'absolute',
-              top: '-1px',
-              right: '-3px',
-              color: '#10B981',
-              fontSize: '0.625rem',
+              top: '-4px',
+              right: isRtl ? 'auto' : '-5px',
+              left: isRtl ? '-5px' : 'auto',
+              backgroundColor: '#10B981',
+              color: '#000000',
+              fontSize: '0.5625rem',
               fontWeight: 700,
               fontFamily: "'Geist Mono', monospace",
               lineHeight: 1,
+              padding: '1px 4px',
+              borderRadius: '9999px',
+              minWidth: '15px',
+              height: '15px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 0 8px rgba(16, 185, 129, 0.5)',
+              pointerEvents: 'none',
             }}
           >
-            {unreadCount}
+            {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
       </button>
@@ -103,17 +135,39 @@ export default function NotificationCenter({ onInspectProduct = null, placement 
       {isOpen && (
         <div
           style={{
-            position: 'absolute',
+            position: placement === 'top' ? 'fixed' : 'absolute',
             ...(placement === 'top'
-              ? { bottom: 'calc(100% + 12px)', left: 0 }
-              : { top: 'calc(100% + 8px)', right: 0 }),
-            width: '380px',
-            maxWidth: '90vw',
-            backgroundColor: '#000000',
+              ? isMobile
+                ? {
+                    bottom: '60px',
+                    left: '12px',
+                    right: '12px',
+                    width: 'auto',
+                  }
+                : isRtl
+                ? {
+                    bottom: '16px',
+                    right: '258px',
+                    left: 'auto',
+                    width: '380px',
+                  }
+                : {
+                    bottom: '16px',
+                    left: '258px',
+                    right: 'auto',
+                    width: '380px',
+                  }
+              : {
+                  top: 'calc(100% + 8px)',
+                  ...(isRtl ? { left: 0 } : { right: 0 }),
+                  width: '380px',
+                }),
+            maxWidth: isMobile ? 'calc(100vw - 24px)' : '420px',
+            backgroundColor: '#050505',
             border: '1px solid rgba(255, 255, 255, 0.12)',
-            borderRadius: '8px',
-            boxShadow: '0 20px 48px -8px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.05)',
-            zIndex: 99999,
+            borderRadius: '10px',
+            boxShadow: '0 24px 60px -8px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+            zIndex: 999999,
             overflow: 'hidden',
             display: 'flex',
             flexDirection: 'column',

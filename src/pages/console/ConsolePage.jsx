@@ -802,14 +802,14 @@ export default function ConsolePage() {
         {/* Topbar: Vercel Border (#1F1F1F) */}
         <header
           style={{
-            height: '56px',
+            height: '50px',
             backgroundColor: '#000000',
             borderBottom: '1px solid #1F1F1F',
-            padding: '0 24px',
+            padding: '0 16px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: '16px',
+            gap: '12px',
             position: 'sticky',
             top: 0,
             zIndex: 30,
@@ -817,11 +817,11 @@ export default function ConsolePage() {
           }}
         >
           {/* Breadcrumb Workspace Title */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#EDEDED', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
-              {t('all_monitored_skus')}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+            <span style={{ fontSize: '0.8125rem', fontWeight: 500, color: '#EDEDED', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+              {isRtl ? 'المنتجات المراقبة' : 'Monitored SKUs'}
             </span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#666666" strokeWidth="2">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#666666" strokeWidth="2">
               <path d="m6 9 6 6 6-6" />
             </svg>
           </div>
@@ -839,7 +839,7 @@ export default function ConsolePage() {
           />
 
           {/* Topbar Right Controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
             {/* Persistent Language Switcher Toggle (🇸🇦 عربي / 🇬🇧 English) */}
             <button
               type="button"
@@ -847,22 +847,23 @@ export default function ConsolePage() {
               style={{
                 backgroundColor: '#0A0A0A',
                 color: '#EDEDED',
-                fontSize: '0.8125rem',
+                fontSize: '0.75rem',
                 fontWeight: 500,
-                padding: '6px 12px',
+                padding: '5px 9px',
                 borderRadius: '6px',
                 border: '1px solid #222222',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '5px',
                 transition: 'all 150ms ease',
                 fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                whiteSpace: 'nowrap',
               }}
               title={isRtl ? 'Switch to English' : 'التحويل إلى اللغة العربية'}
             >
-              <span style={{ fontSize: '13px' }}>{isRtl ? '🇬🇧' : '🇸🇦'}</span>
-              <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>{isRtl ? 'English' : 'عربي'}</span>
+              <span style={{ fontSize: '12px' }}>{isRtl ? '🇬🇧' : '🇸🇦'}</span>
+              <span style={{ fontSize: '0.6875rem', fontWeight: 600 }}>{isRtl ? 'English' : 'عربي'}</span>
             </button>
 
             {/* Run Fleet Audit Manual Trigger Button */}
@@ -873,9 +874,9 @@ export default function ConsolePage() {
               style={{
                 backgroundColor: fleetAuditCompleted ? 'rgba(16, 185, 129, 0.15)' : '#0A0A0A',
                 color: fleetAuditCompleted ? '#10B981' : fleetAuditProgress ? '#F59E0B' : '#EDEDED',
-                fontSize: '0.8125rem',
+                fontSize: '0.75rem',
                 fontWeight: 500,
-                padding: '6px 12px',
+                padding: '5px 10px',
                 borderRadius: '6px',
                 border: fleetAuditCompleted
                   ? '1px solid #10B981'
@@ -885,15 +886,16 @@ export default function ConsolePage() {
                 cursor: fleetAuditProgress ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '5px',
                 transition: 'all 150ms ease',
                 fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                whiteSpace: 'nowrap',
               }}
-              title={isRtl ? 'تحديث وفحص جميع المتاجر الـ 12 فورياً' : 'Trigger background telemetry audit across all 12 Egyptian nodes'}
+              title={isRtl ? 'فحص وتحديث جميع المتاجر فورياً' : 'Trigger background telemetry audit across all 12 Egyptian nodes'}
             >
               <svg
-                width="13"
-                height="13"
+                width="12"
+                height="12"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke={fleetAuditCompleted ? '#10B981' : fleetAuditProgress ? '#F59E0B' : '#888888'}
@@ -902,53 +904,54 @@ export default function ConsolePage() {
               >
                 <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
               </svg>
-              <span style={{ fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace", fontSize: '0.75rem' }}>
+              <span style={{ fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace", fontSize: '0.6875rem' }}>
                 {fleetAuditCompleted
-                  ? t('fleet_audited')
+                  ? (isRtl ? 'تم الفحص ✓' : 'Audited ✓')
                   : fleetAuditProgress
                   ? isRtl
-                    ? `جاري فحص ${fleetAuditProgress.current}/${fleetAuditProgress.total} متجر...`
-                    : `Auditing ${fleetAuditProgress.current}/${fleetAuditProgress.total} nodes...`
-                  : t('run_fleet_audit')}
+                    ? `فحص ${fleetAuditProgress.current}/${fleetAuditProgress.total}...`
+                    : `Auditing ${fleetAuditProgress.current}/${fleetAuditProgress.total}...`
+                  : (isRtl ? 'فحص المتاجر' : 'Audit Fleet')}
               </span>
             </button>
 
-            {/* Iconic Vercel High-Contrast Action Button */}
+            {/* Add Target SKU Action Button */}
             <button
               type="button"
               onClick={() => setModalOpen(true)}
               style={{
                 backgroundColor: '#FFFFFF',
                 color: '#000000',
-                fontSize: '0.8125rem',
-                fontWeight: 500,
-                padding: '6px 14px',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                padding: '5px 12px',
                 borderRadius: '6px',
                 border: 'none',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '4px',
                 transition: 'background-color 150ms ease',
                 fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                whiteSpace: 'nowrap',
               }}
               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#EAEAEA')}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
             >
-              <span style={{ fontSize: '14px', lineHeight: 1 }}>+</span>
-              <span>{t('add_target_sku')}</span>
+              <span style={{ fontSize: '13px', lineHeight: 1 }}>+</span>
+              <span>{isRtl ? 'إضافة منتج' : 'Add SKU'}</span>
             </button>
           </div>
         </header>
 
         {/* ── 3. WORKSPACE CANVAS CONTENT ── */}
-        <main style={{ flex: 1, padding: '24px 28px', boxSizing: 'border-box' }}>
+        <main style={{ flex: 1, padding: '16px 20px', boxSizing: 'border-box' }}>
           <div style={{ maxWidth: '1360px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
             
             {/* View Header with Subdued Controls */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '8px' }}>
               <div>
-                <h1 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#EDEDED', margin: '0 0 4px 0', letterSpacing: '-0.02em', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                <h1 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#EDEDED', margin: '0 0 2px 0', letterSpacing: '-0.02em', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                   {activeTab === 'overview' && (isRtl ? 'لوحة المراقبة والتحكم بالأسعار' : 'Telemetry Control Dashboard')}
                   {activeTab === 'intelligence' && (isRtl ? 'مصفوفة مقارنة المنصات الـ 12' : 'Multi-Platform E-Commerce Intelligence')}
                   {activeTab === 'arbitrage' && (isRtl ? 'محرك فروق الأسعار وفرص التوفير' : 'Cross-Retailer Arbitrage Engine')}
@@ -962,7 +965,7 @@ export default function ConsolePage() {
                   {activeTab === 'logs' && (isRtl ? 'سجل العمليات وأحداث الرادار' : 'System Logs & Glitch Radar Feed')}
                   {activeTab === 'settings' && (isRtl ? 'إعدادات المنصة وأمان الحساب' : 'Telemetry Engine Configuration')}
                 </h1>
-                <p style={{ fontSize: '0.8125rem', color: '#888888', margin: 0, fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                <p style={{ fontSize: '0.75rem', color: '#888888', margin: 0, fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                   {activeTab === 'overview' && (isRtl ? 'مراقبة حية لأسعار التجزئة بالسوق المصري، فحص الخصومات الحقيقية، وهوامش التوفير.' : 'Real-time retail price monitoring, baseline forensics, and arbitrage analytics.')}
                   {activeTab === 'intelligence' && (isRtl ? 'مصفوفة مقارنة موحدة وكشف الخصم الوهمي ومطابقة مواصفات الأجهزة عبر 12 منصة مصرية.' : 'Unified comparison matrix, fake-discount forensic auditor, and material specs across 12 Egyptian platforms.')}
                   {activeTab === 'arbitrage' && (isRtl ? 'اكتشاف آلي لفروق الأسعار بين المتاجر وحساب هوامش الربح الفورية عبر المنصات الـ 12.' : 'Automated domestic shelf divergence discovery calculating real-time margin spreads across 12 verified Egyptian platforms.')}
@@ -995,9 +998,9 @@ export default function ConsolePage() {
                   style={{
                     backgroundColor: activeTab === 'overview' ? '#161616' : 'transparent',
                     color: activeTab === 'overview' ? '#EDEDED' : '#888888',
-                    fontSize: '0.75rem',
+                    fontSize: '0.6875rem',
                     fontWeight: 500,
-                    padding: '4px 10px',
+                    padding: '3px 8px',
                     borderRadius: '4px',
                     border: 'none',
                     cursor: 'pointer',
@@ -1013,9 +1016,9 @@ export default function ConsolePage() {
                   style={{
                     backgroundColor: activeTab === 'intelligence' ? '#161616' : 'transparent',
                     color: activeTab === 'intelligence' ? '#EDEDED' : '#888888',
-                    fontSize: '0.75rem',
+                    fontSize: '0.6875rem',
                     fontWeight: 500,
-                    padding: '4px 10px',
+                    padding: '3px 8px',
                     borderRadius: '4px',
                     border: 'none',
                     cursor: 'pointer',
@@ -1031,9 +1034,9 @@ export default function ConsolePage() {
                   style={{
                     backgroundColor: activeTab === 'analytics' ? '#161616' : 'transparent',
                     color: activeTab === 'analytics' ? '#EDEDED' : '#888888',
-                    fontSize: '0.75rem',
+                    fontSize: '0.6875rem',
                     fontWeight: 500,
-                    padding: '4px 10px',
+                    padding: '3px 8px',
                     borderRadius: '4px',
                     border: 'none',
                     cursor: 'pointer',
@@ -1049,9 +1052,9 @@ export default function ConsolePage() {
                   style={{
                     backgroundColor: activeTab === 'tracker' ? '#161616' : 'transparent',
                     color: activeTab === 'tracker' ? '#EDEDED' : '#888888',
-                    fontSize: '0.75rem',
+                    fontSize: '0.6875rem',
                     fontWeight: 500,
-                    padding: '4px 10px',
+                    padding: '3px 8px',
                     borderRadius: '4px',
                     border: 'none',
                     cursor: 'pointer',
@@ -1067,9 +1070,9 @@ export default function ConsolePage() {
                   style={{
                     backgroundColor: activeTab === 'logs' ? '#161616' : 'transparent',
                     color: activeTab === 'logs' ? '#EDEDED' : '#888888',
-                    fontSize: '0.75rem',
+                    fontSize: '0.6875rem',
                     fontWeight: 500,
-                    padding: '4px 10px',
+                    padding: '3px 8px',
                     borderRadius: '4px',
                     border: 'none',
                     cursor: 'pointer',
@@ -1150,12 +1153,8 @@ export default function ConsolePage() {
                     <span
                       style={{
                         fontSize: '0.6875rem',
-                        fontWeight: 500,
+                        fontWeight: 600,
                         color: '#00DF8F',
-                        backgroundColor: '#0A0A0A',
-                        border: '1px solid #222222',
-                        padding: '2px 8px',
-                        borderRadius: '4px',
                         fontFamily: "'Geist Mono', monospace",
                       }}
                     >
@@ -1226,12 +1225,8 @@ export default function ConsolePage() {
                     <span
                       style={{
                         fontSize: '0.6875rem',
-                        fontWeight: 500,
+                        fontWeight: 600,
                         color: '#0070F3',
-                        backgroundColor: '#0A0A0A',
-                        border: '1px solid #222222',
-                        padding: '2px 8px',
-                        borderRadius: '4px',
                         fontFamily: "'Geist Mono', monospace",
                       }}
                     >
@@ -1302,12 +1297,8 @@ export default function ConsolePage() {
                     <span
                       style={{
                         fontSize: '0.6875rem',
-                        fontWeight: 500,
+                        fontWeight: 600,
                         color: '#FB7185',
-                        backgroundColor: '#0A0A0A',
-                        border: '1px solid #222222',
-                        padding: '2px 8px',
-                        borderRadius: '4px',
                         fontFamily: "'Geist Mono', monospace",
                       }}
                     >
@@ -1378,12 +1369,8 @@ export default function ConsolePage() {
                     <span
                       style={{
                         fontSize: '0.6875rem',
-                        fontWeight: 500,
+                        fontWeight: 600,
                         color: '#00DF8F',
-                        backgroundColor: '#0A0A0A',
-                        border: '1px solid #222222',
-                        padding: '2px 8px',
-                        borderRadius: '4px',
                         fontFamily: "'Geist Mono', monospace",
                       }}
                     >
@@ -2361,14 +2348,10 @@ export default function ConsolePage() {
                         <div>
                           <span
                             style={{
-                              fontSize: '0.6875rem',
-                              fontWeight: 500,
+                              fontSize: '0.75rem',
+                              fontWeight: 600,
                               fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace",
-                              padding: '2px 7px',
-                              borderRadius: '4px',
-                              backgroundColor: '#0A0A0A',
-                              border: '1px solid #222222',
-                              color: '#888888',
+                              color: '#10B981',
                             }}
                           >
                             {getRetailerName(item.node, lang)}

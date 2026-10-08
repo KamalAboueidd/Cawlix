@@ -303,7 +303,7 @@ export default function MultiPlatformIntelligence({
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '24px',
+        gap: '16px',
         width: '100%',
         backgroundColor: '#000000',
         color: '#EDEDED',
@@ -315,9 +315,9 @@ export default function MultiPlatformIntelligence({
         style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: '16px',
+          gap: '10px',
           borderBottom: '1px solid #1F1F1F',
-          paddingBottom: '20px',
+          paddingBottom: '12px',
         }}
       >
         <div
@@ -326,18 +326,18 @@ export default function MultiPlatformIntelligence({
             justifyContent: 'space-between',
             alignItems: 'center',
             flexWrap: 'wrap',
-            gap: '12px',
+            gap: '8px',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span
               style={{
-                fontSize: '0.6875rem',
+                fontSize: '0.625rem',
                 fontWeight: 600,
                 color: '#10B981',
                 backgroundColor: 'rgba(16, 185, 129, 0.1)',
                 border: '1px solid rgba(16, 185, 129, 0.25)',
-                padding: '2px 8px',
+                padding: '2px 7px',
                 borderRadius: '4px',
                 letterSpacing: '0.04em',
                 fontFamily: "'Geist Mono', monospace",
@@ -345,25 +345,25 @@ export default function MultiPlatformIntelligence({
             >
               12 DOMESTIC NODES SYNCHRONIZED
             </span>
-            <span style={{ fontSize: '0.75rem', color: '#666666' }}>·</span>
-            <span style={{ fontSize: '0.75rem', color: '#888888', fontFamily: "'Geist Mono', monospace" }}>
+            <span style={{ fontSize: '0.6875rem', color: '#555555' }}>·</span>
+            <span style={{ fontSize: '0.6875rem', color: '#888888', fontFamily: "'Geist Mono', monospace" }}>
               Active Cairo & Giza Shelf Audits
             </span>
           </div>
 
           {/* Quick Refresh Status */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span
               style={{
                 display: 'inline-block',
-                width: '6px',
-                height: '6px',
+                width: '5px',
+                height: '5px',
                 borderRadius: '50%',
                 backgroundColor: '#10B981',
                 boxShadow: '0 0 6px rgba(16, 185, 129, 0.6)',
               }}
             />
-            <span style={{ fontSize: '0.6875rem', color: '#888888', fontFamily: "'Geist Mono', monospace" }}>
+            <span style={{ fontSize: '0.625rem', color: '#888888', fontFamily: "'Geist Mono', monospace" }}>
               {loading ? 'SYNCING CATALOG...' : 'REALTIME WEBSOCKET FEED'}
             </span>
           </div>
@@ -374,9 +374,9 @@ export default function MultiPlatformIntelligence({
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
+            gap: '6px',
             overflowX: 'auto',
-            paddingBottom: '4px',
+            paddingBottom: '2px',
           }}
         >
           {products.map((item) => {
@@ -390,15 +390,15 @@ export default function MultiPlatformIntelligence({
                   backgroundColor: isSelected ? '#161616' : '#000000',
                   color: isSelected ? '#EDEDED' : '#888888',
                   border: isSelected ? '1px solid #333333' : '1px solid #1F1F1F',
-                  padding: '7px 14px',
-                  borderRadius: '6px',
-                  fontSize: '0.8125rem',
+                  padding: '5px 11px',
+                  borderRadius: '5px',
+                  fontSize: '0.75rem',
                   fontWeight: isSelected ? 600 : 400,
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px',
+                  gap: '6px',
                   transition: 'all 120ms ease',
                   fontFamily: "'Geist', sans-serif",
                 }}
@@ -413,8 +413,8 @@ export default function MultiPlatformIntelligence({
                 {isSelected && (
                   <span
                     style={{
-                      width: '5px',
-                      height: '5px',
+                      width: '4px',
+                      height: '4px',
                       borderRadius: '50%',
                       backgroundColor: '#10B981',
                     }}
@@ -426,46 +426,45 @@ export default function MultiPlatformIntelligence({
         </div>
       </section>
 
-      {/* ── PRODUCT HERO HEADER & SUMMARY METRICS BANNER ── */}
+      {/* ── PRODUCT HERO HEADER & SUMMARY METRICS BANNER (3 CARDS SIDE BY SIDE) ── */}
       <section
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '16px',
+          gridTemplateColumns: 'minmax(320px, 1.35fr) minmax(230px, 1.05fr) minmax(210px, 0.95fr)',
+          gap: '12px',
         }}
       >
         {/* Product Identity Card */}
         <div
           style={{
-            gridColumn: 'span 2',
             backgroundColor: '#0A0A0A',
             border: '1px solid #1F1F1F',
             borderRadius: '8px',
-            padding: '20px',
+            padding: '14px 16px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            gap: '12px',
+            gap: '8px',
           }}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
               <span
                 style={{
-                  fontSize: '0.6875rem',
+                  fontSize: '0.625rem',
                   fontWeight: 600,
                   textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
+                  letterSpacing: '0.04em',
                   color: '#888888',
                   fontFamily: "'Geist Mono', monospace",
                 }}
               >
                 {activeProduct.brand} · {activeProduct.category}
               </span>
-              <span style={{ fontSize: '0.6875rem', color: '#555555' }}>|</span>
+              <span style={{ fontSize: '0.625rem', color: '#444444' }}>|</span>
               <span
                 style={{
-                  fontSize: '0.6875rem',
+                  fontSize: '0.625rem',
                   color: '#888888',
                   fontFamily: "'Geist Mono', monospace",
                 }}
@@ -476,31 +475,33 @@ export default function MultiPlatformIntelligence({
 
             <h2
               style={{
-                fontSize: '1.25rem',
+                fontSize: '1rem',
                 fontWeight: 600,
                 color: '#EDEDED',
                 margin: 0,
-                letterSpacing: '-0.02em',
+                letterSpacing: '-0.01em',
+                lineHeight: 1.35,
+                wordBreak: 'break-word',
               }}
             >
               {activeProduct.title}
             </h2>
 
-            <p style={{ fontSize: '0.8125rem', color: '#888888', margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: '0.75rem', color: '#888888', margin: 0, lineHeight: 1.4 }}>
               {activeProduct.material_summary}
             </p>
           </div>
 
           {/* Quick specs pill strip */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', paddingTop: '6px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', paddingTop: '2px' }}>
             {activeProduct.specifications?.water_resistance && (
               <span
                 style={{
-                  fontSize: '0.6875rem',
+                  fontSize: '0.625rem',
                   color: '#EDEDED',
                   backgroundColor: '#000000',
                   border: '1px solid #1F1F1F',
-                  padding: '3px 8px',
+                  padding: '2px 6px',
                   borderRadius: '4px',
                   fontFamily: "'Geist Mono', monospace",
                 }}
@@ -511,11 +512,11 @@ export default function MultiPlatformIntelligence({
             {activeProduct.specifications?.chassis_material && (
               <span
                 style={{
-                  fontSize: '0.6875rem',
+                  fontSize: '0.625rem',
                   color: '#EDEDED',
                   backgroundColor: '#000000',
                   border: '1px solid #1F1F1F',
-                  padding: '3px 8px',
+                  padding: '2px 6px',
                   borderRadius: '4px',
                   fontFamily: "'Geist Mono', monospace",
                 }}
@@ -526,11 +527,11 @@ export default function MultiPlatformIntelligence({
             {activeProduct.specifications?.weight && (
               <span
                 style={{
-                  fontSize: '0.6875rem',
+                  fontSize: '0.625rem',
                   color: '#888888',
                   backgroundColor: '#000000',
                   border: '1px solid #1F1F1F',
-                  padding: '3px 8px',
+                  padding: '2px 6px',
                   borderRadius: '4px',
                   fontFamily: "'Geist Mono', monospace",
                 }}
@@ -547,11 +548,11 @@ export default function MultiPlatformIntelligence({
             backgroundColor: '#0A0A0A',
             border: '1px solid #10B981',
             borderRadius: '8px',
-            padding: '20px',
+            padding: '14px 16px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            gap: '10px',
+            gap: '8px',
             position: 'relative',
             overflow: 'hidden',
           }}
@@ -562,21 +563,21 @@ export default function MultiPlatformIntelligence({
               position: 'absolute',
               top: 0,
               right: 0,
-              width: '120px',
-              height: '120px',
+              width: '90px',
+              height: '90px',
               background: 'radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(0, 0, 0, 0) 70%)',
               pointerEvents: 'none',
             }}
           />
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '6px' }}>
             <span
               style={{
-                fontSize: '0.6875rem',
+                fontSize: '0.625rem',
                 fontWeight: 600,
                 color: '#10B981',
                 textTransform: 'uppercase',
-                letterSpacing: '0.05em',
+                letterSpacing: '0.04em',
                 fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
               }}
             >
@@ -585,14 +586,15 @@ export default function MultiPlatformIntelligence({
             {lowestInStockListing && (
               <span
                 style={{
-                  fontSize: '0.6875rem',
+                  fontSize: '0.625rem',
                   fontWeight: 600,
                   backgroundColor: 'rgba(16, 185, 129, 0.15)',
                   color: '#10B981',
                   border: '1px solid rgba(16, 185, 129, 0.3)',
-                  padding: '2px 8px',
-                  borderRadius: '9999px',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
                   fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
+                  whiteSpace: 'nowrap',
                 }}
               >
                 {t('matrix.badges.bestDeal', { retailer: getRetailerName(lowestInStockListing.platform_id || lowestInStockListing.name) }, `Cheapest at ${lowestInStockListing.name}`)}
@@ -604,7 +606,7 @@ export default function MultiPlatformIntelligence({
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
               <span
                 style={{
-                  fontSize: '1.875rem',
+                  fontSize: '1.375rem',
                   fontWeight: 700,
                   color: '#10B981',
                   fontFamily: "'Geist Mono', monospace",
@@ -616,7 +618,7 @@ export default function MultiPlatformIntelligence({
               {lowestInStockListing?.discount_pct > 0 && (
                 <span
                   style={{
-                    fontSize: '0.75rem',
+                    fontSize: '0.6875rem',
                     color: '#888888',
                     textDecoration: 'line-through',
                     fontFamily: "'Geist Mono', monospace",
@@ -626,13 +628,13 @@ export default function MultiPlatformIntelligence({
                 </span>
               )}
             </div>
-            <span style={{ fontSize: '0.75rem', color: '#888888', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
-              {lowestInStockListing ? (isRtl ? `يشمل الضمان المعتمد: ${lowestInStockListing.warranty_info}` : `Includes official ${lowestInStockListing.warranty_info}`) : (isRtl ? 'جاري فحص وتحديث المتاجر...' : 'Currently monitoring nodes')}
+            <span style={{ fontSize: '0.6875rem', color: '#888888', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
+              {lowestInStockListing ? (isRtl ? `يشمل الضمان: ${lowestInStockListing.warranty_info}` : `Includes official ${lowestInStockListing.warranty_info}`) : (isRtl ? 'جاري فحص وتحديث المتاجر...' : 'Currently monitoring nodes')}
             </span>
           </div>
 
           {lowestInStockListing && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
               <a
                 href={sanitizeRetailerUrl({
                   url: lowestInStockListing.listing_url || lowestInStockListing.url || lowestInStockListing.product_url,
@@ -646,23 +648,24 @@ export default function MultiPlatformIntelligence({
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '6px',
-                  fontSize: '0.75rem',
+                  gap: '5px',
+                  fontSize: '0.6875rem',
                   color: '#EDEDED',
                   textDecoration: 'none',
                   fontWeight: 500,
-                  padding: '6px 10px',
-                  borderRadius: '5px',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
                   backgroundColor: '#000000',
                   border: '1px solid #1F1F1F',
                   transition: 'border-color 150ms ease',
                   fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
+                  whiteSpace: 'nowrap',
                 }}
                 onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#10B981')}
                 onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#1F1F1F')}
               >
                 <span>{isRtl ? `زيارة ${getRetailerName(lowestInStockListing.platform_id || lowestInStockListing.name)}` : `Direct Link to ${lowestInStockListing.name}`}</span>
-                <ExternalLink size={12} color="#10B981" />
+                <ExternalLink size={11} color="#10B981" />
               </a>
 
               <button
@@ -674,22 +677,23 @@ export default function MultiPlatformIntelligence({
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '6px',
-                  fontSize: '0.75rem',
+                  gap: '5px',
+                  fontSize: '0.6875rem',
                   color: '#10B981',
                   fontWeight: 500,
-                  padding: '6px 10px',
-                  borderRadius: '5px',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
                   backgroundColor: 'rgba(16, 185, 129, 0.08)',
                   border: '1px solid rgba(16, 185, 129, 0.3)',
                   cursor: 'pointer',
                   transition: 'all 150ms ease',
                   fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
+                  whiteSpace: 'nowrap',
                 }}
                 onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(16, 185, 129, 0.16)')}
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'rgba(16, 185, 129, 0.08)')}
               >
-                <BookmarkCheck size={12} color="#10B981" />
+                <BookmarkCheck size={11} color="#10B981" />
                 <span>{t('matrix.actions.addToWatchlist')}</span>
               </button>
             </div>
@@ -702,21 +706,21 @@ export default function MultiPlatformIntelligence({
             backgroundColor: '#0A0A0A',
             border: '1px solid #1F1F1F',
             borderRadius: '8px',
-            padding: '20px',
+            padding: '14px 16px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            gap: '10px',
+            gap: '8px',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span
               style={{
-                fontSize: '0.6875rem',
+                fontSize: '0.625rem',
                 fontWeight: 600,
                 color: '#888888',
                 textTransform: 'uppercase',
-                letterSpacing: '0.05em',
+                letterSpacing: '0.04em',
                 fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
               }}
             >
@@ -724,7 +728,7 @@ export default function MultiPlatformIntelligence({
             </span>
             <span
               style={{
-                fontSize: '0.6875rem',
+                fontSize: '0.625rem',
                 color: '#00DF8F',
                 fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
               }}
@@ -736,7 +740,7 @@ export default function MultiPlatformIntelligence({
           <div>
             <div
               style={{
-                fontSize: '1.75rem',
+                fontSize: '1.375rem',
                 fontWeight: 600,
                 color: '#EDEDED',
                 fontFamily: "'Geist Mono', monospace",
@@ -745,14 +749,14 @@ export default function MultiPlatformIntelligence({
             >
               {formatCurrency(priceSpread)}
             </div>
-            <span style={{ fontSize: '0.75rem', color: '#888888', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
+            <span style={{ fontSize: '0.6875rem', color: '#888888', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
               {t('kpis.arbitrageSavingsSub')}
             </span>
           </div>
 
           <div
             style={{
-              fontSize: '0.6875rem',
+              fontSize: '0.625rem',
               color: '#666666',
               fontFamily: "'Geist Mono', monospace",
             }}
@@ -945,21 +949,21 @@ export default function MultiPlatformIntelligence({
                   backgroundColor: '#000000',
                   borderBottom: '1px solid #1F1F1F',
                   color: '#888888',
-                  fontSize: '0.6875rem',
+                  fontSize: '0.625rem',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                   fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                   textAlign: isRtl ? 'right' : 'left',
                 }}
               >
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{t('matrix.columns.retailer')}</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{t('matrix.columns.currentPrice')}</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{t('matrix.columns.discount')}</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{t('matrix.columns.stock')}</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{t('matrix.columns.rating')}</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{t('matrix.columns.warranty')}</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500 }}>{t('matrix.columns.materials')}</th>
-                <th style={{ padding: '12px 18px', fontWeight: 500, textAlign: isRtl ? 'left' : 'right' }}>{t('matrix.columns.actions')}</th>
+                <th style={{ padding: '8px 12px', fontWeight: 500 }}>{t('matrix.columns.retailer')}</th>
+                <th style={{ padding: '8px 12px', fontWeight: 500 }}>{t('matrix.columns.currentPrice')}</th>
+                <th style={{ padding: '8px 12px', fontWeight: 500 }}>{t('matrix.columns.discount')}</th>
+                <th style={{ padding: '8px 12px', fontWeight: 500 }}>{t('matrix.columns.stock')}</th>
+                <th style={{ padding: '8px 12px', fontWeight: 500 }}>{t('matrix.columns.rating')}</th>
+                <th style={{ padding: '8px 12px', fontWeight: 500 }}>{t('matrix.columns.warranty')}</th>
+                <th style={{ padding: '8px 12px', fontWeight: 500 }}>{t('matrix.columns.materials')}</th>
+                <th style={{ padding: '8px 12px', fontWeight: 500, textAlign: isRtl ? 'left' : 'right' }}>{t('matrix.columns.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -986,12 +990,13 @@ export default function MultiPlatformIntelligence({
                     }}
                   >
                     {/* Platform details */}
-                    <td style={{ padding: '14px 18px' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <td style={{ padding: '8px 12px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                           <span
                             style={{
                               fontWeight: 600,
+                              fontSize: '0.8125rem',
                               color: isOutOfStock ? '#777777' : '#EDEDED',
                               letterSpacing: '-0.01em',
                             }}
@@ -1001,7 +1006,7 @@ export default function MultiPlatformIntelligence({
                           {isLowest && (
                             <span
                               style={{
-                                fontSize: '0.6875rem',
+                                fontSize: '0.625rem',
                                 fontWeight: 600,
                                 color: '#10B981',
                                 letterSpacing: '0.01em',
@@ -1013,7 +1018,7 @@ export default function MultiPlatformIntelligence({
                           )}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <span style={{ fontSize: '0.6875rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
+                          <span style={{ fontSize: '0.625rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
                             {item.domain}
                           </span>
                           <span style={{ fontSize: '0.625rem', color: '#444444' }}>•</span>
@@ -1025,12 +1030,12 @@ export default function MultiPlatformIntelligence({
                     </td>
 
                     {/* Current Price (EGP, Tabular Nums) */}
-                    <td style={{ padding: '14px 18px' }}>
+                    <td style={{ padding: '8px 12px' }}>
                       {item.current_price > 0 ? (
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                           <span
                             style={{
-                              fontSize: isLowest ? '1.0625rem' : '0.9375rem',
+                              fontSize: isLowest ? '0.9375rem' : '0.875rem',
                               fontWeight: isLowest ? 700 : 600,
                               color: isLowest ? '#10B981' : '#EDEDED',
                               fontFamily: "'Geist Mono', monospace",
@@ -1039,7 +1044,7 @@ export default function MultiPlatformIntelligence({
                           >
                             {formatCurrency(item.current_price)}
                           </span>
-                          <span style={{ fontSize: '0.6875rem', color: '#666666' }}>
+                          <span style={{ fontSize: '0.625rem', color: '#666666' }}>
                             {isLowest ? (isRtl ? '★ أرخص سعر' : '★ Best Deal') : (isRtl ? 'سعر الرف' : 'Shelf listing')}
                           </span>
                         </div>
@@ -1051,14 +1056,14 @@ export default function MultiPlatformIntelligence({
                     </td>
 
                     {/* Original Price & Discount % Badge */}
-                    <td style={{ padding: '14px 18px' }}>
+                    <td style={{ padding: '8px 12px' }}>
                       {item.current_price > 0 ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                           {item.discount_pct > 0 ? (
                             <>
                               <span
                                 style={{
-                                  fontSize: '0.75rem',
+                                  fontSize: '0.6875rem',
                                   fontWeight: 600,
                                   color: item.is_suspicious_markup ? '#FB7185' : '#10B981',
                                   fontFamily: "'Geist Mono', monospace",
@@ -1068,7 +1073,7 @@ export default function MultiPlatformIntelligence({
                               </span>
                               <span
                                 style={{
-                                  fontSize: '0.75rem',
+                                  fontSize: '0.6875rem',
                                   color: '#666666',
                                   textDecoration: 'line-through',
                                   fontFamily: "'Geist Mono', monospace",
@@ -1078,22 +1083,22 @@ export default function MultiPlatformIntelligence({
                               </span>
                             </>
                           ) : (
-                            <span style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace" }}>
+                            <span style={{ fontSize: '0.6875rem', color: '#666666', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace" }}>
                               {isRtl ? 'سعر قياسي' : 'Standard Price'}
                             </span>
                           )}
                         </div>
                       ) : (
-                        <span style={{ color: '#555555', fontSize: '0.75rem' }}>—</span>
+                        <span style={{ color: '#555555', fontSize: '0.6875rem' }}>—</span>
                       )}
                     </td>
 
                     {/* Stock Status */}
-                    <td style={{ padding: '14px 18px' }}>
+                    <td style={{ padding: '8px 12px' }}>
                       {isOutOfStock ? (
                         <span
                           style={{
-                            fontSize: '0.75rem',
+                            fontSize: '0.6875rem',
                             fontWeight: 500,
                             color: '#666666',
                             textDecoration: 'line-through',
@@ -1105,7 +1110,7 @@ export default function MultiPlatformIntelligence({
                       ) : isLowStock ? (
                         <span
                           style={{
-                            fontSize: '0.75rem',
+                            fontSize: '0.6875rem',
                             fontWeight: 500,
                             color: '#F59E0B',
                             fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
@@ -1116,7 +1121,7 @@ export default function MultiPlatformIntelligence({
                       ) : (
                         <span
                           style={{
-                            fontSize: '0.75rem',
+                            fontSize: '0.6875rem',
                             fontWeight: 500,
                             color: '#10B981',
                             fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
@@ -1128,35 +1133,36 @@ export default function MultiPlatformIntelligence({
                     </td>
 
                     {/* Rating & Reviews */}
-                    <td style={{ padding: '14px 18px' }}>
+                    <td style={{ padding: '8px 12px' }}>
                       {item.rating > 0 ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <span style={{ color: '#F59E0B', fontSize: '0.75rem' }}>★</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                          <span style={{ color: '#F59E0B', fontSize: '0.6875rem' }}>★</span>
                           <span
                             style={{
                               fontWeight: 600,
+                              fontSize: '0.75rem',
                               color: '#EDEDED',
                               fontFamily: "'Geist Mono', monospace",
                             }}
                           >
                             {item.rating.toFixed(1)}
                           </span>
-                          <span style={{ fontSize: '0.6875rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
+                          <span style={{ fontSize: '0.625rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
                             ({item.reviews_count.toLocaleString()})
                           </span>
                         </div>
                       ) : (
-                        <span style={{ color: '#555555', fontSize: '0.75rem' }}>No reviews</span>
+                        <span style={{ color: '#555555', fontSize: '0.6875rem' }}>No reviews</span>
                       )}
                     </td>
 
                     {/* Warranty */}
-                    <td style={{ padding: '14px 18px', maxWidth: '180px' }}>
+                    <td style={{ padding: '8px 12px', maxWidth: '170px' }}>
                       <span
                         style={{
-                          fontSize: '0.75rem',
+                          fontSize: '0.6875rem',
                           color: isOutOfStock ? '#666666' : '#BBBBBB',
-                          lineHeight: 1.4,
+                          lineHeight: 1.35,
                           display: '-webkit-box',
                           WebkitLineClamp: 2,
                           WebkitBoxOrient: 'vertical',
@@ -1168,12 +1174,12 @@ export default function MultiPlatformIntelligence({
                     </td>
 
                     {/* Material & Edition Summary Notes */}
-                    <td style={{ padding: '14px 18px', maxWidth: '200px' }}>
+                    <td style={{ padding: '8px 12px', maxWidth: '180px' }}>
                       <span
                         style={{
-                          fontSize: '0.75rem',
+                          fontSize: '0.6875rem',
                           color: isOutOfStock ? '#666666' : '#888888',
-                          lineHeight: 1.4,
+                          lineHeight: 1.35,
                           display: '-webkit-box',
                           WebkitLineClamp: 2,
                           WebkitBoxOrient: 'vertical',
@@ -1185,8 +1191,8 @@ export default function MultiPlatformIntelligence({
                     </td>
 
                     {/* Action */}
-                    <td style={{ padding: '14px 18px', textAlign: 'right' }}>
-                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', justifyContent: 'flex-end' }}>
+                    <td style={{ padding: '8px 12px', textAlign: isRtl ? 'left' : 'right', whiteSpace: 'nowrap' }}>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', justifyContent: isRtl ? 'flex-start' : 'flex-end', flexWrap: 'nowrap' }}>
                         {/* Live Re-Audit Trigger */}
                         <button
                           type="button"
@@ -1196,7 +1202,7 @@ export default function MultiPlatformIntelligence({
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: '4px',
-                            fontSize: '0.6875rem',
+                            fontSize: '0.65rem',
                             color: probingListingId === (item.platform_id || item.id)
                               ? '#F59E0B'
                               : flashingListingIds[item.platform_id || item.id]
@@ -1208,11 +1214,12 @@ export default function MultiPlatformIntelligence({
                               : flashingListingIds[item.platform_id || item.id]
                               ? '1px solid #10B981'
                               : '1px solid #222222',
-                            padding: '4px 8px',
+                            padding: '3px 7px',
                             borderRadius: '4px',
                             cursor: probingListingId === (item.platform_id || item.id) ? 'not-allowed' : 'pointer',
-                            fontFamily: "'Geist Mono', monospace",
+                            fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                             transition: 'all 120ms ease',
+                            whiteSpace: 'nowrap',
                           }}
                           onMouseEnter={(e) => {
                             if (!probingListingId) e.currentTarget.style.borderColor = '#444444';
@@ -1236,7 +1243,7 @@ export default function MultiPlatformIntelligence({
                                 : '#888888'
                             }
                           />
-                          <span>
+                          <span style={{ whiteSpace: 'nowrap' }}>
                             {probingListingId === (item.platform_id || item.id)
                               ? (isRtl ? 'جاري الفحص...' : 'Probing...')
                               : flashingListingIds[item.platform_id || item.id]
@@ -1259,15 +1266,16 @@ export default function MultiPlatformIntelligence({
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: '4px',
-                            fontSize: '0.75rem',
+                            fontSize: '0.65rem',
                             color: isLowest ? '#10B981' : isOutOfStock ? '#666666' : '#EDEDED',
                             textDecoration: 'none',
                             fontWeight: 500,
-                            padding: '4px 8px',
+                            padding: '3px 7px',
                             borderRadius: '4px',
                             border: isLowest ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid #222222',
                             backgroundColor: '#000000',
                             transition: 'all 120ms ease',
+                            whiteSpace: 'nowrap',
                             fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
                           }}
                           onMouseEnter={(e) => {
@@ -1277,7 +1285,7 @@ export default function MultiPlatformIntelligence({
                             e.currentTarget.style.borderColor = isLowest ? 'rgba(16, 185, 129, 0.4)' : '#222222';
                           }}
                         >
-                          <span>{isRtl ? 'زيارة المتجر' : 'Visit Store'}</span>
+                          <span style={{ whiteSpace: 'nowrap' }}>{isRtl ? 'زيارة المتجر' : 'Visit Store'}</span>
                           <ExternalLink size={10} />
                         </a>
 

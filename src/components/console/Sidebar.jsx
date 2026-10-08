@@ -193,9 +193,9 @@ export default function Sidebar({
                   fontSize: '0.625rem',
                   fontWeight: 500,
                   color: '#888888',
-                  border: '1px solid #262626',
-                  padding: '1px 6px',
+                  padding: '2px 6px',
                   borderRadius: '9999px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
                   lineHeight: '1.4',
                   fontFamily: "'Geist Mono', monospace",
                 }}
@@ -289,14 +289,23 @@ export default function Sidebar({
                           fontWeight: 500,
                           padding: '1px 5px',
                           borderRadius: '3px',
-                          border: '1px solid #222222',
-                          backgroundColor: '#0A0A0A',
+                          border: 'none',
+                          backgroundColor:
+                            route.badge === 'SPREADS' || route.badge === 'فروق أسعار'
+                              ? 'rgba(16, 185, 129, 0.1)'
+                              : route.badge === '12/12'
+                              ? 'rgba(56, 189, 248, 0.1)'
+                              : route.badge === '3 HIKES' || (typeof route.badge === 'string' && route.badge.includes('تلاعب'))
+                              ? 'rgba(251, 113, 133, 0.1)'
+                              : 'transparent',
                           color:
-                            route.badge === 'SPREADS'
+                            route.badge === 'SPREADS' || route.badge === 'فروق أسعار'
                               ? '#10B981'
                               : route.badge === '12/12'
                               ? '#38BDF8'
-                              : '#888888',
+                              : route.badge === '3 HIKES' || (typeof route.badge === 'string' && route.badge.includes('تلاعب'))
+                              ? '#FB7185'
+                              : '#666666',
                           fontFamily: "'Geist Mono', monospace",
                         }}
                       >
@@ -393,12 +402,12 @@ export default function Sidebar({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '24px',
-              height: '24px',
-              borderRadius: '50%',
+              width: '28px',
+              height: '28px',
+              borderRadius: '6px',
               backgroundColor: userMenuOpen ? '#1F1F1F' : 'transparent',
               border: 'none',
-              color: '#888888',
+              color: userMenuOpen ? '#EDEDED' : '#888888',
               cursor: 'pointer',
               transition: 'all 120ms ease',
             }}

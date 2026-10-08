@@ -277,10 +277,10 @@ export default function TruthForensics({ onInspectProduct = null, onShowToast = 
       >
         <div
           style={{
-            background: '#0A0A0A',
+            backgroundColor: '#000000',
             border: '1px solid #1F1F1F',
-            borderRadius: '6px',
-            padding: '16px',
+            borderRadius: '8px',
+            padding: '18px',
             display: 'flex',
             flexDirection: 'column',
             gap: '8px',
@@ -307,10 +307,10 @@ export default function TruthForensics({ onInspectProduct = null, onShowToast = 
 
         <div
           style={{
-            background: '#0A0A0A',
+            backgroundColor: '#000000',
             border: '1px solid #1F1F1F',
-            borderRadius: '6px',
-            padding: '16px',
+            borderRadius: '8px',
+            padding: '18px',
             display: 'flex',
             flexDirection: 'column',
             gap: '8px',
@@ -337,10 +337,10 @@ export default function TruthForensics({ onInspectProduct = null, onShowToast = 
 
         <div
           style={{
-            background: '#0A0A0A',
+            backgroundColor: '#000000',
             border: '1px solid #1F1F1F',
-            borderRadius: '6px',
-            padding: '16px',
+            borderRadius: '8px',
+            padding: '18px',
             display: 'flex',
             flexDirection: 'column',
             gap: '8px',
@@ -367,10 +367,10 @@ export default function TruthForensics({ onInspectProduct = null, onShowToast = 
 
         <div
           style={{
-            background: '#0A0A0A',
+            backgroundColor: '#000000',
             border: '1px solid #1F1F1F',
-            borderRadius: '6px',
-            padding: '16px',
+            borderRadius: '8px',
+            padding: '18px',
             display: 'flex',
             flexDirection: 'column',
             gap: '8px',
@@ -399,7 +399,7 @@ export default function TruthForensics({ onInspectProduct = null, onShowToast = 
       {/* Control Filter Bar */}
       <div
         style={{
-          background: '#0A0A0A',
+          backgroundColor: '#000000',
           border: '1px solid #1F1F1F',
           borderRadius: '8px',
           padding: '14px 18px',
@@ -418,7 +418,7 @@ export default function TruthForensics({ onInspectProduct = null, onShowToast = 
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              background: '#050505',
+              backgroundColor: '#000000',
               border: '1px solid #222222',
               borderRadius: '6px',
               padding: '6px 10px',
@@ -480,7 +480,7 @@ export default function TruthForensics({ onInspectProduct = null, onShowToast = 
             value={selectedRetailer}
             onChange={(e) => setSelectedRetailer(e.target.value)}
             style={{
-              background: '#111111',
+              backgroundColor: '#000000',
               color: '#EDEDED',
               border: '1px solid #222222',
               borderRadius: '4px',
@@ -507,7 +507,7 @@ export default function TruthForensics({ onInspectProduct = null, onShowToast = 
         {filteredAnomalies.length === 0 ? (
           <div
             style={{
-              background: '#0A0A0A',
+              backgroundColor: '#000000',
               border: '1px solid #1F1F1F',
               borderRadius: '8px',
               padding: '48px 24px',
@@ -536,7 +536,7 @@ export default function TruthForensics({ onInspectProduct = null, onShowToast = 
               <div
                 key={item.id}
                 style={{
-                  background: '#0A0A0A',
+                  backgroundColor: '#000000',
                   border: '1px solid #1F1F1F',
                   borderRadius: '8px',
                   padding: '18px 20px',
@@ -560,12 +560,9 @@ export default function TruthForensics({ onInspectProduct = null, onShowToast = 
                       style={{
                         fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                         fontSize: '0.6875rem',
-                        fontWeight: 600,
+                        fontWeight: 700,
                         color: sevBadge.color,
-                        background: sevBadge.bg,
-                        border: `1px solid ${sevBadge.border}`,
-                        padding: '2px 8px',
-                        borderRadius: '4px',
+                        letterSpacing: '0.04em',
                       }}
                     >
                       {item.severity === 'CRITICAL' ? (isRtl ? 'حرج' : 'CRITICAL') : item.severity === 'HIGH' ? (isRtl ? 'مرتفع' : 'HIGH') : (isRtl ? 'متوسط' : 'MEDIUM')}
@@ -591,11 +588,8 @@ export default function TruthForensics({ onInspectProduct = null, onShowToast = 
                     style={{
                       fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                       fontSize: '0.6875rem',
+                      fontWeight: 600,
                       color: '#F59E0B',
-                      background: 'rgba(245, 158, 11, 0.08)',
-                      padding: '2px 8px',
-                      borderRadius: '4px',
-                      border: '1px solid rgba(245, 158, 11, 0.2)',
                     }}
                   >
                     {isRtl ? 'نوع التلاعب: ' : 'VIOLATION: '}
@@ -637,8 +631,8 @@ export default function TruthForensics({ onInspectProduct = null, onShowToast = 
                 {/* Quantitative Comparison Matrix */}
                 <div
                   style={{
-                    background: '#050505',
-                    border: '1px solid #141414',
+                    backgroundColor: '#000000',
+                    border: '1px solid #1A1A1A',
                     borderRadius: '6px',
                     padding: '12px 16px',
                     display: 'grid',
