@@ -649,7 +649,43 @@ export default function ConsolePage() {
   const emailIdentity = identities.find((id) => id.provider === 'email');
   const isEmailPasswordActive = Boolean(emailIdentity || user?.app_metadata?.providers?.includes('email'));
   const primaryEmail = user?.email || emailIdentity?.identity_data?.email || 'admin@cawlix.com';
+  const userHandle =
+    user?.user_metadata?.full_name ||
+    user?.user_metadata?.name ||
+    (primaryEmail ? primaryEmail.split('@')[0] : 'Kamal Aboueid');
   const pwdStrength = getPasswordStrength(newPassword);
+
+  const handleRowClick = (item) => {
+    setSelectedDrawerItem(item);
+    setAlertTargetPrice(item.target_price ? String(item.target_price) : '');
+  };
+
+  const filteredItems = useMemo(() => {
+    if (!searchQuery.trim()) return trackedItems;
+    const q = searchQuery.toLowerCase().trim();
+    return trackedItems.filter(
+      (item) =>
+        item.title?.toLowerCase().includes(q) ||
+        item.sku?.toLowerCase().includes(q) ||
+        item.node?.toLowerCase().includes(q)
+    );
+  }, [trackedItems, searchQuery]);
+
+  const handleSaveAlert = async () => {
+    if (!selectedDrawerItem) return;
+    try {
+      if (selectedDrawerItem.watchlist_id) {
+        await supabase
+          .from('user_watchlists')
+          .update({ target_price: alertTargetPrice ? parseFloat(alertTargetPrice) : null })
+          .eq('id', selectedDrawerItem.watchlist_id);
+      }
+      setAlertSavedSuccess(true);
+      setTimeout(() => setAlertSavedSuccess(false), 2500);
+    } catch (err) {
+      console.error('Failed to save alert rule:', err);
+    }
+  };
 
   return (
     <div
@@ -956,12 +992,12 @@ export default function ConsolePage() {
                 width: '6px',
                 height: '6px',
                 borderRadius: '50%',
-                backgroundColor: '#00DF8F',
-                boxShadow: '0 0 6px rgba(0, 223, 143, 0.6)',
+                backgroundColor: realtimeConnected ? '#00DF8F' : '#F59E0B',
+                boxShadow: realtimeConnected ? '0 0 6px rgba(0, 223, 143, 0.6)' : 'none',
               }}
             />
             <span style={{ fontSize: '0.6875rem', color: '#666666', lineHeight: 1.4 }}>
-              Direct WebSocket sync active
+              {realtimeConnected ? 'Direct WebSocket sync active' : 'WebSocket sync standby'}
             </span>
           </div>
         </div>
