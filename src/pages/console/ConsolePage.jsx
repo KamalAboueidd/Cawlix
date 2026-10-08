@@ -1,9 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import AddSkuModal from '../../components/console/AddSkuModal';
 import MultiPlatformIntelligence from '../../components/console/MultiPlatformIntelligence';
 import TelemetryControlDashboard from '../../components/console/TelemetryControlDashboard';
+import NotificationCenter from '../../components/console/NotificationCenter';
+import { runFleetAudit, startBackgroundWorker, stopBackgroundWorker } from '../../services/telemetryWorker';
+import { SEEDED_MASTER_PRODUCTS } from '../../services/marketIntelligenceData';
 import { auditProductListing } from '../../services/auditDispatcher';
 import cawlixLogo from '../../assets/ICon.png';
 
@@ -62,6 +65,8 @@ export default function ConsolePage() {
   const [realtimeConnected, setRealtimeConnected] = useState(false);
   const [selectedIntelligenceProduct, setSelectedIntelligenceProduct] = useState(null);
   const [selectedIntelligenceProductId, setSelectedIntelligenceProductId] = useState(null);
+  const [fleetAuditProgress, setFleetAuditProgress] = useState(null);
+  const [fleetAuditCompleted, setFleetAuditCompleted] = useState(false);
 
   // Glitch Radar & Live Events State
   const [glitchRadarEvents, setGlitchRadarEvents] = useState([
@@ -151,6 +156,80 @@ export default function ConsolePage() {
       navigator.clipboard.writeText(strong).catch(() => {});
     }
   };
+
+  // Background telemetry worker scheduled runner
+  useEffect(() => {
+    startBackgroundWorker(300000, { userEmail: user?.email });
+    return () => stopBackgroundWorker();
+  }, [user?.email]);
+
+  // Fleet Audit Trigger Handler
+  const handleRunFleetAudit = async () => {
+    if (fleetAuditProgress) return;
+    setFleetAuditCompleted(false);
+    setFleetAuditProgress({ current: 0, total: 12, percent: 0, activeNode: 'INIT', status: 'STARTING' });
+
+    try {
+      await runFleetAudit({
+        userEmail: user?.email,
+        onProgress: (p) => {
+          setFleetAuditProgress(p);
+        },
+      });
+
+      setFleetAuditCompleted(true);
+      setReAuditToast({
+        type: 'success',
+        message: 'Fleet Audit completed across 12 domestic nodes. Pricing telemetry refreshed.',
+      });
+      setTimeout(() => setReAuditToast(null), 3500);
+      setTimeout(() => {
+        setFleetAuditProgress(null);
+        setFleetAuditCompleted(false);
+      }, 3000);
+    } catch (err) {
+      console.error('[Fleet Audit Error]:', err);
+      setReAuditToast({
+        type: 'error',
+        message: `Fleet Audit halted: ${err.message || 'Network error'}`,
+      });
+      setTimeout(() => setReAuditToast(null), 4000);
+      setFleetAuditProgress(null);
+    }
+  };
+
+  // Dynamically computed metrics for Glitch Radar & Arbitrage Savings
+  const { totalArbitrageSavingsEgp, anomalyDetectionsCount } = useMemo(() => {
+    let totalSavings = 0;
+    let anomalyCount = glitchRadarEvents.length;
+
+    trackedItems.forEach((item) => {
+      const current = item.current_price_egp || 0;
+      const baseline = item.baseline_price_egp || current;
+      if (baseline > current) {
+        totalSavings += baseline - current;
+      }
+      if (item.delta_pct && item.delta_pct < -10) {
+        anomalyCount++;
+      }
+    });
+
+    SEEDED_MASTER_PRODUCTS.forEach((product) => {
+      const validPrices = (product.platform_listings || [])
+        .map((l) => l.current_price)
+        .filter((p) => p > 0);
+
+      if (validPrices.length >= 2) {
+        const spread = Math.max(...validPrices) - Math.min(...validPrices);
+        totalSavings += spread;
+      }
+    });
+
+    return {
+      totalArbitrageSavingsEgp: Math.round(totalSavings),
+      anomalyDetectionsCount: anomalyCount,
+    };
+  }, [trackedItems, glitchRadarEvents]);
 
   const getPasswordStrength = (pass) => {
     if (!pass) return { score: 0, label: '', color: '#27272A' };
@@ -930,7 +1009,62 @@ export default function ConsolePage() {
           />
 
           {/* Topbar Right Controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {/* Run Fleet Audit Manual Trigger Button */}
+            <button
+              type="button"
+              onClick={handleRunFleetAudit}
+              disabled={Boolean(fleetAuditProgress)}
+              style={{
+                backgroundColor: fleetAuditCompleted ? 'rgba(16, 185, 129, 0.15)' : '#0A0A0A',
+                color: fleetAuditCompleted ? '#10B981' : fleetAuditProgress ? '#F59E0B' : '#EDEDED',
+                fontSize: '0.8125rem',
+                fontWeight: 500,
+                padding: '6px 12px',
+                borderRadius: '6px',
+                border: fleetAuditCompleted
+                  ? '1px solid #10B981'
+                  : fleetAuditProgress
+                  ? '1px solid rgba(245, 158, 11, 0.4)'
+                  : '1px solid #222222',
+                cursor: fleetAuditProgress ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 150ms ease',
+                fontFamily: "'Geist', sans-serif",
+              }}
+              title="Trigger background telemetry audit across all 12 Egyptian nodes"
+            >
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke={fleetAuditCompleted ? '#10B981' : fleetAuditProgress ? '#F59E0B' : '#888888'}
+                strokeWidth="2"
+                style={{ animation: fleetAuditProgress ? 'spin 1s linear infinite' : 'none' }}
+              >
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+              </svg>
+              <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: '0.75rem' }}>
+                {fleetAuditCompleted
+                  ? 'Fleet Audited ✓'
+                  : fleetAuditProgress
+                  ? `Auditing ${fleetAuditProgress.current}/${fleetAuditProgress.total} nodes...`
+                  : 'Run Fleet Audit'}
+              </span>
+            </button>
+
+            {/* In-App Notifications Center (Brevo + Real-Time Alerts) */}
+            <NotificationCenter
+              onInspectProduct={(prodId) => {
+                setSelectedIntelligenceProductId(prodId);
+                setActiveTab('intelligence');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            />
+
             {/* Iconic Vercel High-Contrast Action Button */}
             <button
               type="button"
@@ -1323,7 +1457,7 @@ export default function ConsolePage() {
                         letterSpacing: '-0.02em',
                       }}
                     >
-                      {glitchRadarEvents.length}
+                      {anomalyDetectionsCount}
                     </span>
                     <span
                       style={{
@@ -1378,7 +1512,7 @@ export default function ConsolePage() {
                         letterSpacing: '-0.02em',
                       }}
                     >
-                      EGP 342.8K
+                      EGP {(totalArbitrageSavingsEgp / 1000).toFixed(1)}K
                     </span>
                     <span
                       style={{

@@ -236,6 +236,21 @@ function apiDevServerPlugin() {
               )
             );
           }
+
+          if (url.pathname === '/api/v1/alerts/email') {
+            return res.end(
+              JSON.stringify(
+                {
+                  status: 'success',
+                  message: 'Brevo transactional email dispatched successfully',
+                  provider: 'Brevo SMTP REST API',
+                  sent_at: new Date().toISOString(),
+                },
+                null,
+                2
+              )
+            );
+          }
         }
         next();
       });
