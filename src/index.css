@@ -508,3 +508,36 @@ code, pre, kbd, samp {
   }
 }
 
+/* ── Cawlix Re-Audit Animation Utilities ── */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes emeraldFlash {
+  0% {
+    background-color: rgba(16, 185, 129, 0.35);
+    border-color: #10B981;
+    color: #10B981;
+    box-shadow: 0 0 14px rgba(16, 185, 129, 0.4);
+  }
+  50% {
+    background-color: rgba(16, 185, 129, 0.18);
+    border-color: rgba(16, 185, 129, 0.6);
+  }
+  100% {
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+}
+
+.flash-emerald {
+  animation: emeraldFlash 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+

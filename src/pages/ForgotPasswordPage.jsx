@@ -300,11 +300,10 @@ export default function ForgotPasswordPage() {
         return;
       }
 
-        setSuccessMsg('Password established successfully. You can now access Cawlix using either Google or your email and password.');
-        setTimeout(() => {
-          window.location.href = '/dashboard';
-        }, 1500);
-      }
+      setSuccessMsg('Password established successfully. You can now access Cawlix using either Google or your email and password.');
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 1500);
     } catch (err) {
       setErrorMsg(err.message || 'Password update failed.');
       setLoading(false);

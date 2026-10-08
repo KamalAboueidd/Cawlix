@@ -55,6 +55,42 @@ function apiDevServerPlugin() {
                 2
               )
             );
+          if (url.pathname === '/api/v1/scraper/fetch') {
+            const targetUrl = url.searchParams.get('url');
+            if (!targetUrl) {
+              res.statusCode = 400;
+              return res.end(JSON.stringify({ error: 'Missing target url parameter' }));
+            }
+            try {
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), 12000);
+              const upstreamRes = await fetch(targetUrl, {
+                signal: controller.signal,
+                headers: {
+                  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+                  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+                  'Accept-Language': 'en-US,en;q=0.9,ar-EG;q=0.8,ar;q=0.7',
+                },
+              });
+              clearTimeout(timeoutId);
+              const text = await upstreamRes.text();
+              return res.end(
+                JSON.stringify({
+                  status: 'success',
+                  url: targetUrl,
+                  httpStatus: upstreamRes.status,
+                  html: text,
+                })
+              );
+            } catch (err) {
+              res.statusCode = 502;
+              return res.end(
+                JSON.stringify({
+                  status: 'error',
+                  message: err.message || 'Failed to fetch upstream target URL',
+                })
+              );
+            }
           }
 
           if (url.pathname === '/api/v1/audit/ghost-discount') {

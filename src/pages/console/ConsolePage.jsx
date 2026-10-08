@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import AddSkuModal from '../../components/console/AddSkuModal';
 import MultiPlatformIntelligence from '../../components/console/MultiPlatformIntelligence';
+import { auditProductListing } from '../../services/auditDispatcher';
 import cawlixLogo from '../../assets/ICon.png';
 
 // Domestic telemetry nodes cluster definitions
@@ -54,6 +55,9 @@ export default function ConsolePage() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [probingSkuId, setProbingSkuId] = useState(null);
+  const [flashingSkuIds, setFlashingSkuIds] = useState({});
+  const [skuErrorMap, setSkuErrorMap] = useState({});
+  const [reAuditToast, setReAuditToast] = useState(null);
   const [realtimeConnected, setRealtimeConnected] = useState(false);
 
   // Glitch Radar & Live Events State
@@ -434,71 +438,110 @@ export default function ConsolePage() {
     }
   };
 
-  const handleReaudit = async (e, item) => {
-    e.stopPropagation();
-    e.preventDefault();
-    setProbingSkuId(item.id);
-
-    try {
-      await fetch(`/api/v1/telemetry/sku?sku=${encodeURIComponent(item.sku)}&retailer=${encodeURIComponent(item.node)}`);
-    } catch {
-      // Offline fallback simulation
-    }
-
-    setTimeout(() => {
-      setProbingSkuId(null);
-      setTrackedItems((prev) =>
-        prev.map((i) => (i.id === item.id ? { ...i, last_ping: 'just now', status: 'Active' } : i))
-      );
-      if (selectedDrawerItem && selectedDrawerItem.id === item.id) {
-        setSelectedDrawerItem((prev) => (prev ? { ...prev, last_ping: 'just now' } : null));
-      }
-    }, 450);
-  };
-
-  const handleRowClick = (item) => {
-    setSelectedDrawerItem(item);
-    setAlertTargetPrice(Math.round(item.baseline_price_egp * 0.95).toString());
-    setAlertSavedSuccess(false);
-  };
-
-  const handleSaveAlert = async () => {
-    if (!selectedDrawerItem) return;
-    try {
-      await supabase.from('user_watchlists').upsert({
-        sku: selectedDrawerItem.sku,
-        target_alert_price: parseFloat(alertTargetPrice || '0'),
-        glitch_radar_enabled: true,
-        updated_at: new Date().toISOString(),
-      });
-    } catch {
-      // Fallback
-    }
-
-    setAlertSavedSuccess(true);
-    setTimeout(() => setAlertSavedSuccess(false), 2400);
-  };
-
-  const filteredItems = trackedItems.filter((item) => {
-    const q = searchQuery.toLowerCase().trim();
-    if (!q) return true;
-    return (
-      item.title.toLowerCase().includes(q) ||
-      item.sku.toLowerCase().includes(q) ||
-      item.domain.toLowerCase().includes(q) ||
-      item.node.toLowerCase().includes(q)
-    );
-  });
-
-  const userHandle = user?.email ? user.email.split('@')[0] : 'admin-node';
-
-  // Helper for external store links
+  // Helper for external store links across Egyptian platforms
   const getStoreUrl = (item) => {
-    if (item.node.includes('AMZN')) return `https://www.amazon.eg/dp/${item.sku.replace('caw_sku_', 'B0')}`;
-    if (item.node.includes('NOON')) return `https://www.noon.com/egypt-en/p-${item.sku}/`;
-    if (item.node.includes('BTECH')) return `https://btech.com/en/${item.sku}`;
-    if (item.node.includes('2B')) return `https://2b.com.eg/en/catalogsearch/result/?q=${item.sku}`;
-    return `https://www.rayashop.com/en/search?q=${item.sku}`;
+    if (item.url || item.product_url || item.source_url) return item.url || item.product_url || item.source_url;
+    const node = String(item.node || '').toUpperCase();
+    if (node.includes('TRADELINE') || item.domain?.includes('tradeline')) return `https://tradelinestores.com/${encodeURIComponent(item.sku)}`;
+    if (node.includes('BTECH') || item.domain?.includes('btech')) return `https://btech.com/en/${encodeURIComponent(item.sku)}`;
+    if (node.includes('2B') || item.domain?.includes('2b')) return `https://2b.com.eg/en/catalogsearch/result/?q=${encodeURIComponent(item.sku)}`;
+    if (node.includes('AMZN') || item.domain?.includes('amazon')) return `https://www.amazon.eg/dp/${item.sku.replace('caw_sku_', 'B0')}`;
+    if (node.includes('NOON') || item.domain?.includes('noon')) return `https://www.noon.com/egypt-en/p-${item.sku}/`;
+    if (node.includes('RAYA') || item.domain?.includes('raya')) return `https://www.rayashop.com/en/search?q=${encodeURIComponent(item.sku)}`;
+    if (node.includes('JUMIA') || item.domain?.includes('jumia')) return `https://www.jumia.com.eg/catalog/?q=${encodeURIComponent(item.sku)}`;
+    return `https://${item.domain || 'node.cawlix.com'}/sku/${item.sku}`;
+  };
+
+  const handleReaudit = async (e, item) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    const itemId = item.id || item.sku;
+    setProbingSkuId(itemId);
+    setSkuErrorMap((prev) => {
+      const next = { ...prev };
+      delete next[itemId];
+      return next;
+    });
+
+    const productUrl = getStoreUrl(item);
+    const platformSlug = item.node || item.retailer_id || item.domain || 'AMZN_EG';
+
+    try {
+      const telemetry = await auditProductListing(
+        item.id || item.sku,
+        productUrl,
+        platformSlug,
+        { previousPrice: item.current_price_egp }
+      );
+
+      // Play subtle emerald flash animation on the updated price cell
+      setFlashingSkuIds((prev) => ({ ...prev, [itemId]: true }));
+      setTimeout(() => {
+        setFlashingSkuIds((prev) => {
+          const next = { ...prev };
+          delete next[itemId];
+          return next;
+        });
+      }, 2600);
+
+      // Instantly update item price, delta, and last updated time in state
+      setTrackedItems((prev) =>
+        prev.map((i) => {
+          if (i.id === item.id || i.sku === item.sku) {
+            const newPrice = telemetry.currentPrice;
+            const baseline = i.baseline_price_egp || newPrice;
+            const newDelta = baseline > 0 ? parseFloat((((newPrice - baseline) / baseline) * 100).toFixed(1)) : 0;
+            return {
+              ...i,
+              current_price_egp: newPrice,
+              delta_pct: newDelta,
+              last_ping: 'just now',
+              status: telemetry.statusText || 'Active',
+            };
+          }
+          return i;
+        })
+      );
+
+      // Update drawer item if currently open
+      if (selectedDrawerItem && (selectedDrawerItem.id === item.id || selectedDrawerItem.sku === item.sku)) {
+        setSelectedDrawerItem((prev) => {
+          if (!prev) return null;
+          const newPrice = telemetry.currentPrice;
+          const baseline = prev.baseline_price_egp || newPrice;
+          const newDelta = baseline > 0 ? parseFloat((((newPrice - baseline) / baseline) * 100).toFixed(1)) : 0;
+          return {
+            ...prev,
+            current_price_egp: newPrice,
+            delta_pct: newDelta,
+            last_ping: 'just now',
+            status: telemetry.statusText || 'Active',
+          };
+        });
+      }
+
+      // Show subtle non-intrusive notification toast
+      setReAuditToast({
+        type: 'success',
+        message: `Audited ${item.title?.split(' ')[0] || 'SKU'} ${item.title?.split(' ')[1] || ''}: EGP ${telemetry.currentPrice.toLocaleString()} (${telemetry.priceDeltaPct >= 0 ? '+' : ''}${telemetry.priceDeltaPct}%)`,
+      });
+      setTimeout(() => setReAuditToast(null), 3500);
+    } catch (err) {
+      console.error('[Re-audit Pipeline Error]:', err);
+      setSkuErrorMap((prev) => ({
+        ...prev,
+        [itemId]: err?.message || 'Node connection timed out',
+      }));
+      setReAuditToast({
+        type: 'error',
+        message: `Failed to probe ${item.node}: ${err?.message || 'Connection timed out'}`,
+      });
+      setTimeout(() => setReAuditToast(null), 4000);
+    } finally {
+      setProbingSkuId(null);
+    }
   };
 
   // Landed Cost calculations for drawer
@@ -2142,16 +2185,46 @@ export default function ConsolePage() {
 
                         {/* PRICE & DELTA */}
                         <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
-                          <span
+                          <div
                             style={{
-                              fontSize: '0.875rem',
-                              fontWeight: 600,
-                              color: '#EDEDED',
-                              fontFamily: "'Geist Mono', monospace",
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              padding: flashingSkuIds[item.id] ? '2px 8px' : '0',
+                              borderRadius: '4px',
+                              backgroundColor: flashingSkuIds[item.id] ? 'rgba(16, 185, 129, 0.18)' : 'transparent',
+                              border: flashingSkuIds[item.id] ? '1px solid #10B981' : '1px solid transparent',
+                              transition: 'all 240ms ease',
                             }}
                           >
-                            EGP {item.current_price_egp?.toLocaleString()}
-                          </span>
+                            <span
+                              style={{
+                                fontSize: '0.875rem',
+                                fontWeight: 600,
+                                color: flashingSkuIds[item.id] ? '#10B981' : '#EDEDED',
+                                fontFamily: "'Geist Mono', monospace",
+                                transition: 'color 240ms ease',
+                              }}
+                            >
+                              EGP {item.current_price_egp?.toLocaleString()}
+                            </span>
+                            {flashingSkuIds[item.id] && (
+                              <span
+                                style={{
+                                  fontSize: '0.625rem',
+                                  fontWeight: 600,
+                                  color: '#10B981',
+                                  backgroundColor: 'rgba(16, 185, 129, 0.25)',
+                                  padding: '1px 5px',
+                                  borderRadius: '3px',
+                                  fontFamily: "'Geist Mono', monospace",
+                                  letterSpacing: '0.04em',
+                                }}
+                              >
+                                LIVE
+                              </span>
+                            )}
+                          </div>
                           <span
                             style={{
                               fontSize: '0.6875rem',
@@ -2205,36 +2278,83 @@ export default function ConsolePage() {
                           {item.last_ping}
                         </div>
 
-                        {/* ACTIONS: Vercel Ghost Button */}
-                        <div style={{ textAlign: 'right' }}>
+                        {/* ACTIONS: Vercel Ghost Button & Re-Audit Status */}
+                        <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
                           <button
                             type="button"
+                            disabled={probingSkuId === item.id}
                             onClick={(e) => handleReaudit(e, item)}
                             style={{
-                              backgroundColor: 'transparent',
-                              border: '1px solid #222222',
+                              backgroundColor: probingSkuId === item.id ? '#121212' : 'transparent',
+                              border: probingSkuId === item.id ? '1px solid #10B981' : '1px solid #222222',
                               borderRadius: '6px',
                               padding: '4px 10px',
-                              color: '#888888',
+                              color: probingSkuId === item.id ? '#10B981' : '#888888',
                               fontSize: '0.75rem',
                               fontWeight: 500,
-                              cursor: 'pointer',
+                              cursor: probingSkuId === item.id ? 'wait' : 'pointer',
                               transition: 'all 120ms ease',
                               fontFamily: "'Geist', sans-serif",
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '6px',
                             }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = '#111111';
-                              e.currentTarget.style.borderColor = '#333333';
-                              e.currentTarget.style.color = '#EDEDED';
+                              if (probingSkuId !== item.id) {
+                                e.currentTarget.style.backgroundColor = '#111111';
+                                e.currentTarget.style.borderColor = '#333333';
+                                e.currentTarget.style.color = '#EDEDED';
+                              }
                             }}
                             onMouseLeave={(e) => {
-                              e.currentTarget.style.backgroundColor = 'transparent';
-                              e.currentTarget.style.borderColor = '#222222';
-                              e.currentTarget.style.color = '#888888';
+                              if (probingSkuId !== item.id) {
+                                e.currentTarget.style.backgroundColor = 'transparent';
+                                e.currentTarget.style.borderColor = '#222222';
+                                e.currentTarget.style.color = '#888888';
+                              }
                             }}
                           >
-                            {probingSkuId === item.id ? 'Probing...' : 'Re-audit'}
+                            {probingSkuId === item.id ? (
+                              <>
+                                <svg
+                                  width="11"
+                                  height="11"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2.5"
+                                  style={{ animation: 'spin 0.8s linear infinite' }}
+                                >
+                                  <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                                </svg>
+                                <span>Syncing...</span>
+                              </>
+                            ) : (
+                              <span>Re-audit</span>
+                            )}
                           </button>
+
+                          {/* Crisp non-intrusive error notification badge without crashing table */}
+                          {skuErrorMap[item.id] && (
+                            <span
+                              title={skuErrorMap[item.id]}
+                              style={{
+                                fontSize: '0.625rem',
+                                color: '#FB7185',
+                                backgroundColor: 'rgba(251, 113, 133, 0.1)',
+                                border: '1px solid rgba(251, 113, 133, 0.25)',
+                                padding: '1px 5px',
+                                borderRadius: '3px',
+                                fontFamily: "'Geist Mono', monospace",
+                                maxWidth: '120px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              ⚠ Retry needed
+                            </span>
+                          )}
                         </div>
                       </div>
                     );
@@ -2364,44 +2484,90 @@ export default function ConsolePage() {
                   </span>
                 </div>
 
-                {/* Direct Action: Inspect 12 Egyptian Platforms Matrix */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedDrawerItem(null);
-                    setActiveTab('intelligence');
-                  }}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px',
-                    width: '100%',
-                    padding: '8px 14px',
-                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                    border: '1px solid rgba(16, 185, 129, 0.3)',
-                    color: '#10B981',
-                    fontWeight: 600,
-                    fontSize: '0.75rem',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontFamily: "'Geist', sans-serif",
-                    transition: 'all 150ms ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(16, 185, 129, 0.18)';
-                    e.currentTarget.style.borderColor = '#10B981';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
-                    e.currentTarget.style.borderColor = 'rgba(16, 185, 129, 0.3)';
-                  }}
-                >
-                  <span>Compare Across 12 Egyptian Platforms</span>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="m9 18 6-6-6-6" />
-                  </svg>
-                </button>
+                {/* Direct Action: Re-Audit Node & Inspect 12 Platforms Matrix */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                  <button
+                    type="button"
+                    disabled={probingSkuId === (selectedDrawerItem.id || selectedDrawerItem.sku)}
+                    onClick={(e) => handleReaudit(e, selectedDrawerItem)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      padding: '8px 12px',
+                      backgroundColor: probingSkuId === (selectedDrawerItem.id || selectedDrawerItem.sku) ? '#141414' : '#000000',
+                      border: probingSkuId === (selectedDrawerItem.id || selectedDrawerItem.sku) ? '1px solid #10B981' : '1px solid #2A2A2A',
+                      color: probingSkuId === (selectedDrawerItem.id || selectedDrawerItem.sku) ? '#10B981' : '#EDEDED',
+                      fontWeight: 600,
+                      fontSize: '0.75rem',
+                      borderRadius: '6px',
+                      cursor: probingSkuId === (selectedDrawerItem.id || selectedDrawerItem.sku) ? 'wait' : 'pointer',
+                      fontFamily: "'Geist', sans-serif",
+                      transition: 'all 120ms ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (probingSkuId !== (selectedDrawerItem.id || selectedDrawerItem.sku)) {
+                        e.currentTarget.style.backgroundColor = '#111111';
+                        e.currentTarget.style.borderColor = '#333333';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (probingSkuId !== (selectedDrawerItem.id || selectedDrawerItem.sku)) {
+                        e.currentTarget.style.backgroundColor = '#000000';
+                        e.currentTarget.style.borderColor = '#2A2A2A';
+                      }
+                    }}
+                  >
+                    {probingSkuId === (selectedDrawerItem.id || selectedDrawerItem.sku) ? (
+                      <>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ animation: 'spin 0.8s linear infinite' }}>
+                          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                        </svg>
+                        <span>Syncing...</span>
+                      </>
+                    ) : (
+                      <span>↻ Re-audit Node</span>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedDrawerItem(null);
+                      setActiveTab('intelligence');
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      padding: '8px 12px',
+                      backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                      border: '1px solid rgba(16, 185, 129, 0.3)',
+                      color: '#10B981',
+                      fontWeight: 600,
+                      fontSize: '0.75rem',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontFamily: "'Geist', sans-serif",
+                      transition: 'all 150ms ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(16, 185, 129, 0.18)';
+                      e.currentTarget.style.borderColor = '#10B981';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+                      e.currentTarget.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                    }}
+                  >
+                    <span>12-Platform Matrix</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="m9 18 6-6-6-6" />
+                    </svg>
+                  </button>
+                </div>
               </div>
 
               {/* Module 2: Forensic Price Diagnostic */}
@@ -3030,6 +3196,36 @@ export default function ConsolePage() {
               </div>
             </form>
           </div>
+        </div>
+      )}
+
+      {/* Real-time Re-Audit Toast Notification */}
+      {reAuditToast && (
+        <div
+          role="status"
+          aria-live="polite"
+          style={{
+            position: 'fixed',
+            bottom: '24px',
+            right: '24px',
+            zIndex: 9999,
+            backgroundColor: '#0A0A0A',
+            border: reAuditToast.type === 'error' ? '1px solid rgba(251, 113, 133, 0.4)' : '1px solid rgba(16, 185, 129, 0.4)',
+            borderRadius: '8px',
+            padding: '10px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            boxShadow: '0 16px 36px rgba(0, 0, 0, 0.95)',
+            fontFamily: "'Geist', sans-serif",
+            fontSize: '0.8125rem',
+            color: '#EDEDED',
+          }}
+        >
+          <span style={{ color: reAuditToast.type === 'error' ? '#FB7185' : '#10B981', fontWeight: 600 }}>
+            {reAuditToast.type === 'error' ? '⚠' : '✓'}
+          </span>
+          <span>{reAuditToast.message}</span>
         </div>
       )}
 
