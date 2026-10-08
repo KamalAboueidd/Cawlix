@@ -1,4 +1,18 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import {
+  Settings,
+  Smile,
+  Monitor,
+  Sun,
+  Moon,
+  Home,
+  Edit3,
+  HelpCircle,
+  BookOpen,
+  LogOut,
+  MoreHorizontal,
+  BarChart3,
+} from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import AddSkuModal from '../../components/console/AddSkuModal';
@@ -51,12 +65,53 @@ export default function ConsolePage() {
   const [activeTab, setActiveTab] = useState(() => {
     if (typeof window !== 'undefined') {
       const paramTab = new URLSearchParams(window.location.search).get('tab');
-      if (paramTab) return paramTab;
+      if (paramTab && ['overview', 'intelligence', 'nodes', 'tracker', 'logs', 'settings', 'analytics'].includes(paramTab)) {
+        return paramTab;
+      }
       if (window.location.pathname.includes('/intelligence')) return 'intelligence';
     }
     return 'overview';
-  }); // 'overview' | 'intelligence' | 'nodes' | 'tracker' | 'logs' | 'settings'
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  }); // 'overview' | 'intelligence' | 'analytics' | 'nodes' | 'tracker' | 'logs' | 'settings'
+
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [themeMode, setThemeMode] = useState('dark');
+  const userMenuRef = useRef(null);
+
+  // Synchronize activeTab with URL query parameter & browser history navigation
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', tabId);
+      window.history.pushState({}, '', url.toString());
+    }
+  };
+
+  useEffect(() => {
+    const syncTabFromUrl = () => {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const paramTab = params.get('tab');
+        if (paramTab && ['overview', 'intelligence', 'nodes', 'tracker', 'logs', 'settings', 'analytics'].includes(paramTab)) {
+          setActiveTab(paramTab);
+        }
+      }
+    };
+    window.addEventListener('popstate', syncTabFromUrl);
+    return () => window.removeEventListener('popstate', syncTabFromUrl);
+  }, []);
+
+  // Close user menu on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
+
   const [modalOpen, setModalOpen] = useState(false);
   const [probingSkuId, setProbingSkuId] = useState(null);
   const [flashingSkuIds, setFlashingSkuIds] = useState({});
@@ -690,27 +745,30 @@ export default function ConsolePage() {
   return (
     <div
       style={{
-        minHeight: '100vh',
+        height: '100vh',
+        maxHeight: '100vh',
+        overflow: 'hidden',
         backgroundColor: '#000000',
         color: '#EDEDED',
         fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
         display: 'flex',
       }}
     >
-      {/* ── 1. VERCEL AUTHENTIC PITCH-BLACK SIDEBAR ── */}
+      {/* ── 1. VERCEL AUTHENTIC PITCH-BLACK SIDEBAR (PINNED) ── */}
       <aside
         style={{
           width: '240px',
+          height: '100vh',
+          maxHeight: '100vh',
           flexShrink: 0,
           backgroundColor: '#000000',
           borderRight: '1px solid #1F1F1F',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          position: 'sticky',
-          top: 0,
-          height: '100vh',
-          boxSizing: 'border-box',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          position: 'relative',
           zIndex: 40,
         }}
       >
@@ -745,7 +803,7 @@ export default function ConsolePage() {
                     textOverflow: 'ellipsis',
                   }}
                 >
-                  {userHandle || 'kamal Aboueid'}
+                  {userHandle || 'kamalaboueidd'}
                 </span>
                 <span
                   style={{
@@ -817,14 +875,14 @@ export default function ConsolePage() {
             </div>
           </div>
 
-          {/* Navigation Links (Pure Monochrome Vercel Style) */}
+          {/* Navigation Links (Pure Monochrome Vercel Style with 14px Typography) */}
           <nav style={{ padding: '10px 8px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
             {[
               {
                 id: 'overview',
                 label: 'Projects',
                 icon: (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect width="7" height="9" x="3" y="3" rx="1" />
                     <rect width="7" height="5" x="14" y="3" rx="1" />
                     <rect width="7" height="9" x="14" y="12" rx="1" />
@@ -835,9 +893,9 @@ export default function ConsolePage() {
               {
                 id: 'intelligence',
                 label: 'Market Matrix',
-                badge: '12 PLATFORMS',
+                badge: '12 NODES',
                 icon: (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect width="18" height="18" x="3" y="3" rx="2" />
                     <path d="M3 9h18" />
                     <path d="M9 21V9" />
@@ -845,11 +903,17 @@ export default function ConsolePage() {
                 ),
               },
               {
+                id: 'analytics',
+                label: 'Price Analytics',
+                badge: 'LIVE',
+                icon: <BarChart3 size={15} />,
+              },
+              {
                 id: 'nodes',
                 label: 'Telemetry Nodes',
                 badge: '5 ACTIVE',
                 icon: (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="12" cy="12" r="3" />
                     <circle cx="19" cy="5" r="2" />
                     <circle cx="5" cy="5" r="2" />
@@ -867,7 +931,7 @@ export default function ConsolePage() {
                 label: 'SKU Tracker',
                 badge: trackedItems.length.toString(),
                 icon: (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="m21 16-4 4-4-4" />
                     <path d="M17 20V4" />
                     <path d="m3 8 4-4 4 4" />
@@ -880,7 +944,7 @@ export default function ConsolePage() {
                 label: 'System Logs',
                 badge: glitchRadarEvents.length ? `${glitchRadarEvents.length}` : null,
                 icon: (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
                     <polyline points="13 2 13 9 20 9" />
                     <line x1="9" y1="13" x2="15" y2="13" />
@@ -892,7 +956,7 @@ export default function ConsolePage() {
                 id: 'settings',
                 label: 'Settings',
                 icon: (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
                     <circle cx="12" cy="12" r="3" />
                   </svg>
@@ -904,19 +968,19 @@ export default function ConsolePage() {
                 <button
                   key={route.id}
                   type="button"
-                  onClick={() => setActiveTab(route.id)}
+                  onClick={() => handleTabChange(route.id)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     width: '100%',
-                    padding: '7px 10px',
+                    padding: '8px 12px',
                     borderRadius: '6px',
-                    backgroundColor: isActive ? '#161616' : 'transparent',
+                    backgroundColor: isActive ? '#1A1A1A' : 'transparent',
                     border: 'none',
-                    color: isActive ? '#EDEDED' : '#888888',
-                    fontSize: '0.8125rem',
-                    fontWeight: isActive ? 600 : 400,
+                    color: isActive ? '#FFFFFF' : '#888888',
+                    fontSize: '0.875rem',
+                    fontWeight: isActive ? 500 : 400,
                     cursor: 'pointer',
                     textAlign: 'left',
                     transition: 'all 120ms ease',
@@ -935,8 +999,8 @@ export default function ConsolePage() {
                     }
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
-                    <span style={{ color: isActive ? '#EDEDED' : '#888888', display: 'flex' }}>{route.icon}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ color: isActive ? '#FFFFFF' : '#888888', display: 'flex' }}>{route.icon}</span>
                     <span>{route.label}</span>
                   </div>
                   {route.badge && (
@@ -948,7 +1012,7 @@ export default function ConsolePage() {
                         borderRadius: '9999px',
                         border: '1px solid #222222',
                         backgroundColor: '#0A0A0A',
-                        color: '#888888',
+                        color: route.badge === 'LIVE' ? '#00DF8F' : '#888888',
                         fontFamily: "'Geist Mono', monospace",
                       }}
                     >
@@ -961,51 +1025,554 @@ export default function ConsolePage() {
           </nav>
         </div>
 
-        {/* Sidebar Footer */}
+        {/* Exact Vercel Sidebar Bottom Bar (Screenshot 3) */}
         <div
+          ref={userMenuRef}
           style={{
-            padding: '12px 14px',
+            position: 'relative',
+            padding: '10px 14px',
             borderTop: '1px solid #1F1F1F',
             display: 'flex',
-            flexDirection: 'column',
-            gap: '6px',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            backgroundColor: '#000000',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '0.6875rem', color: '#666666', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              CLUSTER
-            </span>
+          {/* Left: User Profile & Handle */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '9px',
+              minWidth: 0,
+              flex: 1,
+              cursor: 'pointer',
+            }}
+            onClick={() => setUserMenuOpen(!userMenuOpen)}
+          >
+            {user?.user_metadata?.avatar_url ? (
+              <img
+                src={user.user_metadata.avatar_url}
+                alt={userHandle}
+                style={{
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  objectFit: 'cover',
+                  flexShrink: 0,
+                  border: '1px solid #333333',
+                }}
+              />
+            ) : (
+              <div
+                style={{
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  backgroundColor: '#222222',
+                  color: '#EDEDED',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.6875rem',
+                  fontWeight: 600,
+                  flexShrink: 0,
+                }}
+              >
+                {(userHandle || 'kamalaboueidd').charAt(0).toUpperCase()}
+              </div>
+            )}
             <span
               style={{
-                fontSize: '0.6875rem',
-                fontFamily: "'Geist Mono', monospace",
-                color: '#EDEDED',
+                fontSize: '0.8125rem',
                 fontWeight: 500,
+                color: '#EDEDED',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                fontFamily: "'Geist', sans-serif",
               }}
             >
-              cairo_node_01
+              {userHandle || 'kamalaboueidd'}
             </span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span
+
+          {/* Right: Three Dots Menu + Notification Center Trigger */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+            <button
+              type="button"
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
               style={{
-                width: '6px',
-                height: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '24px',
+                height: '24px',
                 borderRadius: '50%',
-                backgroundColor: realtimeConnected ? '#00DF8F' : '#F59E0B',
-                boxShadow: realtimeConnected ? '0 0 6px rgba(0, 223, 143, 0.6)' : 'none',
+                backgroundColor: userMenuOpen ? '#1F1F1F' : 'transparent',
+                border: 'none',
+                color: '#888888',
+                cursor: 'pointer',
+                transition: 'all 120ms ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#161616';
+                e.currentTarget.style.color = '#EDEDED';
+              }}
+              onMouseLeave={(e) => {
+                if (!userMenuOpen) {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = '#888888';
+                }
+              }}
+              title="User Options"
+            >
+              <MoreHorizontal size={14} />
+            </button>
+
+            {/* Notification Center Trigger placed at bottom sidebar */}
+            <NotificationCenter
+              placement="top"
+              onInspectProduct={(prodId) => {
+                setSelectedIntelligenceProductId(prodId);
+                handleTabChange('intelligence');
+                const mainEl = document.getElementById('cawlix-main-workspace');
+                if (mainEl) mainEl.scrollTo({ top: 0, behavior: 'smooth' });
               }}
             />
-            <span style={{ fontSize: '0.6875rem', color: '#666666', lineHeight: 1.4 }}>
-              {realtimeConnected ? 'Direct WebSocket sync active' : 'WebSocket sync standby'}
-            </span>
           </div>
+
+          {/* Vercel Exact Popover Menu (Screenshot 3) */}
+          {userMenuOpen && (
+            <div
+              style={{
+                position: 'absolute',
+                bottom: 'calc(100% + 8px)',
+                left: '8px',
+                right: '8px',
+                backgroundColor: '#050505',
+                border: '1px solid #222222',
+                borderRadius: '8px',
+                boxShadow: '0 16px 40px -8px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.04)',
+                padding: '6px',
+                zIndex: 9999,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '2px',
+              }}
+            >
+              {/* User Header */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '8px 10px',
+                }}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, maxWidth: '160px' }}>
+                  <span
+                    style={{
+                      fontSize: '0.8125rem',
+                      fontWeight: 600,
+                      color: '#EDEDED',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {userHandle || 'kamalaboueidd'}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '0.6875rem',
+                      color: '#666666',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {user?.email || 'kamalaboueidd@gmail.com'}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUserMenuOpen(false);
+                    handleTabChange('settings');
+                  }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#888888',
+                    cursor: 'pointer',
+                    padding: '4px',
+                    display: 'flex',
+                    borderRadius: '4px',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = '#EDEDED')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = '#888888')}
+                  title="Settings"
+                >
+                  <Settings size={14} />
+                </button>
+              </div>
+
+              <div style={{ height: '1px', backgroundColor: '#1A1A1A', margin: '4px 0' }} />
+
+              {/* Feedback */}
+              <button
+                type="button"
+                onClick={() => {
+                  setUserMenuOpen(false);
+                  setReAuditToast({
+                    id: Date.now(),
+                    title: 'Feedback Channel',
+                    message: 'Thank you for your feedback! The engineering team has been notified.',
+                    type: 'success',
+                  });
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '7px 10px',
+                  borderRadius: '5px',
+                  background: 'none',
+                  border: 'none',
+                  color: '#A1A1A1',
+                  fontSize: '0.8125rem',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 100ms ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#141414';
+                  e.currentTarget.style.color = '#EDEDED';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = '#A1A1A1';
+                }}
+              >
+                <span>Feedback</span>
+                <Smile size={14} />
+              </button>
+
+              {/* Theme Toggle */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '7px 10px',
+                  borderRadius: '5px',
+                  color: '#A1A1A1',
+                  fontSize: '0.8125rem',
+                }}
+              >
+                <span>Theme</span>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    backgroundColor: '#111111',
+                    padding: '2px 4px',
+                    borderRadius: '4px',
+                    border: '1px solid #1F1F1F',
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setThemeMode('system')}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: themeMode === 'system' ? '#EDEDED' : '#555555',
+                      cursor: 'pointer',
+                      padding: '2px',
+                      display: 'flex',
+                    }}
+                    title="System Theme"
+                  >
+                    <Monitor size={11} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setThemeMode('light')}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: themeMode === 'light' ? '#EDEDED' : '#555555',
+                      cursor: 'pointer',
+                      padding: '2px',
+                      display: 'flex',
+                    }}
+                    title="Light Theme"
+                  >
+                    <Sun size={11} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setThemeMode('dark')}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: themeMode === 'dark' ? '#EDEDED' : '#555555',
+                      cursor: 'pointer',
+                      padding: '2px',
+                      display: 'flex',
+                    }}
+                    title="Dark Theme"
+                  >
+                    <Moon size={11} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Home Page */}
+              <button
+                type="button"
+                onClick={() => {
+                  window.location.href = '/';
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '7px 10px',
+                  borderRadius: '5px',
+                  background: 'none',
+                  border: 'none',
+                  color: '#A1A1A1',
+                  fontSize: '0.8125rem',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 100ms ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#141414';
+                  e.currentTarget.style.color = '#EDEDED';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = '#A1A1A1';
+                }}
+              >
+                <span>Home Page</span>
+                <Home size={14} />
+              </button>
+
+              {/* Changelog */}
+              <button
+                type="button"
+                onClick={() => {
+                  window.location.href = '/changelog';
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '7px 10px',
+                  borderRadius: '5px',
+                  background: 'none',
+                  border: 'none',
+                  color: '#A1A1A1',
+                  fontSize: '0.8125rem',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 100ms ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#141414';
+                  e.currentTarget.style.color = '#EDEDED';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = '#A1A1A1';
+                }}
+              >
+                <span>Changelog</span>
+                <Edit3 size={14} />
+              </button>
+
+              {/* Help */}
+              <button
+                type="button"
+                onClick={() => {
+                  window.location.href = '/docs';
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '7px 10px',
+                  borderRadius: '5px',
+                  background: 'none',
+                  border: 'none',
+                  color: '#A1A1A1',
+                  fontSize: '0.8125rem',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 100ms ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#141414';
+                  e.currentTarget.style.color = '#EDEDED';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = '#A1A1A1';
+                }}
+              >
+                <span>Help</span>
+                <HelpCircle size={14} />
+              </button>
+
+              {/* Docs */}
+              <button
+                type="button"
+                onClick={() => {
+                  window.location.href = '/docs';
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '7px 10px',
+                  borderRadius: '5px',
+                  background: 'none',
+                  border: 'none',
+                  color: '#A1A1A1',
+                  fontSize: '0.8125rem',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 100ms ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#141414';
+                  e.currentTarget.style.color = '#EDEDED';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = '#A1A1A1';
+                }}
+              >
+                <span>Docs</span>
+                <BookOpen size={14} />
+              </button>
+
+              {/* Log Out */}
+              <button
+                type="button"
+                onClick={() => handleSignOut()}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '7px 10px',
+                  borderRadius: '5px',
+                  background: 'none',
+                  border: 'none',
+                  color: '#A1A1A1',
+                  fontSize: '0.8125rem',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 100ms ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#141414';
+                  e.currentTarget.style.color = '#EDEDED';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = '#A1A1A1';
+                }}
+              >
+                <span>Log Out</span>
+                <LogOut size={14} />
+              </button>
+
+              <div style={{ height: '1px', backgroundColor: '#1A1A1A', margin: '4px 0' }} />
+
+              {/* Upgrade to Pro Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  setUserMenuOpen(false);
+                  setReAuditToast({
+                    id: Date.now(),
+                    title: 'Institutional Pro',
+                    message: 'Pro subscription unlocks automated 10-second polling & unlimited Brevo SMS dispatching.',
+                    type: 'success',
+                  });
+                }}
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  color: '#000000',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '8px 12px',
+                  fontSize: '0.8125rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  width: '100%',
+                  marginTop: '2px',
+                  fontFamily: "'Geist', sans-serif",
+                  transition: 'background-color 120ms ease',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#EAEAEA')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
+              >
+                Upgrade to Pro
+              </button>
+
+              <div style={{ height: '1px', backgroundColor: '#1A1A1A', margin: '4px 0' }} />
+
+              {/* All Systems Normal Status */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '6px 10px',
+                  fontSize: '0.75rem',
+                  color: realtimeConnected ? '#00DF8F' : '#0070F3',
+                  fontFamily: "'Geist', sans-serif",
+                }}
+              >
+                <span>{realtimeConnected ? 'WebSocket sync active' : 'All systems normal.'}</span>
+                <span
+                  style={{
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    backgroundColor: realtimeConnected ? '#00DF8F' : '#0070F3',
+                    boxShadow: realtimeConnected ? '0 0 6px rgba(0, 223, 143, 0.8)' : '0 0 6px rgba(0, 112, 243, 0.8)',
+                  }}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </aside>
 
-      {/* ── 2. MAIN APPLICATION WORKSPACE ── */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflowX: 'hidden', backgroundColor: '#000000' }}>
-        
+      {/* ── 2. MAIN APPLICATION WORKSPACE (SCROLLS INDEPENDENTLY) ── */}
+      <div
+        id="cawlix-main-workspace"
+        style={{
+          flex: 1,
+          height: '100vh',
+          maxHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          minWidth: 0,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          backgroundColor: '#000000',
+        }}
+      >
         {/* Topbar: Vercel Border (#1F1F1F) */}
         <header
           style={{
@@ -1039,8 +1606,9 @@ export default function ConsolePage() {
               if (!product) return;
               setSelectedIntelligenceProduct(product);
               setSelectedIntelligenceProductId(product.id);
-              setActiveTab('intelligence');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              handleTabChange('intelligence');
+              const mainEl = document.getElementById('cawlix-main-workspace');
+              if (mainEl) mainEl.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
 
@@ -1092,15 +1660,6 @@ export default function ConsolePage() {
               </span>
             </button>
 
-            {/* In-App Notifications Center (Brevo + Real-Time Alerts) */}
-            <NotificationCenter
-              onInspectProduct={(prodId) => {
-                setSelectedIntelligenceProductId(prodId);
-                setActiveTab('intelligence');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-            />
-
             {/* Iconic Vercel High-Contrast Action Button */}
             <button
               type="button"
@@ -1126,107 +1685,6 @@ export default function ConsolePage() {
               <span style={{ fontSize: '14px', lineHeight: 1 }}>+</span>
               <span>Add Target SKU</span>
             </button>
-
-            {/* User Session Profile Button */}
-            <div style={{ position: 'relative' }}>
-              <button
-                type="button"
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  border: '1px solid #1F1F1F',
-                  backgroundColor: '#0A0A0A',
-                  color: '#EDEDED',
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  fontFamily: "'Geist Mono', monospace",
-                }}
-              >
-                {userHandle.charAt(0).toUpperCase()}
-              </button>
-
-              {dropdownOpen && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    right: 0,
-                    top: '40px',
-                    width: '210px',
-                    backgroundColor: '#000000',
-                    border: '1px solid #1F1F1F',
-                    borderRadius: '8px',
-                    padding: '4px',
-                    boxShadow: '0 16px 32px rgba(0, 0, 0, 0.9)',
-                    zIndex: 100,
-                  }}
-                >
-                  <div style={{ padding: '8px 10px', borderBottom: '1px solid #1F1F1F' }}>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#EDEDED' }}>{userHandle}</div>
-                    <div
-                      style={{
-                        fontSize: '0.6875rem',
-                        color: '#666666',
-                        fontFamily: "'Geist Mono', monospace",
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                      }}
-                    >
-                      {user?.email || 'admin@cawlix.com'}
-                    </div>
-                  </div>
-                  <div style={{ padding: '4px 0' }}>
-                    <a
-                      href="/tracker"
-                      style={{
-                        display: 'block',
-                        padding: '6px 10px',
-                        fontSize: '0.8125rem',
-                        color: '#888888',
-                        textDecoration: 'none',
-                        borderRadius: '4px',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#111111';
-                        e.currentTarget.style.color = '#EDEDED';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = '#888888';
-                      }}
-                    >
-                      Public Live Tracker
-                    </a>
-                  </div>
-                  <div style={{ borderTop: '1px solid #1F1F1F', paddingTop: '4px' }}>
-                    <button
-                      type="button"
-                      onClick={handleSignOut}
-                      style={{
-                        width: '100%',
-                        textAlign: 'left',
-                        padding: '6px 10px',
-                        fontSize: '0.8125rem',
-                        color: '#F43F5E',
-                        background: 'transparent',
-                        border: 'none',
-                        cursor: 'pointer',
-                        borderRadius: '4px',
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(244, 63, 94, 0.1)')}
-                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-                    >
-                      Sign Out
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
           </div>
         </header>
 
@@ -1240,6 +1698,7 @@ export default function ConsolePage() {
                 <h1 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#EDEDED', margin: '0 0 4px 0', letterSpacing: '-0.02em' }}>
                   {activeTab === 'overview' && 'Telemetry Control Dashboard'}
                   {activeTab === 'intelligence' && 'Multi-Platform E-Commerce Intelligence'}
+                  {activeTab === 'analytics' && 'Price Analytics & Arbitrage Matrix'}
                   {activeTab === 'nodes' && 'Domestic Telemetry Nodes'}
                   {activeTab === 'tracker' && 'Tracked SKU Surveillance'}
                   {activeTab === 'logs' && 'System Logs & Glitch Radar Feed'}
@@ -1248,6 +1707,7 @@ export default function ConsolePage() {
                 <p style={{ fontSize: '0.8125rem', color: '#888888', margin: 0 }}>
                   {activeTab === 'overview' && 'Real-time retail price monitoring, baseline forensics, and arbitrage analytics.'}
                   {activeTab === 'intelligence' && 'Unified comparison matrix, fake-discount forensic auditor, and material specs across 12 Egyptian platforms.'}
+                  {activeTab === 'analytics' && 'Multi-retailer price variance distribution, algorithmic margin tracking, and buy-box arbitrage windows.'}
                   {activeTab === 'nodes' && 'Active scraping infrastructure and network latency health for domestic retailers.'}
                   {activeTab === 'tracker' && 'Continuous 90-day rolling baseline tracking for targeted Cairo retail items.'}
                   {activeTab === 'logs' && 'High-frequency price anomaly intercepts and database mutation events.'}
@@ -1268,7 +1728,7 @@ export default function ConsolePage() {
               >
                 <button
                   type="button"
-                  onClick={() => setActiveTab('overview')}
+                  onClick={() => handleTabChange('overview')}
                   style={{
                     backgroundColor: activeTab === 'overview' ? '#161616' : 'transparent',
                     color: activeTab === 'overview' ? '#EDEDED' : '#888888',
@@ -1286,7 +1746,7 @@ export default function ConsolePage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setActiveTab('intelligence')}
+                  onClick={() => handleTabChange('intelligence')}
                   style={{
                     backgroundColor: activeTab === 'intelligence' ? '#161616' : 'transparent',
                     color: activeTab === 'intelligence' ? '#EDEDED' : '#888888',
@@ -1304,7 +1764,25 @@ export default function ConsolePage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setActiveTab('tracker')}
+                  onClick={() => handleTabChange('analytics')}
+                  style={{
+                    backgroundColor: activeTab === 'analytics' ? '#161616' : 'transparent',
+                    color: activeTab === 'analytics' ? '#EDEDED' : '#888888',
+                    fontSize: '0.75rem',
+                    fontWeight: 500,
+                    padding: '4px 10px',
+                    borderRadius: '4px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'all 120ms ease',
+                    fontFamily: "'Geist', sans-serif",
+                  }}
+                >
+                  Analytics
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleTabChange('tracker')}
                   style={{
                     backgroundColor: activeTab === 'tracker' ? '#161616' : 'transparent',
                     color: activeTab === 'tracker' ? '#EDEDED' : '#888888',
@@ -1322,7 +1800,7 @@ export default function ConsolePage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setActiveTab('logs')}
+                  onClick={() => handleTabChange('logs')}
                   style={{
                     backgroundColor: activeTab === 'logs' ? '#161616' : 'transparent',
                     color: activeTab === 'logs' ? '#EDEDED' : '#888888',
@@ -1580,6 +2058,185 @@ export default function ConsolePage() {
                 defaultProductId={selectedIntelligenceProductId}
                 resolvedProduct={selectedIntelligenceProduct}
               />
+            )}
+
+            {/* TAB: Price Analytics & Domestic Arbitrage Trends */}
+            {activeTab === 'analytics' && (
+              <section style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {/* Analytics Key Performance Indices */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                    gap: '14px',
+                  }}
+                >
+                  <div
+                    style={{
+                      backgroundColor: '#000000',
+                      border: '1px solid #1F1F1F',
+                      borderRadius: '8px',
+                      padding: '18px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                    }}
+                  >
+                    <span style={{ fontSize: '0.6875rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#888888' }}>
+                      MAX MARKET DIVERGENCE
+                    </span>
+                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: '1.5rem', fontWeight: 600, color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
+                        34.8%
+                      </span>
+                      <span style={{ fontSize: '0.6875rem', fontWeight: 500, color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
+                        LIVE
+                      </span>
+                    </div>
+                    <span style={{ fontSize: '0.75rem', color: '#666666' }}>
+                      Peak spread across Egyptian platforms
+                    </span>
+                  </div>
+
+                  <div
+                    style={{
+                      backgroundColor: '#000000',
+                      border: '1px solid #1F1F1F',
+                      borderRadius: '8px',
+                      padding: '18px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                    }}
+                  >
+                    <span style={{ fontSize: '0.6875rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#888888' }}>
+                      BUY-BOX LEADER (FREQUENCY)
+                    </span>
+                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: '1.5rem', fontWeight: 600, color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>
+                        Amazon EG
+                      </span>
+                      <span style={{ fontSize: '0.6875rem', fontWeight: 500, color: '#00DF8F', fontFamily: "'Geist Mono', monospace" }}>
+                        61.5% SHARE
+                      </span>
+                    </div>
+                    <span style={{ fontSize: '0.75rem', color: '#666666' }}>
+                      Lowest domestic shelf price probability
+                    </span>
+                  </div>
+
+                  <div
+                    style={{
+                      backgroundColor: '#000000',
+                      border: '1px solid #1F1F1F',
+                      borderRadius: '8px',
+                      padding: '18px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                    }}
+                  >
+                    <span style={{ fontSize: '0.6875rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#888888' }}>
+                      VOLATILITY INDEX (24H)
+                    </span>
+                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: '1.5rem', fontWeight: 600, color: '#F59E0B', fontFamily: "'Geist Mono', monospace" }}>
+                        ± 14.2%
+                      </span>
+                      <span style={{ fontSize: '0.6875rem', fontWeight: 500, color: '#F59E0B', fontFamily: "'Geist Mono', monospace" }}>
+                        ELEVATED
+                      </span>
+                    </div>
+                    <span style={{ fontSize: '0.75rem', color: '#666666' }}>
+                      Retailer dynamic repricing speed
+                    </span>
+                  </div>
+
+                  <div
+                    style={{
+                      backgroundColor: '#000000',
+                      border: '1px solid #1F1F1F',
+                      borderRadius: '8px',
+                      padding: '18px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                    }}
+                  >
+                    <span style={{ fontSize: '0.6875rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#888888' }}>
+                      CUMULATIVE ARBITRAGE POOL
+                    </span>
+                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: '1.5rem', fontWeight: 600, color: '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>
+                        EGP 42,950
+                      </span>
+                      <span style={{ fontSize: '0.6875rem', fontWeight: 500, color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
+                        +22.4%
+                      </span>
+                    </div>
+                    <span style={{ fontSize: '0.75rem', color: '#666666' }}>
+                      Total price delta captured across catalog
+                    </span>
+                  </div>
+                </div>
+
+                {/* Retailer Price War Competitiveness Spectrum */}
+                <div
+                  style={{
+                    backgroundColor: '#000000',
+                    border: '1px solid #1F1F1F',
+                    borderRadius: '8px',
+                    padding: '22px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '16px',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div>
+                      <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#EDEDED', margin: 0, letterSpacing: '-0.01em' }}>
+                        Domestic Price Competitiveness & Buy-Box Dominance
+                      </h3>
+                      <p style={{ fontSize: '0.8125rem', color: '#888888', margin: '4px 0 0 0' }}>
+                        Real-time win-rate calculating which Egyptian platform offers the confirmed lowest authentic shelf price.
+                      </p>
+                    </div>
+                    <span style={{ fontSize: '0.6875rem', color: '#00DF8F', fontFamily: "'Geist Mono', monospace" }}>
+                      12 RETAILERS INDEXED
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', paddingTop: '8px' }}>
+                    {[
+                      { name: 'Amazon Egypt (amazon.eg)', share: 61.5, avgDiscount: '14.8%', status: 'Dominant Best Deal' },
+                      { name: 'Noon Egypt (noon.com/egypt)', share: 23.1, avgDiscount: '11.2%', status: 'Competitive Flash Sales' },
+                      { name: 'B.TECH (btech.com)', share: 7.7, avgDiscount: '6.4%', status: 'Installment Parity' },
+                      { name: '2B Egypt (2b.com.eg)', share: 4.2, avgDiscount: '5.1%', status: 'Niche Hardware Leader' },
+                      { name: 'Raya Shop (rayashop.com)', share: 3.5, avgDiscount: '4.8%', status: 'Domestic Warranty Premium' },
+                    ].map((item) => (
+                      <div key={item.name} style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8125rem' }}>
+                          <span style={{ color: '#EDEDED', fontWeight: 500 }}>{item.name}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontFamily: "'Geist Mono', monospace", fontSize: '0.75rem' }}>
+                            <span style={{ color: '#888888' }}>Avg Markdown: {item.avgDiscount}</span>
+                            <span style={{ color: '#EDEDED', fontWeight: 600 }}>{item.share}%</span>
+                          </div>
+                        </div>
+                        <div style={{ height: '6px', backgroundColor: '#141414', borderRadius: '3px', overflow: 'hidden' }}>
+                          <div
+                            style={{
+                              height: '100%',
+                              width: `${item.share}%`,
+                              backgroundColor: item.share > 50 ? '#10B981' : item.share > 20 ? '#FFE600' : '#38BDF8',
+                              borderRadius: '3px',
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
             )}
 
             {/* TAB: Telemetry Nodes */}

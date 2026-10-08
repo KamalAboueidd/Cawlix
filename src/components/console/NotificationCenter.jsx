@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import {
-  getAlerts,
   markAlertRead,
   markAllAlertsRead,
   clearAllAlerts,
@@ -10,18 +9,14 @@ import {
   Bell,
   Check,
   Trash2,
-  TrendingDown,
-  AlertTriangle,
-  Zap,
   ArrowRight,
-  ExternalLink,
 } from 'lucide-react';
 
 /**
  * Institutional Pitch-Black Notification Center (CAWLIX)
  * Displays real-time price drop alerts, All-Time Lows (ATL), and Arbitrage Anomalies.
  */
-export default function NotificationCenter({ onInspectProduct = null }) {
+export default function NotificationCenter({ onInspectProduct = null, placement = 'bottom' }) {
   const [isOpen, setIsOpen] = useState(false);
   const [alerts, setAlerts] = useState([]);
   const containerRef = useRef(null);
@@ -57,7 +52,7 @@ export default function NotificationCenter({ onInspectProduct = null }) {
 
   return (
     <div ref={containerRef} style={{ position: 'relative' }}>
-      {/* Header Bell Trigger Button */}
+      {/* Header Bell Trigger Button (Borderless & Background-free) */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -66,40 +61,33 @@ export default function NotificationCenter({ onInspectProduct = null }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          width: '32px',
-          height: '32px',
-          borderRadius: '6px',
-          backgroundColor: isOpen ? '#161616' : '#0A0A0A',
-          border: isOpen ? '1px solid #333333' : '1px solid #1F1F1F',
-          color: unreadCount > 0 ? '#EDEDED' : '#888888',
+          width: '28px',
+          height: '28px',
+          borderRadius: '50%',
+          backgroundColor: 'transparent',
+          border: 'none',
+          color: unreadCount > 0 ? '#10B981' : '#888888',
           cursor: 'pointer',
+          padding: 0,
           transition: 'all 150ms ease',
         }}
         aria-label="Price Drop Notifications"
         title="Price Drop & Arbitrage Alerts"
       >
-        <Bell size={15} />
+        <Bell size={16} />
 
-        {/* Unread Badge */}
+        {/* Unread Simple Clean Green Indicator */}
         {unreadCount > 0 && (
           <span
             style={{
               position: 'absolute',
-              top: '-4px',
-              right: '-4px',
-              backgroundColor: '#10B981',
-              color: '#000000',
+              top: '-1px',
+              right: '-3px',
+              color: '#10B981',
               fontSize: '0.625rem',
               fontWeight: 700,
               fontFamily: "'Geist Mono', monospace",
-              borderRadius: '9999px',
-              minWidth: '15px',
-              height: '15px',
-              padding: '0 4px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 0 8px rgba(16, 185, 129, 0.7)',
+              lineHeight: 1,
             }}
           >
             {unreadCount}
@@ -112,8 +100,9 @@ export default function NotificationCenter({ onInspectProduct = null }) {
         <div
           style={{
             position: 'absolute',
-            top: 'calc(100% + 8px)',
-            right: 0,
+            ...(placement === 'top'
+              ? { bottom: 'calc(100% + 12px)', left: 0 }
+              : { top: 'calc(100% + 8px)', right: 0 }),
             width: '380px',
             maxWidth: '90vw',
             backgroundColor: '#000000',
@@ -153,13 +142,10 @@ export default function NotificationCenter({ onInspectProduct = null }) {
               {unreadCount > 0 && (
                 <span
                   style={{
-                    fontSize: '0.625rem',
+                    fontSize: '0.6875rem',
                     color: '#10B981',
-                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                    border: '1px solid rgba(16, 185, 129, 0.25)',
-                    padding: '1px 6px',
-                    borderRadius: '4px',
                     fontFamily: "'Geist Mono', monospace",
+                    fontWeight: 600,
                   }}
                 >
                   {unreadCount} UNREAD
@@ -286,14 +272,6 @@ export default function NotificationCenter({ onInspectProduct = null }) {
                             fontSize: '0.625rem',
                             fontWeight: 600,
                             color: accentColor,
-                            backgroundColor: isCrash
-                              ? 'rgba(251, 113, 133, 0.1)'
-                              : 'rgba(16, 185, 129, 0.1)',
-                            border: `1px solid ${
-                              isCrash ? 'rgba(251, 113, 133, 0.25)' : 'rgba(16, 185, 129, 0.25)'
-                            }`,
-                            padding: '1px 6px',
-                            borderRadius: '3px',
                             fontFamily: "'Geist Mono', monospace",
                           }}
                         >

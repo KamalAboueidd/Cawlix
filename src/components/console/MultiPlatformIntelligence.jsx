@@ -38,7 +38,6 @@ export default function MultiPlatformIntelligence({
   const [timeRange, setTimeRange] = useState('90D'); // '30D' | '60D' | '90D'
   const [stockFilter, setStockFilter] = useState('ALL'); // 'ALL' | 'IN_STOCK' | 'DEALS_ONLY'
   const [platformSearch, setPlatformSearch] = useState('');
-  const [focusedPlatform, setFocusedPlatform] = useState(null);
   const [probingListingId, setProbingListingId] = useState(null);
   const [flashingListingIds, setFlashingListingIds] = useState({});
   const [auditToast, setAuditToast] = useState(null);
@@ -921,14 +920,10 @@ export default function MultiPlatformIntelligence({
                           {isLowest && (
                             <span
                               style={{
-                                fontSize: '0.625rem',
+                                fontSize: '0.6875rem',
                                 fontWeight: 600,
                                 color: '#10B981',
-                                backgroundColor: 'rgba(16, 185, 129, 0.15)',
-                                border: '1px solid rgba(16, 185, 129, 0.3)',
-                                padding: '1px 6px',
-                                borderRadius: '4px',
-                                letterSpacing: '0.02em',
+                                letterSpacing: '0.01em',
                                 fontFamily: "'Geist Mono', monospace",
                               }}
                             >
@@ -982,17 +977,9 @@ export default function MultiPlatformIntelligence({
                             <>
                               <span
                                 style={{
-                                  fontSize: '0.6875rem',
+                                  fontSize: '0.75rem',
                                   fontWeight: 600,
                                   color: item.is_suspicious_markup ? '#FB7185' : '#10B981',
-                                  backgroundColor: item.is_suspicious_markup
-                                    ? 'rgba(251, 113, 133, 0.1)'
-                                    : 'rgba(16, 185, 129, 0.1)',
-                                  border: item.is_suspicious_markup
-                                    ? '1px solid rgba(251, 113, 133, 0.25)'
-                                    : '1px solid rgba(16, 185, 129, 0.25)',
-                                  padding: '2px 7px',
-                                  borderRadius: '9999px',
                                   fontFamily: "'Geist Mono', monospace",
                                 }}
                               >
@@ -1025,18 +1012,11 @@ export default function MultiPlatformIntelligence({
                       {isOutOfStock ? (
                         <span
                           style={{
-                            fontSize: '0.6875rem',
+                            fontSize: '0.75rem',
                             fontWeight: 500,
                             color: '#666666',
                             textDecoration: 'line-through',
-                            backgroundColor: '#0F0F0F',
-                            border: '1px solid #222222',
-                            padding: '2px 8px',
-                            borderRadius: '4px',
                             fontFamily: "'Geist Mono', monospace",
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '4px',
                           }}
                         >
                           Out of Stock
@@ -1044,13 +1024,9 @@ export default function MultiPlatformIntelligence({
                       ) : isLowStock ? (
                         <span
                           style={{
-                            fontSize: '0.6875rem',
+                            fontSize: '0.75rem',
                             fontWeight: 500,
                             color: '#F59E0B',
-                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                            border: '1px solid rgba(245, 158, 11, 0.25)',
-                            padding: '2px 8px',
-                            borderRadius: '4px',
                             fontFamily: "'Geist Mono', monospace",
                           }}
                         >
@@ -1059,13 +1035,9 @@ export default function MultiPlatformIntelligence({
                       ) : (
                         <span
                           style={{
-                            fontSize: '0.6875rem',
+                            fontSize: '0.75rem',
                             fontWeight: 500,
                             color: '#10B981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.08)',
-                            border: '1px solid rgba(16, 185, 129, 0.2)',
-                            padding: '2px 8px',
-                            borderRadius: '4px',
                             fontFamily: "'Geist Mono', monospace",
                           }}
                         >
@@ -1501,10 +1473,8 @@ export default function MultiPlatformIntelligence({
         {/* Fake-Discount Detector Verdict Panel */}
         <div
           style={{
-            backgroundColor: '#0A0A0A',
-            border: discountVerdict.isGenuine
-              ? '1px solid rgba(16, 185, 129, 0.3)'
-              : '1px solid rgba(251, 113, 133, 0.4)',
+            backgroundColor: '#000000',
+            border: '1px solid #1F1F1F',
             borderRadius: '8px',
             padding: '20px',
             display: 'flex',
@@ -1513,7 +1483,7 @@ export default function MultiPlatformIntelligence({
             gap: '16px',
           }}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span
                 style={{
@@ -1538,31 +1508,25 @@ export default function MultiPlatformIntelligence({
               </span>
             </div>
 
-            {/* Verdict Badge */}
+            {/* Verdict Minimalist Presentation */}
             <div
               style={{
-                backgroundColor: discountVerdict.isGenuine
-                  ? 'rgba(16, 185, 129, 0.1)'
-                  : 'rgba(251, 113, 133, 0.1)',
-                border: discountVerdict.isGenuine
-                  ? '1px solid rgba(16, 185, 129, 0.25)'
-                  : '1px solid rgba(251, 113, 133, 0.3)',
-                borderRadius: '6px',
-                padding: '12px',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '6px',
+                gap: '8px',
+                padding: '4px 0',
               }}
             >
               <div
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px',
+                  gap: '8px',
                   fontWeight: 600,
-                  fontSize: '0.8125rem',
+                  fontSize: '0.875rem',
                   color: discountVerdict.isGenuine ? '#10B981' : '#FB7185',
-                  fontFamily: "'Geist', sans-serif",
+                  fontFamily: "'Geist Mono', monospace",
+                  letterSpacing: '0.02em',
                 }}
               >
                 {discountVerdict.isGenuine ? (
@@ -1574,10 +1538,11 @@ export default function MultiPlatformIntelligence({
               </div>
               <p
                 style={{
-                  fontSize: '0.75rem',
+                  fontSize: '0.8125rem',
                   color: '#EDEDED',
                   margin: 0,
-                  lineHeight: 1.45,
+                  lineHeight: 1.5,
+                  fontFamily: "'Geist', sans-serif",
                 }}
               >
                 {discountVerdict.explanation}
