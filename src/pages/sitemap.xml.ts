@@ -1,4 +1,4 @@
-import type { APIRoute } from 'astro';
+type APIRoute = () => Promise<Response>;
 
 const STATIC_ROUTES = [
   { url: '/', changefreq: 'daily', priority: '1.0' },

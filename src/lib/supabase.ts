@@ -218,14 +218,14 @@ export interface TrackedProduct {
   sku: string;
   title: string;
   node: string;
-  domain: string;
+  domain?: string;
   current_price_egp: number;
   baseline_price_egp: number;
   delta_pct: number;
   discount_status: string;
-  status: 'ACTIVE' | 'FLAGGED' | 'STABLE';
+  status: 'ACTIVE' | 'FLAGGED' | 'STABLE' | string;
   last_ping: string;
-  created_at: string;
+  created_at?: string;
 }
 
 const DEFAULT_TRACKED_PRODUCTS: TrackedProduct[] = [
@@ -392,18 +392,4 @@ class SupabaseTableBuilder<T> {
 
 export { supabase, default } from './supabaseClient.js';
 
-export interface TrackedProduct {
-  id: string;
-  sku: string;
-  title: string;
-  node: string;
-  domain?: string;
-  current_price_egp: number;
-  baseline_price_egp: number;
-  delta_pct: number;
-  discount_status: string;
-  status: string;
-  last_ping: string;
-  created_at?: string;
-}
 

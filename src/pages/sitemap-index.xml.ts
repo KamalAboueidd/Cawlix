@@ -1,4 +1,4 @@
-import type { APIRoute } from 'astro';
+type APIRoute = () => Promise<Response>;
 
 export const GET: APIRoute = async () => {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
