@@ -1,17 +1,31 @@
 /**
  * HTML / API Fetcher Utility for Distributed Scrapers
- * Handles CORS avoidance in the browser by routing through the local Cawlix telemetry proxy,
- * with direct fetch fallback when in Node or CORS-enabled environments.
+ * Routes through a public CORS proxy chain since this is a browser-only Vite app
+ * (no backend server available).
+ *
+ * Proxy chain (browser path):
+ *   1. allorigins.win  — returns JSON { contents: "<html>…" }
+ *   2. corsproxy.io    — returns raw HTML directly
+ *   3. Direct fetch    — only succeeds if the target sends permissive CORS headers
  */
 
 const DEFAULT_HEADERS = {
-  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
-  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-  'Accept-Language': 'en-US,en;q=0.9,ar-EG;q=0.8,ar;q=0.7',
+  Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  'Accept-Language': 'en-US,en;q=0.9,ar-EG;q=0.8',
 };
 
+/** allorigins.win proxy — returns JSON { contents, status } */
+function allOriginsUrl(targetUrl) {
+  return `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+}
+
+/** corsproxy.io proxy — returns raw HTML */
+function corsProxyIoUrl(targetUrl) {
+  return `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+}
+
 /**
- * Fetches raw HTML / text content from a given URL
+ * Fetches raw HTML / text content from a given URL.
  *
  * @param {string} targetUrl - Full URL to fetch
  * @param {Object} [options]
@@ -20,49 +34,77 @@ const DEFAULT_HEADERS = {
  */
 export async function fetchProductHtml(targetUrl, options = {}) {
   const timeout = options.timeout || 10000;
+
   if (!targetUrl || typeof targetUrl !== 'string') {
     throw new Error('Invalid URL provided to scraper fetcher');
   }
 
-  // 1. If running in browser, use the local Cawlix proxy to bypass CORS
+  // ── BROWSER PATH: Route through CORS proxy chain ─────────────────────────
   if (typeof window !== 'undefined') {
+    // 1. allorigins.win
     try {
-      const proxyUrl = `/api/v1/scraper/fetch?url=${encodeURIComponent(targetUrl)}`;
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), timeout);
-
-      const proxyRes = await fetch(proxyUrl, {
-        signal: controller.signal,
-        headers: { 'Accept': 'application/json' },
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), timeout);
+      const res = await fetch(allOriginsUrl(targetUrl), {
+        signal: ctrl.signal,
+        headers: { Accept: 'application/json' },
       });
       clearTimeout(timer);
-
-      if (proxyRes.ok) {
-        const json = await proxyRes.json();
-        if (json?.html) {
-          return json.html;
+      if (res.ok) {
+        const json = await res.json();
+        if (json?.contents && json.contents.length > 200) {
+          return json.contents;
         }
       }
     } catch {
-      // Proxy failed or not available, fall through to direct fetch
+      // allorigins failed → try next
     }
+
+    // 2. corsproxy.io
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), timeout);
+      const res = await fetch(corsProxyIoUrl(targetUrl), {
+        signal: ctrl.signal,
+        headers: DEFAULT_HEADERS,
+      });
+      clearTimeout(timer);
+      if (res.ok) {
+        const text = await res.text();
+        if (text.length > 200) return text;
+      }
+    } catch {
+      // corsproxy.io failed → try direct
+    }
+
+    // 3. Direct fetch (only works if site allows it via CORS headers)
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), timeout);
+      const res = await fetch(targetUrl, {
+        signal: ctrl.signal,
+        headers: DEFAULT_HEADERS,
+        mode: 'cors',
+      });
+      clearTimeout(timer);
+      if (res.ok) return await res.text();
+    } catch {
+      // All browser paths exhausted
+    }
+
+    throw new Error(`All CORS proxy paths failed for: ${targetUrl}`);
   }
 
-  // 2. Direct fetch (works in Node.js or if CORS headers allow)
+  // ── NODE PATH: Direct fetch ───────────────────────────────────────────────
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
-
   try {
     const res = await fetch(targetUrl, {
       signal: controller.signal,
       headers: DEFAULT_HEADERS,
     });
     clearTimeout(timer);
-
-    if (!res.ok) {
-      throw new Error(`Upstream returned HTTP ${res.status} for ${targetUrl}`);
-    }
-
+    if (!res.ok) throw new Error(`HTTP ${res.status} from ${targetUrl}`);
     return await res.text();
   } catch (err) {
     clearTimeout(timer);
@@ -83,7 +125,7 @@ export function parseHtmlToDoc(html) {
     return parser.parseFromString(html, 'text/html');
   }
 
-  // Basic regex-based document abstraction for Node environment if DOMParser is absent
+  // Basic abstraction for Node environment
   return {
     rawHtml: html,
     querySelector: () => null,
@@ -100,17 +142,13 @@ export function parseHtmlToDoc(html) {
 export function extractJsonLdBlocks(htmlOrDoc) {
   const blocks = [];
 
-  // If DOM document
   if (typeof htmlOrDoc === 'object' && htmlOrDoc?.querySelectorAll) {
     const scripts = htmlOrDoc.querySelectorAll('script[type="application/ld+json"]');
     scripts.forEach((script) => {
       try {
         const parsed = JSON.parse(script.textContent || '{}');
-        if (Array.isArray(parsed)) {
-          blocks.push(...parsed);
-        } else {
-          blocks.push(parsed);
-        }
+        if (Array.isArray(parsed)) blocks.push(...parsed);
+        else blocks.push(parsed);
       } catch {
         // Ignore malformed JSON-LD
       }
@@ -125,11 +163,8 @@ export function extractJsonLdBlocks(htmlOrDoc) {
   while ((match = regex.exec(raw)) !== null) {
     try {
       const parsed = JSON.parse(match[1]);
-      if (Array.isArray(parsed)) {
-        blocks.push(...parsed);
-      } else {
-        blocks.push(parsed);
-      }
+      if (Array.isArray(parsed)) blocks.push(...parsed);
+      else blocks.push(parsed);
     } catch {
       // Ignore
     }

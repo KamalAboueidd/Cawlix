@@ -100,21 +100,24 @@ export default function VercelMobileShell({
     setIsLiveSearching(true);
     setLiveSearchError('');
     try {
+      // Dispatcher returns: { found, masterProduct, listings, matchedCount, message }
       const response = await executeLiveFederatedSearch(searchQuery.trim());
-      if (response && response.results && response.results.length > 0) {
-        setSearchResults(response.results);
+      if (response?.found && response.masterProduct) {
+        // Auto-select and navigate to the resolved product's market matrix
+        handleSelectSearchResult(response.masterProduct);
       } else {
         setLiveSearchError(
-          isRtl
+          response?.message ||
+          (isRtl
             ? `لم يتم العثور على نتائج تطابق "${searchQuery}" في المتاجر الـ 12 حالياً.`
-            : `No verified active matches found for "${searchQuery}" across 12 domestic retailers.`
+            : `No verified active matches found for "${searchQuery}" across 12 domestic retailers.`)
         );
       }
-    } catch {
+    } catch (err) {
       setLiveSearchError(
         isRtl
           ? 'حدث خطأ أثناء الاتصال بعقد المتاجر المصرية. حاول مجدداً.'
-          : 'Error querying domestic platform nodes. Please retry.'
+          : `Error querying domestic platform nodes: ${err.message}`
       );
     } finally {
       setIsLiveSearching(false);
