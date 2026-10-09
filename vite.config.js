@@ -251,7 +251,210 @@ function apiDevServerPlugin() {
               )
             );
           }
-        }
+
+          // ── LIVE FEDERATED SEARCH ENDPOINT ──────────────────────────────────
+          // Executes real parallel HTTP requests to all 12 Egyptian retail nodes
+          // from Node.js (no CORS restrictions). Returns parsed titles + prices.
+          if (url.pathname === '/api/v1/live-search') {
+            const query = url.searchParams.get('q');
+            if (!query || !query.trim()) {
+              res.statusCode = 400;
+              return res.end(JSON.stringify({ error: 'Missing query parameter q' }));
+            }
+
+            const q = encodeURIComponent(query.trim());
+            const RETAILER_NODES = [
+              { id: 'AMZN_EG',     name: 'Amazon Egypt',       url: `https://www.amazon.eg/s?k=${q}` },
+              { id: 'NOON_EG',     name: 'Noon Egypt',          url: `https://www.noon.com/egypt-en/search?q=${q}` },
+              { id: 'BTECH_EG',    name: 'B.TECH',              url: `https://btech.com/ar/catalogsearch/result/?q=${q}` },
+              { id: 'TRADELINE',   name: 'Tradeline Stores',    url: `https://tradelinestores.com/search?q=${q}` },
+              { id: 'JUMIA_EG',    name: 'Jumia Egypt',         url: `https://www.jumia.com.eg/catalog/?q=${q}` },
+              { id: '2B_EG',       name: '2B Egypt',            url: `https://2b.com.eg/catalogsearch/result/?q=${q}` },
+              { id: 'RAYA_EG',     name: 'Raya Shop',           url: `https://www.rayashop.com/ar/catalogsearch/result/?q=${q}` },
+              { id: 'ELARABY_EG',  name: 'El Araby Group',      url: `https://elarabygroup.com/ar/catalogsearch/result/?q=${q}` },
+              { id: 'DUBAI_PHONE', name: 'Dubai Phone',         url: `https://dubaiphone.net/ar/search?search=${q}` },
+              { id: 'DREAM_2000',  name: 'Dream 2000',          url: `https://dream2000.com/ar/catalogsearch/result/?q=${q}` },
+              { id: 'VODAFONE_EG', name: 'Vodafone Shop EG',   url: `https://eshop.vodafone.com.eg/ar/search?q=${q}` },
+              { id: 'CARREFOUR_EG',name: 'Carrefour Egypt',     url: `https://www.carrefouregypt.com/mafegy/ar/c/search?q=${q}` },
+            ];
+
+            const FETCH_HEADERS = {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+              'Accept-Language': 'en-US,en;q=0.9,ar-EG;q=0.8',
+            };
+
+            /**
+             * Parse a price string in EGP into a number.
+             * Handles formats like "EGP 12,345" / "12.345,00" / "12345"
+             */
+            function parseEgp(str = '') {
+              if (!str) return 0;
+              const cleaned = str.replace(/[^0-9.,]/g, '');
+              // "12,345" → 12345 | "12.345,00" → 12345
+              const num = parseFloat(cleaned.replace(/,(?=\d{3})/g, '').replace(',', '.'));
+              return isNaN(num) ? 0 : Math.round(num);
+            }
+
+            /**
+             * Extract first plausible product from HTML for each platform.
+             * Returns { title, price, url } or null.
+             */
+            function extractFromHtml(html, node, rawQuery) {
+              if (!html || html.length < 500) return null;
+              const lq = rawQuery.toLowerCase();
+
+              // ── Amazon EG ───────────────────────────────────────────────
+              if (node.id === 'AMZN_EG') {
+                const blocks = html.split(/data-component-type="s-search-result"/i);
+                for (let i = 1; i < blocks.length; i++) {
+                  const b = blocks[i].slice(0, 4000);
+                  const t = (b.match(/class="a-text-normal"[^>]*>([^<]+)</) ||
+                             b.match(/<h2[^>]*>[\s\S]*?<span[^>]*>([^<]+)<\/span>/i))?.[1]?.trim();
+                  if (!t || !lq.split(' ').some(tok => t.toLowerCase().includes(tok))) continue;
+                  const p = parseEgp((b.match(/class="a-offscreen">([^<]+)<\/span>/i) ||
+                                      b.match(/class="a-price-whole">([^<]+)<\/span>/i))?.[1]);
+                  const link = (b.match(/href="(\/dp\/[A-Z0-9]{10}[^"]*)"/))?.[1];
+                  if (p > 0) return { title: t, price: p, url: link ? `https://www.amazon.eg${link}` : node.url };
+                }
+              }
+
+              // ── Noon EG (JSON in __NEXT_DATA__) ─────────────────────────
+              if (node.id === 'NOON_EG') {
+                const m = html.match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/i);
+                if (m) {
+                  try {
+                    const d = JSON.parse(m[1]);
+                    const hits = d?.props?.pageProps?.catalog?.hits ||
+                                 d?.props?.pageProps?.hits || [];
+                    for (const h of hits) {
+                      const t = h.name || h.title || '';
+                      if (!t || !lq.split(' ').some(tok => t.toLowerCase().includes(tok))) continue;
+                      const p = parseEgp(String(h.sale_price || h.price || 0));
+                      if (p > 0) return {
+                        title: t, price: p,
+                        url: h.urlKey ? `https://www.noon.com/egypt-en/${h.urlKey}/p/` : node.url
+                      };
+                    }
+                  } catch { /* fall through */ }
+                }
+              }
+
+              // ── Jumia EG ────────────────────────────────────────────────
+              if (node.id === 'JUMIA_EG') {
+                const arts = html.split(/<article\b[^>]*class="[^"]*prd\b/i);
+                for (let i = 1; i < arts.length; i++) {
+                  const b = arts[i].slice(0, 3000);
+                  const t = b.match(/class="name">([^<]+)<\//i)?.[1]?.trim();
+                  if (!t || !lq.split(' ').some(tok => t.toLowerCase().includes(tok))) continue;
+                  const p = parseEgp(b.match(/class="prc">([^<]+)<\//i)?.[1]);
+                  const link = b.match(/href="(\/[^"]+\.html)"/i)?.[1];
+                  if (p > 0) return { title: t, price: p, url: link ? `https://www.jumia.com.eg${link}` : node.url };
+                }
+              }
+
+              // ── Generic Magento 2 (B.TECH, 2B, Raya, El Araby, Dream 2000, Vodafone) ──
+              const items = html.split(/class="[^"]*product-item-info[^"]*"/i);
+              for (let i = 1; i < items.length; i++) {
+                const b = items[i].slice(0, 3000);
+                const linkM = b.match(/<a[^>]*class="[^"]*product-item-link[^"]*"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/i);
+                if (!linkM) continue;
+                const t = linkM[2].replace(/<[^>]+>/g, '').trim();
+                if (!t || !lq.split(' ').some(tok => t.toLowerCase().includes(tok))) continue;
+                const p = parseEgp(
+                  b.match(/data-price-type="finalPrice"[\s\S]*?class="price">([^<]+)<\//i)?.[1] ||
+                  b.match(/class="price">([^<]+)<\//i)?.[1]
+                );
+                if (p > 0) return { title: t, price: p, url: linkM[1] };
+              }
+
+              // ── Tradeline (Shopify) ──────────────────────────────────────
+              if (node.id === 'TRADELINE') {
+                const cards = html.split(/class="[^"]*(?:product-card|grid-product)[^"]*"/i);
+                for (let i = 1; i < cards.length; i++) {
+                  const b = cards[i].slice(0, 2000);
+                  const t = b.match(/class="[^"]*(?:product-card__title|grid-product__title)[^"]*"[^>]*>([\s\S]*?)<\//i)?.[1]?.replace(/<[^>]+>/g,'').trim();
+                  if (!t || !lq.split(' ').some(tok => t.toLowerCase().includes(tok))) continue;
+                  const p = parseEgp(b.match(/EGP\s*([\d,]+)/i)?.[1]);
+                  const link = b.match(/href="(\/products\/[^"]+)"/i)?.[1];
+                  if (p > 0) return { title: t, price: p, url: link ? `https://tradelinestores.com${link}` : node.url };
+                }
+              }
+
+              // ── Carrefour EG (JSON embedded) ──────────────────────────────
+              if (node.id === 'CARREFOUR_EG') {
+                const jm = html.match(/<script[^>]*type="application\/json"[^>]*>([\s\S]*?)<\/script>/i);
+                if (jm) {
+                  try {
+                    const d = JSON.parse(jm[1]);
+                    const prods = d?.products || d?.hits || d?.data?.products || [];
+                    for (const p of prods) {
+                      const t = p.name || p.title || '';
+                      if (!t || !lq.split(' ').some(tok => t.toLowerCase().includes(tok))) continue;
+                      const pr = parseEgp(String(p.price?.value || p.price || 0));
+                      if (pr > 0) return { title: t, price: pr, url: p.url || node.url };
+                    }
+                  } catch { /* fall through */ }
+                }
+              }
+
+              return null;
+            }
+
+            // ── Execute Parallel Fetches ──────────────────────────────────
+            console.log(`[CawlixLiveSearch] Starting parallel fetch for: "${query}" across ${RETAILER_NODES.length} nodes`);
+
+            const settled = await Promise.allSettled(
+              RETAILER_NODES.map(async (node) => {
+                const ctrl = new AbortController();
+                const timer = setTimeout(() => ctrl.abort(), 10000);
+                try {
+                  const r = await fetch(node.url, { signal: ctrl.signal, headers: FETCH_HEADERS });
+                  clearTimeout(timer);
+                  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                  const html = await r.text();
+                  const extracted = extractFromHtml(html, node, query.trim());
+                  if (extracted) {
+                    console.log(`[CawlixLiveSearch] ✓ ${node.name}: "${extracted.title}" @ EGP ${extracted.price}`);
+                  } else {
+                    console.log(`[CawlixLiveSearch] – ${node.name}: no matching result`);
+                  }
+                  return { node, result: extracted };
+                } catch (e) {
+                  clearTimeout(timer);
+                  console.log(`[CawlixLiveSearch] ✗ ${node.name}: ${e.message}`);
+                  return { node, result: null };
+                }
+              })
+            );
+
+            const results = settled
+              .filter(s => s.status === 'fulfilled' && s.value?.result)
+              .map(s => ({
+                platformId: s.value.node.id,
+                platformName: s.value.node.name,
+                title: s.value.result.title,
+                currentPrice: s.value.result.price,
+                originalPrice: s.value.result.price,
+                discountPct: 0,
+                stockStatus: 'IN_STOCK',
+                productUrl: s.value.result.url,
+                searchUrl: s.value.node.url,
+              }));
+
+            console.log(`[CawlixLiveSearch] Done — ${results.length}/${RETAILER_NODES.length} nodes returned results`);
+
+            return res.end(JSON.stringify({
+              status: results.length > 0 ? 'success' : 'no_results',
+              query: query.trim(),
+              matchedNodes: results.length,
+              totalNodes: RETAILER_NODES.length,
+              results,
+              scannedAt: new Date().toISOString(),
+            }));
+          }
+
+        } // end if (url.pathname.startsWith('/api/v1/'))
         next();
       });
     },

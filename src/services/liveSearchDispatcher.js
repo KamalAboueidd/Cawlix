@@ -503,7 +503,97 @@ function parsePlatformSearchHtml(html, query, node) {
 }
 
 /**
- * Executes on-demand live federated search across all 12 Egyptian retail platforms
+ * PRIMARY ENGINE: Calls the Vite dev-server Node.js endpoint /api/v1/live-search
+ * which executes real parallel fetch() calls from Node (no CORS restrictions).
+ * Returns { found, results[] } or null if the endpoint is unavailable.
+ *
+ * @param {string} query
+ * @returns {Promise<Array|null>}
+ */
+async function callViteLiveSearchEndpoint(query) {
+  try {
+    const res = await fetch(
+      `/api/v1/live-search?q=${encodeURIComponent(query)}`,
+      {
+        method: 'GET',
+        headers: { Accept: 'application/json' },
+        signal: AbortSignal.timeout(30000), // 30s max — 12 nodes in parallel
+      }
+    );
+    if (!res.ok) return null;
+    const json = await res.json();
+    if (json?.results && Array.isArray(json.results)) {
+      return json.results; // Array of { platformId, platformName, title, currentPrice, productUrl, ... }
+    }
+    return null;
+  } catch {
+    return null; // endpoint not available (production build)
+  }
+}
+
+/**
+ * Builds the consolidated master product entity from an array of raw match results.
+ */
+function buildMasterProductFromResults(validMatches, query, attributes) {
+  const cleanQ = cleanSearchQuery(query);
+  const slugId = 'mp_live_' + cleanQ.replace(/\s+/g, '_').slice(0, 32);
+
+  const priorityOrder = ['TRADELINE', 'AMZN_EG', 'NOON_EG', 'BTECH_EG', 'RAYA_EG', '2B_EG'];
+  let canonicalMatch = validMatches[0];
+  for (const pid of priorityOrder) {
+    const found = validMatches.find((m) => (m.platformId || m.platform_id) === pid);
+    if (found) { canonicalMatch = found; break; }
+  }
+
+  const resultMap = new Map();
+  validMatches.forEach((r) => resultMap.set(r.platformId || r.platform_id, r));
+
+  const completeListings = PLATFORMS_REGISTRY.map((p) => {
+    const listing = resultMap.get(p.id);
+    return {
+      ...p,
+      platform_id: p.id,
+      current_price:  listing?.currentPrice  ?? listing?.current_price  ?? 0,
+      original_price: listing?.originalPrice ?? listing?.original_price ?? 0,
+      discount_pct:   listing?.discountPct   ?? listing?.discount_pct   ?? 0,
+      stock_status:   listing?.stockStatus   ?? listing?.stock_status   ?? (listing ? 'IN_STOCK' : 'OUT_OF_STOCK'),
+      rating:         listing?.rating        ?? 0,
+      reviews_count:  listing?.reviewsCount  ?? listing?.reviews_count  ?? 0,
+      warranty_info:  listing?.warrantyInfo  ?? listing?.warranty_info  ?? (listing ? 'ضمان الوكيل المحلي المعتمد' : 'غير متوفر حالياً على هذا المتجر'),
+      material_notes: listing?.materialNotes ?? listing?.material_notes ?? (listing ? 'النسخة الأصلية المعتمدة للشرق الأوسط' : 'لم يتم العثور على نتيجة مطابقة'),
+      listing_url:    listing?.productUrl    ?? listing?.listing_url    ?? p.url,
+      hasListing:    (listing?.currentPrice  ?? listing?.current_price  ?? 0) > 0,
+    };
+  });
+
+  const masterProduct = {
+    id: slugId,
+    title: canonicalMatch.title || query,
+    brand: attributes.detectedBrand || 'Tech Product',
+    model: (canonicalMatch.title || query).split(' ').slice(0, 5).join(' '),
+    barcode: attributes.detectedBarcode || 'LIVE-' + Math.floor(100000000000 + Math.random() * 900000000000),
+    category: 'Consumer Electronics & Flagships',
+    base_currency: 'EGP',
+    status: 'ACTIVE_SURVEILLANCE',
+    material_summary: `${attributes.color || 'Standard Finish'} · Live Ingested from Egyptian Retail Nodes`,
+    specifications: {
+      chassis_material: 'Official Manufacturer Specification',
+      display_glass: 'Tempered Display Glass',
+      water_resistance: 'Manufacturer Certified Spec',
+      weight: 'Standard Spec',
+    },
+    platform_listings: completeListings,
+  };
+
+  return { masterProduct, completeListings };
+}
+
+/**
+ * Executes on-demand live federated search across all 12 Egyptian retail platforms.
+ *
+ * PATH A (dev mode): calls /api/v1/live-search — real Node.js parallel fetches, no CORS.
+ * PATH B (fallback): client-side HTML scraping through CORS proxy chain.
+ *
  * @param {string} query
  * @returns {Promise<{ found: boolean, masterProduct: Object|null, listings: Array, message?: string }>}
  */
@@ -517,24 +607,86 @@ export async function executeLiveFederatedSearch(query) {
     };
   }
 
-  const cleanQ = cleanSearchQuery(query);
-  const attributes = extractProductAttributes(query);
+  const rawQuery = query.trim();
+  const cleanQ = cleanSearchQuery(rawQuery);
+  const attributes = extractProductAttributes(rawQuery);
 
-  // 1. Concurrent live queries across all 12 domestic nodes
+  console.log(`[LiveSearch] 🔍 Querying 12 nodes for: "${rawQuery}"`);
+  const startTs = Date.now();
+
+  // ── PATH A: Vite dev-server Node.js proxy (no CORS) ───────────────────────
+  const viteResults = await callViteLiveSearchEndpoint(rawQuery);
+  if (viteResults !== null) {
+    console.log(`[LiveSearch] ✓ PATH A (Vite Node proxy) — ${viteResults.length} matches in ${Date.now() - startTs}ms`);
+
+    if (viteResults.length === 0) {
+      return {
+        found: false,
+        masterProduct: null,
+        listings: [],
+        message: 'عفواً، هذا المنتج غير متوفر للبيع حالياً في أي من المتاجر المصرية الـ 12 المعتمدة.',
+      };
+    }
+
+    const { masterProduct, completeListings } = buildMasterProductFromResults(viteResults, rawQuery, attributes);
+
+    // Background Supabase persist
+    try {
+      if (supabase) {
+        supabase.from('master_products').upsert({
+          id: masterProduct.id,
+          title: masterProduct.title,
+          brand: masterProduct.brand,
+          model: masterProduct.model,
+          barcode: masterProduct.barcode,
+          category: masterProduct.category,
+          base_currency: 'EGP',
+          status: 'ACTIVE_SURVEILLANCE',
+        }).then(() => {
+          const rows = completeListings
+            .filter(l => l.current_price > 0)
+            .map(l => ({
+              master_product_id: masterProduct.id,
+              platform_id: l.platform_id,
+              current_price: l.current_price,
+              original_price: l.original_price,
+              stock_status: l.stock_status,
+              listing_url: l.listing_url,
+              rating: l.rating,
+            }));
+          if (rows.length > 0) supabase.from('platform_listings').upsert(rows).then(() => {});
+        }).catch(() => {});
+      }
+    } catch { /* non-blocking */ }
+
+    return {
+      found: true,
+      masterProduct,
+      listings: completeListings,
+      matchedCount: viteResults.length,
+      source: 'VITE_NODE_PROXY',
+    };
+  }
+
+  // ── PATH B: Client-side HTML scraping via CORS proxy chain ────────────────
+  console.log(`[LiveSearch] PATH A unavailable → switching to PATH B (CORS proxy chain)`);
+
   const probePromises = FEDERATED_SEARCH_NODES.map(async (node) => {
     const searchUrl = node.buildSearchUrl(cleanQ);
     try {
-      const html = await fetchProductHtml(searchUrl, { timeout: 8500 });
+      const html = await fetchProductHtml(searchUrl, { timeout: 9000 });
       const parsed = parsePlatformSearchHtml(html, cleanQ, node);
+      if (parsed) console.log(`[LiveSearch] ✓ PATH B ${node.name}: "${parsed.title}" @ EGP ${parsed.currentPrice}`);
+      else console.log(`[LiveSearch] – PATH B ${node.name}: no match`);
       return { node, result: parsed, searchUrl };
-    } catch {
+    } catch (e) {
+      console.log(`[LiveSearch] ✗ PATH B ${node.name}: ${e.message}`);
       return { node, result: null, searchUrl };
     }
   });
 
   const settled = await Promise.allSettled(probePromises);
 
-  // 2. Extract valid authentic matches
   const validMatches = [];
   const resultMap = new Map();
 
@@ -561,7 +713,8 @@ export async function executeLiveFederatedSearch(query) {
     }
   });
 
-  // 3. ZERO AUTHENTIC MATCHES GUARD
+  console.log(`[LiveSearch] PATH B done — ${validMatches.length}/12 matches in ${Date.now() - startTs}ms`);
+
   if (validMatches.length === 0) {
     return {
       found: false,
@@ -571,74 +724,14 @@ export async function executeLiveFederatedSearch(query) {
     };
   }
 
-  // 4. Construct canonical master product entity from authentic live listings
-  // Select canonical title from highest priority match
-  const priorityOrder = ['TRADELINE', 'AMZN_EG', 'NOON_EG', 'BTECH_EG', 'RAYA_EG', '2B_EG'];
-  let canonicalMatch = validMatches[0];
-  for (const pid of priorityOrder) {
-    const found = validMatches.find((m) => m.platformId === pid);
-    if (found) {
-      canonicalMatch = found;
-      break;
-    }
-  }
+  const { masterProduct, completeListings } = buildMasterProductFromResults(
+    [...validMatches, ...resultMap.values()], rawQuery, attributes
+  );
 
-  const slugId = 'mp_live_' + cleanQ.replace(/\s+/g, '_').slice(0, 32);
-
-  // Build complete 12-platform listings list
-  const completeListings = PLATFORMS_REGISTRY.map((p) => {
-    const listing = resultMap.get(p.id) || {
-      platform_id: p.id,
-      current_price: 0,
-      original_price: 0,
-      discount_pct: 0,
-      stock_status: 'OUT_OF_STOCK',
-      rating: 0,
-      reviews_count: 0,
-      warranty_info: 'غير متوفر حالياً على هذا المتجر',
-      material_notes: 'لم يتم العثور على نتيجة مطابقة',
-      listing_url: p.url,
-    };
-
-    return {
-      ...p,
-      platform_id: p.id,
-      current_price: listing.currentPrice ?? listing.current_price ?? 0,
-      original_price: listing.originalPrice ?? listing.original_price ?? 0,
-      discount_pct: listing.discountPct ?? listing.discount_pct ?? 0,
-      stock_status: listing.stockStatus ?? listing.stock_status ?? 'OUT_OF_STOCK',
-      rating: listing.rating ?? 0,
-      reviews_count: listing.reviewsCount ?? listing.reviews_count ?? 0,
-      warranty_info: listing.warrantyInfo ?? listing.warranty_info ?? 'ضمان الوكيل المحلي المعتمد',
-      material_notes: listing.materialNotes ?? listing.material_notes ?? 'النسخة الأصلية المعتمدة للشرق الأوسط',
-      listing_url: listing.productUrl || listing.listing_url || p.url,
-      hasListing: (listing.currentPrice ?? listing.current_price ?? 0) > 0,
-    };
-  });
-
-  const masterProduct = {
-    id: slugId,
-    title: canonicalMatch.title,
-    brand: attributes.detectedBrand || 'Tech Product',
-    model: canonicalMatch.title.split(' ').slice(0, 5).join(' '),
-    barcode: attributes.detectedBarcode || 'LIVE-' + Math.floor(100000000000 + Math.random() * 900000000000),
-    category: 'Consumer Electronics & Flagships',
-    base_currency: 'EGP',
-    status: 'ACTIVE_SURVEILLANCE',
-    material_summary: `${attributes.color || 'Standard Finish'} · Live Ingested from Egyptian Retail Nodes`,
-    specifications: {
-      chassis_material: 'Official Manufacturer Specification',
-      display_glass: 'Tempered Display Glass',
-      water_resistance: 'Manufacturer Certified Spec',
-      weight: 'Standard Spec',
-    },
-    platform_listings: completeListings,
-  };
-
-  // 5. Optionally persist to Supabase if accessible
+  // Background Supabase persist
   try {
     if (supabase) {
-      await supabase.from('master_products').upsert({
+      supabase.from('master_products').upsert({
         id: masterProduct.id,
         title: masterProduct.title,
         brand: masterProduct.brand,
@@ -647,32 +740,22 @@ export async function executeLiveFederatedSearch(query) {
         category: masterProduct.category,
         base_currency: 'EGP',
         status: 'ACTIVE_SURVEILLANCE',
-      });
-
-      const listingRows = completeListings
-        .filter((l) => l.current_price > 0)
-        .map((l) => ({
-          master_product_id: masterProduct.id,
-          platform_id: l.platform_id,
-          current_price: l.current_price,
-          original_price: l.original_price,
-          stock_status: l.stock_status,
-          listing_url: l.listing_url,
-          rating: l.rating,
-        }));
-
-      if (listingRows.length > 0) {
-        await supabase.from('platform_listings').upsert(listingRows);
-      }
+      }).catch(() => {});
     }
-  } catch {
-    // Non-blocking background persistence
-  }
+  } catch { /* non-blocking */ }
 
   return {
     found: true,
     masterProduct,
     listings: completeListings,
     matchedCount: validMatches.length,
+    source: 'CORS_PROXY_CHAIN',
   };
 }
+
+/**
+ * Named alias — wired to the "🔍 بحث مباشر" button onClick and Enter key.
+ * Identical to executeLiveFederatedSearch.
+ */
+export const executeLiveRetailerSearch = executeLiveFederatedSearch;
+
