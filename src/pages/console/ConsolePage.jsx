@@ -2581,6 +2581,8 @@ export default function ConsolePage() {
                     );
                   })
                 )}
+                  </div>
+                </div>
               </section>
             )}
 
