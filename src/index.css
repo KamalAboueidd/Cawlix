@@ -540,4 +540,114 @@ code, pre, kbd, samp {
   animation: emeraldFlash 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
+/* ── Vercel Mobile Shell & Ultra-Compact Responsive Engine ── */
+@keyframes vercelFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes vercelSlideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.scrollbar-none {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none !important;
+}
+
+.touch-pan-x {
+  touch-action: pan-x !important;
+}
+
+/* Visibility switches */
+.vercel-mobile-only {
+  display: none;
+}
+.vercel-desktop-only {
+  display: flex;
+}
+
+@media (max-width: 768px) {
+  .vercel-mobile-only {
+    display: flex !important;
+  }
+  .vercel-desktop-only,
+  .cawlix-desktop-sidebar {
+    display: none !important;
+  }
+
+  /* Typography Density */
+  .cawlix-mobile-header {
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    line-height: 1.25rem !important;
+  }
+
+  .cawlix-mobile-metric {
+    font-size: 10px !important;
+    font-family: var(--font-mono) !important;
+    font-variant-numeric: tabular-nums !important;
+  }
+
+  .cawlix-mobile-sub {
+    font-size: 11px !important;
+    color: #A1A1AA !important;
+  }
+
+  /* 2-column KPI Grid on Mobile with dense padding */
+  .cawlix-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .cawlix-kpi-card {
+    padding: 10px 12px !important;
+    gap: 4px !important;
+  }
+
+  .cawlix-kpi-card h3,
+  .cawlix-kpi-card .kpi-label {
+    font-size: 0.625rem !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  .cawlix-kpi-card .kpi-value {
+    font-size: 1.125rem !important;
+  }
+
+  .cawlix-kpi-card .kpi-sub {
+    font-size: 0.625rem !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Horizontal scrolling containers for tables */
+  .cawlix-table-scroll-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-x !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    width: 100% !important;
+  }
+
+  .cawlix-table-scroll-container::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* Dense table cell padding on mobile (px-2 py-1.5) */
+  .cawlix-table-cell-dense {
+    padding: 6px 8px !important;
+  }
+
+  /* Workspace padding on mobile to accommodate bottom pill */
+  #cawlix-main-workspace {
+    padding-bottom: 84px !important;
+  }
+}
+
+
 

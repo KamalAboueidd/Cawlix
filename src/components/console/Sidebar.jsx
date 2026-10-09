@@ -137,6 +137,7 @@ export default function Sidebar({
 
   return (
     <aside
+      className="cawlix-desktop-sidebar vercel-desktop-only"
       style={{
         width: '248px',
         height: '100vh',

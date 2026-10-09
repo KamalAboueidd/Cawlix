@@ -5,6 +5,7 @@ import AddSkuModal from '../../components/console/AddSkuModal';
 import MultiPlatformIntelligence from '../../components/console/MultiPlatformIntelligence';
 import TelemetryControlDashboard from '../../components/console/TelemetryControlDashboard';
 import Sidebar from '../../components/console/Sidebar';
+import VercelMobileShell from '../../components/console/VercelMobileShell';
 import ArbitrageEngine from '../../components/console/ArbitrageEngine';
 import RetailerHealth from '../../components/console/RetailerHealth';
 import TruthForensics from '../../components/console/TruthForensics';
@@ -784,6 +785,31 @@ export default function ConsolePage() {
         onInspectProduct={handleInspectProduct}
       />
 
+      {/* ── 1B. VERCEL-STYLE MOBILE SHELL & FLOATING COMMAND PILL (MOBILE ONLY) ── */}
+      <VercelMobileShell
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        trackedCount={trackedItems.length}
+        anomalyCount={anomalyDetectionsCount}
+        watchlistCount={4}
+        userHandle={userHandle}
+        userEmail={user?.email || 'kamalaboueidd@gmail.com'}
+        realtimeConnected={realtimeConnected}
+        onSignOut={handleSignOut}
+        onRunFleetAudit={handleRunFleetAudit}
+        fleetAuditProgress={fleetAuditProgress}
+        fleetAuditCompleted={fleetAuditCompleted}
+        onOpenAddSku={() => setModalOpen(true)}
+        onSelectProduct={(product) => {
+          if (!product) return;
+          setSelectedIntelligenceProduct(product);
+          setSelectedIntelligenceProductId(product.id);
+          handleTabChange('intelligence');
+          const mainEl = document.getElementById('cawlix-main-workspace');
+          if (mainEl) mainEl.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
+
       {/* ── 2. MAIN APPLICATION WORKSPACE (SCROLLS INDEPENDENTLY) ── */}
       <div
         id="cawlix-main-workspace"
@@ -1088,6 +1114,7 @@ export default function ConsolePage() {
             {/* ── 4. METRIC CARDS (Vercel #000000 + 1px solid #1F1F1F) ── */}
             {(activeTab === 'overview' || activeTab === 'tracker') && (
               <section
+                className="cawlix-kpi-grid"
                 style={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
@@ -1096,6 +1123,7 @@ export default function ConsolePage() {
               >
                 {/* Metric 1 */}
                 <div
+                  className="cawlix-kpi-card"
                   style={{
                     backgroundColor: '#000000',
                     border: '1px solid #1F1F1F',
@@ -1108,6 +1136,7 @@ export default function ConsolePage() {
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span
+                      className="kpi-label"
                       style={{
                         fontSize: '0.6875rem',
                         fontWeight: 600,
@@ -1140,6 +1169,7 @@ export default function ConsolePage() {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
                     <span
+                      className="kpi-value"
                       style={{
                         fontSize: '1.5rem',
                         fontWeight: 600,
@@ -1161,13 +1191,14 @@ export default function ConsolePage() {
                       +12.4%
                     </span>
                   </div>
-                  <span style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                  <span className="kpi-sub" style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                     {isRtl ? 'مراقبة مستمرة لمتوسط السعر لآخر 90 يوماً' : 'Active 90-day price baseline monitoring'}
                   </span>
                 </div>
 
                 {/* Metric 2 */}
                 <div
+                  className="cawlix-kpi-card"
                   style={{
                     backgroundColor: '#000000',
                     border: '1px solid #1F1F1F',
@@ -1180,6 +1211,7 @@ export default function ConsolePage() {
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span
+                      className="kpi-label"
                       style={{
                         fontSize: '0.6875rem',
                         fontWeight: 600,
@@ -1212,6 +1244,7 @@ export default function ConsolePage() {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
                     <span
+                      className="kpi-value"
                       style={{
                         fontSize: '1.5rem',
                         fontWeight: 600,
@@ -1233,13 +1266,14 @@ export default function ConsolePage() {
                       {isRtl ? '100% نشط' : '100% ACTIVE'}
                     </span>
                   </div>
-                  <span style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                  <span className="kpi-sub" style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                     {isRtl ? 'أمازون، نون، بي تك، تريد لاين، جوميا، تو بي، راية...' : 'Amazon, Noon, B.TECH, Tradeline, Jumia, 2B, Raya...'}
                   </span>
                 </div>
 
                 {/* Metric 3 */}
                 <div
+                  className="cawlix-kpi-card"
                   style={{
                     backgroundColor: '#000000',
                     border: '1px solid #1F1F1F',
@@ -1252,6 +1286,7 @@ export default function ConsolePage() {
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span
+                      className="kpi-label"
                       style={{
                         fontSize: '0.6875rem',
                         fontWeight: 600,
@@ -1284,6 +1319,7 @@ export default function ConsolePage() {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
                     <span
+                      className="kpi-value"
                       style={{
                         fontSize: '1.5rem',
                         fontWeight: 600,
@@ -1305,13 +1341,14 @@ export default function ConsolePage() {
                       -47.1% MAX
                     </span>
                   </div>
-                  <span style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                  <span className="kpi-sub" style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                     {isRtl ? 'خصومات وهمية وانهيارات سعرية مفاجئة' : 'Zero-margin flash crashes captured'}
                   </span>
                 </div>
 
                 {/* Metric 4 */}
                 <div
+                  className="cawlix-kpi-card"
                   style={{
                     backgroundColor: '#000000',
                     border: '1px solid #1F1F1F',
@@ -1324,6 +1361,7 @@ export default function ConsolePage() {
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span
+                      className="kpi-label"
                       style={{
                         fontSize: '0.6875rem',
                         fontWeight: 600,
@@ -1356,6 +1394,7 @@ export default function ConsolePage() {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
                     <span
+                      className="kpi-value"
                       style={{
                         fontSize: '1.5rem',
                         fontWeight: 600,
@@ -1377,7 +1416,7 @@ export default function ConsolePage() {
                       +18.5%
                     </span>
                   </div>
-                  <span style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                  <span className="kpi-sub" style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                     {isRtl ? 'فارق السعر ومكسب الشراء من أرخص متجر' : 'Landed CIF benchmark advantage'}
                   </span>
                 </div>
@@ -2216,13 +2255,19 @@ export default function ConsolePage() {
                   flexDirection: 'column',
                 }}
               >
-                {/* Table Header: Authentic Vercel Subtle Row */}
                 <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: '2.5fr 1fr 1.2fr 1fr 1fr 0.8fr',
-                    alignItems: 'center',
-                    padding: '11px 18px',
+                  className="cawlix-table-scroll-container overflow-x-auto scrollbar-none touch-pan-x"
+                  style={{ width: '100%', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}
+                >
+                  <div style={{ minWidth: '760px' }}>
+                    {/* Table Header: Authentic Vercel Subtle Row */}
+                    <div
+                      className="cawlix-table-cell-dense"
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '2.5fr 1fr 1.2fr 1fr 1fr 0.8fr',
+                        alignItems: 'center',
+                        padding: '11px 18px',
                     backgroundColor: '#000000',
                     borderBottom: '1px solid #1F1F1F',
                     fontSize: '0.6875rem',
@@ -2305,6 +2350,7 @@ export default function ConsolePage() {
                       <div
                         key={item.id}
                         onClick={() => handleRowClick(item)}
+                        className="cawlix-table-cell-dense"
                         style={{
                           display: 'grid',
                           gridTemplateColumns: '2.5fr 1fr 1.2fr 1fr 1fr 0.8fr',
