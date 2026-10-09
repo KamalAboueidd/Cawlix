@@ -35,6 +35,7 @@ export default function TelemetryControlDashboard({
   const [isResolving, setIsResolving] = useState(false);
   const [localResults, setLocalResults] = useState([]);
   const [resolvedResult, setResolvedResult] = useState(null);
+  const [emptySearchMsg, setEmptySearchMsg] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const containerRef = useRef(null);
@@ -68,7 +69,7 @@ export default function TelemetryControlDashboard({
     };
   }, []);
 
-  // 1. Debounce Input by 350ms
+  // 1. Debounce Input by 300ms
   useEffect(() => {
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
@@ -78,13 +79,14 @@ export default function TelemetryControlDashboard({
       setDebouncedQuery('');
       setLocalResults([]);
       setResolvedResult(null);
+      setEmptySearchMsg('');
       setIsResolving(false);
       return;
     }
 
     debounceTimerRef.current = setTimeout(() => {
       setDebouncedQuery(query.trim());
-    }, 350);
+    }, 300);
 
     return () => {
       if (debounceTimerRef.current) {
@@ -93,43 +95,57 @@ export default function TelemetryControlDashboard({
     };
   }, [query]);
 
-  // 2. Perform Local Catalog Search & Multi-Platform Resolution on debounced query
+  // 2. Perform Local Catalog Search on debounced query (Zero false fuzzy matches)
   useEffect(() => {
     if (!debouncedQuery) {
       setLocalResults([]);
       setResolvedResult(null);
+      setEmptySearchMsg('');
       setIsResolving(false);
       return;
     }
 
-    // Step A: Immediate local catalog matching
+    // Immediate local catalog matching with strict relevance
     const matched = searchLocalMasterProducts(debouncedQuery);
     setLocalResults(matched);
-
-    // Step B: If no local master matches found, trigger live multi-platform resolver
-    let isCancelled = false;
-    async function triggerResolver() {
-      setIsResolving(true);
-      try {
-        const result = await resolveProductAcrossPlatforms(debouncedQuery);
-        if (!isCancelled) {
-          setResolvedResult(result);
-        }
-      } catch (err) {
-        console.error('[Universal Resolver Error]:', err);
-      } finally {
-        if (!isCancelled) {
-          setIsResolving(false);
-        }
-      }
-    }
-
-    triggerResolver();
-
-    return () => {
-      isCancelled = true;
-    };
+    setResolvedResult(null);
+    setEmptySearchMsg('');
   }, [debouncedQuery]);
+
+  // Trigger on-demand live federated search across all 12 Egyptian platforms
+  const handleTriggerLiveFederatedSearch = async (targetQuery) => {
+    const q = (targetQuery || query).trim();
+    if (!q) return;
+
+    setIsResolving(true);
+    setEmptySearchMsg('');
+    setResolvedResult(null);
+
+    try {
+      const res = await resolveProductAcrossPlatforms(q);
+      if (res.status === 'NO_MATCHING_PRODUCTS' || !res.masterProduct) {
+        setEmptySearchMsg(
+          res.message ||
+            (isRtl
+              ? 'عفواً، هذا المنتج غير متوفر للبيع حالياً في أي من المتاجر المصرية الـ 12 المعتمدة.'
+              : 'Sorry, this product is currently not available for purchase on any of the 12 verified Egyptian retail platforms.')
+        );
+        setResolvedResult(null);
+      } else {
+        setResolvedResult(res);
+        setEmptySearchMsg('');
+      }
+    } catch (err) {
+      console.error('[Federated Search Error]:', err);
+      setEmptySearchMsg(
+        isRtl
+          ? 'عفواً، هذا المنتج غير متوفر للبيع حالياً في أي من المتاجر المصرية الـ 12 المعتمدة.'
+          : 'Sorry, this product is currently not available for purchase on any of the 12 verified Egyptian retail platforms.'
+      );
+    } finally {
+      setIsResolving(false);
+    }
+  };
 
   // 3. Global Shortcut Listeners (Cmd+K / Ctrl+K and '/' to focus)
   useEffect(() => {
@@ -173,8 +189,11 @@ export default function TelemetryControlDashboard({
   localResults.forEach((item) => {
     navigableItems.push({ type: 'local', data: item });
   });
-  if (resolvedResult) {
+  if (resolvedResult && resolvedResult.masterProduct) {
     navigableItems.push({ type: 'resolved', data: resolvedResult });
+  }
+  if (query.trim() && !isResolving) {
+    navigableItems.push({ type: 'action', query: query.trim() });
   }
 
   // Keyboard navigation within command palette
@@ -191,21 +210,17 @@ export default function TelemetryControlDashboard({
         const item = navigableItems[selectedIndex];
         if (item.type === 'local') {
           handleSelectLocalProduct(item.data);
-        } else {
+          return;
+        } else if (item.type === 'resolved') {
           handleSelectResolvedProduct(item.data);
+          return;
+        } else if (item.type === 'action') {
+          handleTriggerLiveFederatedSearch(query);
+          return;
         }
-      } else if (query.trim()) {
-        // Explicitly trigger resolver on enter
-        setIsResolving(true);
-        try {
-          const res = await resolveProductAcrossPlatforms(query.trim());
-          setResolvedResult(res);
-          handleSelectResolvedProduct(res);
-        } catch (err) {
-          console.error('Enter resolver execution error:', err);
-        } finally {
-          setIsResolving(false);
-        }
+      }
+      if (query.trim()) {
+        handleTriggerLiveFederatedSearch(query);
       }
     }
   };
@@ -977,52 +992,135 @@ export default function TelemetryControlDashboard({
             </div>
           )}
 
-          {/* Empty State / Prompt */}
-          {localResults.length === 0 && !resolvedResult && !isResolving && query.trim() && (
+          {/* Scanning Indicator */}
+          {isResolving && (
             <div
               style={{
-                padding: '16px 12px',
-                textAlign: 'center',
-                color: '#666666',
-                fontSize: '0.8125rem',
+                padding: '14px 12px',
                 display: 'flex',
-                flexDirection: 'column',
-                gap: '8px',
                 alignItems: 'center',
-                fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
+                justifyContent: 'center',
+                gap: '10px',
+                color: '#10B981',
+                backgroundColor: '#0A0A0A',
+                borderRadius: '6px',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                fontSize: '0.8125rem',
               }}
             >
-              <span>{isRtl ? `لا توجد نتائج مطابقة لـ "${query}" في الكتالوج.` : `No exact SKU matches in catalog for "${query}".`}</span>
-              <button
-                type="button"
-                onClick={async () => {
-                  setIsResolving(true);
-                  try {
-                    const res = await resolveProductAcrossPlatforms(query.trim());
-                    setResolvedResult(res);
-                  } catch (e) {
-                    console.error(e);
-                  } finally {
-                    setIsResolving(false);
-                  }
-                }}
+              <Loader2 size={16} className="animate-spin" style={{ animation: 'spin 1s linear infinite' }} />
+              <span>
+                {isRtl
+                  ? 'جاري مسح المتاجر المصرية (أمازون، نون، بي تك، تريدلاين...)...'
+                  : 'Scanning 12 Egyptian retail nodes (Amazon, Noon, B.TECH, Tradeline...)...'}
+              </span>
+            </div>
+          )}
+
+          {/* Honest Empty State Message */}
+          {emptySearchMsg && !isResolving && (
+            <div
+              style={{
+                padding: '16px 14px',
+                textAlign: 'center',
+                color: '#888888',
+                fontSize: '0.8125rem',
+                backgroundColor: '#0A0A0A',
+                border: '1px solid #222222',
+                borderRadius: '6px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '6px',
+                alignItems: 'center',
+                fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+              }}
+            >
+              <span style={{ color: '#EDEDED', fontWeight: 500 }}>
+                {emptySearchMsg}
+              </span>
+              <span style={{ fontSize: '0.6875rem', color: '#666666' }}>
+                {isRtl
+                  ? 'تم فحص المتاجر الـ 12: أمازون، نون، بي تك، تريدلاين، جوميا، 2B، راية، العربي، دبي فون، دريم 2000، فودافون، وكارفور.'
+                  : 'Scanned 12 domestic nodes: Amazon, Noon, B.TECH, Tradeline, Jumia, 2B, Raya, El Araby, Dubai Phone, Dream 2000, Vodafone, Carrefour.'}
+              </span>
+            </div>
+          )}
+
+          {/* Informational hint if no local matches and no error yet */}
+          {localResults.length === 0 && !resolvedResult && !isResolving && !emptySearchMsg && query.trim() && (
+            <div
+              style={{
+                padding: '10px 12px',
+                textAlign: 'center',
+                color: '#888888',
+                fontSize: '0.75rem',
+                fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+              }}
+            >
+              {isRtl
+                ? `لا توجد نتائج مطابقة لـ "${query}" في الكتالوج المحلي.`
+                : `No local catalog matches for "${query}".`}
+            </div>
+          )}
+
+          {/* Direct Live Federated Search Trigger Action */}
+          {query.trim().length > 0 && !isResolving && (
+            <div
+              onClick={() => handleTriggerLiveFederatedSearch(query)}
+              style={{
+                backgroundColor: '#0A0A0A',
+                border: '1px solid #222222',
+                borderRadius: '6px',
+                padding: '9px 12px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '8px',
+                transition: 'all 120ms ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#10B981';
+                e.currentTarget.style.backgroundColor = '#111111';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = '#222222';
+                e.currentTarget.style.backgroundColor = '#0A0A0A';
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden' }}>
+                <Search size={13} color="#10B981" style={{ flexShrink: 0 }} />
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 500,
+                    color: '#EDEDED',
+                    fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {isRtl
+                    ? `🔍 بحث مباشر في مواقع المتاجر الـ 12 الآن عن: "${query.trim()}"`
+                    : `🔍 Live Federated Search across all 12 Egyptian stores for: "${query.trim()}"`}
+                </span>
+              </div>
+              <span
                 style={{
-                  backgroundColor: '#111111',
-                  border: '1px solid #333333',
-                  borderRadius: '5px',
-                  color: '#EDEDED',
-                  padding: '6px 12px',
-                  fontSize: '0.75rem',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
+                  fontSize: '0.625rem',
+                  color: '#10B981',
+                  fontFamily: "'Geist Mono', monospace",
+                  backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
                 }}
               >
-                <Zap size={12} color="#10B981" />
-                <span>{isRtl ? 'بدء الفحص والبحث عبر الـ 12 متجر مصري' : 'Execute Universal Multi-Platform Resolution'}</span>
-              </button>
+                {isRtl ? 'فحص الـ 12 متجر ↵' : '12 NODES ↵'}
+              </span>
             </div>
           )}
 

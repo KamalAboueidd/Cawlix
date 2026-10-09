@@ -11,6 +11,7 @@ import {
   evaluateDiscountIntegrity,
 } from './marketIntelligenceData.js';
 import { supabase } from '../lib/supabaseClient.js';
+import { executeLiveFederatedSearch } from './liveSearchDispatcher.js';
 
 // Filler and stop words in English & Arabic commonly present in e-commerce search queries
 const FILLER_WORDS = new Set([
@@ -95,7 +96,7 @@ export function extractProductAttributes(rawQuery = '') {
 }
 
 /**
- * Searches local Master Products catalog (Seeded + Supabase)
+ * Searches local Master Products catalog (Seeded + Supabase) with zero false fuzzy fallbacks
  * @param {string} query
  * @param {Array} [catalog]
  * @returns {Array}
@@ -104,7 +105,12 @@ export function searchLocalMasterProducts(query = '', catalog = SEEDED_MASTER_PR
   if (!query || !query.trim()) return [];
   const q = query.toLowerCase().trim();
   const cleanQ = cleanSearchQuery(query);
-  const qTokens = cleanQ.split(' ').filter(Boolean);
+  const qTokens = cleanQ.split(/\s+/).filter(Boolean);
+
+  if (qTokens.length === 0) return [];
+
+  // Extract critical model identifiers and numbers (e.g. '15', '16', 's23', 's24', 'xm4', 'xm5')
+  const modelIdentifiers = qTokens.filter((token) => /\d/.test(token));
 
   const matched = [];
 
@@ -115,45 +121,45 @@ export function searchLocalMasterProducts(query = '', catalog = SEEDED_MASTER_PR
     const model = (item.model || '').toLowerCase();
     const barcode = (item.barcode || '').toLowerCase();
     const category = (item.category || '').toLowerCase();
+    const fullText = `${title} ${model} ${category}`.toLowerCase();
 
-    // Exact barcode match
+    // 1. Exact barcode match
     if (barcode && barcode === q) {
       score += 100;
     }
 
-    // Exact title match or substring
-    if (title.includes(q)) {
+    // 2. Strict model/number constraint:
+    // If the query contains numbers or model codes, every single one MUST exist in the product.
+    // If user searched for '15' and item is 'iPhone 16', immediately REJECT (score remains 0).
+    const modelMismatch = modelIdentifiers.some((code) => !fullText.includes(code));
+    if (modelMismatch) {
+      return;
+    }
+
+    // 3. Exact title match or clean query substring
+    if (title.includes(cleanQ) || model.includes(cleanQ)) {
       score += 65;
     }
 
-    // Model contains query
-    if (model.includes(q)) {
-      score += 55;
-    }
-
-    // Brand match (only if query is primarily brand or title also matches)
-    if (brand && (q === brand || q.startsWith(brand + ' '))) {
-      score += 30;
-    }
-
-    // Multi-token matching (only for significant tokens length >= 3)
+    // 4. Token coverage check
     let matchingTokensCount = 0;
     qTokens.forEach((token) => {
-      if (token.length >= 3) {
-        if (title.includes(token)) {
-          score += 20;
-          matchingTokensCount++;
-        }
-        if (model.includes(token)) {
-          score += 15;
-          matchingTokensCount++;
-        }
+      if (title.includes(token) || model.includes(token)) {
+        score += 20;
+        matchingTokensCount++;
+      } else if (brand && (token === brand || brand.includes(token))) {
+        score += 10;
+        matchingTokensCount++;
       }
     });
 
-    // Require high threshold or at least 2 matching tokens
-    if (score >= 45 || (qTokens.length > 1 && matchingTokensCount >= 2)) {
-      // Find lowest price among listings
+    const coverageRatio = matchingTokensCount / qTokens.length;
+
+    // Strict acceptance criteria: require >= 70% token coverage to eliminate false fuzzy matches
+    const isAuthenticMatch =
+      qTokens.length <= 2 ? coverageRatio >= 0.8 : coverageRatio >= 0.7 && score >= 45;
+
+    if (isAuthenticMatch) {
       const validListings = (item.platform_listings || []).filter(
         (l) => l.current_price > 0 && l.stock_status !== 'OUT_OF_STOCK'
       );
@@ -166,7 +172,9 @@ export function searchLocalMasterProducts(query = '', catalog = SEEDED_MASTER_PR
         searchScore: score,
         lowestPrice: lowestListing ? lowestListing.current_price : null,
         lowestPlatformId: lowestListing ? lowestListing.platform_id : null,
-        lowestPlatformName: lowestListing ? PLATFORMS_REGISTRY.find(p => p.id === lowestListing.platform_id)?.name : null,
+        lowestPlatformName: lowestListing
+          ? PLATFORMS_REGISTRY.find((p) => p.id === lowestListing.platform_id)?.name
+          : null,
       });
     }
   });
@@ -175,9 +183,10 @@ export function searchLocalMasterProducts(query = '', catalog = SEEDED_MASTER_PR
 }
 
 /**
- * Resolves an item across all 12 Egyptian platforms and aggregates key metrics
+ * Resolves an item across all 12 Egyptian platforms and aggregates key metrics.
+ * If not in local catalog, executes on-demand live federated search across all 12 platforms.
  * @param {string} query
- * @returns {Promise<Object>} Consolidated Master Entity View
+ * @returns {Promise<Object>} Consolidated Master Entity View or NO_MATCHING_PRODUCTS
  */
 export async function resolveProductAcrossPlatforms(query = '') {
   if (!query || !query.trim()) {
@@ -198,12 +207,26 @@ export async function resolveProductAcrossPlatforms(query = '') {
 
   const localMatches = searchLocalMasterProducts(rawQuery, liveProducts);
   let resolvedMaster = null;
+  let source = 'LOCAL_CATALOG';
 
   if (localMatches.length > 0) {
     resolvedMaster = localMatches[0];
   } else {
-    // 2. Synthesize a live resolved entity across 12 platforms dynamically
-    resolvedMaster = synthesizeDynamicMasterEntity(rawQuery, attributes);
+    // 2. Execute on-demand live federated search across all 12 domestic retail nodes
+    const liveResult = await executeLiveFederatedSearch(rawQuery);
+
+    if (!liveResult.found || !liveResult.masterProduct) {
+      return {
+        status: 'NO_MATCHING_PRODUCTS',
+        query: rawQuery,
+        cleanQuery: cleanQ,
+        masterProduct: null,
+        message: 'عفواً، هذا المنتج غير متوفر للبيع حالياً في أي من المتاجر المصرية الـ 12 المعتمدة.',
+      };
+    }
+
+    resolvedMaster = liveResult.masterProduct;
+    source = 'LIVE_FEDERATED';
   }
 
   // 3. Compute consolidated platform listings
