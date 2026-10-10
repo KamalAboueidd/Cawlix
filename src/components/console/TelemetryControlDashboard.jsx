@@ -360,7 +360,7 @@ export default function TelemetryControlDashboard({
       </div>
 
       {/* Institutional Pitch-Black Dropdown Palette */}
-      {isOpen && (query.trim().length > 0 || isResolving || resolvedResult) && (
+      {isOpen && (query.trim().length > 0 || isLiveSearching || resolvedResult) && (
         <div
           style={{
             position: 'absolute',
@@ -396,8 +396,8 @@ export default function TelemetryControlDashboard({
                   width: '6px',
                   height: '6px',
                   borderRadius: '50%',
-                  backgroundColor: isResolving ? '#F59E0B' : '#10B981',
-                  boxShadow: isResolving
+                  backgroundColor: isLiveSearching ? '#F59E0B' : '#10B981',
+                  boxShadow: isLiveSearching
                     ? '0 0 6px rgba(245, 158, 11, 0.8)'
                     : '0 0 6px rgba(16, 185, 129, 0.8)',
                 }}
@@ -411,7 +411,7 @@ export default function TelemetryControlDashboard({
                   letterSpacing: '0.04em',
                 }}
               >
-                {isResolving
+                {isLiveSearching
                   ? (isRtl ? 'جاري فحص الـ 12 متجر مصري...' : 'Probing 12 Egyptian Nodes...')
                   : (isRtl ? 'محرك الربط بين المتاجر نشط' : 'Multi-Platform Query Resolver Active')}
               </span>
@@ -709,11 +709,11 @@ export default function TelemetryControlDashboard({
                         {isRtl ? 'المنتج المعتمد' : 'MASTER ENTITY'}
                       </span>
                       <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#EDEDED' }}>
-                        {resolvedResult.masterProduct.title}
+                        {resolvedResult.masterProduct?.title || resolvedResult.title || 'Master Product Entity'}
                       </span>
                     </div>
                     <span style={{ fontSize: '0.6875rem', color: '#888888', marginTop: '2px', display: 'block' }}>
-                      {isRtl ? 'الموديل: ' : 'Model: '}{resolvedResult.masterProduct.model}
+                      {isRtl ? 'الموديل: ' : 'Model: '}{resolvedResult.masterProduct?.model || resolvedResult.model || 'Universal SKU'}
                     </span>
                   </div>
 
@@ -741,7 +741,7 @@ export default function TelemetryControlDashboard({
                   }}
                 >
                   {/* 1. Cheapest Node (Best Deal) */}
-                  {resolvedResult.metrics.cheapestNode && (
+                  {resolvedResult.metrics?.cheapestNode && (
                     <div
                       style={{
                         backgroundColor: '#000000',
@@ -797,10 +797,10 @@ export default function TelemetryControlDashboard({
                       )}
                       <a
                         href={sanitizeRetailerUrl({
-                          url: resolvedResult.metrics.cheapestNode.listingUrl || resolvedResult.metrics.cheapestNode.url,
-                          platformId: resolvedResult.metrics.cheapestNode.platformId,
-                          productTitle: resolvedResult.title,
-                          sku: resolvedResult.barcode || resolvedResult.id,
+                          url: resolvedResult.metrics?.cheapestNode?.listingUrl || resolvedResult.metrics?.cheapestNode?.url,
+                          platformId: resolvedResult.metrics?.cheapestNode?.platformId,
+                          productTitle: resolvedResult.masterProduct?.title || resolvedResult.title,
+                          sku: resolvedResult.barcode || resolvedResult.masterProduct?.barcode || resolvedResult.id,
                         })}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -824,7 +824,7 @@ export default function TelemetryControlDashboard({
                   )}
 
                   {/* 2. Domestic Guarantee Leader */}
-                  {resolvedResult.metrics.domesticGuaranteeLeader && (
+                  {resolvedResult.metrics?.domesticGuaranteeLeader && (
                     <div
                       style={{
                         backgroundColor: '#000000',
@@ -866,10 +866,10 @@ export default function TelemetryControlDashboard({
                       </span>
                       <a
                         href={sanitizeRetailerUrl({
-                          url: resolvedResult.metrics.domesticGuaranteeLeader.listingUrl || resolvedResult.metrics.domesticGuaranteeLeader.url,
-                          platformId: resolvedResult.metrics.domesticGuaranteeLeader.platformId,
-                          productTitle: resolvedResult.title,
-                          sku: resolvedResult.barcode || resolvedResult.id,
+                          url: resolvedResult.metrics?.domesticGuaranteeLeader?.listingUrl || resolvedResult.metrics?.domesticGuaranteeLeader?.url,
+                          platformId: resolvedResult.metrics?.domesticGuaranteeLeader?.platformId,
+                          productTitle: resolvedResult.masterProduct?.title || resolvedResult.title,
+                          sku: resolvedResult.barcode || resolvedResult.masterProduct?.barcode || resolvedResult.id,
                         })}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -893,7 +893,7 @@ export default function TelemetryControlDashboard({
                   )}
 
                   {/* 3. Highest Rated Node */}
-                  {resolvedResult.metrics.highestRatedNode && (
+                  {resolvedResult.metrics?.highestRatedNode && (
                     <div
                       style={{
                         backgroundColor: '#000000',
@@ -935,7 +935,7 @@ export default function TelemetryControlDashboard({
                   )}
 
                   {/* 4. Truth Index Analysis */}
-                  {resolvedResult.metrics.truthIndex && (
+                  {resolvedResult.metrics?.truthIndex && (
                     <div
                       style={{
                         backgroundColor: '#000000',

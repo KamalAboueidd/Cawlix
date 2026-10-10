@@ -101,8 +101,21 @@ export function extractProductAttributes(rawQuery = '') {
  * @param {Array} [catalog]
  * @returns {Array}
  */
-export function searchLocalMasterProducts(query = '', catalog = SEEDED_MASTER_PRODUCTS) {
+export function searchLocalMasterProducts(query = '', catalogOrLimit = SEEDED_MASTER_PRODUCTS, limit = null) {
   if (!query || !query.trim()) return [];
+
+  let catalog = SEEDED_MASTER_PRODUCTS;
+  let maxLimit = typeof limit === 'number' ? limit : null;
+
+  if (Array.isArray(catalogOrLimit)) {
+    catalog = catalogOrLimit;
+  } else if (typeof catalogOrLimit === 'number') {
+    maxLimit = catalogOrLimit;
+    catalog = SEEDED_MASTER_PRODUCTS;
+  } else if (!catalogOrLimit) {
+    catalog = SEEDED_MASTER_PRODUCTS;
+  }
+
   const q = query.toLowerCase().trim();
   const cleanQ = cleanSearchQuery(query);
   const qTokens = cleanQ.split(/\s+/).filter(Boolean);
@@ -179,7 +192,8 @@ export function searchLocalMasterProducts(query = '', catalog = SEEDED_MASTER_PR
     }
   });
 
-  return matched.sort((a, b) => b.searchScore - a.searchScore);
+  const sorted = matched.sort((a, b) => b.searchScore - a.searchScore);
+  return maxLimit ? sorted.slice(0, maxLimit) : sorted;
 }
 
 /**
