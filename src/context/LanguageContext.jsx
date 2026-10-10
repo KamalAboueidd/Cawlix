@@ -37,16 +37,19 @@ export function LanguageProvider({ children }) {
     }
   }, [lang, dir]);
 
-  const setLang = useCallback((newLang) => {
-    if (newLang !== 'ar' && newLang !== 'en') return;
-    setLangState(newLang);
-    if (typeof window !== 'undefined') {
-      try {
-        localStorage.setItem(STORAGE_KEY, newLang);
-      } catch {
-        // Quota or sandboxed
+  const setLang = useCallback((updaterOrLang) => {
+    setLangState((prev) => {
+      const next = typeof updaterOrLang === 'function' ? updaterOrLang(prev) : updaterOrLang;
+      if (next !== 'ar' && next !== 'en') return prev;
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem(STORAGE_KEY, next);
+        } catch {
+          // Quota or sandboxed
+        }
       }
-    }
+      return next;
+    });
   }, []);
 
   const toggleLang = useCallback(() => {

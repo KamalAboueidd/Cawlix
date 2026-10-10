@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import {
   searchLocalMasterProducts,
   resolveProductAcrossPlatforms,
+  executeLiveRetailerSearch,
 } from '../../services/productResolver';
 import { SEEDED_MASTER_PRODUCTS } from '../../services/marketIntelligenceData';
 import {
@@ -32,10 +33,11 @@ export default function TelemetryControlDashboard({
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  const [isResolving, setIsResolving] = useState(false);
+  const [isLiveSearching, setIsLiveSearching] = useState(false);
+  const [searchAttempted, setSearchAttempted] = useState(false);
+  const [searchError, setSearchError] = useState(null);
   const [localResults, setLocalResults] = useState([]);
   const [resolvedResult, setResolvedResult] = useState(null);
-  const [emptySearchMsg, setEmptySearchMsg] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const containerRef = useRef(null);
@@ -69,8 +71,11 @@ export default function TelemetryControlDashboard({
     };
   }, []);
 
-  // 1. Debounce Input by 300ms
+  // 1. Reset search errors & attempt state on query edit + Debounce Input by 300ms
   useEffect(() => {
+    setSearchError(null);
+    setSearchAttempted(false);
+
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
@@ -79,8 +84,7 @@ export default function TelemetryControlDashboard({
       setDebouncedQuery('');
       setLocalResults([]);
       setResolvedResult(null);
-      setEmptySearchMsg('');
-      setIsResolving(false);
+      setIsLiveSearching(false);
       return;
     }
 
@@ -100,8 +104,7 @@ export default function TelemetryControlDashboard({
     if (!debouncedQuery) {
       setLocalResults([]);
       setResolvedResult(null);
-      setEmptySearchMsg('');
-      setIsResolving(false);
+      setIsLiveSearching(false);
       return;
     }
 
@@ -109,41 +112,43 @@ export default function TelemetryControlDashboard({
     const matched = searchLocalMasterProducts(debouncedQuery);
     setLocalResults(matched);
     setResolvedResult(null);
-    setEmptySearchMsg('');
   }, [debouncedQuery]);
 
-  // Trigger on-demand live federated search across all 12 Egyptian platforms
-  const handleTriggerLiveFederatedSearch = async (targetQuery) => {
-    const q = (targetQuery || query).trim();
+  // Trigger on-demand live search across all 12 Egyptian platforms
+  const handleTriggerLiveSearch = async (searchQuery) => {
+    const q = (searchQuery !== undefined ? searchQuery : query)?.trim();
+    console.log('[CAWLIX_LIVE_SEARCH] Triggered for:', q);
     if (!q) return;
 
-    setIsResolving(true);
-    setEmptySearchMsg('');
-    setResolvedResult(null);
+    setIsLiveSearching(true);
+    setSearchError(null);
+    setSearchAttempted(true);
 
     try {
-      const res = await resolveProductAcrossPlatforms(q);
-      if (res.status === 'NO_MATCHING_PRODUCTS' || !res.masterProduct) {
-        setEmptySearchMsg(
-          res.message ||
+      const results = await executeLiveRetailerSearch(q);
+      console.log('[CAWLIX_LIVE_SEARCH] Results received:', results);
+
+      if (results && results.status !== 'NO_MATCHING_PRODUCTS' && (results.masterProduct || results.title)) {
+        setResolvedResult(results);
+        setSearchError(null);
+      } else if (results && results.found && results.masterProduct) {
+        setResolvedResult(results);
+        setSearchError(null);
+      } else {
+        setResolvedResult(null);
+        setSearchError(
+          results?.message ||
             (isRtl
               ? 'عفواً، هذا المنتج غير متوفر للبيع حالياً في أي من المتاجر المصرية الـ 12 المعتمدة.'
               : 'Sorry, this product is currently not available for purchase on any of the 12 verified Egyptian retail platforms.')
         );
-        setResolvedResult(null);
-      } else {
-        setResolvedResult(res);
-        setEmptySearchMsg('');
       }
     } catch (err) {
-      console.error('[Federated Search Error]:', err);
-      setEmptySearchMsg(
-        isRtl
-          ? 'عفواً، هذا المنتج غير متوفر للبيع حالياً في أي من المتاجر المصرية الـ 12 المعتمدة.'
-          : 'Sorry, this product is currently not available for purchase on any of the 12 verified Egyptian retail platforms.'
-      );
+      console.error('[CAWLIX_LIVE_SEARCH] Execution failed:', err);
+      setResolvedResult(null);
+      setSearchError(err?.message || (isRtl ? 'فشل البحث المباشر في المتاجر' : 'Live retailer search failed'));
     } finally {
-      setIsResolving(false);
+      setIsLiveSearching(false);
     }
   };
 
@@ -192,7 +197,7 @@ export default function TelemetryControlDashboard({
   if (resolvedResult && resolvedResult.masterProduct) {
     navigableItems.push({ type: 'resolved', data: resolvedResult });
   }
-  if (query.trim() && !isResolving) {
+  if (query.trim() && !isLiveSearching) {
     navigableItems.push({ type: 'action', query: query.trim() });
   }
 
@@ -215,12 +220,12 @@ export default function TelemetryControlDashboard({
           handleSelectResolvedProduct(item.data);
           return;
         } else if (item.type === 'action') {
-          handleTriggerLiveFederatedSearch(query);
+          handleTriggerLiveSearch(query);
           return;
         }
       }
       if (query.trim()) {
-        handleTriggerLiveFederatedSearch(query);
+        handleTriggerLiveSearch(query);
       }
     }
   };
@@ -264,7 +269,7 @@ export default function TelemetryControlDashboard({
           transition: 'all 150ms ease',
         }}
       >
-        {isResolving ? (
+        {isLiveSearching ? (
           <Loader2
             size={14}
             color="#10B981"
@@ -992,8 +997,8 @@ export default function TelemetryControlDashboard({
             </div>
           )}
 
-          {/* Scanning Indicator */}
-          {isResolving && (
+          {/* Active Live Scanning Loader */}
+          {isLiveSearching && (
             <div
               style={{
                 padding: '14px 12px',
@@ -1012,14 +1017,14 @@ export default function TelemetryControlDashboard({
               <Loader2 size={16} className="animate-spin" style={{ animation: 'spin 1s linear infinite' }} />
               <span>
                 {isRtl
-                  ? 'جاري مسح المتاجر المصرية (أمازون، نون، بي تك، تريدلاين...)...'
-                  : 'Scanning 12 Egyptian retail nodes (Amazon, Noon, B.TECH, Tradeline...)...'}
+                  ? 'جاري إرسال الاستعلام والبحث المباشر في المتاجر الـ 12 الآن...'
+                  : 'Dispatching query & executing live search across all 12 Egyptian stores now...'}
               </span>
             </div>
           )}
 
-          {/* Honest Empty State Message */}
-          {emptySearchMsg && !isResolving && (
+          {/* Honest Empty State Message - Only displayed after explicit search attempt with 0 results */}
+          {!isLiveSearching && searchAttempted && searchError && localResults.length === 0 && !resolvedResult && (
             <div
               style={{
                 padding: '16px 14px',
@@ -1037,7 +1042,7 @@ export default function TelemetryControlDashboard({
               }}
             >
               <span style={{ color: '#EDEDED', fontWeight: 500 }}>
-                {emptySearchMsg}
+                {searchError}
               </span>
               <span style={{ fontSize: '0.6875rem', color: '#666666' }}>
                 {isRtl
@@ -1048,7 +1053,7 @@ export default function TelemetryControlDashboard({
           )}
 
           {/* Informational hint if no local matches and no error yet */}
-          {localResults.length === 0 && !resolvedResult && !isResolving && !emptySearchMsg && query.trim() && (
+          {localResults.length === 0 && !resolvedResult && !isLiveSearching && !searchError && query.trim() && (
             <div
               style={{
                 padding: '10px 12px',
@@ -1065,10 +1070,17 @@ export default function TelemetryControlDashboard({
           )}
 
           {/* Direct Live Federated Search Trigger Action */}
-          {query.trim().length > 0 && !isResolving && (
-            <div
-              onClick={() => handleTriggerLiveFederatedSearch(query)}
+          {query.trim().length > 0 && !isLiveSearching && (
+            <button
+              type="button"
+              id="cawlix-live-search-action-btn"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleTriggerLiveSearch(query);
+              }}
               style={{
+                width: '100%',
                 backgroundColor: '#0A0A0A',
                 border: '1px solid #222222',
                 borderRadius: '6px',
@@ -1079,6 +1091,7 @@ export default function TelemetryControlDashboard({
                 justifyContent: 'space-between',
                 gap: '8px',
                 transition: 'all 120ms ease',
+                textAlign: isRtl ? 'right' : 'left',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = '#10B981';
@@ -1121,7 +1134,7 @@ export default function TelemetryControlDashboard({
               >
                 {isRtl ? 'فحص الـ 12 متجر ↵' : '12 NODES ↵'}
               </span>
-            </div>
+            </button>
           )}
 
           {/* Footer Controls */}

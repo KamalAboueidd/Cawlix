@@ -44,7 +44,7 @@ const CLUSTER_NODES = [
 
 export default function ConsolePage() {
   const { signOut } = useAuth();
-  const { lang, toggleLang, isRtl, dir, t, getRetailerName, formatCurrency } = useLanguage();
+  const { lang, setLang, toggleLang, isRtl, dir, t, getRetailerName, formatCurrency } = useLanguage();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -852,45 +852,77 @@ export default function ConsolePage() {
             </svg>
           </div>
 
-          {/* Universal Real-Time Search & Multi-Platform Command Palette */}
-          <TelemetryControlDashboard
-            onSelectProduct={(product) => {
-              if (!product) return;
-              setSelectedIntelligenceProduct(product);
-              setSelectedIntelligenceProductId(product.id);
-              handleTabChange('intelligence');
-              const mainEl = document.getElementById('cawlix-main-workspace');
-              if (mainEl) mainEl.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-          />
+          {/* Universal Real-Time Search & Multi-Platform Command Palette (Hidden on Mobile < 768px) */}
+          <div className="cawlix-top-search-wrap">
+            <TelemetryControlDashboard
+              onSelectProduct={(product) => {
+                if (!product) return;
+                setSelectedIntelligenceProduct(product);
+                setSelectedIntelligenceProductId(product.id);
+                handleTabChange('intelligence');
+                const mainEl = document.getElementById('cawlix-main-workspace');
+                if (mainEl) mainEl.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            />
+          </div>
 
           {/* Topbar Right Controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
-            {/* Persistent Language Switcher Toggle (🇸🇦 عربي / 🇬🇧 English) */}
-            <button
-              type="button"
-              onClick={toggleLang}
+            {/* Institutional Language Switcher Segmented Control (🇸🇦 عربي / 🇬🇧 English) */}
+            <div
               style={{
-                backgroundColor: '#0A0A0A',
-                color: '#EDEDED',
-                fontSize: '0.75rem',
-                fontWeight: 500,
-                padding: '5px 9px',
-                borderRadius: '6px',
-                border: '1px solid #222222',
-                cursor: 'pointer',
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
-                gap: '5px',
-                transition: 'all 150ms ease',
-                fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
-                whiteSpace: 'nowrap',
+                backgroundColor: '#0A0A0A',
+                border: '1px solid #222222',
+                borderRadius: '6px',
+                padding: '2px',
+                gap: '2px',
               }}
-              title={isRtl ? 'Switch to English' : 'التحويل إلى اللغة العربية'}
             >
-              <span style={{ fontSize: '12px' }}>{isRtl ? '🇬🇧' : '🇸🇦'}</span>
-              <span style={{ fontSize: '0.6875rem', fontWeight: 600 }}>{isRtl ? 'English' : 'عربي'}</span>
-            </button>
+              <button
+                type="button"
+                id="btn-switch-lang-ar"
+                onClick={() => setLang('ar')}
+                style={{
+                  backgroundColor: lang === 'ar' ? '#1F1F1F' : 'transparent',
+                  color: lang === 'ar' ? '#10B981' : '#888888',
+                  fontSize: '0.6875rem',
+                  fontWeight: 600,
+                  padding: '3px 7px',
+                  borderRadius: '4px',
+                  border: lang === 'ar' ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid transparent',
+                  cursor: 'pointer',
+                  fontFamily: "'Alexandria', sans-serif",
+                  transition: 'all 120ms ease',
+                  whiteSpace: 'nowrap',
+                }}
+                title="التحويل إلى اللغة العربية"
+              >
+                🇸🇦 عربي
+              </button>
+              <button
+                type="button"
+                id="btn-switch-lang-en"
+                onClick={() => setLang('en')}
+                style={{
+                  backgroundColor: lang === 'en' ? '#1F1F1F' : 'transparent',
+                  color: lang === 'en' ? '#10B981' : '#888888',
+                  fontSize: '0.6875rem',
+                  fontWeight: 600,
+                  padding: '3px 7px',
+                  borderRadius: '4px',
+                  border: lang === 'en' ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid transparent',
+                  cursor: 'pointer',
+                  fontFamily: "'Geist', sans-serif",
+                  transition: 'all 120ms ease',
+                  whiteSpace: 'nowrap',
+                }}
+                title="Switch to English"
+              >
+                🇬🇧 English
+              </button>
+            </div>
 
             {/* Run Fleet Audit Manual Trigger Button */}
             <button
@@ -1007,8 +1039,9 @@ export default function ConsolePage() {
                 </p>
               </div>
 
-              {/* View Switcher Controls (Subdued Vercel Segmented Bar) */}
+              {/* View Switcher Controls (Subdued Vercel Segmented Bar - Hidden on Mobile < 768px) */}
               <div
+                className="cawlix-view-tabs-bar"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -1149,6 +1182,7 @@ export default function ConsolePage() {
                       {isRtl ? 'المنتجات قيد المراقبة' : 'TOTAL MONITORED SKUS'}
                     </span>
                     <span
+                      className="cawlix-kpi-help-badge"
                       title={isRtl ? 'عدد الأجهزة والمنتجات التي يجري تتبع أسعارها وفحصها لحظياً عبر المتاجر.' : 'Total monitored SKUs undergoing real-time domestic price tracking.'}
                       style={{
                         display: 'inline-flex',
@@ -1224,6 +1258,7 @@ export default function ConsolePage() {
                       {isRtl ? 'المتاجر المصرية المتصلة' : 'DOMESTIC RETAILERS MONITORED'}
                     </span>
                     <span
+                      className="cawlix-kpi-help-badge"
                       title={isRtl ? 'عدد منصات ومتاجر التجزئة المصرية الـ 12 المتصلة بالرادار حالياً.' : 'Connected domestic Egyptian retailer nodes.'}
                       style={{
                         display: 'inline-flex',
@@ -1299,6 +1334,7 @@ export default function ConsolePage() {
                       {isRtl ? 'عروض وتلاعبات تم رصدها' : 'GLITCH ANOMALIES INTERCEPTED'}
                     </span>
                     <span
+                      className="cawlix-kpi-help-badge"
                       title={isRtl ? 'هذا المؤشر يفحص إذا كان الخصم حقيقياً أم قام المتجر برفع السعر مؤخراً لإيهامك بالتخفيض، أو حدوث خطأ تسعير مفاجئ.' : 'Tracks synthetic reference price inflation, ghost markups, and zero-margin price crashes.'}
                       style={{
                         display: 'inline-flex',
@@ -1374,6 +1410,7 @@ export default function ConsolePage() {
                       {isRtl ? 'إجمالي وفر الأسعار المتاح بالسوق' : 'ESTIMATED ARBITRAGE SAVINGS'}
                     </span>
                     <span
+                      className="cawlix-kpi-help-badge"
                       title={isRtl ? 'فارق السعر ومكسب التجارة بين أرخص وأغلى متجر مصري لنفس السلعة الأصلية.' : 'Arbitrage spread between lowest and highest domestic price across identical authentic listings.'}
                       style={{
                         display: 'inline-flex',
@@ -2256,7 +2293,7 @@ export default function ConsolePage() {
                 }}
               >
                 <div
-                  className="cawlix-table-scroll-container overflow-x-auto scrollbar-none touch-pan-x"
+                  className="cawlix-desktop-table cawlix-table-scroll-container overflow-x-auto scrollbar-none touch-pan-x"
                   style={{ width: '100%', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}
                 >
                   <div style={{ minWidth: '760px' }}>
@@ -2582,6 +2619,232 @@ export default function ConsolePage() {
                   })
                 )}
                   </div>
+                </div>
+
+                {/* ── MOBILE RESPONSIVE VIEW (< 768px): Vertical Stack of Clean Native Cards ── */}
+                <div
+                  className="cawlix-mobile-cards-stack"
+                  style={{
+                    padding: '12px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px',
+                  }}
+                >
+                  {loading ? (
+                    <div style={{ padding: '36px 0', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                      <div
+                        style={{
+                          width: '18px',
+                          height: '18px',
+                          border: '2px solid rgba(255, 255, 255, 0.2)',
+                          borderTopColor: '#FFFFFF',
+                          borderRadius: '50%',
+                          animation: 'spin 1s linear infinite',
+                        }}
+                      />
+                      <span style={{ fontSize: '0.75rem', color: '#666666' }}>
+                        {isRtl ? 'جاري فحص المتاجر المصرية...' : 'Probing domestic nodes...'}
+                      </span>
+                    </div>
+                  ) : filteredItems.length === 0 ? (
+                    <div
+                      style={{
+                        padding: '36px 14px',
+                        textAlign: 'center',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: '10px',
+                      }}
+                    >
+                      <span style={{ fontSize: '0.8125rem', fontWeight: 500, color: '#EDEDED' }}>
+                        {isRtl ? 'لا توجد منتجات مراقبة مطابقة' : 'No matching tracked SKUs detected'}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setModalOpen(true)}
+                        style={{
+                          backgroundColor: '#FFFFFF',
+                          color: '#000000',
+                          fontSize: '0.6875rem',
+                          fontWeight: 600,
+                          padding: '6px 14px',
+                          borderRadius: '6px',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                        }}
+                      >
+                        {isRtl ? '+ إضافة منتج للمراقبة' : '+ Track Your First SKU'}
+                      </button>
+                    </div>
+                  ) : (
+                    filteredItems.map((item) => {
+                      const isMarkup = item.delta_pct > 0;
+                      const deltaColor = isMarkup ? '#FB7185' : '#00DF8F';
+                      const deltaSign = item.delta_pct > 0 ? `+${item.delta_pct}%` : `${item.delta_pct}%`;
+                      const isFlashing = flashingSkuIds[item.id];
+                      const isProbing = probingSkuId === item.id;
+
+                      return (
+                        <div
+                          key={`mobile-${item.id}`}
+                          onClick={() => handleRowClick(item)}
+                          style={{
+                            backgroundColor: '#0A0A0A',
+                            border: '1px solid #1F1F1F',
+                            borderRadius: '8px',
+                            padding: '12px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '8px',
+                            cursor: 'pointer',
+                            transition: 'border-color 150ms ease, background-color 150ms ease',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = '#333333';
+                            e.currentTarget.style.backgroundColor = '#0E0E0E';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = '#1F1F1F';
+                            e.currentTarget.style.backgroundColor = '#0A0A0A';
+                          }}
+                        >
+                          {/* Header: Platform Badge + Stock status dot & Last ping */}
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <span
+                                style={{
+                                  fontSize: '11px',
+                                  fontWeight: 600,
+                                  color: '#10B981',
+                                  backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                  border: '1px solid rgba(16, 185, 129, 0.25)',
+                                  padding: '2px 7px',
+                                  borderRadius: '4px',
+                                  fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace",
+                                }}
+                              >
+                                {getRetailerName(item.node, lang)}
+                              </span>
+
+                              {/* Status dot */}
+                              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                <span
+                                  style={{
+                                    width: '6px',
+                                    height: '6px',
+                                    borderRadius: '50%',
+                                    backgroundColor: item.status === 'OUT_OF_STOCK' ? '#FB7185' : '#10B981',
+                                  }}
+                                />
+                                <span style={{ fontSize: '10px', color: '#888888', fontFamily: "'Geist Mono', monospace" }}>
+                                  {item.status}
+                                </span>
+                              </span>
+                            </div>
+
+                            <span style={{ fontSize: '10px', color: '#71717A', fontFamily: "'Geist Mono', monospace" }}>
+                              {item.last_ping}
+                            </span>
+                          </div>
+
+                          {/* Body: Product Title (max 2 lines) + SKU code */}
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                fontWeight: 500,
+                                color: '#E4E4E7',
+                                lineHeight: 1.35,
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden',
+                                fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                              }}
+                            >
+                              {item.title}
+                            </div>
+                            <span style={{ fontSize: '10px', color: '#71717A', fontFamily: "'Geist Mono', monospace" }}>
+                              {item.sku}
+                            </span>
+                          </div>
+
+                          {/* Footer: Live Price + Savings/Delta Tag + Direct Touch Target */}
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              paddingTop: '8px',
+                              borderTop: '1px solid #161616',
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                              <span
+                                style={{
+                                  fontSize: '14px',
+                                  fontWeight: 700,
+                                  color: isFlashing ? '#10B981' : '#FFFFFF',
+                                  fontFamily: "'Geist Mono', monospace",
+                                  fontVariantNumeric: 'tabular-nums',
+                                }}
+                              >
+                                EGP {item.current_price_egp?.toLocaleString()}
+                              </span>
+                              <span
+                                style={{
+                                  fontSize: '10px',
+                                  fontWeight: 600,
+                                  color: deltaColor,
+                                  fontFamily: "'Geist Mono', monospace",
+                                }}
+                              >
+                                {deltaSign}
+                              </span>
+                            </div>
+
+                            {/* Direct touch target */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <button
+                                type="button"
+                                disabled={isProbing}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleReaudit(e, item);
+                                }}
+                                style={{
+                                  backgroundColor: isProbing ? '#18181B' : '#141414',
+                                  border: '1px solid #27272A',
+                                  borderRadius: '5px',
+                                  padding: '4px 9px',
+                                  color: isProbing ? '#10B981' : '#E4E4E7',
+                                  fontSize: '11px',
+                                  fontWeight: 500,
+                                  cursor: isProbing ? 'wait' : 'pointer',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                  fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                                }}
+                              >
+                                {isProbing ? (
+                                  <span>{isRtl ? 'جاري الفحص...' : 'Auditing...'}</span>
+                                ) : (
+                                  <>
+                                    <span>{isRtl ? 'إعادة الفحص' : 'Re-audit'}</span>
+                                    <span style={{ fontSize: '10px', transform: isRtl ? 'scaleX(-1)' : 'none' }}>→</span>
+                                  </>
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
               </section>
             )}

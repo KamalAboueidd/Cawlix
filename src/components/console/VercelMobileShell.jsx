@@ -96,12 +96,15 @@ export default function VercelMobileShell({
 
   // Execute live federated search across Egyptian platforms
   const handleExecuteLiveSearch = async () => {
-    if (!searchQuery.trim() || isLiveSearching) return;
+    const q = searchQuery?.trim();
+    console.log('[CAWLIX_LIVE_SEARCH] Triggered for:', q);
+    if (!q || isLiveSearching) return;
     setIsLiveSearching(true);
     setLiveSearchError('');
     try {
       // Dispatcher returns: { found, masterProduct, listings, matchedCount, message }
-      const response = await executeLiveFederatedSearch(searchQuery.trim());
+      const response = await executeLiveFederatedSearch(q);
+      console.log('[CAWLIX_LIVE_SEARCH] Results received:', response);
       if (response?.found && response.masterProduct) {
         // Auto-select and navigate to the resolved product's market matrix
         handleSelectSearchResult(response.masterProduct);
@@ -114,6 +117,7 @@ export default function VercelMobileShell({
         );
       }
     } catch (err) {
+      console.error('[CAWLIX_LIVE_SEARCH] Execution failed:', err);
       setLiveSearchError(
         isRtl
           ? 'حدث خطأ أثناء الاتصال بعقد المتاجر المصرية. حاول مجدداً.'
@@ -250,16 +254,16 @@ export default function VercelMobileShell({
           <button
             type="button"
             onClick={() => {
-              setIsSearchOpen(true);
+              setIsSearchOpen((prev) => !prev);
               setIsNavOpen(false);
             }}
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              backgroundColor: 'transparent',
+              backgroundColor: isSearchOpen ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
               border: 'none',
-              color: '#EDEDED',
+              color: isSearchOpen ? '#FFFFFF' : '#EDEDED',
               fontSize: '0.8125rem',
               fontWeight: 500,
               cursor: 'pointer',
@@ -269,12 +273,14 @@ export default function VercelMobileShell({
               fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
             }}
             onMouseEnter={(e) => (e.currentTarget.style.color = '#FFFFFF')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = '#EDEDED')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = isSearchOpen ? '#FFFFFF' : '#EDEDED')}
             aria-label="Universal Search"
           >
-            <Search size={14} color="#A1A1AA" style={{ flexShrink: 0 }} />
+            <Search size={14} color={isSearchOpen ? '#10B981' : '#A1A1AA'} style={{ flexShrink: 0 }} />
             <span style={{ letterSpacing: '-0.01em' }}>
-              {isRtl ? 'بحث / Find' : 'Find / بحث'}
+              {isSearchOpen
+                ? (isRtl ? 'إغلاق البحث' : 'Close')
+                : (isRtl ? 'بحث / Find' : 'Find / بحث')}
             </span>
           </button>
 
@@ -288,7 +294,7 @@ export default function VercelMobileShell({
             }}
           />
 
-          {/* Right Segment: Menu toggle (☰ icon / ✕ when open) */}
+          {/* Right Segment: Menu toggle (clean minimal text when open, without any '✕' emoji/icons) */}
           <button
             type="button"
             onClick={() => {
@@ -299,7 +305,7 @@ export default function VercelMobileShell({
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              backgroundColor: isNavOpen ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+              backgroundColor: isNavOpen ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
               border: 'none',
               color: isNavOpen ? '#FFFFFF' : '#EDEDED',
               fontSize: '0.8125rem',
@@ -312,9 +318,7 @@ export default function VercelMobileShell({
             }}
             aria-label={isNavOpen ? 'Close Menu' : 'Open Menu'}
           >
-            {isNavOpen ? (
-              <X size={15} color="#FB7185" style={{ flexShrink: 0 }} />
-            ) : (
+            {!isNavOpen && (
               <Menu size={15} color="#EDEDED" style={{ flexShrink: 0 }} />
             )}
             <span style={{ letterSpacing: '-0.01em' }}>
@@ -412,37 +416,18 @@ export default function VercelMobileShell({
               </div>
             </div>
 
-            {/* Close '✕' Button & Realtime Ping Dot */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {/* Realtime Ping Dot (minimal indicator without redundant top circular X) */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span
                 style={{
-                  width: '7px',
-                  height: '7px',
+                  width: '6px',
+                  height: '6px',
                   borderRadius: '50%',
                   backgroundColor: realtimeConnected ? '#00DF8F' : '#F59E0B',
-                  boxShadow: realtimeConnected ? '0 0 8px rgba(0, 223, 143, 0.8)' : 'none',
+                  boxShadow: realtimeConnected ? '0 0 6px rgba(0, 223, 143, 0.6)' : 'none',
                 }}
                 title={realtimeConnected ? 'WebSocket Online' : 'Standby'}
               />
-              <button
-                type="button"
-                onClick={() => setIsNavOpen(false)}
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  backgroundColor: '#111111',
-                  border: '1px solid #222222',
-                  color: '#EDEDED',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                }}
-                aria-label="Close Navigation"
-              >
-                <X size={16} />
-              </button>
             </div>
           </div>
 
@@ -463,12 +448,12 @@ export default function VercelMobileShell({
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '5px',
-                padding: '8px 10px',
-                borderRadius: '6px',
+                padding: '6px 10px',
+                borderRadius: '8px',
                 backgroundColor: '#0A0A0A',
                 border: '1px solid #222222',
                 color: '#EDEDED',
-                fontSize: '0.75rem',
+                fontSize: '11px',
                 fontWeight: 500,
                 cursor: 'pointer',
                 fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
@@ -490,18 +475,18 @@ export default function VercelMobileShell({
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '5px',
-                padding: '8px 10px',
-                borderRadius: '6px',
-                backgroundColor: fleetAuditCompleted ? 'rgba(16, 185, 129, 0.15)' : '#0A0A0A',
-                border: fleetAuditCompleted ? '1px solid #10B981' : '1px solid #222222',
+                padding: '6px 10px',
+                borderRadius: '8px',
+                backgroundColor: fleetAuditCompleted ? 'rgba(16, 185, 129, 0.08)' : '#0A0A0A',
+                border: fleetAuditCompleted ? '1px solid rgba(16, 185, 129, 0.25)' : '1px solid #222222',
                 color: fleetAuditCompleted ? '#10B981' : '#EDEDED',
-                fontSize: '0.75rem',
+                fontSize: '11px',
                 fontWeight: 500,
                 cursor: fleetAuditProgress ? 'not-allowed' : 'pointer',
                 fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
               }}
             >
-              <Zap size={12} color={fleetAuditCompleted ? '#10B981' : '#888888'} />
+              <Zap size={11} color={fleetAuditCompleted ? '#10B981' : '#888888'} />
               <span>{fleetAuditCompleted ? (isRtl ? 'تم الفحص ✓' : 'Audited ✓') : (isRtl ? 'فحص المتاجر' : 'Audit Fleet')}</span>
             </button>
 
@@ -517,16 +502,19 @@ export default function VercelMobileShell({
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '5px',
-                padding: '8px 10px',
-                borderRadius: '6px',
-                backgroundColor: '#FFFFFF',
-                border: 'none',
-                color: '#000000',
-                fontSize: '0.75rem',
-                fontWeight: 600,
+                padding: '6px 10px',
+                borderRadius: '8px',
+                backgroundColor: '#18181B',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                color: '#E4E4E7',
+                fontSize: '11px',
+                fontWeight: 500,
                 cursor: 'pointer',
                 fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                transition: 'background-color 150ms ease',
               }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#27272A')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#18181B')}
             >
               <span>+</span>
               <span>{isRtl ? 'إضافة منتج' : 'Add SKU'}</span>
@@ -589,27 +577,11 @@ export default function VercelMobileShell({
                       {route.badge && (
                         <span
                           style={{
-                            fontSize: '0.625rem',
-                            fontWeight: 500,
-                            padding: '2px 6px',
-                            borderRadius: '4px',
-                            backgroundColor:
-                              route.badge === 'SPREADS' || route.badge === 'فروق أسعار'
-                                ? 'rgba(16, 185, 129, 0.12)'
-                                : route.badge === '12/12'
-                                ? 'rgba(56, 189, 248, 0.12)'
-                                : route.badge === '3 HIKES' || (typeof route.badge === 'string' && route.badge.includes('تلاعب'))
-                                ? 'rgba(251, 113, 133, 0.12)'
-                                : 'rgba(255, 255, 255, 0.05)',
-                            color:
-                              route.badge === 'SPREADS' || route.badge === 'فروق أسعار'
-                                ? '#10B981'
-                                : route.badge === '12/12'
-                                ? '#38BDF8'
-                                : route.badge === '3 HIKES' || (typeof route.badge === 'string' && route.badge.includes('تلاعب'))
-                                ? '#FB7185'
-                                : '#888888',
+                            fontSize: '10px',
+                            fontWeight: 400,
+                            color: '#71717A',
                             fontFamily: "'Geist Mono', monospace",
+                            fontVariantNumeric: 'tabular-nums',
                           }}
                         >
                           {route.badge}
@@ -621,8 +593,8 @@ export default function VercelMobileShell({
               </div>
             ))}
 
-            {/* Sign Out Button in Drawer */}
-            <div style={{ paddingTop: '6px' }}>
+            {/* Sign Out Link in Drawer (clean minimal text link) */}
+            <div style={{ paddingTop: '8px' }}>
               <button
                 type="button"
                 onClick={() => {
@@ -632,57 +604,27 @@ export default function VercelMobileShell({
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '10px',
+                  gap: '8px',
                   width: '100%',
-                  padding: '10px 12px',
+                  padding: '8px 12px',
                   borderRadius: '6px',
-                  backgroundColor: 'rgba(239, 68, 68, 0.06)',
-                  border: '1px solid rgba(239, 68, 68, 0.2)',
-                  color: '#EF4444',
-                  fontSize: '0.8125rem',
-                  fontWeight: 500,
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  color: '#71717A',
+                  fontSize: '0.75rem',
+                  fontWeight: 400,
                   cursor: 'pointer',
                   textAlign: 'start',
+                  transition: 'color 120ms ease',
                   fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                 }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#FB7185')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#71717A')}
               >
-                <LogOut size={15} color="#EF4444" />
+                <LogOut size={13} style={{ flexShrink: 0 }} />
                 <span>{isRtl ? 'تسجيل الخروج من الحساب' : 'Sign Out of Account'}</span>
               </button>
             </div>
-          </div>
-
-          {/* System Status Indicator at the Very Bottom */}
-          <div
-            style={{
-              marginTop: 'auto',
-              paddingTop: '20px',
-              borderTop: '1px solid #1F1F1F',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-            }}
-          >
-            <span
-              style={{
-                width: '6px',
-                height: '6px',
-                borderRadius: '50%',
-                backgroundColor: '#00DF8F',
-                boxShadow: '0 0 8px rgba(0, 223, 143, 0.9)',
-                flexShrink: 0,
-              }}
-            />
-            <span
-              style={{
-                fontSize: '0.6875rem',
-                color: '#A1A1AA',
-                fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace",
-              }}
-            >
-              {isRtl ? 'جميع الأنظمة متصلة وتعمل بكفاءة' : 'All systems normal · 12 Nodes Online'}
-            </span>
           </div>
         </div>
       )}
@@ -712,11 +654,11 @@ export default function VercelMobileShell({
             animation: 'vercelFadeIn 180ms ease forwards',
           }}
         >
-          {/* Search Header Row with Input & Close Button */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Search Header Row with Full Width Input (No redundant cancel button) */}
+          <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
             <div
               style={{
-                flex: 1,
+                width: '100%',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
@@ -735,20 +677,24 @@ export default function VercelMobileShell({
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     handleExecuteLiveSearch();
+                  } else if (e.key === 'Escape') {
+                    setIsSearchOpen(false);
                   }
                 }}
                 placeholder={isRtl ? 'ابحث في المتاجر الـ 12 (مثل: iPhone 16 Pro, S24...)' : 'Search 12 platforms (e.g. iPhone 16 Pro, S24...)'}
+                className="cawlix-mobile-search-input"
                 style={{
+                  flex: 1,
                   width: '100%',
                   background: 'transparent',
                   border: 'none',
                   outline: 'none',
                   color: '#EDEDED',
-                  fontSize: '0.875rem',
+                  fontSize: '12px',
                   fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                 }}
               />
-              {searchQuery && (
+              {searchQuery ? (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
@@ -757,33 +703,34 @@ export default function VercelMobileShell({
                     border: 'none',
                     color: '#888888',
                     cursor: 'pointer',
-                    fontSize: '14px',
-                    padding: 0,
+                    fontSize: '12px',
+                    padding: '2px',
+                    display: 'flex',
+                    alignItems: 'center',
                   }}
+                  aria-label="Clear Search"
                 >
-                  ✕
+                  <X size={14} color="#71717A" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsSearchOpen(false)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#71717A',
+                    cursor: 'pointer',
+                    padding: '2px',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                  aria-label="Close Search"
+                >
+                  <X size={14} color="#71717A" />
                 </button>
               )}
             </div>
-
-            <button
-              type="button"
-              onClick={() => setIsSearchOpen(false)}
-              style={{
-                padding: '10px 14px',
-                borderRadius: '8px',
-                backgroundColor: '#111111',
-                border: '1px solid #222222',
-                color: '#EDEDED',
-                fontSize: '0.8125rem',
-                fontWeight: 500,
-                cursor: 'pointer',
-                fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {isRtl ? 'إلغاء' : 'Cancel'}
-            </button>
           </div>
 
           {/* Trigger Direct Live Search Button across all 12 Egyptian stores */}

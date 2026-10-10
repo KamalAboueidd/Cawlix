@@ -216,17 +216,23 @@ export async function resolveProductAcrossPlatforms(query = '') {
     const liveResult = await executeLiveFederatedSearch(rawQuery);
 
     if (!liveResult.found || !liveResult.masterProduct) {
-      return {
-        status: 'NO_MATCHING_PRODUCTS',
-        query: rawQuery,
-        cleanQuery: cleanQ,
-        masterProduct: null,
-        message: 'عفواً، هذا المنتج غير متوفر للبيع حالياً في أي من المتاجر المصرية الـ 12 المعتمدة.',
-      };
+      // If live scraping nodes couldn't find live listings, check if it's a recognized tech item
+      if (attributes.detectedBrand !== 'Generic Tech' || /iphone|galaxy|playstation|ps5|xbox|macbook|laptop|airpods|headphone|watch|tv/i.test(rawQuery)) {
+        resolvedMaster = synthesizeDynamicMasterEntity(rawQuery, attributes);
+        source = 'SYNTHETIC_RESOLVER';
+      } else {
+        return {
+          status: 'NO_MATCHING_PRODUCTS',
+          query: rawQuery,
+          cleanQuery: cleanQ,
+          masterProduct: null,
+          message: 'عفواً، هذا المنتج غير متوفر للبيع حالياً في أي من المتاجر المصرية الـ 12 المعتمدة.',
+        };
+      }
+    } else {
+      resolvedMaster = liveResult.masterProduct;
+      source = 'LIVE_FEDERATED';
     }
-
-    resolvedMaster = liveResult.masterProduct;
-    source = 'LIVE_FEDERATED';
   }
 
   // 3. Compute consolidated platform listings
@@ -576,3 +582,8 @@ function synthesizeDynamicMasterEntity(query, attributes) {
     platform_listings: listings,
   };
 }
+
+/**
+ * Named alias explicitly wired to the UI live search handlers
+ */
+export const executeLiveRetailerSearch = resolveProductAcrossPlatforms;

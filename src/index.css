@@ -606,25 +606,53 @@ code, pre, kbd, samp {
 
   .cawlix-kpi-card {
     padding: 10px 12px !important;
-    gap: 4px !important;
+    gap: 6px !important;
+    border-radius: 8px !important;
+  }
+
+  /* Ultra-minimize/hide question mark helper badge on mobile */
+  .cawlix-kpi-help-badge {
+    display: none !important;
   }
 
   .cawlix-kpi-card h3,
   .cawlix-kpi-card .kpi-label {
-    font-size: 0.625rem !important;
+    font-size: 11px !important;
+    color: #a1a1aa !important;
+    font-weight: 500 !important;
     letter-spacing: 0.02em !important;
-  }
-
-  .cawlix-kpi-card .kpi-value {
-    font-size: 1.125rem !important;
-  }
-
-  .cawlix-kpi-card .kpi-sub {
-    font-size: 0.625rem !important;
     line-height: 1.2 !important;
   }
 
-  /* Horizontal scrolling containers for tables */
+  .cawlix-kpi-card .kpi-value {
+    font-size: 1.125rem !important; /* text-lg */
+    font-weight: 700 !important;
+    font-family: var(--font-mono) !important;
+    font-variant-numeric: tabular-nums !important;
+    color: #ffffff !important;
+  }
+
+  .cawlix-kpi-card .kpi-sub {
+    font-size: 10px !important;
+    color: #71717a !important;
+    line-height: 1.25 !important;
+  }
+
+  /* Redundant Mobile Control Elimination (< 768px) */
+  .cawlix-top-search-wrap,
+  .cawlix-view-tabs-bar,
+  .cawlix-desktop-table {
+    display: none !important;
+  }
+
+  /* Mobile Native Product Cards Stack */
+  .cawlix-mobile-cards-stack {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  /* Horizontal scrolling containers for tables (fallback) */
   .cawlix-table-scroll-container {
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
@@ -647,6 +675,26 @@ code, pre, kbd, samp {
   #cawlix-main-workspace {
     padding-bottom: 84px !important;
   }
+}
+
+@media (min-width: 769px) {
+  .cawlix-mobile-cards-stack {
+    display: none !important;
+  }
+  .cawlix-top-search-wrap {
+    flex: 1;
+    max-width: 460px;
+    display: flex;
+  }
+}
+
+/* Mobile search modal input placeholder refinement */
+.cawlix-mobile-search-input {
+  font-size: 12px !important;
+}
+.cawlix-mobile-search-input::placeholder {
+  font-size: 12px !important;
+  color: #71717a !important;
 }
 
 
