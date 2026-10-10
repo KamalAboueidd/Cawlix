@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import cawlixLogo from '../../assets/ICon.png';
+import { supabase } from '../../lib/supabaseClient';
 
 interface DropdownItem {
   title: string;
@@ -74,7 +75,20 @@ export default function Navbar() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAuthenticated(!!session);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(!!session);
+    });
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -244,18 +258,29 @@ export default function Navbar() {
 
         {/* Action CTA Group */}
         <div className="navbar-action-group">
-          <a
-            href="/login"
-            className="navbar-login-link"
-          >
-            Sign In
-          </a>
-          <a
-            href="/register"
-            className="navbar-register-btn"
-          >
-            Register
-          </a>
+          {isAuthenticated ? (
+            <a
+              href="/console"
+              className="navbar-register-btn"
+            >
+              Console &rarr;
+            </a>
+          ) : (
+            <>
+              <a
+                href="/login"
+                className="navbar-login-link"
+              >
+                Sign In
+              </a>
+              <a
+                href="/register"
+                className="navbar-register-btn"
+              >
+                Register
+              </a>
+            </>
+          )}
           <a
             href="/#showcase"
             className="navbar-cta-btn"
@@ -346,13 +371,34 @@ export default function Navbar() {
 
               {/* Mobile CTA */}
               <div className="mobile-cta-wrap">
-                <a
-                  href="/register"
-                  onClick={() => setMobileOpen(false)}
-                  className="mobile-register-btn"
-                >
-                  Register Free Account
-                </a>
+                {isAuthenticated ? (
+                  <a
+                    href="/console"
+                    onClick={() => setMobileOpen(false)}
+                    className="mobile-register-btn"
+                  >
+                    Open Console &rarr;
+                  </a>
+                ) : (
+                  <>
+                    <a
+                      href="/register"
+                      onClick={() => setMobileOpen(false)}
+                      className="mobile-register-btn"
+                    >
+                      Register Free Account
+                    </a>
+                    <div style={{ textAlign: 'center', marginTop: '14px', marginBottom: '14px' }}>
+                      <a
+                        href="/login"
+                        onClick={() => setMobileOpen(false)}
+                        className="mobile-login-link"
+                      >
+                        Already have an account? Sign In &rarr;
+                      </a>
+                    </div>
+                  </>
+                )}
                 <a
                   href="/#showcase"
                   onClick={() => setMobileOpen(false)}
@@ -360,15 +406,6 @@ export default function Navbar() {
                 >
                   Launch Tracker
                 </a>
-                <div style={{ textAlign: 'center', marginTop: '14px' }}>
-                  <a
-                    href="/login"
-                    onClick={() => setMobileOpen(false)}
-                    className="mobile-login-link"
-                  >
-                    Already have an account? Sign In &rarr;
-                  </a>
-                </div>
               </div>
             </div>
           </motion.div>

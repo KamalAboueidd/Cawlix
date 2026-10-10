@@ -542,36 +542,6 @@ export default function Sidebar({
               <Smile size={14} />
             </button>
 
-            {/* Language Switcher */}
-            <button
-              type="button"
-              onClick={() => {
-                toggleLang();
-              }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '7px 10px',
-                borderRadius: '5px',
-                background: 'none',
-                border: 'none',
-                color: '#EDEDED',
-                fontSize: '0.8125rem',
-                cursor: 'pointer',
-                textAlign: 'start',
-                fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#141414';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-              }}
-            >
-              <span>{isRtl ? 'اللغة: عربي 🇸🇦' : 'Language: English 🇬🇧'}</span>
-              <Languages size={14} color="#10B981" />
-            </button>
 
             {/* Theme Toggle */}
             <div

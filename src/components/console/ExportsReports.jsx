@@ -1,8 +1,6 @@
 import { useState, useMemo } from 'react';
 import {
   Download,
-  Printer,
-  FileSpreadsheet,
   CheckCircle2,
   AlertTriangle,
   Clock,
@@ -474,104 +472,6 @@ export default function ExportsReports({ onShowToast = null }) {
             </p>
           </div>
 
-          {/* Action Export Buttons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <button
-              onClick={handleExportCsv}
-              disabled={isExportingCsv}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '8px 14px',
-                background: '#111111',
-                border: '1px solid #2A2A2A',
-                borderRadius: '6px',
-                color: '#EDEDED',
-                fontSize: '0.8125rem',
-                fontWeight: 500,
-                cursor: isExportingCsv ? 'not-allowed' : 'pointer',
-                fontFamily: "'Geist', sans-serif",
-                transition: 'all 0.15s ease',
-              }}
-              onMouseEnter={(e) => {
-                if (!isExportingCsv) {
-                  e.currentTarget.style.borderColor = '#10B981';
-                  e.currentTarget.style.color = '#10B981';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isExportingCsv) {
-                  e.currentTarget.style.borderColor = '#2A2A2A';
-                  e.currentTarget.style.color = '#EDEDED';
-                }
-              }}
-            >
-              <FileSpreadsheet size={15} color="#10B981" />
-              <span>{isExportingCsv ? (lang === 'ar' ? 'جاري إنشاء CSV...' : 'Generating CSV...') : (lang === 'ar' ? 'تصدير المنتجات المراقبة (CSV)' : 'Export Monitored SKUs (CSV)')}</span>
-            </button>
-
-            <button
-              onClick={handleExportJson}
-              disabled={isExportingJson}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '8px 14px',
-                background: '#111111',
-                border: '1px solid #2A2A2A',
-                borderRadius: '6px',
-                color: '#EDEDED',
-                fontSize: '0.8125rem',
-                fontWeight: 500,
-                cursor: isExportingJson ? 'not-allowed' : 'pointer',
-                fontFamily: "'Geist', sans-serif",
-                transition: 'all 0.15s ease',
-              }}
-              onMouseEnter={(e) => {
-                if (!isExportingJson) {
-                  e.currentTarget.style.borderColor = '#EDEDED';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isExportingJson) {
-                  e.currentTarget.style.borderColor = '#2A2A2A';
-                }
-              }}
-            >
-              <Download size={15} color="#EDEDED" />
-              <span>{isExportingJson ? (lang === 'ar' ? 'جاري التصدير...' : 'Exporting...') : (lang === 'ar' ? 'تصدير سجل فروق الأسعار (JSON)' : 'Export Arbitrage Log (JSON)')}</span>
-            </button>
-
-            <button
-              onClick={handlePrintAuditReport}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '8px 14px',
-                background: '#EDEDED',
-                border: '1px solid #FFFFFF',
-                borderRadius: '6px',
-                color: '#000000',
-                fontSize: '0.8125rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                fontFamily: "'Geist', sans-serif",
-                transition: 'all 0.15s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#FFFFFF';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = '#EDEDED';
-              }}
-            >
-              <Printer size={15} color="#000000" />
-              <span>{lang === 'ar' ? 'طباعة تقرير الفحص' : 'Print Audit Report'}</span>
-            </button>
-          </div>
         </div>
 
         {/* Filter Toolbar for Exports */}
@@ -677,10 +577,6 @@ export default function ExportsReports({ onShowToast = null }) {
                   fontFamily: "'Geist Mono', monospace",
                   textTransform: 'uppercase',
                   color: '#10B981',
-                  background: 'rgba(16, 185, 129, 0.1)',
-                  padding: '2px 8px',
-                  borderRadius: '4px',
-                  border: '1px solid rgba(16, 185, 129, 0.2)',
                   fontWeight: 600,
                 }}
               >

@@ -171,11 +171,14 @@ const DIRECT_LINKS = [
 
     <!-- Action CTA Group -->
     <div class="cta-group">
-      <a href="/login" class="cta-login">
+      <a href="/login" class="cta-login cta-unauth-only">
         Sign In
       </a>
-      <a href="/register" class="cta-register">
+      <a href="/register" class="cta-register cta-unauth-only">
         Register
+      </a>
+      <a href="/console" class="cta-register cta-auth-only" style="display: none;">
+        Console &rarr;
       </a>
       <a href="/#showcase" class="cta-launch">
         Launch Tracker
@@ -249,13 +252,16 @@ const DIRECT_LINKS = [
 
       <!-- Mobile CTA -->
       <div class="mobile-cta-wrap">
-        <a href="/register" class="mobile-register-btn">
+        <a href="/register" class="mobile-register-btn mobile-unauth-only">
           Register Free Account
+        </a>
+        <a href="/console" class="mobile-register-btn mobile-auth-only" style="display: none;">
+          Open Console &rarr;
         </a>
         <a href="/#showcase" class="mobile-launch-btn">
           Launch Tracker
         </a>
-        <div style="text-align: center; margin-top: 14px;">
+        <div class="mobile-unauth-only" style="text-align: center; margin-top: 14px;">
           <a href="/login" class="mobile-login-link">
             Already have an account? Sign In &rarr;
           </a>
@@ -747,6 +753,8 @@ const DIRECT_LINKS = [
 </style>
 
 <script>
+  import { supabase } from '../../lib/supabaseClient';
+
   // Mobile drawer toggle logic
   const toggleBtn = document.getElementById('astro-mobile-toggle-btn');
   const drawer = document.getElementById('astro-mobile-drawer');
@@ -799,4 +807,37 @@ const DIRECT_LINKS = [
   }
   handleNavbarScroll();
   window.addEventListener('scroll', handleNavbarScroll, { passive: true });
+
+  // Dynamic Auth State update
+  function updateAuthNav(session: any) {
+    const isAuthed = !!session;
+    const unauthCta = document.querySelectorAll('.cta-unauth-only');
+    const authCta = document.querySelectorAll('.cta-auth-only');
+    const unauthMobile = document.querySelectorAll('.mobile-unauth-only');
+    const authMobile = document.querySelectorAll('.mobile-auth-only');
+
+    unauthCta.forEach((el) => {
+      (el as HTMLElement).style.display = isAuthed ? 'none' : '';
+    });
+    authCta.forEach((el) => {
+      (el as HTMLElement).style.display = isAuthed ? 'inline-flex' : 'none';
+    });
+    unauthMobile.forEach((el) => {
+      (el as HTMLElement).style.display = isAuthed ? 'none' : '';
+    });
+    authMobile.forEach((el) => {
+      (el as HTMLElement).style.display = isAuthed ? 'inline-flex' : 'none';
+    });
+  }
+
+  try {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      updateAuthNav(session);
+    });
+    supabase.auth.onAuthStateChange((_event, session) => {
+      updateAuthNav(session);
+    });
+  } catch (e) {
+    console.error('Navbar auth check failed', e);
+  }
 </script>

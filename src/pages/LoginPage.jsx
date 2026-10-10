@@ -131,12 +131,12 @@ export default function LoginPage() {
             setErrorMsg(error.message);
           }
         } else if (data?.session) {
-          window.location.href = getReturnTo() === '/console' ? '/dashboard' : getReturnTo();
+          window.location.href = '/console';
         }
       } else {
         const { error } = await supabase.auth.signInWithOtp({
           email: cleanEmail,
-          options: { emailRedirectTo: `${window.location.origin}/dashboard` },
+          options: { emailRedirectTo: `${window.location.origin}/console` },
         });
         if (error) {
           setErrorMsg(error.message);

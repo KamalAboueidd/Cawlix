@@ -431,37 +431,14 @@ export default function VercelMobileShell({
             </div>
           </div>
 
-          {/* Quick Actions Strip (Language Switcher + Fleet Audit + Add SKU) */}
+          {/* Quick Actions Strip (Fleet Audit + Add SKU) */}
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: '1fr 1fr 1fr',
+              gridTemplateColumns: '1fr 1fr',
               gap: '8px',
             }}
           >
-            {/* Language Switch */}
-            <button
-              type="button"
-              onClick={toggleLang}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '5px',
-                padding: '6px 10px',
-                borderRadius: '8px',
-                backgroundColor: '#0A0A0A',
-                border: '1px solid #222222',
-                color: '#EDEDED',
-                fontSize: '11px',
-                fontWeight: 500,
-                cursor: 'pointer',
-                fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
-              }}
-            >
-              <span>{isRtl ? '🇬🇧' : '🇸🇦'}</span>
-              <span>{isRtl ? 'English' : 'عربي'}</span>
-            </button>
 
             {/* Run Fleet Audit */}
             <button

@@ -21,12 +21,12 @@ import {
   AlertTriangle,
   ExternalLink,
   Layers,
-  Sparkles,
   CheckCircle2,
   Search,
   RefreshCw,
   BookmarkCheck,
   HelpCircle,
+  ShieldCheck,
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { addToUserWatchlist } from '../../services/dataWiringService.js';
@@ -587,11 +587,7 @@ export default function MultiPlatformIntelligence({
                 style={{
                   fontSize: '0.625rem',
                   fontWeight: 600,
-                  backgroundColor: 'rgba(16, 185, 129, 0.15)',
                   color: '#10B981',
-                  border: '1px solid rgba(16, 185, 129, 0.3)',
-                  padding: '2px 6px',
-                  borderRadius: '4px',
                   fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                   whiteSpace: 'nowrap',
                 }}
@@ -2066,11 +2062,8 @@ export default function MultiPlatformIntelligence({
               <span
                 style={{
                   fontSize: '0.6875rem',
+                  fontWeight: 600,
                   color: '#10B981',
-                  backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                  border: '1px solid rgba(16, 185, 129, 0.25)',
-                  padding: '2px 8px',
-                  borderRadius: '4px',
                   fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                 }}
               >
@@ -2091,7 +2084,7 @@ export default function MultiPlatformIntelligence({
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Sparkles size={16} color="#10B981" />
+                <ShieldCheck size={16} color="#10B981" />
                 <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#EDEDED', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
                   {isRtl ? 'ملخص الخامات وتفاصيل الهيكل' : 'Verified Material Summary'}
                 </span>

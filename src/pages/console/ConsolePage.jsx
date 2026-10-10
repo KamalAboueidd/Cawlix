@@ -2025,7 +2025,77 @@ export default function ConsolePage() {
                   </div>
                 </div>
 
-                {/* 2. Active Session Information (Flat List) */}
+                {/* 2. Language & Interface Preferences */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', paddingTop: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', paddingBottom: '12px', borderBottom: '1px solid #191919' }}>
+                    <div>
+                      <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#EDEDED', margin: 0, fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
+                        {isRtl ? 'لغة واجهة المنصة' : 'Platform Language'}
+                      </h3>
+                      <p style={{ fontSize: '0.75rem', color: '#888888', marginTop: '3px', marginBottom: 0, fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
+                        {isRtl ? 'اختر لغة عرض الواجهة واتجاه النصوص المفضل لمنصة كاوكليكس.' : 'Select display language and typography layout preference for Cawlix.'}
+                      </p>
+                    </div>
+                    <span
+                      style={{
+                        fontSize: '0.6875rem',
+                        fontFamily: "'Geist Mono', monospace",
+                        color: '#10B981',
+                      }}
+                    >
+                      {lang === 'ar' ? 'العربية (RTL)' : 'ENGLISH (LTR)'}
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                    <button
+                      type="button"
+                      onClick={() => setLang('ar')}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '8px 16px',
+                        fontSize: '0.8125rem',
+                        fontWeight: lang === 'ar' ? 600 : 400,
+                        backgroundColor: lang === 'ar' ? '#18181B' : '#09090B',
+                        border: lang === 'ar' ? '1px solid #3F3F46' : '1px solid #27272A',
+                        borderRadius: '6px',
+                        color: lang === 'ar' ? '#EDEDED' : '#A1A1AA',
+                        cursor: 'pointer',
+                        fontFamily: "'Cairo', sans-serif",
+                        transition: 'all 120ms ease',
+                      }}
+                    >
+                      <span>🇸🇦</span>
+                      <span>العربية (واجهة عربية كاملة)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLang('en')}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '8px 16px',
+                        fontSize: '0.8125rem',
+                        fontWeight: lang === 'en' ? 600 : 400,
+                        backgroundColor: lang === 'en' ? '#18181B' : '#09090B',
+                        border: lang === 'en' ? '1px solid #3F3F46' : '1px solid #27272A',
+                        borderRadius: '6px',
+                        color: lang === 'en' ? '#EDEDED' : '#A1A1AA',
+                        cursor: 'pointer',
+                        fontFamily: "'Geist', sans-serif",
+                        transition: 'all 120ms ease',
+                      }}
+                    >
+                      <span>🇬🇧</span>
+                      <span>English (International)</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* 3. Active Session Information (Flat List) */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '10px' }}>
                   <h3 style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#EDEDED', margin: 0, fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
                     {isRtl ? 'بيانات الجلسة النشطة' : 'ACTIVE SESSION'}

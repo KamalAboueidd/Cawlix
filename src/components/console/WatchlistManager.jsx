@@ -314,9 +314,9 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
                             type="button"
                             onClick={() => handleToggleRule(item.id, 'emailDispatch')}
                             style={{
-                              backgroundColor: item.emailDispatch ? '#161616' : '#0A0A0A',
-                              border: item.emailDispatch ? '1px solid #10B981' : '1px solid #222222',
-                              color: item.emailDispatch ? '#10B981' : '#555555',
+                              backgroundColor: item.emailDispatch ? 'rgba(16, 185, 129, 0.12)' : 'rgba(255, 255, 255, 0.03)',
+                              border: '1px solid #222222',
+                              color: item.emailDispatch ? '#10B981' : '#71717A',
                               padding: '3px 7px',
                               borderRadius: '4px',
                               cursor: 'pointer',
@@ -325,6 +325,7 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
                               gap: '4px',
                               fontSize: '0.6875rem',
                               fontFamily: "'Geist Mono', monospace",
+                              transition: 'all 120ms ease',
                             }}
                             title="Brevo Email Webhook Dispatch"
                           >
@@ -337,9 +338,9 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
                             type="button"
                             onClick={() => handleToggleRule(item.id, 'inAppAlert')}
                             style={{
-                              backgroundColor: item.inAppAlert ? '#161616' : '#0A0A0A',
-                              border: item.inAppAlert ? '1px solid #10B981' : '1px solid #222222',
-                              color: item.inAppAlert ? '#10B981' : '#555555',
+                              backgroundColor: item.inAppAlert ? 'rgba(16, 185, 129, 0.12)' : 'rgba(255, 255, 255, 0.03)',
+                              border: '1px solid #222222',
+                              color: item.inAppAlert ? '#10B981' : '#71717A',
                               padding: '3px 7px',
                               borderRadius: '4px',
                               cursor: 'pointer',
@@ -348,6 +349,7 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
                               gap: '4px',
                               fontSize: '0.6875rem',
                               fontFamily: "'Geist Mono', monospace",
+                              transition: 'all 120ms ease',
                             }}
                             title="Console Bell Notification"
                           >
@@ -360,9 +362,9 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
                             type="button"
                             onClick={() => handleToggleRule(item.id, 'flashCrashAlert')}
                             style={{
-                              backgroundColor: item.flashCrashAlert ? '#161616' : '#0A0A0A',
-                              border: item.flashCrashAlert ? '1px solid #FB7185' : '1px solid #222222',
-                              color: item.flashCrashAlert ? '#FB7185' : '#555555',
+                              backgroundColor: item.flashCrashAlert ? 'rgba(251, 113, 133, 0.12)' : 'rgba(255, 255, 255, 0.03)',
+                              border: '1px solid #222222',
+                              color: item.flashCrashAlert ? '#FB7185' : '#71717A',
                               padding: '3px 7px',
                               borderRadius: '4px',
                               cursor: 'pointer',
@@ -371,6 +373,7 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
                               gap: '4px',
                               fontSize: '0.6875rem',
                               fontFamily: "'Geist Mono', monospace",
+                              transition: 'all 120ms ease',
                             }}
                             title="Flash Crash (>15%) Emergency Intercept"
                           >
