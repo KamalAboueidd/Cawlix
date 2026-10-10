@@ -178,16 +178,20 @@ export default function TelemetryControlDashboard({
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
   }, [isOpen]);
 
-  // 4. Click outside to close dropdown
+  // 4. Lock body scroll and auto-focus search input when modal opens
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (containerRef.current && !containerRef.current.contains(e.target)) {
-        setIsOpen(false);
-      }
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 60);
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [isOpen]);
 
   // 5. Build Flat Navigable Items List for Arrow Keys
   const navigableItems = [];
@@ -254,132 +258,370 @@ export default function TelemetryControlDashboard({
         maxWidth: '460px',
       }}
     >
-      {/* Search Input Bar */}
-      <div
+      {/* Search Trigger Bar in Navbar */}
+      <button
+        type="button"
+        onClick={() => {
+          setIsOpen(true);
+        }}
         style={{
+          width: '100%',
+          height: '34px',
+          backgroundColor: '#000000',
+          border: '1px solid #1F1F1F',
+          borderRadius: '6px',
+          padding: '0 10px',
           display: 'flex',
           alignItems: 'center',
-          backgroundColor: '#000000',
-          border: isOpen ? '1px solid rgba(255, 255, 255, 0.25)' : '1px solid #1F1F1F',
-          boxShadow: isOpen ? '0 0 0 1px rgba(255, 255, 255, 0.15)' : 'none',
-          borderRadius: '6px',
-          height: '34px',
-          padding: '0 10px',
-          gap: '8px',
-          transition: 'all 150ms ease',
+          justifyContent: 'space-between',
+          cursor: 'pointer',
+          color: '#888888',
+          transition: 'all 120ms ease',
+          outline: 'none',
         }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+          e.currentTarget.style.backgroundColor = '#0A0A0A';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = '#1F1F1F';
+          e.currentTarget.style.backgroundColor = '#000000';
+        }}
+        aria-label="Universal Search"
       >
-        {isLiveSearching ? (
-          <Loader2
-            size={14}
-            color="#10B981"
-            className="animate-spin"
-            style={{ animation: 'spin 1s linear infinite', flexShrink: 0 }}
-          />
-        ) : (
-          <Search size={14} color="#666666" style={{ flexShrink: 0 }} />
-        )}
-
-        <input
-          ref={inputRef}
-          id="telemetry-search-input"
-          type="text"
-          value={query}
-          onFocus={() => setIsOpen(true)}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            setIsOpen(true);
-          }}
-          onKeyDown={handleKeyDown}
-          placeholder={placeholder || t('nav.searchPlaceholder')}
-          style={{
-            flex: 1,
-            background: 'transparent',
-            border: 'none',
-            color: '#EDEDED',
-            fontSize: '0.8125rem',
-            fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
-            outline: 'none',
-          }}
-        />
-
-        {query ? (
-          <button
-            type="button"
-            onClick={() => {
-              setQuery('');
-              setDebouncedQuery('');
-              setLocalResults([]);
-              setResolvedResult(null);
-            }}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+          <Search size={14} color="#71717A" style={{ flexShrink: 0 }} />
+          <span
             style={{
-              background: 'none',
-              border: 'none',
-              color: '#666666',
-              cursor: 'pointer',
-              fontSize: '14px',
-              padding: '0 2px',
-              display: 'flex',
-              alignItems: 'center',
+              fontSize: '0.8125rem',
+              color: '#71717A',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
             }}
           >
-            &times;
-          </button>
-        ) : (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <kbd
-              style={{
-                fontSize: '0.6875rem',
-                fontFamily: "'Geist Mono', monospace",
-                color: '#666666',
-                backgroundColor: '#0A0A0A',
-                border: '1px solid #262626',
-                borderRadius: '4px',
-                padding: '1px 5px',
-                lineHeight: '1.4',
-              }}
-            >
-              ⌘K
-            </kbd>
-            <kbd
-              style={{
-                fontSize: '0.6875rem',
-                fontFamily: "'Geist Mono', monospace",
-                color: '#666666',
-                backgroundColor: '#0A0A0A',
-                border: '1px solid #262626',
-                borderRadius: '4px',
-                padding: '1px 5px',
-                lineHeight: '1.4',
-              }}
-            >
-              /
-            </kbd>
-          </div>
-        )}
-      </div>
+            {placeholder || (isRtl ? 'ابحث في المتاجر الـ 12 أو اضغط ⌘K...' : 'Search 12 stores or press ⌘K...')}
+          </span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+          <kbd
+            style={{
+              fontSize: '0.6875rem',
+              color: '#666666',
+              backgroundColor: '#0D0D0D',
+              border: '1px solid #222222',
+              borderRadius: '4px',
+              padding: '1px 5px',
+              fontFamily: "'Geist Mono', monospace",
+            }}
+          >
+            ⌘K
+          </kbd>
+          <kbd
+            style={{
+              fontSize: '0.6875rem',
+              color: '#666666',
+              backgroundColor: '#0D0D0D',
+              border: '1px solid #222222',
+              borderRadius: '4px',
+              padding: '1px 5px',
+              fontFamily: "'Geist Mono', monospace",
+            }}
+          >
+            /
+          </kbd>
+        </div>
+      </button>
 
-      {/* Institutional Pitch-Black Dropdown Palette */}
-      {isOpen && (query.trim().length > 0 || isLiveSearching || resolvedResult) && (
+      {/* Central Spotlight Command Palette Modal */}
+      {isOpen && (
         <div
           style={{
-            position: 'absolute',
-            top: 'calc(100% + 6px)',
-            left: 0,
-            right: 0,
-            backgroundColor: '#000000',
-            border: '1px solid rgba(255, 255, 255, 0.12)',
-            borderRadius: '8px',
-            boxShadow: '0 20px 48px -8px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.05)',
-            zIndex: 9999,
-            maxHeight: '480px',
-            overflowY: 'auto',
-            padding: '8px',
+            position: 'fixed',
+            inset: 0,
+            zIndex: 99999,
+            backgroundColor: 'rgba(0, 0, 0, 0.78)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
             display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+            paddingTop: 'clamp(36px, 10vh, 96px)',
+            paddingLeft: '16px',
+            paddingRight: '16px',
+            paddingBottom: '24px',
+            overflowY: 'auto',
+            animation: 'cawlixFadeIn 150ms ease forwards',
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setIsOpen(false);
+            }
           }}
         >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '640px',
+              backgroundColor: '#0A0A0A',
+              border: '1px solid rgba(255, 255, 255, 0.16)',
+              borderRadius: '12px',
+              boxShadow: '0 25px 65px -15px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.06)',
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+              animation: 'cawlixSlideDown 150ms ease forwards',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Search Input Header */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                height: '52px',
+                padding: '0 16px',
+                borderBottom: '1px solid #1C1C1C',
+                gap: '12px',
+                backgroundColor: '#0E0E0E',
+              }}
+            >
+              {isLiveSearching ? (
+                <Loader2 size={18} color="#10B981" style={{ animation: 'spin 1s linear infinite', flexShrink: 0 }} />
+              ) : (
+                <Search size={18} color="#10B981" style={{ flexShrink: 0 }} />
+              )}
+
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={placeholder || (isRtl ? 'ابحث باسم المنتج، الموديل، الباركود، أو المتجر... (مثال: iPhone, S24)' : 'Search by product title, model, barcode, or store... (e.g. iPhone, S24)')}
+                style={{
+                  flex: 1,
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#EDEDED',
+                  fontSize: '0.9375rem',
+                  outline: 'none',
+                  fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                }}
+              />
+
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQuery('');
+                    setDebouncedQuery('');
+                    setLocalResults([]);
+                    setResolvedResult(null);
+                  }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#71717A',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    padding: '2px 4px',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                  aria-label="Clear query"
+                >
+                  ✕
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                style={{
+                  fontSize: '0.6875rem',
+                  color: '#888888',
+                  backgroundColor: '#161616',
+                  border: '1px solid #262626',
+                  borderRadius: '4px',
+                  padding: '2px 6px',
+                  cursor: 'pointer',
+                  fontFamily: "'Geist Mono', monospace",
+                }}
+              >
+                ESC
+              </button>
+            </div>
+
+            {/* Modal Scrollable Body */}
+            <div
+              style={{
+                maxHeight: '480px',
+                overflowY: 'auto',
+                padding: '12px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px',
+              }}
+            >
+              {/* State 1: When Query is Empty - Show Recommendations & Popular Brands */}
+              {!query.trim() && !isLiveSearching && !resolvedResult && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  {/* Quick Brand & Category Chips */}
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '0.6875rem',
+                        color: '#71717A',
+                        marginBottom: '8px',
+                        fontWeight: 500,
+                        fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                      }}
+                    >
+                      {isRtl ? 'تصنيفات وعلامات بحث شائعة:' : 'Popular Brands & Categories:'}
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                      {['Apple', 'Samsung', 'Sony', 'PlayStation', 'Dell', isRtl ? 'لابتوبات' : 'Laptops', isRtl ? 'شاشات' : 'OLED TV'].map((tag) => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => setQuery(tag)}
+                          style={{
+                            backgroundColor: '#141414',
+                            border: '1px solid #222222',
+                            borderRadius: '6px',
+                            padding: '4px 10px',
+                            fontSize: '0.75rem',
+                            color: '#A1A1AA',
+                            cursor: 'pointer',
+                            transition: 'all 120ms ease',
+                            fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.color = '#EDEDED';
+                            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.color = '#A1A1AA';
+                            e.currentTarget.style.borderColor = '#222222';
+                          }}
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Recommended Products in System */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <Sparkles size={12} color="#10B981" />
+                        <span
+                          style={{
+                            fontSize: '0.6875rem',
+                            fontWeight: 600,
+                            color: '#A1A1AA',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.04em',
+                            fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace",
+                          }}
+                        >
+                          {isRtl ? 'المنتجات الأكثر رصداً في الرادار' : 'TRENDING IN CAWLIX RADAR'}
+                        </span>
+                      </div>
+                      <span style={{ fontSize: '0.625rem', color: '#71717A', fontFamily: "'Geist Mono', monospace" }}>
+                        {isRtl ? '12 متجر نشط' : '12 Nodes Active'}
+                      </span>
+                    </div>
+
+                    {SEEDED_MASTER_PRODUCTS.slice(0, 5).map((recItem) => {
+                      const validListings = (recItem.platform_listings || []).filter((l) => l.current_price > 0);
+                      const cheapestListing = validListings.length
+                        ? [...validListings].sort((a, b) => a.current_price - b.current_price)[0]
+                        : null;
+
+                      return (
+                        <div
+                          key={`rec-${recItem.id}`}
+                          onClick={() => handleSelectLocalProduct(recItem)}
+                          style={{
+                            backgroundColor: '#0E0E0E',
+                            border: '1px solid #1C1C1C',
+                            borderRadius: '8px',
+                            padding: '10px 12px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: '12px',
+                            transition: 'all 120ms ease',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = '#333333';
+                            e.currentTarget.style.backgroundColor = '#141414';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = '#1C1C1C';
+                            e.currentTarget.style.backgroundColor = '#0E0E0E';
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                            <span
+                              style={{
+                                fontSize: '0.625rem',
+                                fontWeight: 600,
+                                color: '#888888',
+                                backgroundColor: '#161616',
+                                border: '1px solid #262626',
+                                borderRadius: '4px',
+                                padding: '2px 6px',
+                                fontFamily: "'Geist Mono', monospace",
+                                flexShrink: 0,
+                              }}
+                            >
+                              {recItem.brand}
+                            </span>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0 }}>
+                              <span
+                                style={{
+                                  fontSize: '0.8125rem',
+                                  fontWeight: 500,
+                                  color: '#EDEDED',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                                }}
+                              >
+                                {recItem.title}
+                              </span>
+                              <span style={{ fontSize: '0.6875rem', color: '#71717A', fontFamily: "'Geist Mono', monospace" }}>
+                                {recItem.model}
+                              </span>
+                            </div>
+                          </div>
+
+                          {cheapestListing && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                              <div style={{ textAlign: isRtl ? 'left' : 'right' }}>
+                                <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
+                                  {formatCurrency(cheapestListing.current_price)}
+                                </span>
+                                <div style={{ fontSize: '0.625rem', color: '#71717A', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                                  {getRetailerName(cheapestListing.platform_id, lang)}
+                                </div>
+                              </div>
+                              <ArrowRight size={13} color="#666666" style={{ transform: isRtl ? 'scaleX(-1)' : 'none' }} />
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
           {/* Status Header */}
           <div
             style={{
@@ -1136,6 +1378,7 @@ export default function TelemetryControlDashboard({
               </span>
             </button>
           )}
+          </div>
 
           {/* Footer Controls */}
           <div
@@ -1160,6 +1403,7 @@ export default function TelemetryControlDashboard({
             <span>{isRtl ? '12 متجر مصري' : '12 Egyptian Nodes'}</span>
           </div>
         </div>
+      </div>
       )}
     </div>
   );
