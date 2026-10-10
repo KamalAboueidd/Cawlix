@@ -678,6 +678,9 @@ code, pre, kbd, samp {
 }
 
 @media (min-width: 769px) {
+  .cawlix-kpi-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
   .cawlix-mobile-cards-stack {
     display: none !important;
   }

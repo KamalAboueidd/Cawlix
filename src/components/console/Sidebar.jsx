@@ -288,17 +288,9 @@ export default function Sidebar({
                         style={{
                           fontSize: '0.625rem',
                           fontWeight: 500,
-                          padding: '1px 5px',
-                          borderRadius: '3px',
+                          padding: '0 2px',
                           border: 'none',
-                          backgroundColor:
-                            route.badge === 'SPREADS' || route.badge === 'فروق أسعار'
-                              ? 'rgba(16, 185, 129, 0.1)'
-                              : route.badge === '12/12'
-                              ? 'rgba(56, 189, 248, 0.1)'
-                              : route.badge === '3 HIKES' || (typeof route.badge === 'string' && route.badge.includes('تلاعب'))
-                              ? 'rgba(251, 113, 133, 0.1)'
-                              : 'transparent',
+                          backgroundColor: 'transparent',
                           color:
                             route.badge === 'SPREADS' || route.badge === 'فروق أسعار'
                               ? '#10B981'
@@ -306,8 +298,9 @@ export default function Sidebar({
                               ? '#38BDF8'
                               : route.badge === '3 HIKES' || (typeof route.badge === 'string' && route.badge.includes('تلاعب'))
                               ? '#FB7185'
-                              : '#666666',
+                              : '#71717A',
                           fontFamily: "'Geist Mono', monospace",
+                          fontVariantNumeric: 'tabular-nums',
                         }}
                       >
                         {route.badge}

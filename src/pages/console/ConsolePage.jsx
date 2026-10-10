@@ -1038,120 +1038,16 @@ export default function ConsolePage() {
                   {activeTab === 'settings' && (isRtl ? 'أمان الحساب، إعدادات التنبيهات والبريد الإلكتروني، وبيانات الربط.' : 'Account security, webhook configurations, and node credentials.')}
                 </p>
               </div>
-
-              {/* View Switcher Controls (Subdued Vercel Segmented Bar - Hidden on Mobile < 768px) */}
-              <div
-                className="cawlix-view-tabs-bar"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  backgroundColor: '#000000',
-                  borderRadius: '6px',
-                  border: '1px solid #1F1F1F',
-                  padding: '2px',
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => handleTabChange('overview')}
-                  style={{
-                    backgroundColor: activeTab === 'overview' ? '#161616' : 'transparent',
-                    color: activeTab === 'overview' ? '#EDEDED' : '#888888',
-                    fontSize: '0.6875rem',
-                    fontWeight: 500,
-                    padding: '3px 8px',
-                    borderRadius: '4px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    transition: 'all 120ms ease',
-                    fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
-                  }}
-                >
-                  {isRtl ? 'نظرة عامة' : 'Overview'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleTabChange('intelligence')}
-                  style={{
-                    backgroundColor: activeTab === 'intelligence' ? '#161616' : 'transparent',
-                    color: activeTab === 'intelligence' ? '#EDEDED' : '#888888',
-                    fontSize: '0.6875rem',
-                    fontWeight: 500,
-                    padding: '3px 8px',
-                    borderRadius: '4px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    transition: 'all 120ms ease',
-                    fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
-                  }}
-                >
-                  {isRtl ? 'مصفوفة المنصات الـ 12' : 'Market Matrix'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleTabChange('analytics')}
-                  style={{
-                    backgroundColor: activeTab === 'analytics' ? '#161616' : 'transparent',
-                    color: activeTab === 'analytics' ? '#EDEDED' : '#888888',
-                    fontSize: '0.6875rem',
-                    fontWeight: 500,
-                    padding: '3px 8px',
-                    borderRadius: '4px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    transition: 'all 120ms ease',
-                    fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
-                  }}
-                >
-                  {isRtl ? 'التحليلات' : 'Analytics'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleTabChange('tracker')}
-                  style={{
-                    backgroundColor: activeTab === 'tracker' ? '#161616' : 'transparent',
-                    color: activeTab === 'tracker' ? '#EDEDED' : '#888888',
-                    fontSize: '0.6875rem',
-                    fontWeight: 500,
-                    padding: '3px 8px',
-                    borderRadius: '4px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    transition: 'all 120ms ease',
-                    fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
-                  }}
-                >
-                  {isRtl ? 'قائمة التتبع' : 'Tracker'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleTabChange('logs')}
-                  style={{
-                    backgroundColor: activeTab === 'logs' ? '#161616' : 'transparent',
-                    color: activeTab === 'logs' ? '#EDEDED' : '#888888',
-                    fontSize: '0.6875rem',
-                    fontWeight: 500,
-                    padding: '3px 8px',
-                    borderRadius: '4px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    transition: 'all 120ms ease',
-                    fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
-                  }}
-                >
-                  {isRtl ? 'رادار العروض' : 'Glitch Radar'}
-                </button>
-              </div>
             </div>
 
-            {/* ── 4. METRIC CARDS (Vercel #000000 + 1px solid #1F1F1F) ── */}
+            {/* ── 4. METRIC CARDS (4 Columns Side-by-Side on Desktop, Tighter Dimensions, Clean Borderless ?) ── */}
             {(activeTab === 'overview' || activeTab === 'tracker') && (
               <section
                 className="cawlix-kpi-grid"
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-                  gap: '14px',
+                  gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+                  gap: '12px',
                 }}
               >
                 {/* Metric 1 */}
@@ -1161,10 +1057,10 @@ export default function ConsolePage() {
                     backgroundColor: '#000000',
                     border: '1px solid #1F1F1F',
                     borderRadius: '8px',
-                    padding: '18px',
+                    padding: '12px 14px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '8px',
+                    gap: '6px',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1174,7 +1070,7 @@ export default function ConsolePage() {
                         fontSize: '0.6875rem',
                         fontWeight: 600,
                         textTransform: 'uppercase',
-                        letterSpacing: '0.05em',
+                        letterSpacing: '0.04em',
                         color: '#888888',
                         fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                       }}
@@ -1188,14 +1084,14 @@ export default function ConsolePage() {
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        width: '16px',
-                        height: '16px',
-                        borderRadius: '50%',
-                        backgroundColor: '#111111',
-                        border: '1px solid #262626',
-                        color: '#888888',
-                        fontSize: '0.625rem',
+                        color: '#71717A',
+                        fontSize: '0.6875rem',
+                        fontWeight: 500,
                         cursor: 'help',
+                        background: 'transparent',
+                        border: 'none',
+                        lineHeight: 1,
+                        padding: 0,
                       }}
                     >
                       ?
@@ -1205,7 +1101,7 @@ export default function ConsolePage() {
                     <span
                       className="kpi-value"
                       style={{
-                        fontSize: '1.5rem',
+                        fontSize: '1.25rem',
                         fontWeight: 600,
                         color: '#EDEDED',
                         fontFamily: "'Geist Mono', monospace",
@@ -1225,7 +1121,7 @@ export default function ConsolePage() {
                       +12.4%
                     </span>
                   </div>
-                  <span className="kpi-sub" style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                  <span className="kpi-sub" style={{ fontSize: '0.6875rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                     {isRtl ? 'مراقبة مستمرة لمتوسط السعر لآخر 90 يوماً' : 'Active 90-day price baseline monitoring'}
                   </span>
                 </div>
@@ -1237,10 +1133,10 @@ export default function ConsolePage() {
                     backgroundColor: '#000000',
                     border: '1px solid #1F1F1F',
                     borderRadius: '8px',
-                    padding: '18px',
+                    padding: '12px 14px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '8px',
+                    gap: '6px',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1250,7 +1146,7 @@ export default function ConsolePage() {
                         fontSize: '0.6875rem',
                         fontWeight: 600,
                         textTransform: 'uppercase',
-                        letterSpacing: '0.05em',
+                        letterSpacing: '0.04em',
                         color: '#888888',
                         fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                       }}
@@ -1264,14 +1160,14 @@ export default function ConsolePage() {
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        width: '16px',
-                        height: '16px',
-                        borderRadius: '50%',
-                        backgroundColor: '#111111',
-                        border: '1px solid #262626',
-                        color: '#888888',
-                        fontSize: '0.625rem',
+                        color: '#71717A',
+                        fontSize: '0.6875rem',
+                        fontWeight: 500,
                         cursor: 'help',
+                        background: 'transparent',
+                        border: 'none',
+                        lineHeight: 1,
+                        padding: 0,
                       }}
                     >
                       ?
@@ -1281,7 +1177,7 @@ export default function ConsolePage() {
                     <span
                       className="kpi-value"
                       style={{
-                        fontSize: '1.5rem',
+                        fontSize: '1.25rem',
                         fontWeight: 600,
                         color: '#EDEDED',
                         fontFamily: "'Geist Mono', monospace",
@@ -1301,7 +1197,7 @@ export default function ConsolePage() {
                       {isRtl ? '100% نشط' : '100% ACTIVE'}
                     </span>
                   </div>
-                  <span className="kpi-sub" style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                  <span className="kpi-sub" style={{ fontSize: '0.6875rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                     {isRtl ? 'أمازون، نون، بي تك، تريد لاين، جوميا، تو بي، راية...' : 'Amazon, Noon, B.TECH, Tradeline, Jumia, 2B, Raya...'}
                   </span>
                 </div>
@@ -1313,10 +1209,10 @@ export default function ConsolePage() {
                     backgroundColor: '#000000',
                     border: '1px solid #1F1F1F',
                     borderRadius: '8px',
-                    padding: '18px',
+                    padding: '12px 14px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '8px',
+                    gap: '6px',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1326,7 +1222,7 @@ export default function ConsolePage() {
                         fontSize: '0.6875rem',
                         fontWeight: 600,
                         textTransform: 'uppercase',
-                        letterSpacing: '0.05em',
+                        letterSpacing: '0.04em',
                         color: '#888888',
                         fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                       }}
@@ -1340,14 +1236,14 @@ export default function ConsolePage() {
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        width: '16px',
-                        height: '16px',
-                        borderRadius: '50%',
-                        backgroundColor: '#111111',
-                        border: '1px solid #262626',
-                        color: '#888888',
-                        fontSize: '0.625rem',
+                        color: '#71717A',
+                        fontSize: '0.6875rem',
+                        fontWeight: 500,
                         cursor: 'help',
+                        background: 'transparent',
+                        border: 'none',
+                        lineHeight: 1,
+                        padding: 0,
                       }}
                     >
                       ?
@@ -1357,7 +1253,7 @@ export default function ConsolePage() {
                     <span
                       className="kpi-value"
                       style={{
-                        fontSize: '1.5rem',
+                        fontSize: '1.25rem',
                         fontWeight: 600,
                         color: '#EDEDED',
                         fontFamily: "'Geist Mono', monospace",
@@ -1377,7 +1273,7 @@ export default function ConsolePage() {
                       -47.1% MAX
                     </span>
                   </div>
-                  <span className="kpi-sub" style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                  <span className="kpi-sub" style={{ fontSize: '0.6875rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                     {isRtl ? 'خصومات وهمية وانهيارات سعرية مفاجئة' : 'Zero-margin flash crashes captured'}
                   </span>
                 </div>
@@ -1389,10 +1285,10 @@ export default function ConsolePage() {
                     backgroundColor: '#000000',
                     border: '1px solid #1F1F1F',
                     borderRadius: '8px',
-                    padding: '18px',
+                    padding: '12px 14px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '8px',
+                    gap: '6px',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1402,7 +1298,7 @@ export default function ConsolePage() {
                         fontSize: '0.6875rem',
                         fontWeight: 600,
                         textTransform: 'uppercase',
-                        letterSpacing: '0.05em',
+                        letterSpacing: '0.04em',
                         color: '#888888',
                         fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                       }}
@@ -1416,14 +1312,14 @@ export default function ConsolePage() {
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        width: '16px',
-                        height: '16px',
-                        borderRadius: '50%',
-                        backgroundColor: '#111111',
-                        border: '1px solid #262626',
-                        color: '#888888',
-                        fontSize: '0.625rem',
+                        color: '#71717A',
+                        fontSize: '0.6875rem',
+                        fontWeight: 500,
                         cursor: 'help',
+                        background: 'transparent',
+                        border: 'none',
+                        lineHeight: 1,
+                        padding: 0,
                       }}
                     >
                       ?
@@ -1433,7 +1329,7 @@ export default function ConsolePage() {
                     <span
                       className="kpi-value"
                       style={{
-                        fontSize: '1.5rem',
+                        fontSize: '1.25rem',
                         fontWeight: 600,
                         color: '#EDEDED',
                         fontFamily: "'Geist Mono', monospace",
@@ -1453,7 +1349,7 @@ export default function ConsolePage() {
                       +18.5%
                     </span>
                   </div>
-                  <span className="kpi-sub" style={{ fontSize: '0.75rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
+                  <span className="kpi-sub" style={{ fontSize: '0.6875rem', color: '#666666', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                     {isRtl ? 'فارق السعر ومكسب الشراء من أرخص متجر' : 'Landed CIF benchmark advantage'}
                   </span>
                 </div>
@@ -2495,24 +2391,11 @@ export default function ConsolePage() {
                           </span>
                         </div>
 
-                        {/* STATUS (Iconic Vercel Checkmark Circle) */}
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                          <div
-                            style={{
-                              width: '18px',
-                              height: '18px',
-                              borderRadius: '50%',
-                              border: '1px solid #222222',
-                              backgroundColor: '#0A0A0A',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                            }}
-                          >
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0070F3" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                          </div>
+                        {/* STATUS (Clean Checkmark without circle border) */}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0070F3" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
                           <span
                             style={{
                               fontSize: '0.6875rem',
