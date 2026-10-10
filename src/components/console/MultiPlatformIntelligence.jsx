@@ -1335,7 +1335,7 @@ export default function MultiPlatformIntelligence({
             const isLowest = lowestInStockListing && item.platform_id === lowestInStockListing.platform_id;
             const isOutOfStock = item.stock_status === 'OUT_OF_STOCK' || item.current_price === 0;
             const isLowStock = item.stock_status === 'LOW_STOCK';
-            const meta = getRetailerMetadata(item.platform_id);
+            const retailerName = item.retailer_name || item.name || (getRetailerName ? getRetailerName(item.platform_id) : item.platform_id);
             const discountPct = (item.original_price && item.original_price > item.current_price && item.current_price > 0)
               ? Math.round(((item.original_price - item.current_price) / item.original_price) * 100)
               : 0;
@@ -1364,7 +1364,7 @@ export default function MultiPlatformIntelligence({
                       }}
                     />
                     <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#EDEDED' }}>
-                      {meta?.displayName || item.name || item.platform_id}
+                      {retailerName}
                     </span>
                     {isLowest && (
                       <span style={{ fontSize: '9px', color: '#10B981', fontFamily: "'Geist Mono', monospace", fontWeight: 600 }}>

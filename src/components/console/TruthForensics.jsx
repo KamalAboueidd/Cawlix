@@ -13,6 +13,7 @@ import { SEEDED_MASTER_PRODUCTS, PLATFORMS_REGISTRY } from '../../services/marke
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { fetchGlitchRadarEvents } from '../../services/dataWiringService.js';
 import { supabase } from '../../lib/supabaseClient.js';
+import CustomDropdown from './CustomDropdown.jsx';
 
 export default function TruthForensics({ onInspectProduct = null, onShowToast = null }) {
   const { lang, t, isRtl, getRetailerName, formatCurrency } = useLanguage();
@@ -399,10 +400,6 @@ export default function TruthForensics({ onInspectProduct = null, onShowToast = 
       {/* Control Filter Bar */}
       <div
         style={{
-          backgroundColor: '#000000',
-          border: '1px solid #1F1F1F',
-          borderRadius: '8px',
-          padding: '14px 18px',
           display: 'flex',
           flexWrap: 'wrap',
           alignItems: 'center',
@@ -476,28 +473,19 @@ export default function TruthForensics({ onInspectProduct = null, onShowToast = 
         {/* Retailer Selector Dropdown */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ fontSize: '0.75rem', color: '#666666' }}>{isRtl ? 'المتجر:' : 'Retailer:'}</span>
-          <select
+          <CustomDropdown
             value={selectedRetailer}
-            onChange={(e) => setSelectedRetailer(e.target.value)}
-            style={{
-              backgroundColor: '#000000',
-              color: '#EDEDED',
-              border: '1px solid #222222',
-              borderRadius: '4px',
-              padding: '4px 8px',
-              fontSize: '0.75rem',
-              outline: 'none',
-              fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
-              cursor: 'pointer',
-            }}
-          >
-            <option value="ALL">{isRtl ? 'جميع المتاجر (12)' : 'All Retailers (12)'}</option>
-            {PLATFORMS_REGISTRY.map((p) => (
-              <option key={p.id} value={p.id}>
-                {getRetailerName(p.id)}
-              </option>
-            ))}
-          </select>
+            onChange={setSelectedRetailer}
+            isRtl={isRtl}
+            minWidth="140px"
+            options={[
+              { value: 'ALL', label: isRtl ? 'جميع المتاجر (12)' : 'All Retailers (12)' },
+              ...PLATFORMS_REGISTRY.map((p) => ({
+                value: p.id,
+                label: getRetailerName(p.id),
+              })),
+            ]}
+          />
         </div>
       </div>
     </div>

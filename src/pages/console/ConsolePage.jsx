@@ -1713,48 +1713,36 @@ export default function ConsolePage() {
 
             {/* TAB: System Logs / Glitch Radar Feed */}
             {activeTab === 'logs' && (
-              <section style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <section style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '12px 16px',
-                    backgroundColor: '#000000',
-                    border: '1px solid #1F1F1F',
-                    borderRadius: '8px',
+                    padding: '4px 0',
+                    flexWrap: 'wrap',
+                    gap: '8px',
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span
-                      style={{
-                        width: '6px',
-                        height: '6px',
-                        borderRadius: '50%',
-                        backgroundColor: '#00DF8F',
-                      }}
-                    />
-                    <div>
-                      <div style={{ fontSize: '0.8125rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist', sans-serif" }}>
-                        REALTIME POSTGRES MUTATION STREAM
-                      </div>
-                      <div style={{ fontSize: '0.6875rem', color: '#888888', fontFamily: "'Geist Mono', monospace" }}>
-                        channel: realtime:glitch_radar_events
-                      </div>
+                  <div>
+                    <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#EDEDED', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
+                      {isRtl ? 'سجل العمليات ورصد تغيرات المتاجر' : 'Live Pricing & Audit Movement Stream'}
+                    </div>
+                    <div style={{ fontSize: '0.6875rem', color: '#888888', fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace", marginTop: '2px' }}>
+                      {isRtl ? 'تسجيل فوري لتقلبات أسعار الرف وحالات التلاعب المكتشفة لحظياً عبر المتاجر' : 'Real-time telemetry of retail shelf price movements and verified discount events'}
                     </div>
                   </div>
                   <span
                     style={{
                       fontSize: '0.6875rem',
                       fontFamily: "'Geist Mono', monospace",
-                      color: '#EDEDED',
-                      backgroundColor: '#0A0A0A',
-                      border: '1px solid #222222',
-                      padding: '3px 8px',
-                      borderRadius: '4px',
+                      color: '#888888',
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      padding: 0,
                     }}
                   >
-                    {glitchRadarEvents.length} ANOMALIES INTERCEPTED
+                    {glitchRadarEvents.length} {isRtl ? 'رصد تلاعب' : 'ANOMALIES DETECTED'}
                   </span>
                 </div>
 
@@ -1849,104 +1837,64 @@ export default function ConsolePage() {
 
             {/* TAB: Settings */}
             {activeTab === 'settings' && (
-              <section style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {/* 1. Authentication & Linked Accounts Card */}
-                <div
-                  style={{
-                    backgroundColor: '#000000',
-                    border: '1px solid #1F1F1F',
-                    borderRadius: '8px',
-                    padding: '24px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '20px',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+              <section style={{ display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '800px' }}>
+                {/* 1. Authentication & Linked Accounts */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', paddingBottom: '12px', borderBottom: '1px solid #191919' }}>
                     <div>
-                      <h3 style={{ fontSize: '0.9375rem', fontWeight: 500, color: '#EDEDED', margin: 0, fontFamily: "'Geist', sans-serif" }}>
-                        Authentication & Connected Accounts
+                      <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#EDEDED', margin: 0, fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
+                        {isRtl ? 'بيانات الاعتماد والحسابات المتصلة' : 'Authentication & Connected Accounts'}
                       </h3>
-                      <p style={{ fontSize: '0.8125rem', color: '#888888', marginTop: '4px', marginBottom: 0, fontFamily: "'Geist', sans-serif" }}>
-                        Linking multiple sign-in methods allows redundant access to your Cawlix workspace.
+                      <p style={{ fontSize: '0.75rem', color: '#888888', marginTop: '3px', marginBottom: 0, fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
+                        {isRtl ? 'إدارة طرق تسجيل الدخول المرتبطة بحسابك في منصة كاوكليكس.' : 'Manage direct sign-in credentials and linked single sign-on providers.'}
                       </p>
                     </div>
                     <span
                       style={{
                         fontSize: '0.6875rem',
                         fontFamily: "'Geist Mono', monospace",
-                        padding: '3px 8px',
-                        borderRadius: '4px',
-                        backgroundColor: '#0A0A0A',
-                        border: '1px solid #222222',
-                        color: '#888888',
+                        color: '#71717A',
                       }}
                     >
                       {identities.length} {identities.length === 1 ? 'PROVIDER LINKED' : 'PROVIDERS LINKED'}
                     </span>
                   </div>
 
-                  {/* Provider List */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {/* Provider List: Borderless & Flat */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {/* Provider 1: Email / Password */}
                     <div
                       style={{
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        padding: '14px 16px',
-                        backgroundColor: '#0A0A0A',
-                        border: '1px solid #1F1F1F',
-                        borderRadius: '6px',
-                        gap: '14px',
+                        padding: '10px 0',
+                        borderBottom: '1px solid #141414',
+                        gap: '12px',
                         flexWrap: 'wrap',
                       }}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                        <div
-                          style={{
-                            width: '36px',
-                            height: '36px',
-                            borderRadius: '6px',
-                            backgroundColor: '#000000',
-                            border: '1px solid #222222',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: '#EDEDED',
-                            flexShrink: 0,
-                          }}
-                        >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                          </svg>
-                        </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888888" strokeWidth="2" style={{ flexShrink: 0 }}>
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
                         <div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist', sans-serif" }}>
+                            <span style={{ fontSize: '0.8125rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist', sans-serif" }}>
                               Email & Password
                             </span>
                             <span
                               style={{
                                 fontSize: '0.6875rem',
-                                fontWeight: 500,
-                                padding: '2px 8px',
-                                borderRadius: '4px',
                                 fontFamily: "'Geist Mono', monospace",
-                                backgroundColor: '#000000',
                                 color: isEmailPasswordActive ? '#10B981' : '#666666',
-                                border: isEmailPasswordActive ? '1px solid #222222' : '1px solid #1F1F1F',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '4px',
                               }}
                             >
-                              {isEmailPasswordActive && <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#10B981' }} />}
                               {isEmailPasswordActive ? 'Active' : 'Unset'}
                             </span>
                           </div>
-                          <div style={{ fontSize: '0.75rem', color: '#888888', fontFamily: "'Geist Mono', monospace", marginTop: '2px' }}>
+                          <div style={{ fontSize: '0.6875rem', color: '#71717A', fontFamily: "'Geist Mono', monospace", marginTop: '2px' }}>
                             {primaryEmail}
                           </div>
                         </div>
@@ -1962,12 +1910,12 @@ export default function ConsolePage() {
                           setPasswordModalOpen(true);
                         }}
                         style={{
-                          padding: '6px 12px',
-                          fontSize: '0.75rem',
+                          padding: '4px 10px',
+                          fontSize: '0.6875rem',
                           fontWeight: 500,
                           backgroundColor: '#000000',
                           border: '1px solid #222222',
-                          borderRadius: '6px',
+                          borderRadius: '4px',
                           color: '#EDEDED',
                           cursor: 'pointer',
                           transition: 'all 120ms ease',
@@ -1992,66 +1940,35 @@ export default function ConsolePage() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        padding: '14px 16px',
-                        backgroundColor: '#0A0A0A',
-                        border: '1px solid #1F1F1F',
-                        borderRadius: '6px',
-                        gap: '14px',
+                        padding: '10px 0',
+                        borderBottom: '1px solid #141414',
+                        gap: '12px',
                         flexWrap: 'wrap',
                       }}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                        <div
-                          style={{
-                            width: '36px',
-                            height: '36px',
-                            borderRadius: '6px',
-                            backgroundColor: '#000000',
-                            border: '1px solid #222222',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexShrink: 0,
-                          }}
-                        >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
-                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
-                          </svg>
-                        </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+                        </svg>
                         <div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist', sans-serif" }}>
+                            <span style={{ fontSize: '0.8125rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist', sans-serif" }}>
                               Google OAuth
                             </span>
                             <span
                               style={{
                                 fontSize: '0.6875rem',
-                                fontWeight: 500,
-                                padding: '2px 8px',
-                                borderRadius: '4px',
                                 fontFamily: "'Geist Mono', monospace",
-                                backgroundColor: '#000000',
                                 color: isGoogleConnected ? '#10B981' : '#666666',
-                                border: isGoogleConnected ? '1px solid #222222' : '1px solid #1F1F1F',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '6px',
                               }}
                             >
-                              {isGoogleConnected ? (
-                                <>
-                                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10B981', display: 'inline-block' }} />
-                                  <span>Connected {googleEmail ? `(${googleEmail})` : ''}</span>
-                                </>
-                              ) : (
-                                'Not connected'
-                              )}
+                              {isGoogleConnected ? (googleEmail ? `Connected (${googleEmail})` : 'Connected') : 'Not linked'}
                             </span>
                           </div>
-                          <div style={{ fontSize: '0.75rem', color: '#888888', fontFamily: "'Geist Mono', monospace", marginTop: '2px' }}>
+                          <div style={{ fontSize: '0.6875rem', color: '#71717A', fontFamily: "'Geist Mono', monospace", marginTop: '2px' }}>
                             {isGoogleConnected ? 'Seamless 1-click single sign-on enabled' : 'Not linked to this session'}
                           </div>
                         </div>
@@ -2059,36 +1976,27 @@ export default function ConsolePage() {
 
                       <div>
                         {isGoogleConnected ? (
-                          <div
+                          <span
                             style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '6px',
-                              padding: '5px 10px',
-                              borderRadius: '6px',
-                              backgroundColor: '#000000',
-                              border: '1px solid #222222',
-                              color: '#00DF8F',
-                              fontSize: '0.75rem',
-                              fontWeight: 500,
+                              fontSize: '0.6875rem',
                               fontFamily: "'Geist Mono', monospace",
+                              color: '#10B981',
                             }}
                           >
-                            <span>✓</span>
-                            <span>Verified</span>
-                          </div>
+                            ✓ Verified
+                          </span>
                         ) : (
                           <button
                             type="button"
                             disabled={googleLinking}
                             onClick={handleConnectGoogle}
                             style={{
-                              padding: '6px 14px',
-                              fontSize: '0.75rem',
+                              padding: '5px 12px',
+                              fontSize: '0.6875rem',
                               fontWeight: 500,
                               backgroundColor: '#FFFFFF',
                               border: 'none',
-                              borderRadius: '6px',
+                              borderRadius: '4px',
                               color: '#000000',
                               cursor: googleLinking ? 'not-allowed' : 'pointer',
                               opacity: googleLinking ? 0.6 : 1,
@@ -2105,12 +2013,9 @@ export default function ConsolePage() {
                     {googleLinkMsg && (
                       <div
                         style={{
-                          fontSize: '0.8125rem',
+                          fontSize: '0.75rem',
                           color: '#FB7185',
-                          backgroundColor: '#0A0A0A',
-                          border: '1px solid #222222',
-                          borderRadius: '6px',
-                          padding: '10px 12px',
+                          padding: '6px 0',
                           fontFamily: "'Geist', sans-serif",
                         }}
                       >
@@ -2118,58 +2023,25 @@ export default function ConsolePage() {
                       </div>
                     )}
                   </div>
-
-                  {/* Redundant Access Guarantee Box */}
-                  <div
-                    style={{
-                      backgroundColor: '#000000',
-                      border: '1px solid #1F1F1F',
-                      borderRadius: '6px',
-                      padding: '14px 16px',
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '12px',
-                    }}
-                  >
-                    <span style={{ fontSize: '1.125rem', lineHeight: 1 }}>🛡️</span>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                      <span style={{ fontSize: '0.8125rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist', sans-serif" }}>
-                        Redundant Access Guarantee
-                      </span>
-                      <p style={{ fontSize: '0.75rem', color: '#888888', margin: 0, lineHeight: 1.5, fontFamily: "'Geist', sans-serif" }}>
-                        By linking both Google OAuth and Email/Password credentials, you maintain dual redundant access to the Cawlix Telemetry Console. If Google OAuth experiences downtime or identity token invalidation, you can immediately sign in using your direct password hash without disruption.
-                      </p>
-                    </div>
-                  </div>
                 </div>
 
-                {/* 2. Active Telemetry Session Card */}
-                <div
-                  style={{
-                    backgroundColor: '#000000',
-                    border: '1px solid #1F1F1F',
-                    borderRadius: '8px',
-                    padding: '22px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '14px',
-                  }}
-                >
-                  <h3 style={{ fontSize: '0.875rem', fontWeight: 500, color: '#EDEDED', margin: 0, fontFamily: "'Geist', sans-serif" }}>
-                    ACTIVE TELEMETRY SESSION
+                {/* 2. Active Session Information (Flat List) */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '10px' }}>
+                  <h3 style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#EDEDED', margin: 0, fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
+                    {isRtl ? 'بيانات الجلسة النشطة' : 'ACTIVE SESSION'}
                   </h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.8125rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #1F1F1F' }}>
-                      <span style={{ color: '#666666', fontFamily: "'Geist', sans-serif" }}>USER IDENTIFIER</span>
-                      <span style={{ fontFamily: "'Geist Mono', monospace", color: '#EDEDED' }}>{user?.id || 'anon-session'}</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.75rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #141414' }}>
+                      <span style={{ color: '#71717A' }}>USER IDENTIFIER</span>
+                      <span style={{ fontFamily: "'Geist Mono', monospace", color: '#EDEDED' }}>{user?.id || 'session-live'}</span>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #1F1F1F' }}>
-                      <span style={{ color: '#666666', fontFamily: "'Geist', sans-serif" }}>PRIMARY EMAIL</span>
-                      <span style={{ fontFamily: "'Geist Mono', monospace", color: '#EDEDED' }}>{user?.email || 'admin@cawlix.com'}</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #141414' }}>
+                      <span style={{ color: '#71717A' }}>PRIMARY EMAIL</span>
+                      <span style={{ fontFamily: "'Geist Mono', monospace", color: '#EDEDED' }}>{user?.email || primaryEmail || 'kamalaboueidd@gmail.com'}</span>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #1F1F1F' }}>
-                      <span style={{ color: '#666666', fontFamily: "'Geist', sans-serif" }}>POSTGRES REPLICATION</span>
-                      <span style={{ fontFamily: "'Geist Mono', monospace", color: '#00DF8F', fontWeight: 500 }}>CONNECTED (WSS)</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #141414' }}>
+                      <span style={{ color: '#71717A' }}>FLEET REPLICATION</span>
+                      <span style={{ fontFamily: "'Geist Mono', monospace", color: '#EDEDED' }}>12 DOMESTIC NODES</span>
                     </div>
                   </div>
                 </div>

@@ -144,7 +144,7 @@ export default function VercelMobileShell({
         {
           id: 'overview',
           label: t('nav.overview'),
-          badge: trackedCount > 0 ? (isRtl ? `${trackedCount} منتج` : `${trackedCount} SKUs`) : (isRtl ? 'نشط' : 'ACTIVE'),
+          badge: trackedCount > 0 ? (isRtl ? `${trackedCount} منتج` : `${trackedCount} SKUs`) : null,
           icon: <Activity size={16} />,
         },
         {

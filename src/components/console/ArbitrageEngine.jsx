@@ -9,6 +9,7 @@ import {
 import { SEEDED_MASTER_PRODUCTS, PLATFORMS_REGISTRY } from '../../services/marketIntelligenceData.js';
 import { sanitizeRetailerUrl } from '../../utils/urlSanitizer.js';
 import { useLanguage } from '../../context/LanguageContext.jsx';
+import CustomDropdown from './CustomDropdown.jsx';
 
 export default function ArbitrageEngine({ onInspectProduct = null, onShowToast = null }) {
   const { lang, t, isRtl, getRetailerName, formatCurrency } = useLanguage();
@@ -288,10 +289,6 @@ export default function ArbitrageEngine({ onInspectProduct = null, onShowToast =
           justifyContent: 'space-between',
           gap: '12px',
           flexWrap: 'wrap',
-          backgroundColor: '#000000',
-          border: '1px solid #1F1F1F',
-          borderRadius: '8px',
-          padding: '10px 14px',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: '240px' }}>
@@ -300,8 +297,8 @@ export default function ArbitrageEngine({ onInspectProduct = null, onShowToast =
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              backgroundColor: '#0A0A0A',
-              border: '1px solid #222222',
+              backgroundColor: '#000000',
+              border: '1px solid #1F1F1F',
               borderRadius: '6px',
               padding: '6px 10px',
               flex: 1,
@@ -327,50 +324,34 @@ export default function ArbitrageEngine({ onInspectProduct = null, onShowToast =
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           {/* Category Filter */}
-          <select
+          <CustomDropdown
             value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-            style={{
-              backgroundColor: '#0A0A0A',
-              border: '1px solid #222222',
-              color: '#EDEDED',
-              fontSize: '0.75rem',
-              padding: '6px 10px',
-              borderRadius: '6px',
-              fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
-              outline: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            <option value="ALL">{isRtl ? 'جميع الأقسام' : 'All Categories'}</option>
-            <option value="Laptops & Computing">{isRtl ? 'الحواسيب واللابتوب' : 'Computing'}</option>
-            <option value="Smartphones">{isRtl ? 'الهواتف الذكية' : 'Smartphones'}</option>
-            <option value="Audio & Wearables">{isRtl ? 'الصوتيات والأجهزة القابلة للارتداء' : 'Audio & Wearables'}</option>
-            <option value="Home & Televisions">{isRtl ? 'الشاشات والتلفزيونات' : 'Televisions'}</option>
-          </select>
+            onChange={setCategoryFilter}
+            isRtl={isRtl}
+            minWidth="140px"
+            options={[
+              { value: 'ALL', label: isRtl ? 'جميع الأقسام' : 'All Categories' },
+              { value: 'Laptops & Computing', label: isRtl ? 'الحواسيب واللابتوب' : 'Computing' },
+              { value: 'Smartphones', label: isRtl ? 'الهواتف الذكية' : 'Smartphones' },
+              { value: 'Audio & Wearables', label: isRtl ? 'الصوتيات والأجهزة القابلة للارتداء' : 'Audio & Wearables' },
+              { value: 'Home & Televisions', label: isRtl ? 'الشاشات والتلفزيونات' : 'Televisions' },
+            ]}
+          />
 
           {/* Sort Selector */}
-          <select
+          <CustomDropdown
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            style={{
-              backgroundColor: '#0A0A0A',
-              border: '1px solid #222222',
-              color: '#EDEDED',
-              fontSize: '0.75rem',
-              padding: '6px 10px',
-              borderRadius: '6px',
-              fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
-              outline: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            <option value="SPREAD_EGP">{isRtl ? 'ترتيب: أعلى فارق سعر' : 'Sort: Net Spread (Highest)'}</option>
-            <option value="MARGIN_PCT">{isRtl ? 'ترتيب: أعلى نسبة وفر' : 'Sort: Margin % (Highest)'}</option>
-            <option value="PRICE_ASC">{isRtl ? 'ترتيب: أقل سعر شراء' : 'Sort: Buy Price (Lowest)'}</option>
-          </select>
+            onChange={setSortBy}
+            isRtl={isRtl}
+            minWidth="160px"
+            options={[
+              { value: 'SPREAD_EGP', label: isRtl ? 'ترتيب: أعلى فارق سعر' : 'Sort: Net Spread (Highest)' },
+              { value: 'MARGIN_PCT', label: isRtl ? 'ترتيب: أعلى نسبة وفر' : 'Sort: Margin % (Highest)' },
+              { value: 'PRICE_ASC', label: isRtl ? 'ترتيب: أقل سعر شراء' : 'Sort: Buy Price (Lowest)' },
+            ]}
+          />
         </div>
       </div>
 

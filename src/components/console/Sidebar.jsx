@@ -66,7 +66,7 @@ export default function Sidebar({
         {
           id: 'overview',
           label: t('nav.overview'),
-          badge: trackedCount > 0 ? (isRtl ? `${trackedCount} منتج` : `${trackedCount} SKUs`) : (isRtl ? 'نشط' : 'ACTIVE'),
+          badge: trackedCount > 0 ? (isRtl ? `${trackedCount} منتج` : `${trackedCount} SKUs`) : null,
           icon: <Activity size={15} />,
         },
         {
@@ -843,21 +843,12 @@ export default function Sidebar({
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '6px 10px',
-                fontSize: '0.75rem',
-                color: realtimeConnected ? '#00DF8F' : '#0070F3',
+                fontSize: '0.6875rem',
+                color: '#71717A',
                 fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
               }}
             >
-              <span>{realtimeConnected ? (isRtl ? 'مزامنة لحظية نشطة' : 'WebSocket sync active') : (isRtl ? 'كافة الأنظمة تعمل بكفاءة' : 'All systems normal.')}</span>
-              <span
-                style={{
-                  width: '6px',
-                  height: '6px',
-                  borderRadius: '50%',
-                  backgroundColor: realtimeConnected ? '#00DF8F' : '#0070F3',
-                  boxShadow: realtimeConnected ? '0 0 6px rgba(0, 223, 143, 0.8)' : '0 0 6px rgba(0, 112, 243, 0.8)',
-                }}
-              />
+              <span>{isRtl ? 'كافة الأنظمة متصلة' : 'All systems operational'}</span>
             </div>
           </div>
         )}

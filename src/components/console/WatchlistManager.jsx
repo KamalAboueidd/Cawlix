@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { SEEDED_MASTER_PRODUCTS, PLATFORMS_REGISTRY } from '../../services/marketIntelligenceData.js';
 import { useLanguage } from '../../context/LanguageContext';
+import CustomDropdown from './CustomDropdown.jsx';
 
 export default function WatchlistManager({ onInspectProduct = null, onShowToast = null }) {
   const { lang, isRtl, t, getRetailerName, formatCurrency } = useLanguage();
@@ -472,26 +473,17 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
                 <label style={{ fontSize: '0.75rem', color: '#888888', display: 'block', marginBottom: '6px' }}>
                   Target Product / SKU
                 </label>
-                <select
+                <CustomDropdown
                   value={selectedProductId}
-                  onChange={(e) => setSelectedProductId(e.target.value)}
-                  style={{
-                    width: '100%',
-                    backgroundColor: '#0A0A0A',
-                    border: '1px solid #222222',
-                    color: '#EDEDED',
-                    padding: '8px 12px',
-                    borderRadius: '6px',
-                    fontSize: '0.8125rem',
-                    outline: 'none',
-                  }}
-                >
-                  {SEEDED_MASTER_PRODUCTS.map((prod) => (
-                    <option key={prod.id} value={prod.id}>
-                      {prod.title} ({prod.brand})
-                    </option>
-                  ))}
-                </select>
+                  onChange={setSelectedProductId}
+                  isRtl={isRtl}
+                  style={{ width: '100%' }}
+                  minWidth="100%"
+                  options={SEEDED_MASTER_PRODUCTS.map((prod) => ({
+                    value: prod.id,
+                    label: `${prod.title} (${prod.brand})`,
+                  }))}
+                />
               </div>
 
               <div>
