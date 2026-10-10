@@ -333,7 +333,7 @@ export default function ExportsReports({ onShowToast = null }) {
       >
         <div
           style={{
-            background: '#0A0A0A',
+            background: '#000000',
             border: '1px solid #1F1F1F',
             borderRadius: '6px',
             padding: '16px',
@@ -363,7 +363,7 @@ export default function ExportsReports({ onShowToast = null }) {
 
         <div
           style={{
-            background: '#0A0A0A',
+            background: '#000000',
             border: '1px solid #1F1F1F',
             borderRadius: '6px',
             padding: '16px',
@@ -393,7 +393,7 @@ export default function ExportsReports({ onShowToast = null }) {
 
         <div
           style={{
-            background: '#0A0A0A',
+            background: '#000000',
             border: '1px solid #1F1F1F',
             borderRadius: '6px',
             padding: '16px',
@@ -423,7 +423,7 @@ export default function ExportsReports({ onShowToast = null }) {
 
         <div
           style={{
-            background: '#0A0A0A',
+            background: '#000000',
             border: '1px solid #1F1F1F',
             borderRadius: '6px',
             padding: '16px',
@@ -455,7 +455,7 @@ export default function ExportsReports({ onShowToast = null }) {
       {/* Export Controls & Action Section */}
       <div
         style={{
-          background: '#0A0A0A',
+          background: '#000000',
           border: '1px solid #1F1F1F',
           borderRadius: '8px',
           padding: '20px',
@@ -648,7 +648,7 @@ export default function ExportsReports({ onShowToast = null }) {
       <div
         id="cawlix-printable-audit-report"
         style={{
-          background: '#0A0A0A',
+          background: '#000000',
           border: '1px solid #1F1F1F',
           borderRadius: '8px',
           padding: '24px',

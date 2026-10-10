@@ -334,19 +334,31 @@ export default function MultiPlatformIntelligence({
               style={{
                 fontSize: '0.625rem',
                 fontWeight: 600,
-                color: '#10B981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                border: '1px solid rgba(16, 185, 129, 0.25)',
-                padding: '2px 7px',
-                borderRadius: '4px',
+                color: '#34D399',
+                backgroundColor: 'transparent',
+                border: 'none',
+                padding: 0,
                 letterSpacing: '0.04em',
                 fontFamily: "'Geist Mono', monospace",
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
               }}
             >
+              <span
+                style={{
+                  display: 'inline-block',
+                  width: '4px',
+                  height: '4px',
+                  borderRadius: '50%',
+                  backgroundColor: '#34D399',
+                  boxShadow: '0 0 5px rgba(52, 211, 153, 0.7)',
+                }}
+              />
               12 DOMESTIC NODES SYNCHRONIZED
             </span>
-            <span style={{ fontSize: '0.6875rem', color: '#555555' }}>·</span>
-            <span style={{ fontSize: '0.6875rem', color: '#888888', fontFamily: "'Geist Mono', monospace" }}>
+            <span style={{ fontSize: '0.6875rem', color: '#444444' }}>·</span>
+            <span style={{ fontSize: '0.5625rem', color: '#71717A', fontFamily: "'Geist Mono', monospace" }}>
               Active Cairo & Giza Shelf Audits
             </span>
           </div>
@@ -355,15 +367,13 @@ export default function MultiPlatformIntelligence({
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span
               style={{
-                display: 'inline-block',
-                width: '5px',
-                height: '5px',
-                borderRadius: '50%',
-                backgroundColor: '#10B981',
-                boxShadow: '0 0 6px rgba(16, 185, 129, 0.6)',
+                fontSize: '0.5625rem',
+                color: '#71717A',
+                fontFamily: "'Geist Mono', monospace",
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
               }}
-            />
-            <span style={{ fontSize: '0.625rem', color: '#888888', fontFamily: "'Geist Mono', monospace" }}>
+            >
               {loading ? 'SYNCING CATALOG...' : 'REALTIME WEBSOCKET FEED'}
             </span>
           </div>
@@ -437,7 +447,7 @@ export default function MultiPlatformIntelligence({
         {/* Product Identity Card */}
         <div
           style={{
-            backgroundColor: '#0A0A0A',
+            backgroundColor: '#000000',
             border: '1px solid #1F1F1F',
             borderRadius: '8px',
             padding: '14px 16px',
@@ -493,16 +503,16 @@ export default function MultiPlatformIntelligence({
           </div>
 
           {/* Quick specs pill strip */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', paddingTop: '2px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexWrap: 'wrap', paddingTop: '2px' }}>
             {activeProduct.specifications?.water_resistance && (
               <span
                 style={{
-                  fontSize: '0.625rem',
-                  color: '#EDEDED',
-                  backgroundColor: '#000000',
-                  border: '1px solid #1F1F1F',
-                  padding: '2px 6px',
-                  borderRadius: '4px',
+                  fontSize: '0.5625rem',
+                  color: '#A1A1AA',
+                  backgroundColor: '#18181B',
+                  border: 'none',
+                  padding: '2px 5px',
+                  borderRadius: '3px',
                   fontFamily: "'Geist Mono', monospace",
                 }}
               >
@@ -512,12 +522,12 @@ export default function MultiPlatformIntelligence({
             {activeProduct.specifications?.chassis_material && (
               <span
                 style={{
-                  fontSize: '0.625rem',
-                  color: '#EDEDED',
-                  backgroundColor: '#000000',
-                  border: '1px solid #1F1F1F',
-                  padding: '2px 6px',
-                  borderRadius: '4px',
+                  fontSize: '0.5625rem',
+                  color: '#A1A1AA',
+                  backgroundColor: '#18181B',
+                  border: 'none',
+                  padding: '2px 5px',
+                  borderRadius: '3px',
                   fontFamily: "'Geist Mono', monospace",
                 }}
               >
@@ -527,12 +537,12 @@ export default function MultiPlatformIntelligence({
             {activeProduct.specifications?.weight && (
               <span
                 style={{
-                  fontSize: '0.625rem',
-                  color: '#888888',
-                  backgroundColor: '#000000',
-                  border: '1px solid #1F1F1F',
-                  padding: '2px 6px',
-                  borderRadius: '4px',
+                  fontSize: '0.5625rem',
+                  color: '#71717A',
+                  backgroundColor: '#18181B',
+                  border: 'none',
+                  padding: '2px 5px',
+                  borderRadius: '3px',
                   fontFamily: "'Geist Mono', monospace",
                 }}
               >
@@ -545,8 +555,8 @@ export default function MultiPlatformIntelligence({
         {/* Lowest Price ("Best Deal") Stat Card */}
         <div
           style={{
-            backgroundColor: '#0A0A0A',
-            border: '1px solid #10B981',
+            backgroundColor: '#000000',
+            border: '1px solid #1F1F1F',
             borderRadius: '8px',
             padding: '14px 16px',
             display: 'flex',
@@ -557,18 +567,7 @@ export default function MultiPlatformIntelligence({
             overflow: 'hidden',
           }}
         >
-          {/* Subtle Emerald glow backdrop */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              width: '90px',
-              height: '90px',
-              background: 'radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(0, 0, 0, 0) 70%)',
-              pointerEvents: 'none',
-            }}
-          />
+
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '6px' }}>
             <span
@@ -703,7 +702,7 @@ export default function MultiPlatformIntelligence({
         {/* Arbitrage Spread Stat Card */}
         <div
           style={{
-            backgroundColor: '#0A0A0A',
+            backgroundColor: '#000000',
             border: '1px solid #1F1F1F',
             borderRadius: '8px',
             padding: '14px 16px',
@@ -771,7 +770,7 @@ export default function MultiPlatformIntelligence({
       {/* ── DELIVERABLE A: CENTRAL PRODUCT COMPARISON MATRIX (ITEM INSPECTOR VIEW) ── */}
       <section
         style={{
-          backgroundColor: '#0A0A0A',
+          backgroundColor: '#000000',
           border: '1px solid #1F1F1F',
           borderRadius: '8px',
           overflow: 'hidden',
@@ -934,7 +933,7 @@ export default function MultiPlatformIntelligence({
         </div>
 
         {/* Matrix Table */}
-        <div style={{ overflowX: 'auto', width: '100%' }}>
+        <div className="hidden md:block" style={{ overflowX: 'auto', width: '100%' }}>
           <table
             style={{
               width: '100%',
@@ -1330,6 +1329,153 @@ export default function MultiPlatformIntelligence({
             </tbody>
           </table>
         </div>
+        {/* Mobile Dense Matrix Cards (< 768px) */}
+        <div className="block md:hidden cawlix-mobile-matrix" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          {displayedListings.map((item) => {
+            const isLowest = lowestInStockListing && item.platform_id === lowestInStockListing.platform_id;
+            const isOutOfStock = item.stock_status === 'OUT_OF_STOCK' || item.current_price === 0;
+            const isLowStock = item.stock_status === 'LOW_STOCK';
+            const meta = getRetailerMetadata(item.platform_id);
+            const discountPct = (item.original_price && item.original_price > item.current_price && item.current_price > 0)
+              ? Math.round(((item.original_price - item.current_price) / item.original_price) * 100)
+              : 0;
+
+            return (
+              <div
+                key={item.platform_id}
+                style={{
+                  backgroundColor: isLowest ? 'rgba(16, 185, 129, 0.04)' : '#000000',
+                  border: isLowest ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid #141414',
+                  borderRadius: '6px',
+                  padding: '8px 10px',
+                  opacity: isOutOfStock ? 0.5 : 1,
+                }}
+              >
+                {/* Header row: Retailer name + stock badge/dot + lowest badge */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span
+                      style={{
+                        width: '6px',
+                        height: '6px',
+                        borderRadius: '50%',
+                        backgroundColor: isOutOfStock ? '#666' : isLowStock ? '#F59E0B' : '#10B981',
+                        flexShrink: 0,
+                      }}
+                    />
+                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#EDEDED' }}>
+                      {meta?.displayName || item.name || item.platform_id}
+                    </span>
+                    {isLowest && (
+                      <span style={{ fontSize: '9px', color: '#10B981', fontFamily: "'Geist Mono', monospace", fontWeight: 600 }}>
+                        {isRtl ? 'أقل سعر' : 'LOWEST'}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Stock status text */}
+                  <span style={{ fontSize: '9px', color: isOutOfStock ? '#666' : isLowStock ? '#F59E0B' : '#10B981', fontFamily: "'Geist Mono', monospace" }}>
+                    {isOutOfStock ? t('matrix.badges.outOfStock') : isLowStock ? t('matrix.badges.lowStock', { count: 3 }) : t('matrix.badges.inStock')}
+                  </span>
+                </div>
+
+                {/* Middle row: Price and discount / warranty */}
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginTop: '2px', marginBottom: '6px' }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                    {item.current_price > 0 ? (
+                      <span style={{ fontSize: '0.875rem', fontWeight: 700, color: isLowest ? '#10B981' : '#EDEDED', fontFamily: "'Geist Mono', monospace" }}>
+                        {formatCurrency(item.current_price)}
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: '0.75rem', color: '#666' }}>{isRtl ? 'غير متوفر' : 'N/A'}</span>
+                    )}
+                    {discountPct > 0 && (
+                      <span style={{ fontSize: '9px', color: '#666', textDecoration: 'line-through', fontFamily: "'Geist Mono', monospace" }}>
+                        {formatCurrency(item.original_price)}
+                      </span>
+                    )}
+                    {discountPct > 0 && (
+                      <span style={{ fontSize: '9px', color: '#10B981', fontFamily: "'Geist Mono', monospace", fontWeight: 600 }}>
+                        -{discountPct}%
+                      </span>
+                    )}
+                  </div>
+
+                  {item.warranty && (
+                    <span style={{ fontSize: '9px', color: '#888', backgroundColor: '#111', padding: '1px 4px', borderRadius: '3px' }}>
+                      {item.warranty}
+                    </span>
+                  )}
+                </div>
+
+                {/* Footer row: Actions (Visit store + Re-audit) */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px', paddingTop: '4px', borderTop: '1px solid #141414' }}>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleReAudit(item.platform_id || item.id);
+                    }}
+                    disabled={probingListingId === (item.platform_id || item.id)}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      fontSize: '9px',
+                      color: '#888',
+                      padding: '3px 6px',
+                      borderRadius: '4px',
+                      border: '1px solid #1F1F1F',
+                      backgroundColor: '#0A0A0A',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <RefreshCw
+                      size={9}
+                      style={{
+                        animation: probingListingId === (item.platform_id || item.id) ? 'spin 1s linear infinite' : 'none',
+                      }}
+                      color={probingListingId === (item.platform_id || item.id) ? '#F59E0B' : '#888'}
+                    />
+                    <span>
+                      {probingListingId === (item.platform_id || item.id)
+                        ? (isRtl ? 'جاري الفحص...' : 'Probing...')
+                        : (isRtl ? 'فحص وتحديث' : 'Re-audit')}
+                    </span>
+                  </button>
+
+                  <a
+                    href={sanitizeRetailerUrl({
+                      url: item.listing_url || item.url || item.product_url,
+                      platformId: item.platform_id,
+                      productTitle: activeProduct.title,
+                      sku: activeProduct.barcode || activeProduct.id,
+                    })}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      fontSize: '9px',
+                      color: isLowest ? '#10B981' : '#EDEDED',
+                      padding: '3px 8px',
+                      borderRadius: '4px',
+                      border: isLowest ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid #1F1F1F',
+                      backgroundColor: '#0A0A0A',
+                      textDecoration: 'none',
+                      fontWeight: 500,
+                    }}
+                  >
+                    <span>{isRtl ? 'زيارة المتجر' : 'Visit Store'}</span>
+                    <ExternalLink size={9} />
+                  </a>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </section>
 
       {/* ── DELIVERABLE B: PRICE HISTORY & FAKE-DISCOUNT DETECTOR CHART ── */}
@@ -1344,7 +1490,7 @@ export default function MultiPlatformIntelligence({
         <div
           style={{
             gridColumn: 'span 2',
-            backgroundColor: '#0A0A0A',
+            backgroundColor: '#000000',
             border: '1px solid #1F1F1F',
             borderRadius: '8px',
             padding: '20px',
@@ -1379,12 +1525,11 @@ export default function MultiPlatformIntelligence({
                 </h3>
                 <span
                   style={{
-                    fontSize: '0.625rem',
-                    color: '#10B981',
-                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                    border: '1px solid rgba(16, 185, 129, 0.25)',
-                    padding: '1px 6px',
-                    borderRadius: '4px',
+                    fontSize: '0.5625rem',
+                    color: '#71717A',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
                     fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                   }}
                 >
@@ -1438,21 +1583,21 @@ export default function MultiPlatformIntelligence({
           </div>
 
           {/* Recharts High-Contrast Pitch-Black LineChart */}
-          <div style={{ width: '100%', height: '280px', marginTop: '8px' }}>
+          <div style={{ width: '100%', height: '240px', marginTop: '6px', padding: '0 2px', overflow: 'hidden' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData} margin={{ top: 10, right: 20, left: 20, bottom: 0 }}>
+              <LineChart data={chartData} margin={{ top: 8, right: 8, left: -14, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1A1A1A" vertical={false} />
                 <XAxis
                   dataKey="date"
                   stroke="#555555"
-                  fontSize={11}
+                  fontSize={9}
                   tickLine={false}
                   axisLine={{ stroke: '#222222' }}
                   fontFamily="'Geist Mono', monospace"
                 />
                 <YAxis
                   stroke="#555555"
-                  fontSize={11}
+                  fontSize={8}
                   tickLine={false}
                   axisLine={{ stroke: '#222222' }}
                   domain={['auto', 'auto']}
@@ -1506,9 +1651,9 @@ export default function MultiPlatformIntelligence({
                   stroke="#444444"
                   strokeDasharray="4 4"
                   label={{
-                    value: isRtl ? `متوسط السوق: ${formatCurrency(discountVerdict.baselineMedian)}` : `Baseline Median ${formatCurrency(discountVerdict.baselineMedian)}`,
+                    value: isRtl ? `متوسط: ${formatCurrency(discountVerdict.baselineMedian)}` : `Median: ${formatCurrency(discountVerdict.baselineMedian)}`,
                     fill: '#888888',
-                    fontSize: 10,
+                    fontSize: 8,
                     position: 'insideTopRight',
                   }}
                 />
@@ -1575,11 +1720,11 @@ export default function MultiPlatformIntelligence({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '16px',
+              gap: '8px',
               flexWrap: 'wrap',
               borderTop: '1px solid #191919',
-              paddingTop: '12px',
-              fontSize: '0.6875rem',
+              paddingTop: '8px',
+              fontSize: '0.625rem',
               color: '#888888',
               fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
             }}
@@ -1784,7 +1929,7 @@ export default function MultiPlatformIntelligence({
         <div
           style={{
             gridColumn: 'span 2',
-            backgroundColor: '#0A0A0A',
+            backgroundColor: '#000000',
             border: '1px solid #1F1F1F',
             borderRadius: '8px',
             padding: '20px',
@@ -1811,24 +1956,27 @@ export default function MultiPlatformIntelligence({
             </div>
             <span
               style={{
-                fontSize: '0.6875rem',
-                color: '#888888',
+                fontSize: '0.5625rem',
+                color: '#71717A',
                 fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
               }}
             >
-              {isRtl ? 'المواصفات المعتمدة' : 'master_products.specifications'}
+              {isRtl ? 'المواصفات المعتمدة' : 'VERIFIED HARDWARE MATRIX'}
             </span>
           </div>
 
-          {/* Structured Key-Value Grid */}
+          {/* Unified Borderless Specifications List */}
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-              gap: '12px',
+              display: 'flex',
+              flexDirection: 'column',
+              backgroundColor: 'transparent',
+              borderRadius: '6px',
             }}
           >
-            {Object.entries(activeProduct.specifications || {}).map(([key, value]) => {
+            {Object.entries(activeProduct.specifications || {}).map(([key, value], idx, arr) => {
               const specLabelMap = {
                 chassis_material: t('specs.chassis', 'خامة الهيكل والإطار'),
                 front_glass: t('specs.frontGlass', 'زجاج الشاشة والحماية'),
@@ -1836,6 +1984,11 @@ export default function MultiPlatformIntelligence({
                 thermal_system: t('specs.thermal', 'نظام التبريد الداخلي'),
                 water_resistance: t('specs.waterResistance', 'مقاومة الماء والغبار'),
                 processor: t('specs.processor', 'المعالج ووحدة المعالجة'),
+                soc_processor: t('specs.processor', 'المعالج ووحدة المعالجة'),
+                storage_capacity: isRtl ? 'سعة التخزين والذاكرة' : 'STORAGE CAPACITY',
+                display_panel: isRtl ? 'شاشة العرض والتردد' : 'DISPLAY PANEL & REFRESH',
+                camera_system: isRtl ? 'منظومة الكاميرات' : 'CAMERA SYSTEM',
+                battery_capacity: isRtl ? 'البطارية والشحن' : 'BATTERY & CHARGING',
                 weight: t('specs.weight', 'الوزن الصافي'),
                 durability_score: t('specs.durabilityScore', 'مؤشر الصلابة ومقاومة الصدمات'),
                 scratch_score: t('specs.scratchScore', 'مؤشر مقاومة الخدوش'),
@@ -1847,21 +2000,19 @@ export default function MultiPlatformIntelligence({
                 <div
                   key={key}
                   style={{
-                    backgroundColor: '#000000',
-                    border: '1px solid #1F1F1F',
-                    borderRadius: '6px',
-                    padding: '10px 14px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '4px',
+                    padding: '6px 0',
+                    borderBottom: idx === arr.length - 1 ? 'none' : '1px solid rgba(39, 39, 42, 0.4)',
                   }}
                 >
                   <span
                     style={{
-                      fontSize: '0.6875rem',
-                      color: '#666666',
+                      fontSize: '0.5625rem',
+                      color: '#71717A',
+                      fontWeight: 600,
                       textTransform: 'uppercase',
-                      letterSpacing: '0.04em',
+                      letterSpacing: '0.05em',
                       fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
                     }}
                   >
@@ -1869,9 +2020,10 @@ export default function MultiPlatformIntelligence({
                   </span>
                   <span
                     style={{
-                      fontSize: '0.8125rem',
-                      color: '#EDEDED',
-                      fontWeight: 500,
+                      fontSize: '0.75rem',
+                      color: '#E4E4E7',
+                      fontWeight: 400,
+                      marginTop: '2px',
                       lineHeight: 1.4,
                       fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
                     }}
@@ -1887,7 +2039,7 @@ export default function MultiPlatformIntelligence({
         {/* Verified Material Composition & User-Sentiment Consensus Chip */}
         <div
           style={{
-            backgroundColor: '#0A0A0A',
+            backgroundColor: '#000000',
             border: '1px solid #1F1F1F',
             borderRadius: '8px',
             padding: '20px',

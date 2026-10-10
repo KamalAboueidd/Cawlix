@@ -9,8 +9,8 @@
 :root {
   /* Canvas & Vercel True Pitch Black Palette */
   --canvas:           #000000;
-  --surface:          #0A0A0A;
-  --surface-elevated: #111111;
+  --surface:          #000000;
+  --surface-elevated: #000000;
 
   /* Borders (Authentic Vercel Pitch-Black Micro-Borders) */
   --border:           #1F1F1F;
@@ -540,6 +540,17 @@ code, pre, kbd, samp {
   animation: emeraldFlash 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
+/* ── Universal Pitch-Black Card & Panel Enforcement (#000000) ── */
+.cawlix-kpi-card,
+.cawlix-card,
+.auth-card-shell,
+div[style*="border: 1px solid #1F1F1F"],
+section[style*="border: 1px solid #1F1F1F"],
+div[style*="border: 1px solid #141414"],
+div[style*="border: 1px solid #222222"] {
+  background-color: #000000 !important;
+}
+
 /* ── Vercel Mobile Shell & Ultra-Compact Responsive Engine ── */
 @keyframes vercelFadeIn {
   from { opacity: 0; }
@@ -594,20 +605,121 @@ code, pre, kbd, samp {
   }
 
   .cawlix-mobile-sub {
-    font-size: 11px !important;
+    font-size: 10px !important;
     color: #A1A1AA !important;
+  }
+
+  /* ── 1. GLOBAL MOBILE VIEWPORT CONTAINER DENSITY (< 768px) ── */
+  *, *::before, *::after {
+    max-width: 100vw;
+  }
+
+  /* Main containers padding reduction */
+  main,
+  #cawlix-main-workspace,
+  .cawlix-content-area,
+  .cawlix-page-container {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    padding-top: 8px !important;
+    padding-bottom: 84px !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  /* ── 2. GLOBAL MOBILE TYPOGRAPHY SCALE DOWN ── */
+  h1, h2, h3,
+  .text-2xl, .text-3xl, .text-4xl, .text-display {
+    font-size: 0.875rem !important; /* 14px */
+    line-height: 1.25 !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  h4, h5, h6,
+  .text-xl, .text-lg {
+    font-size: 0.8125rem !important; /* 13px */
+    line-height: 1.2 !important;
+    font-weight: 600 !important;
+  }
+
+  p,
+  .text-base,
+  .text-zinc-400,
+  .text-secondary {
+    font-size: 10px !important;
+    line-height: 1.35 !important;
+    color: #a1a1aa !important;
+  }
+
+  /* ── 3. CONTAINER CARDS & PANELS: EXTREME COMPACTION ── */
+  div[style*="padding: 20px"],
+  div[style*="padding: 24px"],
+  div[style*="padding: 18px"],
+  div[style*="padding: 16px"],
+  div[style*="padding: 14px"],
+  section[style*="padding: 20px"],
+  section[style*="padding: 24px"],
+  section[style*="padding: 16px"] {
+    padding: 8px 10px !important;
+    border-radius: 6px !important;
+  }
+
+  /* Section and flex gaps compaction */
+  div[style*="gap: 20px"],
+  div[style*="gap: 24px"],
+  div[style*="gap: 16px"],
+  div[style*="gap: 14px"],
+  section[style*="gap: 20px"],
+  section[style*="gap: 24px"],
+  section[style*="gap: 16px"] {
+    gap: 6px !important;
+  }
+
+  div[style*="margin-bottom: 24px"],
+  div[style*="margin-bottom: 20px"],
+  div[style*="margin-bottom: 16px"] {
+    margin-bottom: 8px !important;
+  }
+
+  /* ── 4. DE-BOXING & HEAVY BADGE ELIMINATION ── */
+  .badge-glow,
+  .glow-box,
+  div[style*="rgba(16, 185, 129, 0.15)"],
+  div[style*="rgba(56, 189, 248, 0.15)"] {
+    background-color: transparent !important;
+    border-color: #1f1f1f !important;
+    box-shadow: none !important;
+  }
+
+  /* Large KPI values in cards (e.g. 1.5rem, 2rem) */
+  span[style*="font-size: 1.5rem"],
+  span[style*="fontSize: '1.5rem'"],
+  span[style*="fontSize: 1.5rem"],
+  span[style*="font-size: 2rem"],
+  span[style*="fontSize: '2rem'"],
+  span[style*="fontSize: 2rem"] {
+    font-size: 1.125rem !important; /* 18px */
+    line-height: 1.2 !important;
+  }
+
+  /* ── 5. GRID LAYOUTS OVERFLOW ELIMINATION ── */
+  div[style*="gridTemplateColumns"],
+  section[style*="gridTemplateColumns"] {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
   }
 
   /* 2-column KPI Grid on Mobile with dense padding */
   .cawlix-kpi-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 8px !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
   }
 
   .cawlix-kpi-card {
-    padding: 10px 12px !important;
-    gap: 6px !important;
-    border-radius: 8px !important;
+    padding: 8px 10px !important;
+    gap: 4px !important;
+    border-radius: 6px !important;
   }
 
   /* Ultra-minimize/hide question mark helper badge on mobile */
@@ -617,7 +729,7 @@ code, pre, kbd, samp {
 
   .cawlix-kpi-card h3,
   .cawlix-kpi-card .kpi-label {
-    font-size: 11px !important;
+    font-size: 10px !important;
     color: #a1a1aa !important;
     font-weight: 500 !important;
     letter-spacing: 0.02em !important;
@@ -625,7 +737,7 @@ code, pre, kbd, samp {
   }
 
   .cawlix-kpi-card .kpi-value {
-    font-size: 1.125rem !important; /* text-lg */
+    font-size: 1rem !important;
     font-weight: 700 !important;
     font-family: var(--font-mono) !important;
     font-variant-numeric: tabular-nums !important;
@@ -633,9 +745,9 @@ code, pre, kbd, samp {
   }
 
   .cawlix-kpi-card .kpi-sub {
-    font-size: 10px !important;
+    font-size: 9px !important;
     color: #71717a !important;
-    line-height: 1.25 !important;
+    line-height: 1.2 !important;
   }
 
   /* Redundant Mobile Control Elimination (< 768px) */
@@ -649,7 +761,7 @@ code, pre, kbd, samp {
   .cawlix-mobile-cards-stack {
     display: flex !important;
     flex-direction: column !important;
-    gap: 10px !important;
+    gap: 8px !important;
   }
 
   /* Horizontal scrolling containers for tables (fallback) */
@@ -668,7 +780,7 @@ code, pre, kbd, samp {
 
   /* Dense table cell padding on mobile (px-2 py-1.5) */
   .cawlix-table-cell-dense {
-    padding: 6px 8px !important;
+    padding: 4px 6px !important;
   }
 
   /* Workspace padding on mobile to accommodate bottom pill */
