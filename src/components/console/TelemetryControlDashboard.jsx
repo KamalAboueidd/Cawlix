@@ -139,8 +139,8 @@ export default function TelemetryControlDashboard({
         setSearchError(
           results?.message ||
             (isRtl
-              ? 'عفواً، هذا المنتج غير متوفر للبيع حالياً في أي من المتاجر المصرية الـ 12 المعتمدة.'
-              : 'Sorry, this product is currently not available for purchase on any of the 12 verified Egyptian retail platforms.')
+              ? 'عفواً، هذا المنتج غير مدرج في كتالوج الأجهزة المعتمدة حالياً.'
+              : 'Sorry, this product is not currently listed in the verified domestic catalog.')
         );
       }
     } catch (err) {
@@ -1306,8 +1306,8 @@ export default function TelemetryControlDashboard({
               }}
             >
               {isRtl
-                ? `لا توجد نتائج مطابقة لـ "${query}" في الكتالوج المحلي.`
-                : `No local catalog matches for "${query}".`}
+                ? 'عفواً، هذا المنتج غير مدرج في كتالوج الأجهزة المعتمدة حالياً.'
+                : 'Sorry, this product is not currently listed in the verified domestic catalog.'}
             </div>
           )}
 

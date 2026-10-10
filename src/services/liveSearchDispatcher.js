@@ -571,7 +571,7 @@ function buildMasterProductFromResults(validMatches, query, attributes) {
     title: canonicalMatch.title || query,
     brand: attributes.detectedBrand || 'Tech Product',
     model: (canonicalMatch.title || query).split(' ').slice(0, 5).join(' '),
-    barcode: attributes.detectedBarcode || 'LIVE-' + Math.floor(100000000000 + Math.random() * 900000000000),
+    barcode: attributes.detectedBarcode || `EGY-${cleanSearchQuery(query).replace(/\s+/g, '-').toUpperCase()}`,
     category: 'Consumer Electronics & Flagships',
     base_currency: 'EGP',
     status: 'ACTIVE_SURVEILLANCE',

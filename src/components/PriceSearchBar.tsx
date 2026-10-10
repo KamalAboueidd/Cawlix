@@ -17,6 +17,9 @@ const RETAILERS = [
   { id: 'newegg' as RetailerId, name: 'Newegg' },
 ];
 
+import { searchLocalMasterProducts } from '../services/productResolver';
+import { PLATFORMS_REGISTRY } from '../services/marketIntelligenceData';
+
 interface SearchResult {
   retailer: string;
   price: number;
@@ -24,15 +27,27 @@ interface SearchResult {
   inStock: boolean;
 }
 
-function simulateSearch(query: string): SearchResult[] {
+function searchVerifiedCatalog(query: string): SearchResult[] {
   if (!query.trim()) return [];
-  const base = 8000 + Math.random() * 40000;
-  return RETAILERS.map((r) => ({
-    retailer: r.name,
-    price: Math.round(base + (Math.random() - 0.5) * base * 0.25),
-    delta: parseFloat(((Math.random() - 0.5) * 15).toFixed(1)),
-    inStock: Math.random() > 0.2,
-  })).sort((a, b) => a.price - b.price);
+  const matches = searchLocalMasterProducts(query);
+  if (matches.length === 0) return [];
+
+  const product = matches[0];
+  const listings = (product.platform_listings || []).filter((l: any) => l.current_price > 0);
+  if (listings.length === 0) return [];
+
+  const minPrice = Math.min(...listings.map((l: any) => l.current_price));
+
+  return listings.map((l: any) => {
+    const platform = PLATFORMS_REGISTRY.find((p) => p.id === l.platform_id);
+    const diffPct = minPrice > 0 ? parseFloat((((l.current_price - minPrice) / minPrice) * 100).toFixed(1)) : 0;
+    return {
+      retailer: platform ? platform.name : l.platform_id,
+      price: l.current_price,
+      delta: diffPct,
+      inStock: l.stock_status === 'IN_STOCK' || l.stock_status === 'LOW_STOCK',
+    };
+  }).sort((a: SearchResult, b: SearchResult) => a.price - b.price);
 }
 
 export default function PriceSearchBar() {
@@ -48,9 +63,8 @@ export default function PriceSearchBar() {
       return;
     }
     setIsSearching(true);
-    // Simulate async probe across retailers
-    await new Promise((r) => setTimeout(r, 480 + Math.random() * 200));
-    setResults(simulateSearch(q));
+    await new Promise((r) => setTimeout(r, 200));
+    setResults(searchVerifiedCatalog(q));
     setIsSearching(false);
     setHasSearched(true);
   }, []);
@@ -192,6 +206,22 @@ export default function PriceSearchBar() {
               );
             })}
           </div>
+        </div>
+      )}
+
+      {hasSearched && results.length === 0 && (
+        <div
+          className="card"
+          style={{
+            marginTop: '16px',
+            padding: '24px 16px',
+            textAlign: 'center',
+            color: 'var(--text-muted)',
+            fontFamily: 'var(--font-sans)',
+            fontSize: '0.875rem',
+          }}
+        >
+          عفواً، هذا المنتج غير مدرج في كتالوج الأجهزة المعتمدة حالياً.
         </div>
       )}
     </div>
