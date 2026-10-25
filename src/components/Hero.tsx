@@ -12,6 +12,7 @@ const TICKER_ITEMS = [
 export default function Hero() {
   return (
     <section
+      dir="ltr"
       className="page-container hero-section-root"
       style={{
         minHeight: '100vh',
@@ -32,7 +33,7 @@ export default function Hero() {
         className="hero-globe-graphic"
         style={{
           position: 'absolute',
-          top: '30px',
+          top: '60px',
           left: '50%',
           transform: 'translateX(-50%)',
           width: '100%',
@@ -41,10 +42,10 @@ export default function Hero() {
           aspectRatio: '1672 / 941',
           pointerEvents: 'none',
           zIndex: 0,
-          opacity: 0.38,
+          opacity: 0.28,
           mixBlendMode: 'screen',
-          WebkitMaskImage: 'radial-gradient(circle at 50% 45%, black 40%, rgba(0, 0, 0, 0.4) 65%, transparent 85%)',
-          maskImage: 'radial-gradient(circle at 50% 45%, black 40%, rgba(0, 0, 0, 0.4) 65%, transparent 85%)',
+          WebkitMaskImage: 'radial-gradient(circle at 50% 48%, black 35%, rgba(0, 0, 0, 0.3) 65%, transparent 85%)',
+          maskImage: 'radial-gradient(circle at 50% 48%, black 35%, rgba(0, 0, 0, 0.3) 65%, transparent 85%)',
         }}
       >
         <img
@@ -134,15 +135,13 @@ export default function Hero() {
             <a
               href="#showcase"
               className="hero-action-btn hero-btn-primary"
-              style={{ height: '32px' }}
             >
               <span>Launch Tracker</span>
-              <ArrowRight size={11} strokeWidth={2.2} />
+              <ArrowRight size={12} strokeWidth={2.2} />
             </a>
             <a
               href="#engines"
               className="hero-action-btn hero-btn-secondary"
-              style={{ height: '32px' }}
             >
               <span>Docs</span>
             </a>
@@ -313,7 +312,7 @@ export default function Hero() {
         @media (max-width: 768px) {
           .hero-section-root {
             padding-top: 56px !important;
-            padding-bottom: 12px !important;
+            padding-bottom: 16px !important;
             background: #0A0A0A !important;
           }
 
@@ -329,41 +328,43 @@ export default function Hero() {
             flex-direction: column !important;
             justify-content: space-between !important;
             align-items: center !important;
-            padding: 14px 16px 16px 16px !important;
+            padding: 16px 16px 12px 16px !important;
             box-sizing: border-box !important;
             position: relative !important;
             background: transparent !important;
           }
 
-          /* Central cluster over the globe */
+          /* Central cluster vertically centered in the fold */
           .hero-content-cluster {
             display: flex !important;
             flex-direction: column !important;
             align-items: center !important;
-            gap: 12px !important;
+            gap: 14px !important;
             text-align: center !important;
             margin: auto 0 !important;
             position: relative !important;
             z-index: 2 !important;
             background: transparent !important;
+            width: 100% !important;
+            max-width: 360px !important;
           }
 
-          /* Globe enlarged, shifted down into the bottom half, and scaled up to frame mobile viewport */
+          /* Globe positioned gracefully as ambient depth behind the action area */
           .hero-globe-graphic {
-            top: 85px !important;
+            top: 140px !important;
             left: 50% !important;
-            transform: translateX(-50%) scale(1.14) !important;
+            transform: translateX(-50%) !important;
             transform-origin: center center !important;
-            width: 145% !important;
-            max-width: 640px !important;
-            height: 460px !important;
-            opacity: 0.55 !important;
+            width: 135% !important;
+            max-width: 520px !important;
+            height: 400px !important;
+            opacity: 0.28 !important;
             overflow: hidden !important;
             mix-blend-mode: screen !important;
             background: transparent !important;
             pointer-events: none !important;
-            -webkit-mask-image: radial-gradient(circle at 50% 50%, black 55%, rgba(0, 0, 0, 0.4) 80%, transparent 100%) !important;
-            mask-image: radial-gradient(circle at 50% 50%, black 55%, rgba(0, 0, 0, 0.4) 80%, transparent 100%) !important;
+            -webkit-mask-image: radial-gradient(circle at 50% 50%, black 45%, rgba(0, 0, 0, 0.3) 75%, transparent 100%) !important;
+            mask-image: radial-gradient(circle at 50% 50%, black 45%, rgba(0, 0, 0, 0.3) 75%, transparent 100%) !important;
           }
 
           .hero-globe-graphic img {
@@ -376,46 +377,48 @@ export default function Hero() {
           }
 
           .hero-title-responsive {
-            font-size: clamp(1.65rem, 6.8vw, 2.15rem) !important;
-            line-height: 1.12 !important;
+            font-size: clamp(1.8rem, 7.2vw, 2.3rem) !important;
+            line-height: 1.14 !important;
             letter-spacing: -0.035em !important;
             margin: 0 auto !important;
-            max-width: 320px !important;
+            max-width: 350px !important;
+            text-shadow: 0 2px 14px rgba(0, 0, 0, 0.9);
           }
 
-          /* Pushed down so it sits lower in the globe */
           .hero-sub-responsive {
-            font-size: 0.78125rem !important;
-            line-height: 1.5 !important;
-            max-width: 300px !important;
-            margin: 20px auto 6px auto !important;
-            color: #888888 !important;
+            font-size: 0.84rem !important;
+            line-height: 1.55 !important;
+            max-width: 320px !important;
+            margin: 2px auto 0 auto !important;
+            color: #9CA3AF !important;
+            letter-spacing: -0.01em !important;
+            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.95);
           }
 
           .hero-actions-wrapper {
-            max-width: 240px !important;
-            gap: 8px !important;
-            margin: 0 auto !important;
+            max-width: 270px !important;
+            gap: 10px !important;
+            margin: 8px auto 0 auto !important;
           }
 
           .hero-action-btn {
-            height: 31px !important;
-            max-height: 31px !important;
-            line-height: 31px !important;
-            font-size: 0.70rem !important;
-            padding: 0 10px !important;
-            border-radius: 6px !important;
-            gap: 4px !important;
+            height: 38px !important;
+            max-height: 38px !important;
+            line-height: 38px !important;
+            font-size: 0.8125rem !important;
+            padding: 0 14px !important;
+            border-radius: 8px !important;
+            gap: 6px !important;
           }
 
-          /* Auto-marquee ticker on mobile (lifted up to eliminate bottom dead space) */
+          /* Auto-marquee ticker on mobile */
           .ticker-wrapper {
-            padding: 6px 0 !important;
+            padding: 9px 0 !important;
             max-width: 100% !important;
             margin-top: auto !important;
-            margin-bottom: 50px !important;
-            border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+            margin-bottom: 12px !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
             -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 1) 8%, rgba(0, 0, 0, 1) 92%, transparent 100%) !important;
             mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 1) 8%, rgba(0, 0, 0, 1) 92%, transparent 100%) !important;
           }
@@ -433,10 +436,10 @@ export default function Hero() {
           }
 
           .ticker-group {
-            gap: 14px !important;
-            padding-right: 14px !important;
-            font-size: 9.5px !important;
-            letter-spacing: 0.05em !important;
+            gap: 16px !important;
+            padding-right: 16px !important;
+            font-size: 0.6875rem !important;
+            letter-spacing: 0.04em !important;
             flex-shrink: 0 !important;
           }
 

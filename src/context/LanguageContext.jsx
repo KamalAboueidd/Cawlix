@@ -24,18 +24,31 @@ export function LanguageProvider({ children }) {
   const dir = isRtl ? 'rtl' : 'ltr';
 
   // Apply layout direction, document language, and typography
+  // Only console and dashboard pages should be RTL in Arabic; public pages are in English LTR
   useEffect(() => {
-    if (typeof document !== 'undefined') {
-      document.documentElement.setAttribute('dir', dir);
-      document.documentElement.setAttribute('lang', lang);
+    if (typeof document === 'undefined') return;
 
-      if (lang === 'ar') {
+    const updateDirection = () => {
+      const pathname = typeof window !== 'undefined' ? window.location.pathname || '/' : '/';
+      const isConsoleRoute = pathname.startsWith('/console') || pathname.startsWith('/dashboard');
+
+      const effectiveDir = (isConsoleRoute && isRtl) ? 'rtl' : 'ltr';
+      const effectiveLang = isConsoleRoute ? lang : 'en';
+
+      document.documentElement.setAttribute('dir', effectiveDir);
+      document.documentElement.setAttribute('lang', effectiveLang);
+
+      if (isConsoleRoute && isRtl) {
         document.body.style.fontFamily = "'Cairo', 'Alexandria', 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
       } else {
         document.body.style.fontFamily = "'Geist', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
       }
-    }
-  }, [lang, dir]);
+    };
+
+    updateDirection();
+    window.addEventListener('popstate', updateDirection);
+    return () => window.removeEventListener('popstate', updateDirection);
+  }, [lang, dir, isRtl]);
 
   const setLang = useCallback((updaterOrLang) => {
     setLangState((prev) => {

@@ -322,12 +322,14 @@ code, pre, kbd, samp {
   }
 }
 
-/* Mobile Hero Typography */
+/* Responsive Hero Typography */
 .hero-title-responsive {
-  font-size: clamp(1.625rem, 6.5vw, 4.5rem);
+  font-size: clamp(1.85rem, 4.5vw, 4.25rem);
   font-weight: 500;
   letter-spacing: -0.035em;
-  line-height: 1.14;
+  line-height: 1.12;
+  word-break: break-word;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.85);
 }
 
 @media (max-width: 768px) {

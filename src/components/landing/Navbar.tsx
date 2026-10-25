@@ -122,7 +122,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className={`navbar-header ${scrolled || mobileOpen ? 'scrolled' : ''}`}>
+    <header dir="ltr" className={`navbar-header ${scrolled || mobileOpen ? 'scrolled' : ''}`}>
       <div className="navbar-inner">
         {/* Brand Group */}
         <div className="navbar-brand-group">
@@ -538,10 +538,12 @@ export default function Navbar() {
 
         .flyout-engines {
           width: 540px;
+          max-width: min(540px, 92vw);
         }
 
         .flyout-solutions {
           width: 380px;
+          max-width: min(380px, 92vw);
         }
 
         .flyout-grid {
