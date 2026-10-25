@@ -759,11 +759,19 @@ div[style*="border: 1px solid #222222"] {
     display: none !important;
   }
 
-  /* Mobile Native Product Cards Stack */
+  /* Mobile Telemetry Section & Cards Stack (Unboxed standalone cards matching KPI grid) */
+  .cawlix-telemetry-table-section {
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+  }
+
   .cawlix-mobile-cards-stack {
     display: flex !important;
     flex-direction: column !important;
-    gap: 8px !important;
+    gap: 10px !important;
+    padding: 0 !important;
   }
 
   /* Horizontal scrolling containers for tables (fallback) */
@@ -829,6 +837,19 @@ div[style*="border: 1px solid #222222"] {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+/* ── Green Font Hover on Navigation & Menu items ── */
+.vercel-mobile-drawer button:hover,
+.vercel-mobile-drawer button:hover span,
+.vercel-floating-pill-container button:hover,
+.vercel-floating-pill-container button:hover span {
+  color: #10B981 !important;
+}
+
+.vercel-mobile-drawer button:hover svg,
+.vercel-floating-pill-container button:hover svg {
+  stroke: #10B981 !important;
 }
 
 

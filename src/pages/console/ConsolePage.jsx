@@ -33,6 +33,36 @@ const VALID_CONSOLE_TABS = [
   'analytics',
 ];
 
+const TAB_TITLES_EN = {
+  overview: 'Monitored SKUs',
+  tracker: 'Monitored SKUs',
+  intelligence: 'Market Matrix',
+  arbitrage: 'Arbitrage Engine',
+  'retailer-health': 'Retailer Health',
+  forensics: 'Glitch Radar',
+  watchlist: 'Watchlist',
+  reports: 'Export & Reports',
+  logs: 'System Logs',
+  settings: 'Settings',
+  nodes: 'Nodes Cluster',
+  analytics: 'Analytics',
+};
+
+const TAB_TITLES_AR = {
+  overview: 'المنتجات المراقبة',
+  tracker: 'المنتجات المراقبة',
+  intelligence: 'مصفوفة السوق',
+  arbitrage: 'محرك الفروقات',
+  'retailer-health': 'صحة المتاجر',
+  forensics: 'رادار الأخطاء',
+  watchlist: 'قائمة المتابعة',
+  reports: 'التقارير والتصدير',
+  logs: 'سجلات النظام',
+  settings: 'الإعدادات',
+  nodes: 'مجموعة العقد',
+  analytics: 'التحليلات',
+};
+
 // Domestic telemetry nodes cluster definitions
 const CLUSTER_NODES = [
   { id: 'AMZN_EG', name: 'Amazon Egypt Node', domain: 'amazon.eg', status: 'ONLINE', ping: '18ms', throughput: '420 req/m', successRate: '99.9%' },
@@ -162,13 +192,16 @@ export default function ConsolePage() {
 
   // Password & Linked Accounts Management State
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
+  const [forgotPasswordLoading, setForgotPasswordLoading] = useState(false);
   const [googleLinking, setGoogleLinking] = useState(false);
   const [googleLinkMsg, setGoogleLinkMsg] = useState('');
 
@@ -293,18 +326,69 @@ export default function ConsolePage() {
     return { score: 3, label: 'Strong', color: '#34D399' };
   };
 
+  const handleForgotPassword = async () => {
+    if (forgotPasswordLoading) return;
+    if (!primaryEmail) {
+      setPasswordError('No email associated with this session.');
+      return;
+    }
+    setForgotPasswordLoading(true);
+    setPasswordError('');
+    setPasswordSuccess('');
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(primaryEmail, {
+        redirectTo: `${window.location.origin}/console`,
+      });
+      if (error) {
+        setPasswordError(error.message || 'Failed to send password reset email.');
+      } else {
+        setPasswordSuccess(`✓ Reset confirmation dispatched to ${primaryEmail}. Please check your inbox.`);
+      }
+    } catch (err) {
+      setPasswordError(err?.message || 'Failed to dispatch reset email.');
+    } finally {
+      setForgotPasswordLoading(false);
+    }
+  };
+
   const handleSavePassword = async (e) => {
     e.preventDefault();
     if (passwordLoading) return;
     setPasswordError('');
     setPasswordSuccess('');
 
+    // If changing existing password, verify current password first
+    if (isEmailPasswordActive) {
+      if (!currentPassword) {
+        setPasswordError('Please enter your current password.');
+        return;
+      }
+      setPasswordLoading(true);
+      try {
+        const { error: verifyErr } = await supabase.auth.signInWithPassword({
+          email: primaryEmail,
+          password: currentPassword,
+        });
+        if (verifyErr) {
+          setPasswordError('Current password is incorrect. Click "Forgot old password?" above to reset via email confirmation.');
+          setPasswordLoading(false);
+          return;
+        }
+      } catch (err) {
+        setPasswordError('Failed to verify current password. Please try again.');
+        setPasswordLoading(false);
+        return;
+      }
+    }
+
     if (!newPassword || newPassword.length < 8) {
-      setPasswordError('Password must contain at least 8 characters.');
+      setPasswordError('New password must contain at least 8 characters.');
+      setPasswordLoading(false);
       return;
     }
     if (newPassword !== confirmPassword) {
       setPasswordError('Passwords do not match. Please verify both fields.');
+      setPasswordLoading(false);
       return;
     }
 
@@ -314,10 +398,11 @@ export default function ConsolePage() {
       if (error) {
         setPasswordError(error.message || 'Failed to update password.');
       } else {
-        setPasswordSuccess('✓ Password set successfully. You can now log in using either Google or your email and password.');
+        setPasswordSuccess('✓ Password updated successfully. You can now use your new password.');
         await refreshUserData();
         setTimeout(() => {
           setPasswordModalOpen(false);
+          setCurrentPassword('');
           setNewPassword('');
           setConfirmPassword('');
           setPasswordSuccess('');
@@ -339,7 +424,7 @@ export default function ConsolePage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.href,
+          redirectTo: `${window.location.origin}/console`,
         },
       });
       if (error) {
@@ -842,14 +927,113 @@ export default function ConsolePage() {
             boxSizing: 'border-box',
           }}
         >
-          {/* Breadcrumb Workspace Title */}
+          {/* Breadcrumb Workspace Title / Back Navigation Arrow */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
-            <span style={{ fontSize: '0.8125rem', fontWeight: 500, color: '#EDEDED', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
-              {isRtl ? 'المنتجات المراقبة' : 'Monitored SKUs'}
-            </span>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#666666" strokeWidth="2">
-              <path d="m6 9 6 6 6-6" />
-            </svg>
+            {activeTab !== 'overview' && activeTab !== 'tracker' ? (
+              <button
+                type="button"
+                onClick={() => handleTabChange('overview')}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '7px',
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#EDEDED',
+                  cursor: 'pointer',
+                  padding: '5px 3px',
+                  margin: 0,
+                  fontSize: '0.8125rem',
+                  fontWeight: 600,
+                  fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                  transition: 'color 120ms ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#10B981';
+                  const svg = e.currentTarget.querySelector('svg');
+                  if (svg) svg.style.stroke = '#10B981';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = '#EDEDED';
+                  const svg = e.currentTarget.querySelector('svg');
+                  if (svg) svg.style.stroke = 'currentColor';
+                }}
+                title={isRtl ? 'الرجوع للمنتجات المراقبة' : 'Back to Overview'}
+                aria-label={isRtl ? 'الرجوع للمنتجات المراقبة' : 'Back to Overview'}
+              >
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{
+                    flexShrink: 0,
+                    transform: isRtl ? 'rotate(180deg)' : 'none',
+                    transition: 'stroke 120ms ease',
+                  }}
+                >
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span>
+                  {isRtl
+                    ? (TAB_TITLES_AR[activeTab] || 'رجوع')
+                    : (TAB_TITLES_EN[activeTab] || 'Overview')}
+                </span>
+              </button>
+            ) : (
+              <a
+                href="/"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '7px',
+                  textDecoration: 'none',
+                  color: '#EDEDED',
+                  padding: '5px 3px',
+                  fontSize: '0.8125rem',
+                  fontWeight: 600,
+                  fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                  transition: 'color 120ms ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#10B981';
+                  const svg = e.currentTarget.querySelector('svg');
+                  if (svg) svg.style.stroke = '#10B981';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = '#EDEDED';
+                  const svg = e.currentTarget.querySelector('svg');
+                  if (svg) svg.style.stroke = 'currentColor';
+                }}
+                title={isRtl ? 'الرجوع للرئيسية' : 'Back to Home'}
+                aria-label={isRtl ? 'الرجوع للرئيسية' : 'Back to Home'}
+              >
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{
+                    flexShrink: 0,
+                    transform: isRtl ? 'rotate(180deg)' : 'none',
+                    transition: 'stroke 120ms ease',
+                  }}
+                >
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                <span>{isRtl ? 'المنتجات المراقبة' : 'Monitored SKUs'}</span>
+              </a>
+            )}
           </div>
 
           {/* Universal Real-Time Search & Multi-Platform Command Palette (Hidden on Mobile < 768px) */}
@@ -868,62 +1052,6 @@ export default function ConsolePage() {
 
           {/* Topbar Right Controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
-            {/* Institutional Language Switcher Segmented Control (🇸🇦 عربي / 🇬🇧 English) */}
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                backgroundColor: '#0A0A0A',
-                border: '1px solid #222222',
-                borderRadius: '6px',
-                padding: '2px',
-                gap: '2px',
-              }}
-            >
-              <button
-                type="button"
-                id="btn-switch-lang-ar"
-                onClick={() => setLang('ar')}
-                style={{
-                  backgroundColor: lang === 'ar' ? '#1F1F1F' : 'transparent',
-                  color: lang === 'ar' ? '#10B981' : '#888888',
-                  fontSize: '0.6875rem',
-                  fontWeight: 600,
-                  padding: '3px 7px',
-                  borderRadius: '4px',
-                  border: lang === 'ar' ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid transparent',
-                  cursor: 'pointer',
-                  fontFamily: "'Alexandria', sans-serif",
-                  transition: 'all 120ms ease',
-                  whiteSpace: 'nowrap',
-                }}
-                title="التحويل إلى اللغة العربية"
-              >
-                🇸🇦 عربي
-              </button>
-              <button
-                type="button"
-                id="btn-switch-lang-en"
-                onClick={() => setLang('en')}
-                style={{
-                  backgroundColor: lang === 'en' ? '#1F1F1F' : 'transparent',
-                  color: lang === 'en' ? '#10B981' : '#888888',
-                  fontSize: '0.6875rem',
-                  fontWeight: 600,
-                  padding: '3px 7px',
-                  borderRadius: '4px',
-                  border: lang === 'en' ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid transparent',
-                  cursor: 'pointer',
-                  fontFamily: "'Geist', sans-serif",
-                  transition: 'all 120ms ease',
-                  whiteSpace: 'nowrap',
-                }}
-                title="Switch to English"
-              >
-                🇬🇧 English
-              </button>
-            </div>
-
             {/* Run Fleet Audit Manual Trigger Button */}
             <button
               type="button"
@@ -1905,6 +2033,7 @@ export default function ConsolePage() {
                         onClick={() => {
                           setPasswordError('');
                           setPasswordSuccess('');
+                          setCurrentPassword('');
                           setNewPassword('');
                           setConfirmPassword('');
                           setPasswordModalOpen(true);
@@ -2025,75 +2154,6 @@ export default function ConsolePage() {
                   </div>
                 </div>
 
-                {/* 2. Language & Interface Preferences */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', paddingTop: '10px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', paddingBottom: '12px', borderBottom: '1px solid #191919' }}>
-                    <div>
-                      <h3 style={{ fontSize: '0.875rem', fontWeight: 600, color: '#EDEDED', margin: 0, fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
-                        {isRtl ? 'لغة واجهة المنصة' : 'Platform Language'}
-                      </h3>
-                      <p style={{ fontSize: '0.75rem', color: '#888888', marginTop: '3px', marginBottom: 0, fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif" }}>
-                        {isRtl ? 'اختر لغة عرض الواجهة واتجاه النصوص المفضل لمنصة كاوكليكس.' : 'Select display language and typography layout preference for Cawlix.'}
-                      </p>
-                    </div>
-                    <span
-                      style={{
-                        fontSize: '0.6875rem',
-                        fontFamily: "'Geist Mono', monospace",
-                        color: '#10B981',
-                      }}
-                    >
-                      {lang === 'ar' ? 'العربية (RTL)' : 'ENGLISH (LTR)'}
-                    </span>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                    <button
-                      type="button"
-                      onClick={() => setLang('ar')}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        padding: '8px 16px',
-                        fontSize: '0.8125rem',
-                        fontWeight: lang === 'ar' ? 600 : 400,
-                        backgroundColor: lang === 'ar' ? '#18181B' : '#09090B',
-                        border: lang === 'ar' ? '1px solid #3F3F46' : '1px solid #27272A',
-                        borderRadius: '6px',
-                        color: lang === 'ar' ? '#EDEDED' : '#A1A1AA',
-                        cursor: 'pointer',
-                        fontFamily: "'Cairo', sans-serif",
-                        transition: 'all 120ms ease',
-                      }}
-                    >
-                      <span>🇸🇦</span>
-                      <span>العربية (واجهة عربية كاملة)</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setLang('en')}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        padding: '8px 16px',
-                        fontSize: '0.8125rem',
-                        fontWeight: lang === 'en' ? 600 : 400,
-                        backgroundColor: lang === 'en' ? '#18181B' : '#09090B',
-                        border: lang === 'en' ? '1px solid #3F3F46' : '1px solid #27272A',
-                        borderRadius: '6px',
-                        color: lang === 'en' ? '#EDEDED' : '#A1A1AA',
-                        cursor: 'pointer',
-                        fontFamily: "'Geist', sans-serif",
-                        transition: 'all 120ms ease',
-                      }}
-                    >
-                      <span>🇬🇧</span>
-                      <span>English (International)</span>
-                    </button>
-                  </div>
-                </div>
 
                 {/* 3. Active Session Information (Flat List) */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '10px' }}>
@@ -2121,6 +2181,7 @@ export default function ConsolePage() {
             {/* ── 6. VERCEL TELEMETRY TABLE (Overview & Tracker) ── */}
             {(activeTab === 'overview' || activeTab === 'tracker') && (
               <section
+                className="cawlix-telemetry-table-section"
                 style={{
                   backgroundColor: '#000000',
                   border: '1px solid #1F1F1F',
@@ -2517,10 +2578,10 @@ export default function ConsolePage() {
                           key={`mobile-${item.id}`}
                           onClick={() => handleRowClick(item)}
                           style={{
-                            backgroundColor: '#0A0A0A',
+                            backgroundColor: '#000000',
                             border: '1px solid #1F1F1F',
                             borderRadius: '8px',
-                            padding: '12px',
+                            padding: '12px 14px',
                             display: 'flex',
                             flexDirection: 'column',
                             gap: '8px',
@@ -2529,48 +2590,50 @@ export default function ConsolePage() {
                           }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.borderColor = '#333333';
-                            e.currentTarget.style.backgroundColor = '#0E0E0E';
+                            e.currentTarget.style.backgroundColor = '#050505';
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.borderColor = '#1F1F1F';
-                            e.currentTarget.style.backgroundColor = '#0A0A0A';
+                            e.currentTarget.style.backgroundColor = '#000000';
                           }}
                         >
-                          {/* Header: Platform Badge + Stock status dot & Last ping */}
+                          {/* Header: Platform Store Name (clean text, no badge box) + Blue Status Checkmark + Last ping */}
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                              {/* Clean Store Name matching desktop exactly (no green background/border) */}
                               <span
                                 style={{
-                                  fontSize: '11px',
+                                  fontSize: '0.75rem',
                                   fontWeight: 600,
                                   color: '#10B981',
-                                  backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                                  border: '1px solid rgba(16, 185, 129, 0.25)',
-                                  padding: '2px 7px',
-                                  borderRadius: '4px',
-                                  fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace",
+                                  fontFamily: "'Geist Mono', monospace",
                                 }}
                               >
                                 {getRetailerName(item.node, lang)}
                               </span>
 
-                              {/* Status dot */}
+                              {/* Status: Clean Blue Checkmark identical to desktop */}
                               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                                <span
-                                  style={{
-                                    width: '6px',
-                                    height: '6px',
-                                    borderRadius: '50%',
-                                    backgroundColor: item.status === 'OUT_OF_STOCK' ? '#FB7185' : '#10B981',
-                                  }}
-                                />
-                                <span style={{ fontSize: '10px', color: '#888888', fontFamily: "'Geist Mono', monospace" }}>
+                                <svg
+                                  width="12"
+                                  height="12"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="#0070F3"
+                                  strokeWidth="2.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  style={{ flexShrink: 0 }}
+                                >
+                                  <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                                <span style={{ fontSize: '0.6875rem', color: '#888888', fontFamily: "'Geist Mono', monospace" }}>
                                   {item.status}
                                 </span>
                               </span>
                             </div>
 
-                            <span style={{ fontSize: '10px', color: '#71717A', fontFamily: "'Geist Mono', monospace" }}>
+                            <span style={{ fontSize: '0.75rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
                               {item.last_ping}
                             </span>
                           </div>
@@ -2587,7 +2650,7 @@ export default function ConsolePage() {
                                 WebkitLineClamp: 2,
                                 WebkitBoxOrient: 'vertical',
                                 overflow: 'hidden',
-                                fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                                fontFamily: "'Geist', sans-serif",
                               }}
                             >
                               {item.title}
@@ -2610,9 +2673,9 @@ export default function ConsolePage() {
                             <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
                               <span
                                 style={{
-                                  fontSize: '14px',
-                                  fontWeight: 700,
-                                  color: isFlashing ? '#10B981' : '#FFFFFF',
+                                  fontSize: '0.875rem',
+                                  fontWeight: 600,
+                                  color: isFlashing ? '#10B981' : '#EDEDED',
                                   fontFamily: "'Geist Mono', monospace",
                                   fontVariantNumeric: 'tabular-nums',
                                 }}
@@ -2621,8 +2684,8 @@ export default function ConsolePage() {
                               </span>
                               <span
                                 style={{
-                                  fontSize: '10px',
-                                  fontWeight: 600,
+                                  fontSize: '0.6875rem',
+                                  fontWeight: 500,
                                   color: deltaColor,
                                   fontFamily: "'Geist Mono', monospace",
                                 }}
@@ -2631,7 +2694,7 @@ export default function ConsolePage() {
                               </span>
                             </div>
 
-                            {/* Direct touch target */}
+                            {/* Direct touch target - matches desktop ghost button reaudit_node */}
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                               <button
                                 type="button"
@@ -2641,27 +2704,38 @@ export default function ConsolePage() {
                                   handleReaudit(e, item);
                                 }}
                                 style={{
-                                  backgroundColor: isProbing ? '#18181B' : '#141414',
-                                  border: '1px solid #27272A',
-                                  borderRadius: '5px',
-                                  padding: '4px 9px',
-                                  color: isProbing ? '#10B981' : '#E4E4E7',
-                                  fontSize: '11px',
+                                  backgroundColor: isProbing ? '#121212' : 'transparent',
+                                  border: isProbing ? '1px solid #10B981' : '1px solid #222222',
+                                  borderRadius: '6px',
+                                  padding: '4px 10px',
+                                  color: isProbing ? '#10B981' : '#888888',
+                                  fontSize: '0.75rem',
                                   fontWeight: 500,
                                   cursor: isProbing ? 'wait' : 'pointer',
                                   display: 'inline-flex',
                                   alignItems: 'center',
-                                  gap: '4px',
-                                  fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                                  gap: '6px',
+                                  fontFamily: "'Geist Mono', monospace",
+                                  transition: 'all 120ms ease',
                                 }}
                               >
                                 {isProbing ? (
-                                  <span>{isRtl ? 'جاري الفحص...' : 'Auditing...'}</span>
-                                ) : (
                                   <>
-                                    <span>{isRtl ? 'إعادة الفحص' : 'Re-audit'}</span>
-                                    <span style={{ fontSize: '10px', transform: isRtl ? 'scaleX(-1)' : 'none' }}>→</span>
+                                    <svg
+                                      width="11"
+                                      height="11"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2.5"
+                                      style={{ animation: 'spin 0.8s linear infinite' }}
+                                    >
+                                      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                                    </svg>
+                                    <span>Syncing...</span>
                                   </>
+                                ) : (
+                                  <span>{t('reaudit_node')}</span>
                                 )}
                               </button>
                             </div>
@@ -3247,6 +3321,108 @@ export default function ConsolePage() {
 
             {/* Modal Form */}
             <form onSubmit={handleSavePassword} style={{ display: 'flex', flexDirection: 'column', gap: '16px', direction: isRtl ? 'rtl' : 'ltr' }}>
+              {/* Current Password Field (when changing existing password) */}
+              {isEmailPasswordActive && (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <label
+                      htmlFor="settings-current-password"
+                      style={{
+                        fontSize: '0.75rem',
+                        fontWeight: 500,
+                        color: '#666666',
+                        letterSpacing: '0.04em',
+                        textTransform: 'uppercase',
+                        margin: 0,
+                        fontFamily: "'Geist', sans-serif",
+                      }}
+                    >
+                      CURRENT PASSWORD
+                    </label>
+                    <button
+                      type="button"
+                      disabled={forgotPasswordLoading}
+                      onClick={handleForgotPassword}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#10B981',
+                        fontSize: '0.75rem',
+                        fontWeight: 500,
+                        cursor: forgotPasswordLoading ? 'wait' : 'pointer',
+                        padding: 0,
+                        textDecoration: 'underline',
+                        fontFamily: "'Geist', sans-serif",
+                        transition: 'color 120ms ease',
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = '#34D399')}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = '#10B981')}
+                      title="Send reset confirmation email"
+                    >
+                      {forgotPasswordLoading ? 'Sending link...' : 'Forgot old password?'}
+                    </button>
+                  </div>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      id="settings-current-password"
+                      type={showCurrentPassword ? 'text' : 'password'}
+                      required
+                      value={currentPassword}
+                      onChange={(e) => {
+                        setCurrentPassword(e.target.value);
+                        setPasswordError('');
+                      }}
+                      placeholder="Enter your current password"
+                      style={{
+                        backgroundColor: '#000000',
+                        border: '1px solid #1F1F1F',
+                        color: '#EDEDED',
+                        fontSize: '0.875rem',
+                        padding: '0 40px 0 12px',
+                        height: '40px',
+                        borderRadius: '6px',
+                        outline: 'none',
+                        width: '100%',
+                        boxSizing: 'border-box',
+                        transition: 'border-color 150ms ease',
+                        fontFamily: "'Geist Mono', monospace",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = '#333333')}
+                      onBlur={(e) => (e.target.style.borderColor = '#1F1F1F')}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCurrentPassword((prev) => !prev)}
+                      style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'none',
+                        border: 'none',
+                        color: '#666666',
+                        cursor: 'pointer',
+                        padding: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      {showCurrentPassword ? (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                          <line x1="1" y1="1" x2="23" y2="23" />
+                        </svg>
+                      ) : (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* New Password */}
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
@@ -3463,19 +3639,18 @@ export default function ConsolePage() {
                   style={{
                     fontSize: '0.8125rem',
                     color: '#FB7185',
-                    backgroundColor: '#0A0A0A',
-                    border: '1px solid #222222',
-                    borderRadius: '6px',
-                    padding: '10px 12px',
-                    lineHeight: 1.5,
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    padding: '2px 0',
+                    lineHeight: 1.45,
                     display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '10px',
+                    alignItems: 'center',
+                    gap: '8px',
                     fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                   }}
                 >
-                  <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>✕</span>
-                  <div style={{ wordBreak: 'break-word' }}>{passwordError}</div>
+                  <span style={{ fontSize: '0.875rem', lineHeight: 1, flexShrink: 0, color: '#FB7185' }}>✕</span>
+                  <div style={{ wordBreak: 'break-word', color: '#FB7185' }}>{passwordError}</div>
                 </div>
               )}
 
@@ -3483,20 +3658,19 @@ export default function ConsolePage() {
                 <div
                   style={{
                     fontSize: '0.8125rem',
-                    color: '#00DF8F',
-                    backgroundColor: '#0A0A0A',
-                    border: '1px solid #222222',
-                    borderRadius: '6px',
-                    padding: '10px 12px',
-                    lineHeight: 1.5,
+                    color: '#10B981',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    padding: '2px 0',
+                    lineHeight: 1.45,
                     display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '10px',
+                    alignItems: 'center',
+                    gap: '8px',
                     fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                   }}
                 >
-                  <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>✓</span>
-                  <div style={{ wordBreak: 'break-word' }}>{passwordSuccess}</div>
+                  <span style={{ fontSize: '0.875rem', lineHeight: 1, flexShrink: 0, color: '#10B981' }}>✓</span>
+                  <div style={{ wordBreak: 'break-word', color: '#10B981' }}>{passwordSuccess}</div>
                 </div>
               )}
 

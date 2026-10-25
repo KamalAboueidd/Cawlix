@@ -26,9 +26,7 @@ export const en = {
     liveTelemetry: "Live Telemetry Feed",
     consoleBreadcrumb: "Telemetry Console",
     accountSecurity: "Account Security & Authentication",
-    signOut: "Sign Out",
-    langToggle: "🇸🇦 عربي / 🇬🇧 English",
-    langToggleLabel: "Toggle Language"
+    signOut: "Sign Out"
   },
 
   // 12 Egyptian Retailers

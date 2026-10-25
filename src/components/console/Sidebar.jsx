@@ -266,21 +266,40 @@ export default function Sidebar({
                     onMouseEnter={(e) => {
                       if (!isActive) {
                         e.currentTarget.style.backgroundColor = '#0F0F0F';
-                        e.currentTarget.style.color = '#EDEDED';
+                        e.currentTarget.style.color = '#10B981';
+                        const iconSpan = e.currentTarget.querySelector('.sidebar-icon-wrap');
+                        if (iconSpan) {
+                          iconSpan.style.color = '#10B981';
+                          const svg = iconSpan.querySelector('svg');
+                          if (svg) svg.style.stroke = '#10B981';
+                        }
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (!isActive) {
                         e.currentTarget.style.backgroundColor = 'transparent';
                         e.currentTarget.style.color = '#888888';
+                        const iconSpan = e.currentTarget.querySelector('.sidebar-icon-wrap');
+                        if (iconSpan) {
+                          iconSpan.style.color = '#777777';
+                          const svg = iconSpan.querySelector('svg');
+                          if (svg) svg.style.stroke = '#777777';
+                        }
                       }
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
-                      <span style={{ color: isActive ? '#10B981' : '#777777', display: 'flex' }}>
+                      <span
+                        className="sidebar-icon-wrap"
+                        style={{
+                          color: isActive ? '#10B981' : '#777777',
+                          display: 'flex',
+                          transition: 'color 120ms ease',
+                        }}
+                      >
                         {route.icon}
                       </span>
-                      <span>{route.label}</span>
+                      <span style={{ transition: 'color 120ms ease' }}>{route.label}</span>
                     </div>
 
                     {route.badge && (
@@ -399,21 +418,19 @@ export default function Sidebar({
               width: '28px',
               height: '28px',
               borderRadius: '6px',
-              backgroundColor: userMenuOpen ? '#1F1F1F' : 'transparent',
+              backgroundColor: 'transparent',
               border: 'none',
               color: userMenuOpen ? '#EDEDED' : '#888888',
               cursor: 'pointer',
               transition: 'all 120ms ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#161616';
+              e.currentTarget.style.backgroundColor = 'transparent';
               e.currentTarget.style.color = '#EDEDED';
             }}
             onMouseLeave={(e) => {
-              if (!userMenuOpen) {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = '#888888';
-              }
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = userMenuOpen ? '#EDEDED' : '#888888';
             }}
             title="User Options"
           >

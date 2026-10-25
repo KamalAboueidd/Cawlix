@@ -79,7 +79,7 @@ export default function NotificationCenter({ onInspectProduct = null, placement 
           width: '28px',
           height: '28px',
           borderRadius: '6px',
-          backgroundColor: isOpen ? '#161616' : 'transparent',
+          backgroundColor: 'transparent',
           border: 'none',
           color: unreadCount > 0 ? '#10B981' : '#888888',
           cursor: 'pointer',
@@ -87,17 +87,15 @@ export default function NotificationCenter({ onInspectProduct = null, placement 
           transition: 'all 120ms ease',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = '#161616';
-          e.currentTarget.style.color = unreadCount > 0 ? '#10B981' : '#EDEDED';
+          e.currentTarget.style.backgroundColor = 'transparent';
+          e.currentTarget.style.color = unreadCount > 0 ? '#34D399' : '#EDEDED';
         }}
         onMouseLeave={(e) => {
-          if (!isOpen) {
-            e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.color = unreadCount > 0 ? '#10B981' : '#888888';
-          }
+          e.currentTarget.style.backgroundColor = 'transparent';
+          e.currentTarget.style.color = unreadCount > 0 ? '#10B981' : '#888888';
         }}
         aria-label="Price Drop Notifications"
-        title={t('alerts.title')}
+        title="Notifications"
       >
         <Bell size={15} />
 

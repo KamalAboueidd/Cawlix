@@ -61,13 +61,6 @@ import AddSkuModal from '../../components/console/AddSkuModal.astro';
           <span id="theme-label-text">Dark</span>
         </button>
 
-        <!-- Instant Language Switcher (EN | عربي) -->
-        <div class="lang-switcher font-mono" id="lang-switcher">
-          <button type="button" class="lang-btn active" id="btn-lang-en" data-lang="en">EN</button>
-          <span class="lang-sep">|</span>
-          <button type="button" class="lang-btn" id="btn-lang-ar" data-lang="ar">عربي</button>
-        </div>
-
         <div class="util-divider"></div>
 
         <!-- User Profile Avatar -->
@@ -1463,32 +1456,31 @@ import AddSkuModal from '../../components/console/AddSkuModal.astro';
     setTheme(currentTheme === 'dark' ? 'light' : 'dark');
   });
 
-  // 2. Language Management (AR / EN)
+  // 2. Language Management (English Only)
   function initLang() {
-    const savedLang = localStorage.getItem('cawlix-lang') || 'en';
-    setLang(savedLang);
+    try {
+      localStorage.removeItem('cawlix-lang');
+    } catch {}
+    setLang('en');
   }
 
-  function setLang(lang: string) {
-    currentLang = lang;
-    localStorage.setItem('cawlix-lang', lang);
-    const dir = lang === 'ar' ? 'rtl' : 'ltr';
+  function setLang(_lang: string) {
+    currentLang = 'en';
+    const dir = 'ltr';
     if (root) {
       root.setAttribute('dir', dir);
-      root.setAttribute('lang', lang);
+      root.setAttribute('lang', 'en');
     }
     document.documentElement.setAttribute('dir', dir);
-    document.documentElement.setAttribute('lang', lang);
+    document.documentElement.setAttribute('lang', 'en');
 
-    if (btnLangEn && btnLangAr) {
-      if (lang === 'ar') {
-        btnLangAr.classList.add('active');
-        btnLangEn.classList.remove('active');
-      } else {
-        btnLangEn.classList.add('active');
-        btnLangAr.classList.remove('active');
-      }
+    if (btnLangEn) {
+      btnLangEn.classList.add('active');
     }
+    if (btnLangAr) {
+      btnLangAr.classList.remove('active');
+    }
+  }
 
     // Apply translations
     const dict = I18N[lang as 'en' | 'ar'] || I18N.en;

@@ -603,7 +603,7 @@ export async function executeLiveFederatedSearch(query) {
       found: false,
       masterProduct: null,
       listings: [],
-      message: 'عفواً، يرجى إدخال اسم أو موديل المنتج للبحث.',
+      message: 'Please enter a product title or model to search.',
     };
   }
 
@@ -624,7 +624,7 @@ export async function executeLiveFederatedSearch(query) {
         found: false,
         masterProduct: null,
         listings: [],
-        message: 'عفواً، هذا المنتج غير متوفر للبيع حالياً في أي من المتاجر المصرية الـ 12 المعتمدة.',
+        message: 'No active listings found across the 12 indexed retailers for this query.',
       };
     }
 
@@ -720,7 +720,7 @@ export async function executeLiveFederatedSearch(query) {
       found: false,
       masterProduct: null,
       listings: [],
-      message: 'عفواً، هذا المنتج غير متوفر للبيع حالياً في أي من المتاجر المصرية الـ 12 المعتمدة.',
+      message: 'No active listings found across the 12 indexed retailers for this query.',
     };
   }
 

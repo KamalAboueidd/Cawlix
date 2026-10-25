@@ -261,7 +261,7 @@ export default function VercelMobileShell({
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              backgroundColor: isSearchOpen ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
+              backgroundColor: 'transparent',
               border: 'none',
               color: isSearchOpen ? '#FFFFFF' : '#EDEDED',
               fontSize: '0.8125rem',
@@ -270,17 +270,23 @@ export default function VercelMobileShell({
               padding: '4px 6px',
               borderRadius: '9999px',
               transition: 'all 120ms ease',
-              fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+              fontFamily: "'Geist', sans-serif",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#FFFFFF')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = isSearchOpen ? '#FFFFFF' : '#EDEDED')}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = '#10B981';
+              const svg = e.currentTarget.querySelector('svg');
+              if (svg) svg.style.stroke = '#10B981';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = isSearchOpen ? '#10B981' : '#EDEDED';
+              const svg = e.currentTarget.querySelector('svg');
+              if (svg) svg.style.stroke = isSearchOpen ? '#10B981' : '#A1A1AA';
+            }}
             aria-label="Universal Search"
           >
-            <Search size={14} color={isSearchOpen ? '#10B981' : '#A1A1AA'} style={{ flexShrink: 0 }} />
-            <span style={{ letterSpacing: '-0.01em' }}>
-              {isSearchOpen
-                ? (isRtl ? 'إغلاق البحث' : 'Close')
-                : (isRtl ? 'بحث / Find' : 'Find / بحث')}
+            <Search size={14} color={isSearchOpen ? '#10B981' : '#A1A1AA'} style={{ flexShrink: 0, transition: 'stroke 120ms ease' }} />
+            <span style={{ letterSpacing: '-0.01em', transition: 'color 120ms ease' }}>
+              {isSearchOpen ? 'Close' : 'Search'}
             </span>
           </button>
 
@@ -305,26 +311,34 @@ export default function VercelMobileShell({
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              backgroundColor: isNavOpen ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
+              backgroundColor: 'transparent',
               border: 'none',
-              color: isNavOpen ? '#FFFFFF' : '#EDEDED',
+              color: isNavOpen ? '#10B981' : '#EDEDED',
               fontSize: '0.8125rem',
               fontWeight: 500,
               cursor: 'pointer',
               padding: '4px 8px',
               borderRadius: '9999px',
               transition: 'all 120ms ease',
-              fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+              fontFamily: "'Geist', sans-serif",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = '#10B981';
+              const svg = e.currentTarget.querySelector('svg');
+              if (svg) svg.style.stroke = '#10B981';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = isNavOpen ? '#10B981' : '#EDEDED';
+              const svg = e.currentTarget.querySelector('svg');
+              if (svg) svg.style.stroke = isNavOpen ? '#10B981' : '#EDEDED';
             }}
             aria-label={isNavOpen ? 'Close Menu' : 'Open Menu'}
           >
             {!isNavOpen && (
-              <Menu size={15} color="#EDEDED" style={{ flexShrink: 0 }} />
+              <Menu size={15} color="#EDEDED" style={{ flexShrink: 0, transition: 'stroke 120ms ease' }} />
             )}
-            <span style={{ letterSpacing: '-0.01em' }}>
-              {isNavOpen
-                ? (isRtl ? 'إغلاق' : 'Close')
-                : (isRtl ? 'القائمة' : 'Menu')}
+            <span style={{ letterSpacing: '-0.01em', transition: 'color 120ms ease' }}>
+              {isNavOpen ? 'Close' : 'Menu'}
             </span>
           </button>
         </div>
@@ -383,7 +397,11 @@ export default function VercelMobileShell({
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
+                      transition: 'color 120ms ease',
+                      cursor: 'pointer',
                     }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = '#10B981')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = '#EDEDED')}
                   >
                     {userHandle}
                   </span>
@@ -461,10 +479,25 @@ export default function VercelMobileShell({
                 fontWeight: 500,
                 cursor: fleetAuditProgress ? 'not-allowed' : 'pointer',
                 fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                transition: 'all 120ms ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = '#10B981';
+                e.currentTarget.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+                const svg = e.currentTarget.querySelector('svg');
+                if (svg) svg.style.stroke = '#10B981';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = fleetAuditCompleted ? '#10B981' : '#EDEDED';
+                e.currentTarget.style.borderColor = fleetAuditCompleted ? 'rgba(16, 185, 129, 0.25)' : '1px solid #222222';
+                const svg = e.currentTarget.querySelector('svg');
+                if (svg) svg.style.stroke = fleetAuditCompleted ? '#10B981' : '#888888';
               }}
             >
-              <Zap size={11} color={fleetAuditCompleted ? '#10B981' : '#888888'} />
-              <span>{fleetAuditCompleted ? (isRtl ? 'تم الفحص ✓' : 'Audited ✓') : (isRtl ? 'فحص المتاجر' : 'Audit Fleet')}</span>
+              <Zap size={11} color={fleetAuditCompleted ? '#10B981' : '#888888'} style={{ transition: 'stroke 120ms ease' }} />
+              <span style={{ transition: 'color 120ms ease' }}>
+                {fleetAuditCompleted ? (isRtl ? 'تم الفحص ✓' : 'Audited ✓') : (isRtl ? 'فحص المتاجر' : 'Audit Fleet')}
+              </span>
             </button>
 
             {/* Add Target SKU */}
@@ -488,10 +521,18 @@ export default function VercelMobileShell({
                 fontWeight: 500,
                 cursor: 'pointer',
                 fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
-                transition: 'background-color 150ms ease',
+                transition: 'all 120ms ease',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#27272A')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#18181B')}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#202024';
+                e.currentTarget.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+                e.currentTarget.style.color = '#10B981';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#18181B';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                e.currentTarget.style.color = '#E4E4E7';
+              }}
             >
               <span>+</span>
               <span>{isRtl ? 'إضافة منتج' : 'Add SKU'}</span>
@@ -535,7 +576,7 @@ export default function VercelMobileShell({
                         borderRadius: '6px',
                         backgroundColor: isActive ? '#161616' : 'transparent',
                         border: isActive ? '1px solid #262626' : '1px solid transparent',
-                        color: isActive ? '#FFFFFF' : '#A1A1AA',
+                        color: isActive ? '#10B981' : '#A1A1AA',
                         fontSize: '0.875rem',
                         fontWeight: isActive ? 500 : 400,
                         cursor: 'pointer',
@@ -543,12 +584,39 @@ export default function VercelMobileShell({
                         transition: 'all 120ms ease',
                         fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                       }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = '#10B981';
+                        e.currentTarget.style.backgroundColor = isActive ? '#161616' : '#111111';
+                        const iconSpan = e.currentTarget.querySelector('.route-icon-wrap');
+                        if (iconSpan) {
+                          iconSpan.style.color = '#10B981';
+                          const svg = iconSpan.querySelector('svg');
+                          if (svg) svg.style.stroke = '#10B981';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = isActive ? '#10B981' : '#A1A1AA';
+                        e.currentTarget.style.backgroundColor = isActive ? '#161616' : 'transparent';
+                        const iconSpan = e.currentTarget.querySelector('.route-icon-wrap');
+                        if (iconSpan) {
+                          iconSpan.style.color = isActive ? '#10B981' : '#71717A';
+                          const svg = iconSpan.querySelector('svg');
+                          if (svg) svg.style.stroke = isActive ? '#10B981' : '#71717A';
+                        }
+                      }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <span style={{ color: isActive ? '#10B981' : '#71717A', display: 'flex' }}>
+                        <span
+                          className="route-icon-wrap"
+                          style={{
+                            color: isActive ? '#10B981' : '#71717A',
+                            display: 'flex',
+                            transition: 'color 120ms ease',
+                          }}
+                        >
                           {route.icon}
                         </span>
-                        <span>{route.label}</span>
+                        <span style={{ transition: 'color 120ms ease' }}>{route.label}</span>
                       </div>
 
                       {route.badge && (
@@ -595,11 +663,21 @@ export default function VercelMobileShell({
                   transition: 'color 120ms ease',
                   fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#FB7185')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = '#71717A')}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#10B981';
+                  const svg = e.currentTarget.querySelector('svg');
+                  if (svg) svg.style.stroke = '#10B981';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = '#71717A';
+                  const svg = e.currentTarget.querySelector('svg');
+                  if (svg) svg.style.stroke = '#71717A';
+                }}
               >
-                <LogOut size={13} style={{ flexShrink: 0 }} />
-                <span>{isRtl ? 'تسجيل الخروج من الحساب' : 'Sign Out of Account'}</span>
+                <LogOut size={13} style={{ flexShrink: 0, transition: 'stroke 120ms ease' }} />
+                <span style={{ transition: 'color 120ms ease' }}>
+                  {isRtl ? 'تسجيل الخروج من الحساب' : 'Sign Out of Account'}
+                </span>
               </button>
             </div>
           </div>
@@ -720,31 +798,38 @@ export default function VercelMobileShell({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '12px 14px',
+                padding: '10px 14px',
                 borderRadius: '8px',
-                backgroundColor: 'rgba(16, 185, 129, 0.08)',
-                border: '1px solid rgba(16, 185, 129, 0.3)',
-                color: '#10B981',
+                backgroundColor: '#111111',
+                border: '1px solid #222222',
+                color: '#EDEDED',
                 fontSize: '0.8125rem',
-                fontWeight: 600,
+                fontWeight: 500,
                 cursor: isLiveSearching ? 'wait' : 'pointer',
-                fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                fontFamily: "'Geist', sans-serif",
                 textAlign: 'start',
+                transition: 'all 120ms ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#333333';
+                e.currentTarget.style.backgroundColor = '#161616';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = '#222222';
+                e.currentTarget.style.backgroundColor = '#111111';
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {isLiveSearching ? (
-                  <Loader2 size={15} color="#10B981" style={{ animation: 'spin 1s linear infinite' }} />
-                ) : (
-                  <Sparkles size={15} color="#10B981" />
+                {isLiveSearching && (
+                  <Loader2 size={14} color="#10B981" style={{ animation: 'spin 1s linear infinite' }} />
                 )}
                 <span>
                   {isLiveSearching
-                    ? (isRtl ? 'جاري مسح المتاجر المصرية الـ 12 مباشرة...' : 'Scanning all 12 Egyptian platform websites...')
-                    : (isRtl ? `بحث مباشر في مواقع المتاجر الـ 12 الآن عن: "${searchQuery}"` : `Execute live probe across all 12 retailers: "${searchQuery}"`)}
+                    ? 'Scanning all 12 platform websites...'
+                    : `Execute live probe across all 12 retailers: "${searchQuery}"`}
                 </span>
               </div>
-              <span style={{ fontSize: '0.6875rem', fontFamily: "'Geist Mono', monospace" }}>
+              <span style={{ fontSize: '0.6875rem', fontFamily: "'Geist Mono', monospace", color: '#888888' }}>
                 12 NODES
               </span>
             </button>

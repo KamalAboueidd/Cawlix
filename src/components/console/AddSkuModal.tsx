@@ -219,13 +219,13 @@ export const AddSkuModal = ({ isOpen, onClose, onSuccess }: AddSkuModalProps) =>
     >
       <div
         style={{
-          backgroundColor: '#0A0A0A',
-          border: '1px solid rgba(255, 255, 255, 0.12)',
+          backgroundColor: '#000000',
+          border: '1px solid #1F1F1F',
           borderRadius: '12px',
           maxWidth: '520px',
           width: '100%',
           padding: '24px',
-          boxShadow: '0 24px 48px -12px rgba(0, 0, 0, 0.95)',
+          boxShadow: '0 24px 48px -12px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.05)',
           boxSizing: 'border-box',
           display: 'flex',
           flexDirection: 'column',
@@ -235,7 +235,7 @@ export const AddSkuModal = ({ isOpen, onClose, onSuccess }: AddSkuModalProps) =>
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
           <div>
-            <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 500, color: '#FFFFFF', letterSpacing: '-0.015em' }}>
+            <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: '#EDEDED', letterSpacing: '-0.015em' }}>
               Track Target SKU Node
             </h2>
             <p style={{ margin: '6px 0 0 0', fontSize: '0.75rem', color: '#737373', lineHeight: 1.45 }}>
@@ -247,20 +247,33 @@ export const AddSkuModal = ({ isOpen, onClose, onSuccess }: AddSkuModalProps) =>
             onClick={onClose}
             style={{
               background: 'transparent',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
+              border: 'none',
               color: '#737373',
-              fontFamily: 'var(--font-mono, monospace)',
-              fontSize: '10px',
-              fontWeight: 600,
-              padding: '2px 6px',
-              borderRadius: '4px',
+              padding: '4px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               cursor: 'pointer',
-              lineHeight: 1.2,
               flexShrink: 0,
+              transition: 'color 120ms ease',
             }}
-            title="Press Escape to close"
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = '#10B981';
+              const svg = e.currentTarget.querySelector('svg');
+              if (svg) svg.style.stroke = '#10B981';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = '#737373';
+              const svg = e.currentTarget.querySelector('svg');
+              if (svg) svg.style.stroke = 'currentColor';
+            }}
+            title="Close"
+            aria-label="Close"
           >
-            ESC
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
           </button>
         </div>
 
@@ -268,17 +281,20 @@ export const AddSkuModal = ({ isOpen, onClose, onSuccess }: AddSkuModalProps) =>
         {errorMsg && (
           <div
             style={{
-              color: '#EF4444',
+              color: '#FB7185',
               fontFamily: 'var(--font-mono, monospace)',
-              fontSize: '0.75rem',
-              lineHeight: 1.4,
-              padding: '8px 12px',
-              border: '1px solid rgba(239, 68, 68, 0.2)',
-              backgroundColor: 'rgba(239, 68, 68, 0.05)',
-              borderRadius: '6px',
+              fontSize: '0.8125rem',
+              lineHeight: 1.45,
+              padding: '2px 0',
+              border: 'none',
+              backgroundColor: 'transparent',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
             }}
           >
-            {errorMsg}
+            <span style={{ fontSize: '0.875rem', lineHeight: 1, flexShrink: 0, color: '#FB7185' }}>✕</span>
+            <span>{errorMsg}</span>
           </div>
         )}
 
@@ -502,21 +518,19 @@ export const AddSkuModal = ({ isOpen, onClose, onSuccess }: AddSkuModalProps) =>
                 color: '#000000',
                 fontSize: '0.75rem',
                 fontWeight: 600,
-                padding: '0 16px',
+                padding: '0 18px',
                 height: '36px',
                 borderRadius: '6px',
                 border: 'none',
                 cursor: isSubmitting ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
+                justifyContent: 'center',
                 opacity: isSubmitting ? 0.7 : 1,
+                transition: 'opacity 150ms ease',
               }}
             >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-              </svg>
-              <span>{isSubmitting ? 'INITIALIZING TELEMETRY...' : 'Initialize Telemetry'}</span>
+              <span>{isSubmitting ? 'Initializing Telemetry...' : 'Initialize Telemetry'}</span>
             </button>
           </div>
         </form>
