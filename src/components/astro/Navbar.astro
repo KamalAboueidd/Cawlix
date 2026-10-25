@@ -207,6 +207,31 @@ const DIRECT_LINKS = [
 
   <!-- Mobile Navigation Drawer / Fullscreen Slide-Over (< 768px) -->
   <div id="astro-mobile-drawer" class="mobile-drawer-overlay" style="display: none;">
+    <!-- Dedicated Mobile Drawer Topbar -->
+    <div class="mobile-drawer-topbar">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <img
+          src={cawlixLogo.src || cawlixLogo}
+          alt="Cawlix Logo"
+          width="22"
+          height="22"
+          class="brand-icon"
+        />
+        <span class="brand-name">Cawlix</span>
+      </div>
+      <button
+        type="button"
+        id="astro-mobile-close-btn"
+        class="mobile-drawer-close-btn"
+        aria-label="Close menu"
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
     <div class="mobile-drawer-content">
       <!-- Engines Section -->
       <div class="mobile-section">
@@ -600,17 +625,48 @@ const DIRECT_LINKS = [
     }
 
     .mobile-drawer-overlay {
-      display: block;
-      position: fixed;
-      top: 56px;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 49;
-      background: #0A0A0A;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+      display: none;
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: 100vw !important;
+      height: 100dvh !important;
+      height: 100vh !important;
+      z-index: 999999 !important;
+      background: #000000 !important;
+      overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+    }
+
+    .mobile-drawer-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      padding: 0 16px;
+      background: #000000;
+      border-bottom: 1px solid #1F1F1F;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .mobile-drawer-close-btn {
+      background: transparent;
+      border: none;
+      color: #EDEDED;
+      cursor: pointer;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 140ms ease;
+    }
+
+    .mobile-drawer-close-btn:hover {
+      color: #10B981;
     }
 
     .mobile-drawer-content {
@@ -763,9 +819,17 @@ const DIRECT_LINKS = [
 
   let isOpen = false;
 
+  // Move drawer to document.body so it breaks out of header stacking context in Safari/iOS
+  if (drawer && drawer.parentElement !== document.body) {
+    document.body.appendChild(drawer);
+  }
+
   function setDrawerState(open: boolean) {
     isOpen = open;
     if (drawer) {
+      if (open && drawer.parentElement !== document.body) {
+        document.body.appendChild(drawer);
+      }
       drawer.style.display = isOpen ? 'block' : 'none';
     }
     if (openIcon && closeIcon) {
@@ -780,6 +844,11 @@ const DIRECT_LINKS = [
 
   toggleBtn?.addEventListener('click', () => {
     setDrawerState(!isOpen);
+  });
+
+  const closeDrawerBtn = document.getElementById('astro-mobile-close-btn');
+  closeDrawerBtn?.addEventListener('click', () => {
+    setDrawerState(false);
   });
 
   // Auto-close on link click

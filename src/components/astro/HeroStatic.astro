@@ -11,13 +11,13 @@ const TICKER_ITEMS = [
 <section
   class="hero-section-root"
   dir="ltr"
-  style="display: flex; flex-direction: column; align-items: center; padding-top: 110px; padding-bottom: 40px; padding-left: 24px; padding-right: 24px; position: relative; background: #0A0A0A; overflow: hidden; text-align: center;"
+  style="display: flex; flex-direction: column; align-items: center; padding-top: 110px; padding-bottom: 40px; padding-left: 24px; padding-right: 24px; position: relative; background: #000000; overflow: hidden; text-align: center;"
 >
-  {/* Visual 1: Primary Hero Graphic with subtle radial fade mask */}
+  {/* Visual 1: Primary Hero Graphic Centered */}
   <div
     aria-hidden="true"
     class="hero-globe-graphic"
-    style="position: absolute; top: 60px; left: 50%; transform: translateX(-50%); width: 100%; max-width: 1240px; height: auto; aspect-ratio: 1672 / 941; pointer-events: none; z-index: 0; opacity: 0.28; -webkit-mask-image: radial-gradient(circle at 50% 48%, black 35%, rgba(0, 0, 0, 0.3) 65%, transparent 85%); mask-image: radial-gradient(circle at 50% 48%, black 35%, rgba(0, 0, 0, 0.3) 65%, transparent 85%);"
+    style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; max-width: 1240px; height: auto; aspect-ratio: 1672 / 941; pointer-events: none; z-index: 0; opacity: 0.28; -webkit-mask-image: radial-gradient(circle at 50% 50%, black 35%, rgba(0, 0, 0, 0.3) 65%, transparent 85%); mask-image: radial-gradient(circle at 50% 50%, black 35%, rgba(0, 0, 0, 0.3) 65%, transparent 85%);"
   >
     <img
       src="/landing/1.webp"
@@ -29,13 +29,6 @@ const TICKER_ITEMS = [
       style="width: 100%; height: auto; aspect-ratio: 1672 / 941; object-fit: cover; display: block;"
     />
   </div>
-
-  {/* Ambient radial glow */}
-  <div
-    aria-hidden="true"
-    class="hero-ambient-glow"
-    style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 1000px; height: 520px; background: radial-gradient(ellipse at 50% 0%, rgba(62, 207, 142, 0.05) 0%, transparent 70%); pointer-events: none; z-index: 1;"
-  ></div>
 
   {/* Hero First Fold */}
   <div
@@ -86,7 +79,7 @@ const TICKER_ITEMS = [
         <div class="ticker-group">
           {TICKER_ITEMS.map((item) => (
             <div class="ticker-item">
-              <span style={{ color: item.highlight ? '#3ECF8E' : '#FFFFFF', fontWeight: 600 }}>
+              <span style={`color: ${item.highlight ? '#3ECF8E' : '#FFFFFF'}; font-weight: 600;`}>
                 {item.value}
               </span>
               <span>{item.label}</span>
@@ -99,7 +92,7 @@ const TICKER_ITEMS = [
         <div class="ticker-group ticker-group-duplicate" aria-hidden="true">
           {TICKER_ITEMS.map((item) => (
             <div class="ticker-item">
-              <span style={{ color: item.highlight ? '#3ECF8E' : '#FFFFFF', fontWeight: 600 }}>
+              <span style={`color: ${item.highlight ? '#3ECF8E' : '#FFFFFF'}; font-weight: 600;`}>
                 {item.value}
               </span>
               <span>{item.label}</span>
@@ -237,7 +230,7 @@ const TICKER_ITEMS = [
     .hero-section-root {
       padding-top: 56px !important;
       padding-bottom: 16px !important;
-      background: #0A0A0A !important;
+      background: #000000 !important;
     }
 
     .hero-ambient-glow {
@@ -273,22 +266,23 @@ const TICKER_ITEMS = [
       max-width: 360px !important;
     }
 
-    /* Globe positioned gracefully as ambient depth behind the action area */
+    /* Globe centered visually in the fold behind the content */
     .hero-globe-graphic {
-      top: 140px !important;
+      position: absolute !important;
+      top: 50% !important;
       left: 50% !important;
-      transform: translateX(-50%) !important;
+      transform: translate(-50%, -50%) !important;
       transform-origin: center center !important;
-      width: 135% !important;
-      max-width: 520px !important;
-      height: 400px !important;
-      opacity: 0.28 !important;
+      width: 120% !important;
+      max-width: 480px !important;
+      height: auto !important;
+      aspect-ratio: 1672 / 941 !important;
+      opacity: 0.32 !important;
       overflow: hidden !important;
-      mix-blend-mode: screen !important;
       background: transparent !important;
       pointer-events: none !important;
-      -webkit-mask-image: radial-gradient(circle at 50% 50%, black 45%, rgba(0, 0, 0, 0.3) 75%, transparent 100%) !important;
-      mask-image: radial-gradient(circle at 50% 50%, black 45%, rgba(0, 0, 0, 0.3) 75%, transparent 100%) !important;
+      -webkit-mask-image: radial-gradient(circle at 50% 50%, black 40%, rgba(0, 0, 0, 0.25) 70%, transparent 95%) !important;
+      mask-image: radial-gradient(circle at 50% 50%, black 40%, rgba(0, 0, 0, 0.25) 70%, transparent 95%) !important;
     }
 
     .hero-globe-graphic img {
@@ -296,7 +290,6 @@ const TICKER_ITEMS = [
       height: 100% !important;
       object-fit: contain !important;
       object-position: center !important;
-      mix-blend-mode: screen !important;
       background: transparent !important;
     }
 
@@ -320,27 +313,28 @@ const TICKER_ITEMS = [
     }
 
     .hero-actions-wrapper {
-      max-width: 270px !important;
-      gap: 10px !important;
-      margin: 8px auto 0 auto !important;
+      max-width: 250px !important;
+      gap: 8px !important;
+      margin: 6px auto 0 auto !important;
     }
 
     .hero-action-btn {
-      height: 38px !important;
-      max-height: 38px !important;
-      line-height: 38px !important;
-      font-size: 0.8125rem !important;
-      padding: 0 14px !important;
-      border-radius: 8px !important;
-      gap: 6px !important;
+      height: 32px !important;
+      max-height: 32px !important;
+      line-height: 32px !important;
+      font-size: 0.75rem !important;
+      padding: 0 12px !important;
+      border-radius: 6px !important;
+      gap: 5px !important;
+      font-weight: 600 !important;
     }
 
     /* Auto-marquee ticker on mobile */
     .ticker-wrapper {
-      padding: 9px 0 !important;
+      padding: 10px 0 !important;
       max-width: 100% !important;
       margin-top: auto !important;
-      margin-bottom: 12px !important;
+      margin-bottom: 8px !important;
       border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
       border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
       -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 1) 8%, rgba(0, 0, 0, 1) 92%, transparent 100%) !important;
@@ -348,9 +342,12 @@ const TICKER_ITEMS = [
     }
 
     .ticker-track {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
       justify-content: flex-start !important;
       width: max-content !important;
-      animation: cawlixTickerMarquee 16s linear infinite !important;
+      animation: cawlixTickerMarquee 22s linear infinite !important;
       will-change: transform;
     }
 
@@ -360,10 +357,25 @@ const TICKER_ITEMS = [
     }
 
     .ticker-group {
-      gap: 16px !important;
-      padding-right: 16px !important;
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      gap: 22px !important;
+      padding-right: 22px !important;
       font-size: 0.6875rem !important;
       letter-spacing: 0.04em !important;
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
+    }
+
+    .ticker-item {
+      display: inline-flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      gap: 6px !important;
+      white-space: nowrap !important;
       flex-shrink: 0 !important;
     }
 
