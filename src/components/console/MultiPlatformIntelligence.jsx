@@ -345,16 +345,6 @@ export default function MultiPlatformIntelligence({
                 gap: '4px',
               }}
             >
-              <span
-                style={{
-                  display: 'inline-block',
-                  width: '4px',
-                  height: '4px',
-                  borderRadius: '50%',
-                  backgroundColor: '#34D399',
-                  boxShadow: '0 0 5px rgba(52, 211, 153, 0.7)',
-                }}
-              />
               12 DOMESTIC NODES SYNCHRONIZED
             </span>
             <span style={{ fontSize: '0.6875rem', color: '#444444' }}>·</span>
@@ -420,16 +410,6 @@ export default function MultiPlatformIntelligence({
                 }}
               >
                 <span>{item.title.split(' ')[0]} {item.model || item.title.split(' ')[1]}</span>
-                {isSelected && (
-                  <span
-                    style={{
-                      width: '4px',
-                      height: '4px',
-                      borderRadius: '50%',
-                      backgroundColor: '#10B981',
-                    }}
-                  />
-                )}
               </button>
             );
           })}
@@ -1350,15 +1330,6 @@ export default function MultiPlatformIntelligence({
                 {/* Header row: Retailer name + stock badge/dot + lowest badge */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span
-                      style={{
-                        width: '6px',
-                        height: '6px',
-                        borderRadius: '50%',
-                        backgroundColor: isOutOfStock ? '#666' : isLowStock ? '#F59E0B' : '#10B981',
-                        flexShrink: 0,
-                      }}
-                    />
                     <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#EDEDED' }}>
                       {retailerName}
                     </span>

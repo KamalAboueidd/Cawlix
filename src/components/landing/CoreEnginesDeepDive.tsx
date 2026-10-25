@@ -94,16 +94,7 @@ function EngineRow({
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
             {specs.map((spec) => (
               <div key={spec} className="feature-item-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8125rem' }}>
-                <span
-                  style={{
-                    width: '5px',
-                    height: '5px',
-                    borderRadius: '50%',
-                    backgroundColor: '#3ECF8E',
-                    display: 'inline-block',
-                    flexShrink: 0,
-                  }}
-                />
+                <span style={{ color: '#666666', fontSize: '0.75rem', fontFamily: 'monospace' }}>–</span>
                 <span>{spec}</span>
               </div>
             ))}

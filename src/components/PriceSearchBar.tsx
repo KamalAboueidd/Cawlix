@@ -163,10 +163,6 @@ export default function PriceSearchBar() {
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               {results.length} retailers probed · best price highlighted
             </span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <div className="dot dot-success dot-pulse" />
-              <span className="mono-label">LIVE</span>
-            </div>
           </div>
           <div style={{ maxHeight: '320px', overflowY: 'auto' }}>
             {results.map((r, i) => {

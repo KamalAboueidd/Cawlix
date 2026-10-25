@@ -434,19 +434,6 @@ export default function VercelMobileShell({
               </div>
             </div>
 
-            {/* Realtime Ping Dot (minimal indicator without redundant top circular X) */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span
-                style={{
-                  width: '6px',
-                  height: '6px',
-                  borderRadius: '50%',
-                  backgroundColor: realtimeConnected ? '#00DF8F' : '#F59E0B',
-                  boxShadow: realtimeConnected ? '0 0 6px rgba(0, 223, 143, 0.6)' : 'none',
-                }}
-                title={realtimeConnected ? 'WebSocket Online' : 'Standby'}
-              />
-            </div>
           </div>
 
           {/* Quick Actions Strip (Fleet Audit + Add SKU) */}

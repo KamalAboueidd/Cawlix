@@ -204,18 +204,6 @@ export default function Sidebar({
                 PRO FLEET
               </span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span
-                style={{
-                  width: '6px',
-                  height: '6px',
-                  borderRadius: '50%',
-                  backgroundColor: realtimeConnected ? '#00DF8F' : '#F59E0B',
-                  boxShadow: realtimeConnected ? '0 0 6px rgba(0, 223, 143, 0.7)' : 'none',
-                }}
-                title={realtimeConnected ? 'WebSocket Telemetry Connected' : 'Telemetry Standby'}
-              />
-            </div>
           </div>
         </div>
 

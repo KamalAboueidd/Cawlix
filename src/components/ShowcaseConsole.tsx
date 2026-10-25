@@ -406,16 +406,7 @@ export default function ShowcaseConsole() {
         </div>
 
         {/* Right Status Indicator: Clean static micro-text (no pulse, no fluff) */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span
-            style={{
-              width: '5px',
-              height: '5px',
-              borderRadius: '50%',
-              backgroundColor: '#3ECF8E',
-              display: 'inline-block',
-            }}
-          />
+        <div style={{ display: 'flex', alignItems: 'center' }}>
           <span
             style={{
               fontFamily: 'var(--font-mono)',

@@ -50,7 +50,7 @@ export default function Footer() {
             </a>
 
             <div className="platform-status">
-              <span className="status-dot">●</span> 12 RETAIL NODES ACTIVE · PING: 118MS
+              12 RETAIL NODES ACTIVE · PING: 118MS
             </div>
 
             <p className="platform-tagline">

@@ -202,6 +202,7 @@ export default function ConsolePage() {
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
   const [forgotPasswordLoading, setForgotPasswordLoading] = useState(false);
+  const [isRecoveryMode, setIsRecoveryMode] = useState(false);
   const [googleLinking, setGoogleLinking] = useState(false);
   const [googleLinkMsg, setGoogleLinkMsg] = useState('');
 
@@ -245,6 +246,45 @@ export default function ConsolePage() {
     startBackgroundWorker(300000, { userEmail: user?.email });
     return () => stopBackgroundWorker();
   }, [user?.email]);
+
+  // Automatic Password Recovery Detection from Email Confirmation Link
+  useEffect(() => {
+    const detectRecoverySession = () => {
+      if (typeof window === 'undefined') return;
+      const hash = window.location.hash || '';
+      const search = window.location.search || '';
+      const isRecovery =
+        hash.includes('type=recovery') ||
+        search.includes('type=recovery') ||
+        search.includes('reset=recovery') ||
+        new URLSearchParams(search).get('reset') === 'recovery' ||
+        new URLSearchParams(search).get('type') === 'recovery';
+
+      if (isRecovery) {
+        setIsRecoveryMode(true);
+        setPasswordModalOpen(true);
+        setPasswordError('');
+        setPasswordSuccess('');
+        handleTabChange('settings');
+      }
+    };
+
+    detectRecoverySession();
+
+    const { data: authSub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsRecoveryMode(true);
+        setPasswordModalOpen(true);
+        setPasswordError('');
+        setPasswordSuccess('');
+        handleTabChange('settings');
+      }
+    });
+
+    return () => {
+      authSub?.subscription?.unsubscribe();
+    };
+  }, []);
 
   // Fleet Audit Trigger Handler
   const handleRunFleetAudit = async () => {
@@ -337,12 +377,14 @@ export default function ConsolePage() {
     setPasswordSuccess('');
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(primaryEmail, {
-        redirectTo: `${window.location.origin}/console`,
+        redirectTo: `${window.location.origin}/console?reset=recovery`,
       });
       if (error) {
         setPasswordError(error.message || 'Failed to send password reset email.');
       } else {
-        setPasswordSuccess(`✓ Reset confirmation dispatched to ${primaryEmail}. Please check your inbox.`);
+        setPasswordSuccess(isRtl
+          ? `✓ تم إرسال رابط التعيين إلى ${primaryEmail}. افتح الرابط على هاتفك لتعيين كلمة مرور جديدة مباشرة دون الحاجة للقديمة.`
+          : `✓ Reset link dispatched to ${primaryEmail}. Open the link to set a new password directly without your old one.`);
       }
     } catch (err) {
       setPasswordError(err?.message || 'Failed to dispatch reset email.');
@@ -357,8 +399,8 @@ export default function ConsolePage() {
     setPasswordError('');
     setPasswordSuccess('');
 
-    // If changing existing password, verify current password first
-    if (isEmailPasswordActive) {
+    // If changing existing password normally (NOT in recovery mode), verify current password first
+    if (isEmailPasswordActive && !isRecoveryMode) {
       if (!currentPassword) {
         setPasswordError('Please enter your current password.');
         return;
@@ -399,6 +441,13 @@ export default function ConsolePage() {
         setPasswordError(error.message || 'Failed to update password.');
       } else {
         setPasswordSuccess('✓ Password updated successfully. You can now use your new password.');
+        setIsRecoveryMode(false);
+        if (typeof window !== 'undefined') {
+          const url = new URL(window.location.href);
+          url.searchParams.delete('reset');
+          url.searchParams.delete('type');
+          window.history.replaceState({}, '', url.pathname + (url.search ? url.search : ''));
+        }
         await refreshUserData();
         setTimeout(() => {
           setPasswordModalOpen(false);
@@ -1601,9 +1650,6 @@ export default function ConsolePage() {
                       <span style={{ fontSize: '1.5rem', fontWeight: 600, color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
                         34.8%
                       </span>
-                      <span style={{ fontSize: '0.6875rem', fontWeight: 500, color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
-                        LIVE
-                      </span>
                     </div>
                     <span style={{ fontSize: '0.75rem', color: '#666666' }}>
                       Peak spread across Egyptian platforms
@@ -2365,22 +2411,6 @@ export default function ConsolePage() {
                             >
                               EGP {item.current_price_egp?.toLocaleString()}
                             </span>
-                            {flashingSkuIds[item.id] && (
-                              <span
-                                style={{
-                                  fontSize: '0.625rem',
-                                  fontWeight: 600,
-                                  color: '#10B981',
-                                  backgroundColor: 'rgba(16, 185, 129, 0.25)',
-                                  padding: '1px 5px',
-                                  borderRadius: '3px',
-                                  fontFamily: "'Geist Mono', monospace",
-                                  letterSpacing: '0.04em',
-                                }}
-                              >
-                                LIVE
-                              </span>
-                            )}
                           </div>
                           <span
                             style={{
@@ -2808,8 +2838,7 @@ export default function ConsolePage() {
                 zIndex: 10,
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#00DF8F' }} />
+              <div style={{ display: 'flex', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.6875rem', fontWeight: 500, color: '#888888', letterSpacing: '0.05em', textTransform: 'uppercase', fontFamily: "'Geist', sans-serif" }}>
                   FORENSIC TELEMETRY PROBE
                 </span>
@@ -3289,10 +3318,16 @@ export default function ConsolePage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', direction: isRtl ? 'rtl' : 'ltr' }}>
               <div>
                 <h2 style={{ fontSize: '1.0625rem', fontWeight: 600, color: '#EDEDED', margin: 0, fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
-                  {isEmailPasswordActive ? (isRtl ? 'تغيير كلمة المرور' : 'Change Password') : (isRtl ? 'تعيين كلمة مرور للحساب' : 'Set Direct Password')}
+                  {isRecoveryMode
+                    ? (isRtl ? 'تعيين كلمة مرور جديدة' : 'Reset Password')
+                    : isEmailPasswordActive
+                    ? (isRtl ? 'تغيير كلمة المرور' : 'Change Password')
+                    : (isRtl ? 'تعيين كلمة مرور للحساب' : 'Set Direct Password')}
                 </h2>
                 <p style={{ fontSize: '0.8125rem', color: '#888888', marginTop: '4px', marginBottom: 0, fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
-                  {isEmailPasswordActive
+                  {isRecoveryMode
+                    ? (isRtl ? 'تم التحقق من بريدك الإلكتروني بنجاح. أدخل كلمة المرور الجديدة مباشرة دون الحاجة لكلمة المرور القديمة.' : 'Identity verified via recovery email. Enter your new password directly without your old one.')
+                    : isEmailPasswordActive
                     ? (isRtl ? 'أدخل كلمة مرور رئيسية جديدة لتسجيل الدخول المباشر بالبريد.' : 'Enter a new master password for email credential login.')
                     : (isRtl ? 'قم بتعيين كلمة مرور مباشرة للتمكن من الدخول عبر جوجل أو البريد الإلكتروني.' : 'Set a direct password so you can log in with both Google and email.')}
                 </p>
@@ -3300,7 +3335,10 @@ export default function ConsolePage() {
               <button
                 type="button"
                 disabled={passwordLoading}
-                onClick={() => setPasswordModalOpen(false)}
+                onClick={() => {
+                  setPasswordModalOpen(false);
+                  setIsRecoveryMode(false);
+                }}
                 aria-label="Close"
                 style={{
                   background: 'none',
@@ -3321,8 +3359,33 @@ export default function ConsolePage() {
 
             {/* Modal Form */}
             <form onSubmit={handleSavePassword} style={{ display: 'flex', flexDirection: 'column', gap: '16px', direction: isRtl ? 'rtl' : 'ltr' }}>
-              {/* Current Password Field (when changing existing password) */}
-              {isEmailPasswordActive && (
+              {/* Recovery Mode Verification Banner */}
+              {isRecoveryMode && (
+                <div
+                  style={{
+                    fontSize: '0.8125rem',
+                    color: '#10B981',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    padding: '2px 0',
+                    lineHeight: 1.45,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                  }}
+                >
+                  <span style={{ fontSize: '0.875rem', lineHeight: 1, color: '#10B981', flexShrink: 0 }}>✓</span>
+                  <span>
+                    {isRtl
+                      ? 'تم التحقق من هويتك عبر رابط البريد. تم إلغاء طلب كلمة المرور القديمة، أدخل كلمتك الجديدة مباشرة.'
+                      : 'Identity verified via email reset link. Old password requirement bypassed—enter your new password directly.'}
+                  </span>
+                </div>
+              )}
+
+              {/* Current Password Field (when changing existing password normally - NOT in recovery mode) */}
+              {isEmailPasswordActive && !isRecoveryMode && (
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                     <label

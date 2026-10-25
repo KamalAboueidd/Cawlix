@@ -134,17 +134,7 @@ export function ProtectedRoute({ children }) {
           letterSpacing: '0.06em',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span
-            style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              backgroundColor: '#3ECF8E',
-              boxShadow: '0 0 10px #3ECF8E',
-              display: 'inline-block',
-            }}
-          />
+        <div style={{ display: 'flex', alignItems: 'center' }}>
           <span>VERIFYING TELEMETRY CREDENTIALS...</span>
         </div>
       </div>

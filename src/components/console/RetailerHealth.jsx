@@ -400,19 +400,10 @@ export default function RetailerHealth({ onShowToast = null }) {
               {/* Header: Platform Name & Status Dot */}
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
                     <span style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#EDEDED', fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif" }}>
                       {getRetailerName(node.id, lang)}
                     </span>
-                    <span
-                      style={{
-                        width: '6px',
-                        height: '6px',
-                        borderRadius: '50%',
-                        backgroundColor: pingColor,
-                        boxShadow: `0 0 6px ${pingColor}`,
-                      }}
-                    />
                   </div>
                   <span style={{ fontSize: '0.6875rem', color: '#666666', fontFamily: "'Geist Mono', monospace" }}>
                     {node.domain} • {node.tier}

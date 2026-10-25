@@ -434,9 +434,8 @@ export default function ArbitrageEngine({ onInspectProduct = null, onShowToast =
                       {/* Cheapest Node (Buy At) */}
                       <td style={{ padding: '14px 18px' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
                             <span style={{ color: '#10B981', fontWeight: 600 }}>{getRetailerName(item.cheapest.platformId || item.cheapest.platformName)}</span>
-                            <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#10B981' }} />
                           </div>
                           <span style={{ fontSize: '0.9375rem', fontWeight: 700, color: '#10B981', fontFamily: "'Geist Mono', monospace" }}>
                             {formatCurrency(item.cheapest.price)}

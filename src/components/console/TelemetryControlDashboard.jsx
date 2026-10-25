@@ -632,18 +632,7 @@ export default function TelemetryControlDashboard({
               borderBottom: '1px solid #1A1A1A',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span
-                style={{
-                  width: '6px',
-                  height: '6px',
-                  borderRadius: '50%',
-                  backgroundColor: isLiveSearching ? '#F59E0B' : '#10B981',
-                  boxShadow: isLiveSearching
-                    ? '0 0 6px rgba(245, 158, 11, 0.8)'
-                    : '0 0 6px rgba(16, 185, 129, 0.8)',
-                }}
-              />
+            <div style={{ display: 'flex', alignItems: 'center' }}>
               <span
                 style={{
                   fontSize: '0.6875rem',
@@ -702,19 +691,6 @@ export default function TelemetryControlDashboard({
                   }}
                 >
                   {t('kpis.glitchesIntercepted')}
-                </span>
-                <span
-                  style={{
-                    fontSize: '0.5625rem',
-                    color: '#10B981',
-                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                    border: '1px solid rgba(16, 185, 129, 0.25)',
-                    padding: '0 4px',
-                    borderRadius: '3px',
-                    fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist Mono', monospace",
-                  }}
-                >
-                  {isRtl ? 'مباشر' : 'LIVE'}
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
