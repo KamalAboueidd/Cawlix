@@ -194,7 +194,7 @@ export default function RadarScanCore() {
           </span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', fontFamily: 'var(--font-mono)', fontSize: '0.6875rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', fontFamily: 'var(--font-mono)', fontSize: '0.58rem' }}>
           <span style={{ color: '#737373' }}>Azimuth: <strong style={{ color: '#3ECF8E', fontWeight: 500 }}>{azimuthDeg}°</strong></span>
           <span style={{ color: '#737373' }}>Range: <strong style={{ color: '#FFFFFF', fontWeight: 500 }}>90 days</strong></span>
           <span style={{ color: '#737373' }}>142ms avg response</span>

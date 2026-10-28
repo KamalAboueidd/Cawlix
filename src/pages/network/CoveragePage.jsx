@@ -288,13 +288,13 @@ export default function CoveragePage() {
         /* ── Canvas & Core Architecture ────────────────────────────────────────────── */
         .network-wrapper {
           min-height: 100vh;
-          background-color: #0A0A0A;
+          background-color: #000000;
           color: #EDEDED;
         }
 
         .network-main {
           min-height: 100vh;
-          background-color: #0A0A0A;
+          background-color: #000000;
           padding-top: 130px;
           padding-bottom: 96px;
           overflow-x: hidden;
@@ -412,7 +412,7 @@ export default function CoveragePage() {
           letter-spacing: 0.06em;
           text-transform: uppercase;
           border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-          background: #0A0A0A;
+          background: #000000;
           white-space: nowrap;
         }
 
@@ -752,7 +752,7 @@ export default function CoveragePage() {
 
         @media (max-width: 768px) {
           .network-main {
-            padding-top: 100px;
+            padding-top: 145px !important;
             padding-bottom: 64px;
           }
 

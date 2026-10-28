@@ -127,7 +127,7 @@ export default function LandedCostSpread() {
               width: '100%',
               aspectRatio: '16 / 9',
               overflow: 'hidden',
-              background: '#0A0A0A',
+              background: '#000000',
               borderRadius: '4px',
               marginTop: '10px',
               marginBottom: '10px',
@@ -148,13 +148,13 @@ export default function LandedCostSpread() {
                 display: 'block',
               }}
             />
-            {/* Smooth Edge Blend Scrim into #0A0A0A canvas */}
+            {/* Smooth Edge Blend Scrim into #000000 canvas */}
             <div
               aria-hidden="true"
               style={{
                 position: 'absolute',
                 inset: 0,
-                background: 'linear-gradient(to top, #0A0A0A 0%, rgba(10, 10, 10, 0.4) 45%, transparent 100%)',
+                background: 'linear-gradient(to top, #000000 0%, rgba(0, 0, 0, 0.4) 45%, transparent 100%)',
                 pointerEvents: 'none',
               }}
             />
@@ -166,8 +166,8 @@ export default function LandedCostSpread() {
                 bottom: '8px',
                 left: '8px',
                 right: '8px',
-                background: 'rgba(10, 10, 10, 0.75)',
-                padding: '4px 8px',
+                background: 'transparent',
+                padding: '4px 0',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',

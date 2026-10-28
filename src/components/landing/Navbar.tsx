@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   ChevronDown,
   Layers,
@@ -76,7 +77,12 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -122,7 +128,8 @@ export default function Navbar() {
   };
 
   return (
-    <header dir="ltr" className={`navbar-header ${scrolled || mobileOpen ? 'scrolled' : ''}`}>
+    <>
+      <header dir="ltr" className={`navbar-header ${scrolled || mobileOpen ? 'scrolled' : ''}`}>
       <div className="navbar-inner">
         {/* Brand Group */}
         <div className="navbar-brand-group">
@@ -300,139 +307,182 @@ export default function Navbar() {
           </button>
         </div>
       </div>
+    </header>
 
-      {/* Mobile Navigation Drawer / Fullscreen Slide-Over (< 768px) */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.18, ease: 'easeOut' }}
-            className="mobile-drawer-overlay"
-          >
-            <div className="mobile-drawer-content">
-              {/* Engines Section */}
-              <div className="mobile-section">
-                <span className="mobile-section-label">ENGINES</span>
-                <div className="mobile-links-list">
-                  {ENGINES_ITEMS.map((item) => (
-                    <a
-                      key={item.title}
-                      href={item.href}
-                      onClick={() => setMobileOpen(false)}
-                      className="mobile-nav-link"
-                    >
-                      <div className="mobile-nav-item-body">
-                        <span className="mobile-nav-item-title">{item.title}</span>
-                        <span className="mobile-nav-item-desc">{item.desc}</span>
-                      </div>
-                    </a>
-                  ))}
+    {/* Mobile Navigation Bottom Sheet (< 900px) */}
+    {mounted &&
+      createPortal(
+        <AnimatePresence>
+          {mobileOpen && (
+            <>
+              {/* Dimmed backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18 }}
+                onClick={() => setMobileOpen(false)}
+                className="mobile-sheet-backdrop"
+              />
+
+              {/* Bottom Sheet Modal */}
+              <motion.div
+                initial={{ y: '100%' }}
+                animate={{ y: 0 }}
+                exit={{ y: '100%' }}
+                transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+                className="mobile-bottom-sheet"
+              >
+                {/* Visual Pull / Drag Handle */}
+                <div className="sheet-handle-bar" onClick={() => setMobileOpen(false)}>
+                  <div className="sheet-handle-pill" />
                 </div>
-              </div>
 
-              {/* Solutions Section */}
-              <div className="mobile-section">
-                <span className="mobile-section-label">SOLUTIONS</span>
-                <div className="mobile-links-list">
-                  {SOLUTIONS_ITEMS.map((item) => (
-                    <a
-                      key={item.title}
-                      href={item.href}
-                      onClick={() => setMobileOpen(false)}
-                      className="mobile-nav-link"
-                    >
-                      <div className="mobile-nav-item-body">
-                        <span className="mobile-nav-item-title">{item.title}</span>
-                        <span className="mobile-nav-item-desc">{item.desc}</span>
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              </div>
-
-              {/* Direct Links Section */}
-              <div className="mobile-section">
-                <span className="mobile-section-label">PLATFORM &amp; DOCS</span>
-                <div className="mobile-direct-grid">
-                  {DIRECT_LINKS.map((link) => (
-                    <a
-                      key={link.label}
-                      href={link.href}
-                      onClick={() => setMobileOpen(false)}
-                      className="mobile-direct-link"
-                    >
-                      {link.label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-
-              {/* Mobile CTA */}
-              <div className="mobile-cta-wrap">
-                {isAuthenticated ? (
-                  <a
-                    href="/console"
+                {/* Sheet Top Header */}
+                <div className="sheet-header">
+                  <div className="sheet-brand">
+                    <img src={cawlixLogo} alt="Cawlix" className="sheet-brand-icon" />
+                    <span className="sheet-brand-name">Cawlix</span>
+                  </div>
+                  <button
+                    type="button"
                     onClick={() => setMobileOpen(false)}
-                    className="mobile-register-btn"
+                    className="sheet-close-btn"
+                    style={{ background: 'transparent', backgroundColor: 'transparent', border: 'none', outline: 'none', boxShadow: 'none', borderRadius: 0, padding: 0 }}
+                    aria-label="Close menu"
                   >
-                    Open Console &rarr;
-                  </a>
-                ) : (
-                  <>
-                    <a
-                      href="/register"
-                      onClick={() => setMobileOpen(false)}
-                      className="mobile-register-btn"
-                    >
-                      Register Free Account
-                    </a>
-                    <div style={{ textAlign: 'center', marginTop: '14px', marginBottom: '14px' }}>
-                      <a
-                        href="/login"
-                        onClick={() => setMobileOpen(false)}
-                        className="mobile-login-link"
-                      >
-                        Already have an account? Sign In &rarr;
-                      </a>
+                    <X size={16} />
+                  </button>
+                </div>
+
+                <div className="sheet-scrollable-content">
+                  {/* 1. Core Engines */}
+                  <div className="sheet-group">
+                    <span className="sheet-group-label">ENGINES</span>
+                    <div className="sheet-items-grid">
+                      {ENGINES_ITEMS.map((item) => {
+                        const Icon = item.icon;
+                        return (
+                          <a
+                            key={item.title}
+                            href={item.href}
+                            onClick={() => setMobileOpen(false)}
+                            className="sheet-clean-row"
+                          >
+                            <Icon size={16} color="#3ECF8E" strokeWidth={1.8} className="sheet-raw-icon" />
+                            <div className="sheet-row-text">
+                              <span className="sheet-row-title">{item.title}</span>
+                              <span className="sheet-row-desc">{item.desc}</span>
+                            </div>
+                          </a>
+                        );
+                      })}
                     </div>
-                  </>
-                )}
-                <a
-                  href="/#showcase"
-                  onClick={() => setMobileOpen(false)}
-                  className="mobile-launch-btn"
-                >
-                  Launch Tracker
-                </a>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                  </div>
+
+                  {/* 2. Solutions */}
+                  <div className="sheet-group">
+                    <span className="sheet-group-label">SOLUTIONS</span>
+                    <div className="sheet-items-grid">
+                      {SOLUTIONS_ITEMS.map((item) => {
+                        const Icon = item.icon;
+                        return (
+                          <a
+                            key={item.title}
+                            href={item.href}
+                            onClick={() => setMobileOpen(false)}
+                            className="sheet-clean-row"
+                          >
+                            <Icon size={16} color="#3ECF8E" strokeWidth={1.8} className="sheet-raw-icon" />
+                            <div className="sheet-row-text">
+                              <span className="sheet-row-title">{item.title}</span>
+                              <span className="sheet-row-desc">{item.desc}</span>
+                            </div>
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* 3. Platform & Docs Text Links (No background, no border) */}
+                  <div className="sheet-group">
+                    <span className="sheet-group-label">PLATFORM &amp; DOCS</span>
+                    <div className="sheet-links-row">
+                      {DIRECT_LINKS.map((link) => (
+                        <a
+                          key={link.label}
+                          href={link.href}
+                          onClick={() => setMobileOpen(false)}
+                          className="sheet-text-link"
+                        >
+                          {link.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 4. Action Buttons & Auth subtext */}
+                  <div className="sheet-footer-actions">
+                    {isAuthenticated ? (
+                      <a
+                        href="/console"
+                        onClick={() => setMobileOpen(false)}
+                        className="sheet-action-primary"
+                      >
+                        Open Console &rarr;
+                      </a>
+                    ) : (
+                      <>
+                        <a
+                          href="/register"
+                          onClick={() => setMobileOpen(false)}
+                          className="sheet-action-primary"
+                        >
+                          Register Free
+                        </a>
+                        <div className="sheet-auth-subtext">
+                          <span>Already have an account?</span>
+                          <a
+                            href="/login"
+                            onClick={() => setMobileOpen(false)}
+                            className="sheet-auth-inline-link"
+                          >
+                            Sign In
+                          </a>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
 
       <style>{`
         .navbar-header {
-          position: fixed;
+          position: absolute;
           top: 0;
           left: 0;
           right: 0;
-          z-index: 50;
+          z-index: 1000;
           height: 60px;
           width: 100%;
-          background-color: transparent;
-          border-bottom: 1px solid transparent;
-          backdrop-filter: none;
-          -webkit-backdrop-filter: none;
-          transition: background-color 200ms ease, border-color 200ms ease, backdrop-filter 200ms ease;
+          background: transparent !important;
+          background-color: transparent !important;
+          border-bottom: none !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
         }
 
         .navbar-header.scrolled {
-          background-color: rgba(0, 0, 0, 0.85);
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          background: transparent !important;
+          background-color: transparent !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
+          border-bottom: none !important;
         }
 
         .navbar-inner {
@@ -701,8 +751,11 @@ export default function Navbar() {
           color: #FFFFFF;
         }
 
-        /* ── Mobile Fullscreen Slide-Over Drawer (< 768px) ─────────────────────── */
-        .mobile-drawer-overlay {
+        /* ── Mobile Bottom Sheet Drawer (< 900px) ─────────────────────── */
+        .mobile-sheet-backdrop {
+          display: none;
+        }
+        .mobile-bottom-sheet {
           display: none;
         }
 
@@ -712,13 +765,32 @@ export default function Navbar() {
           }
 
           .mobile-hamburger-btn {
-            display: block !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            position: relative;
           }
-        }
 
-        @media (max-width: 768px) {
           .navbar-header {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
             height: 56px !important;
+            background: transparent !important;
+            background-color: transparent !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            border-bottom: none !important;
+          }
+
+          .navbar-header.scrolled {
+            background: transparent !important;
+            background-color: transparent !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            border-bottom: none !important;
           }
 
           .navbar-inner {
@@ -735,158 +807,267 @@ export default function Navbar() {
             display: none !important;
           }
 
-          .mobile-drawer-overlay {
+          /* Backdrop */
+          .mobile-sheet-backdrop {
             display: block !important;
-            position: fixed;
-            top: 56px;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 49;
-            background: #0A0A0A;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            position: fixed !important;
+            inset: 0 !important;
+            background: rgba(0, 0, 0, 0.72) !important;
+            backdrop-filter: blur(8px) !important;
+            -webkit-backdrop-filter: blur(8px) !important;
+            z-index: 10001 !important;
+          }
+
+          /* Bottom Sheet Modal Container */
+          .mobile-bottom-sheet {
+            display: flex !important;
+            flex-direction: column !important;
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100vw !important;
+            max-height: 86vh !important;
+            max-height: 86dvh !important;
+            background: #000000 !important;
+            background-color: #000000 !important;
+            border-top: 1px solid #1F1F1F !important;
+            border-top-left-radius: 20px !important;
+            border-top-right-radius: 20px !important;
+            box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.8) !important;
+            z-index: 10002 !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+          }
+
+          .sheet-handle-bar {
+            width: 100%;
+            padding: 10px 0 4px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+          }
+
+          .sheet-handle-pill {
+            width: 36px;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.22);
+          }
+
+          .sheet-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 18px 12px 18px;
+            border-bottom: none !important;
+          }
+
+          .sheet-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          }
+
+          .sheet-brand-icon {
+            height: 18px;
+            width: auto;
+          }
+
+          .sheet-brand-name {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: #FFFFFF;
+            letter-spacing: -0.01em;
+          }
+
+          .sheet-close-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: transparent !important;
+            background-color: transparent !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            color: #888888;
+            cursor: pointer;
+            transition: color 140ms ease;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            -webkit-tap-highlight-color: transparent !important;
+          }
+
+          .sheet-close-btn svg {
+            transition: color 140ms ease, stroke 140ms ease;
+          }
+
+          .sheet-close-btn:hover,
+          .sheet-close-btn:focus,
+          .sheet-close-btn:active {
+            color: #3ECF8E !important;
+            background: transparent !important;
+            background-color: transparent !important;
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+          }
+
+          .sheet-close-btn:hover svg,
+          .sheet-close-btn:focus svg,
+          .sheet-close-btn:active svg {
+            color: #3ECF8E !important;
+            stroke: #3ECF8E !important;
+          }
+
+          .sheet-scrollable-content {
+            padding: 14px 16px 28px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
           }
 
-          .mobile-drawer-content {
-            padding: 24px 20px 48px 20px;
+          .sheet-group {
             display: flex;
             flex-direction: column;
-            gap: 28px;
-            max-width: 520px;
-            margin: 0 auto;
+            gap: 8px;
           }
 
-          .mobile-section {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-          }
-
-          .mobile-section-label {
+          .sheet-group-label {
             font-family: var(--font-mono, monospace);
-            font-size: 0.6875rem;
+            font-size: 0.625rem;
             font-weight: 600;
             color: #737373;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
+            letter-spacing: 0.06em;
           }
 
-          .mobile-links-list {
+          .sheet-items-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px 14px;
+          }
+
+          .sheet-clean-row {
             display: flex;
-            flex-direction: column;
-            gap: 14px;
-          }
-
-          .mobile-nav-link {
+            align-items: flex-start;
+            gap: 8px;
+            background: transparent !important;
+            border: none !important;
+            padding: 2px 0;
             text-decoration: none;
-            display: block;
-            padding: 6px 0;
+            transition: opacity 120ms ease;
           }
 
-          .mobile-nav-item-body {
+          .sheet-clean-row:active {
+            opacity: 0.7;
+          }
+
+          .sheet-raw-icon {
+            flex-shrink: 0;
+            margin-top: 2px;
+          }
+
+          .sheet-row-text {
             display: flex;
             flex-direction: column;
             gap: 2px;
           }
 
-          .mobile-nav-item-title {
-            font-family: var(--font-sans, system-ui, sans-serif);
-            font-size: 0.9375rem;
+          .sheet-row-title {
+            font-size: 0.78rem;
             font-weight: 600;
             color: #FFFFFF;
+            line-height: 1.25;
           }
 
-          .mobile-nav-item-desc {
+          .sheet-row-desc {
+            font-size: 0.65rem;
+            color: #737373;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+
+          .sheet-links-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px 18px;
+            padding: 2px 0;
+          }
+
+          .sheet-text-link {
             font-size: 0.75rem;
-            color: #888888;
-            line-height: 1.4;
-          }
-
-          .mobile-direct-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-          }
-
-          .mobile-direct-link {
-            font-family: var(--font-sans, system-ui, sans-serif);
-            font-size: 0.875rem;
             font-weight: 500;
             color: #A3A3A3;
             text-decoration: none;
-            padding: 6px 0;
-            transition: color 140ms ease;
+            background: transparent !important;
+            border: none !important;
+            padding: 0 !important;
+            transition: color 120ms ease;
           }
 
-          .mobile-direct-link:hover {
+          .sheet-text-link:active {
             color: #3ECF8E;
           }
 
-          .mobile-cta-wrap {
-            margin-top: 8px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
+          .sheet-footer-actions {
+            margin-top: 6px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
           }
 
-          .mobile-register-btn {
+          .sheet-action-primary {
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
-            background-color: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.16);
-            color: #FFFFFF;
-            font-family: var(--font-sans, system-ui, sans-serif);
-            font-size: 0.875rem;
+            height: 38px;
+            background: #3ECF8E !important;
+            color: #000000 !important;
             font-weight: 600;
-            padding: 11px 16px;
+            font-size: 0.8125rem;
             border-radius: 8px;
             text-decoration: none;
-            box-sizing: border-box;
-            margin-bottom: 10px;
             transition: background-color 140ms ease;
           }
 
-          .mobile-register-btn:hover {
-            background-color: rgba(255, 255, 255, 0.06);
+          .sheet-action-primary:active {
+            background: #34B77B !important;
           }
 
-          .mobile-launch-btn {
+          .sheet-auth-subtext {
+            font-size: 0.75rem;
+            color: #737373;
             display: flex;
             align-items: center;
-            justify-content: center;
-            width: 100%;
-            background-color: #3ECF8E;
-            color: #0A0A0A;
-            font-family: var(--font-sans, system-ui, sans-serif);
-            font-size: 0.875rem;
-            font-weight: 700;
-            padding: 12px 16px;
-            border-radius: 8px;
-            text-decoration: none;
-            box-sizing: border-box;
-            transition: background-color 140ms ease;
+            gap: 4px;
           }
 
-          .mobile-launch-btn:hover {
-            background-color: #34B27B;
-          }
-
-          .mobile-login-link {
-            color: #888888;
-            font-family: var(--font-mono, monospace);
-            font-size: 0.75rem;
-            text-decoration: none;
-            transition: color 140ms ease;
-          }
-
-          .mobile-login-link:hover {
+          .sheet-auth-inline-link {
             color: #3ECF8E;
+            font-weight: 500;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            cursor: pointer;
           }
-        }
+
+          .sheet-auth-inline-link:active {
+            color: #FFFFFF;
+          }
       `}</style>
-    </header>
+    </>
   );
 }

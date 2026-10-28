@@ -68,7 +68,7 @@ const RECEIPT_ROWS = [
 
 export default function TrueCostPage() {
   return (
-    <div style={{ minHeight: '100vh', background: '#0A0A0A', color: '#FFFFFF', overflowX: 'hidden', width: '100%', maxWidth: '100vw' }}>
+    <div style={{ minHeight: '100vh', background: '#000000', color: '#FFFFFF', overflowX: 'hidden', width: '100%', maxWidth: '100vw' }}>
       <Navbar />
 
       <main className="engine-main">
@@ -206,7 +206,7 @@ export default function TrueCostPage() {
       <style>{`
         .engine-main {
           min-height: 100vh;
-          background-color: #0A0A0A;
+          background-color: #000000;
           padding-top: 130px;
           padding-bottom: 120px;
           width: 100%;
@@ -634,7 +634,7 @@ export default function TrueCostPage() {
 
         @media (max-width: 860px) {
           .engine-main {
-            padding-top: 100px;
+            padding-top: 145px !important;
             padding-bottom: 80px;
           }
 

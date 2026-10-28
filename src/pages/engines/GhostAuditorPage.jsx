@@ -46,7 +46,7 @@ const SCORE_TIERS = [
 
 export default function GhostAuditorPage() {
   return (
-    <div style={{ minHeight: '100vh', background: '#0A0A0A', color: '#FFFFFF', overflowX: 'hidden', width: '100%', maxWidth: '100vw' }}>
+    <div style={{ minHeight: '100vh', background: '#000000', color: '#FFFFFF', overflowX: 'hidden', width: '100%', maxWidth: '100vw' }}>
       <Navbar />
 
       <main className="engine-main">
@@ -244,7 +244,7 @@ export default function GhostAuditorPage() {
                     {/* Time Axis Labels */}
                     <text x="50" y="212" fill="#555555" fontSize="10" fontFamily="var(--font-mono)">T-90 Days</text>
                     <text x="380" y="212" fill="#555555" fontSize="10" fontFamily="var(--font-mono)" textAnchor="middle">T-45 Days</text>
-                    <text x="690" y="212" fill="#EF4444" fontSize="10" fontFamily="var(--font-mono)" textAnchor="middle">T-48h Spike</text>
+                    <text x="630" y="212" fill="#EF4444" fontSize="10" fontFamily="var(--font-mono)" textAnchor="middle">T-48h Spike</text>
                     <text x="780" y="212" fill="#555555" fontSize="10" fontFamily="var(--font-mono)" textAnchor="end">Sale Launch</text>
                   </svg>
                 </div>
@@ -274,7 +274,7 @@ export default function GhostAuditorPage() {
       <style>{`
         .engine-main {
           min-height: 100vh;
-          background-color: #0A0A0A;
+          background-color: #000000;
           padding-top: 130px;
           padding-bottom: 120px;
           width: 100%;
@@ -482,30 +482,31 @@ export default function GhostAuditorPage() {
 
         .tier-grade {
           font-family: var(--font-mono);
-          font-size: 0.5625rem;
+          font-size: 0.625rem;
           font-weight: 600;
           letter-spacing: 0.06em;
-          padding: 2px 6px;
-          border-radius: 4px;
+          padding: 0;
+          border: none;
+          background: transparent;
           text-transform: uppercase;
         }
 
         .badge-brand-clean {
           color: #3ECF8E;
-          border: 1px solid rgba(62, 207, 142, 0.28);
-          background: rgba(62, 207, 142, 0.04);
+          border: none;
+          background: transparent;
         }
 
         .badge-warn-clean {
           color: #F59E0B;
-          border: 1px solid rgba(245, 158, 11, 0.28);
-          background: rgba(245, 158, 11, 0.04);
+          border: none;
+          background: transparent;
         }
 
         .badge-danger-clean {
           color: #EF4444;
-          border: 1px solid rgba(239, 68, 68, 0.28);
-          background: rgba(239, 68, 68, 0.04);
+          border: none;
+          background: transparent;
         }
 
         .text-brand { color: #3ECF8E; }
@@ -563,12 +564,11 @@ export default function GhostAuditorPage() {
           font-size: 0.6875rem;
           font-weight: 700;
           color: #EF4444;
-          border: 1px solid rgba(239, 68, 68, 0.32);
-          padding: 4px 10px;
-          border-radius: 4px;
+          border: none;
+          padding: 0;
           letter-spacing: 0.06em;
           white-space: nowrap;
-          background: rgba(239, 68, 68, 0.05);
+          background: transparent;
         }
 
         .comparison-cols {
@@ -604,21 +604,24 @@ export default function GhostAuditorPage() {
 
         .comp-col-badge {
           font-family: var(--font-mono);
-          font-size: 0.5625rem;
+          font-size: 0.625rem;
           font-weight: 600;
           letter-spacing: 0.04em;
-          padding: 2px 6px;
-          border-radius: 4px;
+          padding: 0;
+          border: none;
+          background: transparent;
         }
 
         .badge-claim {
           color: #888888;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: none;
+          background: transparent;
         }
 
         .badge-audit {
           color: #EF4444;
-          border: 1px solid rgba(239, 68, 68, 0.28);
+          border: none;
+          background: transparent;
         }
 
         .comp-lines {
@@ -790,7 +793,7 @@ export default function GhostAuditorPage() {
 
         @media (max-width: 860px) {
           .engine-main {
-            padding-top: 100px;
+            padding-top: 145px !important;
             padding-bottom: 80px;
           }
 

@@ -172,13 +172,13 @@ export default function BlogIndexPage() {
         /* ── Canvas & Core Architecture ────────────────────────────────────────────── */
         .blog-wrapper {
           min-height: 100vh;
-          background-color: #0A0A0A;
+          background-color: #000000;
           color: #EDEDED;
         }
 
         .blog-main {
           min-height: 100vh;
-          background-color: #0A0A0A;
+          background-color: #000000;
           padding-top: 130px;
           padding-bottom: 96px;
           overflow-x: hidden;
@@ -558,7 +558,7 @@ export default function BlogIndexPage() {
         /* ── Responsive Queries ────────────────────────────────────────────────────── */
         @media (max-width: 768px) {
           .blog-main {
-            padding-top: 100px;
+            padding-top: 145px !important;
             padding-bottom: 64px;
           }
 

@@ -88,7 +88,7 @@ export default function ConsumersPage() {
           {/* Hero Header */}
           <header className="hero-header">
             <div className="hero-category-tag">
-              SOLUTIONS // HARDWARE ENTHUSIASTS &amp; POWER CONSUMERS
+              SOLUTIONS · HARDWARE ENTHUSIASTS &amp; POWER CONSUMERS
             </div>
 
             <h1 className="hero-title">
@@ -225,7 +225,7 @@ export default function ConsumersPage() {
       <style>{`
         .solution-page-wrap {
           min-height: 100vh;
-          background-color: #0A0A0A;
+          background-color: #000000;
           color: #EDEDED;
           font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
           overflow-x: hidden;
@@ -233,7 +233,7 @@ export default function ConsumersPage() {
 
         .solution-main {
           min-height: 100vh;
-          background-color: #0A0A0A;
+          background-color: #000000;
           padding-top: 130px;
           padding-bottom: 96px;
         }
@@ -683,7 +683,7 @@ export default function ConsumersPage() {
 
         @media (max-width: 768px) {
           .solution-main {
-            padding-top: 84px;
+            padding-top: 145px !important;
             padding-bottom: 64px;
           }
 

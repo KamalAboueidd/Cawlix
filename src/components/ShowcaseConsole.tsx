@@ -410,7 +410,7 @@ export default function ShowcaseConsole() {
           <span
             style={{
               fontFamily: 'var(--font-mono)',
-              fontSize: '0.6875rem',
+              fontSize: '0.58rem',
               color: '#737373',
               letterSpacing: '0.02em',
             }}

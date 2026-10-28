@@ -167,62 +167,68 @@ export default function TelemetryConsole() {
     >
       {/* Header bar */}
       <div
+        className="telemetry-header-bar"
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '10px 0',
+          padding: '8px 0',
           borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
           flexShrink: 0,
+          gap: '8px',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Terminal size={13} strokeWidth={1.5} style={{ color: 'var(--text-muted)' }} />
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-secondary)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+          <Terminal size={12} strokeWidth={1.5} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+          <span className="telemetry-feed-title">
             Telemetry Feed
           </span>
-          <span className={clsx('badge', 'badge-neutral')} style={{ fontSize: '0.55rem' }}>
+          {/* Active events counter - Pure green text directly on screen, no background box */}
+          <span className="telemetry-events-count">
             {eventCount} events
           </span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
           {/* Connection status */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             {isConnected ? (
-              <Wifi size={11} strokeWidth={1.5} style={{ color: 'var(--success)' }} />
+              <Wifi size={10} strokeWidth={1.5} style={{ color: '#3ECF8E', flexShrink: 0 }} />
             ) : (
-              <WifiOff size={11} strokeWidth={1.5} style={{ color: 'var(--danger)' }} />
+              <WifiOff size={10} strokeWidth={1.5} style={{ color: 'var(--danger)', flexShrink: 0 }} />
             )}
             <div
               className={`dot dot-${isConnected ? 'success' : 'danger'}`}
+              style={{ width: '4px', height: '4px', flexShrink: 0 }}
             />
-            <span className="mono-label">
+            <span className="telemetry-response-label">
               {isConnected ? (isPaused ? 'Paused' : '142ms avg response') : 'Offline'}
             </span>
           </div>
 
-          {/* Controls */}
+          {/* Controls: Transparent background, NO background on hover */}
           <button
+            type="button"
             onClick={isPaused ? resumeTelemetry : pauseTelemetry}
-            className={clsx('btn', 'btn-ghost', 'btn-sm')}
-            style={{ padding: '3px 8px', gap: '4px' }}
+            className="telemetry-action-btn"
             title={isPaused ? 'Resume feed' : 'Pause feed'}
+            aria-label={isPaused ? 'Resume feed' : 'Pause feed'}
           >
             {isPaused ? (
-              <Play size={11} strokeWidth={1.5} />
+              <Play size={10} strokeWidth={1.5} />
             ) : (
-              <Pause size={11} strokeWidth={1.5} />
+              <Pause size={10} strokeWidth={1.5} />
             )}
           </button>
 
           <button
+            type="button"
             onClick={clearEvents}
-            className={clsx('btn', 'btn-ghost', 'btn-sm')}
-            style={{ padding: '3px 8px' }}
+            className="telemetry-action-btn"
             title="Clear feed"
+            aria-label="Clear feed"
           >
-            <Trash2 size={11} strokeWidth={1.5} />
+            <Trash2 size={10} strokeWidth={1.5} />
           </button>
         </div>
       </div>
@@ -285,15 +291,86 @@ export default function TelemetryConsole() {
         ))}
       </div>
       <style>{`
+        .telemetry-feed-title {
+          font-family: var(--font-mono, monospace);
+          font-size: 0.65rem;
+          color: var(--text-secondary);
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          white-space: nowrap;
+        }
+
+        /* Active events counter - Pure green text directly on screen, no background box */
+        .telemetry-events-count {
+          background: transparent !important;
+          color: #3ECF8E !important;
+          font-family: var(--font-mono, monospace);
+          font-size: 0.60rem;
+          font-weight: 600;
+          letter-spacing: 0.02em;
+          padding: 0 !important;
+          border: none !important;
+          box-shadow: none !important;
+          white-space: nowrap;
+        }
+
+        /* 142ms avg response - Micro crisp font */
+        .telemetry-response-label {
+          font-family: var(--font-mono, monospace);
+          font-size: 0.58rem;
+          color: #737373;
+          letter-spacing: 0.02em;
+          white-space: nowrap;
+        }
+
+        /* Delete and Pause buttons: Pure transparent background, NO background on hover */
+        .telemetry-action-btn {
+          background: transparent !important;
+          border: none !important;
+          outline: none !important;
+          box-shadow: none !important;
+          color: #737373 !important;
+          padding: 2px 4px !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          cursor: pointer;
+          transition: color 120ms ease;
+          border-radius: 4px;
+        }
+        .telemetry-action-btn:hover {
+          background: transparent !important;
+          color: #FFFFFF !important;
+        }
+        .telemetry-action-btn:active {
+          background: transparent !important;
+          color: #3ECF8E !important;
+        }
+
         .telemetry-log-row {
           grid-template-columns: 72px 80px 1fr;
           padding: 5px 16px;
         }
         @media (max-width: 640px) {
+          .telemetry-header-bar {
+            padding: 6px 0 !important;
+          }
+          .telemetry-feed-title {
+            font-size: 0.5625rem !important;
+          }
+          .telemetry-events-count {
+            font-size: 0.54rem !important;
+          }
+          .telemetry-response-label {
+            font-size: 0.52rem !important;
+          }
           .telemetry-log-row {
-            grid-template-columns: 58px 64px 1fr !important;
-            padding: 4px 10px !important;
-            font-size: 10px !important;
+            grid-template-columns: 54px 60px 1fr !important;
+            padding: 4px 8px !important;
+            font-size: 9px !important;
+          }
+          .telemetry-log-row span {
+            font-size: 0.56rem !important;
           }
         }
       `}</style>

@@ -3,7 +3,6 @@ import TrueCostSimulator from './TrueCostSimulator';
 import GhostDiscountVisualizer from './GhostDiscountVisualizer';
 import LandedCostSpread from './LandedCostSpread';
 import GlitchFeedCard from './GlitchFeedCard';
-import GlobalArbitrageGlobe from './GlobalArbitrageGlobe';
 import PriceStreamMatrix from './PriceStreamMatrix';
 import RadarScanCore from './RadarScanCore';
 import LiveDashboardPreview from './LiveDashboardPreview';
@@ -169,7 +168,7 @@ export default function CoreEnginesDeepDive() {
         margin: '0 auto',
         paddingTop: '60px',
         paddingBottom: '80px',
-        background: '#0A0A0A',
+        background: '#000000',
         overflowX: 'hidden',
       }}
     >
@@ -253,7 +252,7 @@ export default function CoreEnginesDeepDive() {
         secondaryView={<GhostDiscountVisualizer />}
       />
 
-      {/* ── Engine 03: Landed-Cost Matrix & 3D Wireframe Globe ── */}
+      {/* ── Engine 03: Landed-Cost Matrix & Parity Comparison ── */}
       <EngineRow
         label="Engine 03 · Global Arbitrage Corridor"
         leadHeading="Calculate exact US-to-Egypt"
@@ -261,13 +260,11 @@ export default function CoreEnginesDeepDive() {
         body="Compare Egyptian shelf prices against Amazon US, Newegg, and B&H in real-time. Automated reconciliation of live parallel exchange rates, freight tariffs, Egyptian Customs codes, 14% VAT, and bank clearance margins."
         specs={[
           'Customs Code 8517.13 (0% Tariff + 14% VAT)',
-          'Lightweight WebGL Wireframe Earth (Cobe)',
+          'Real-Time Landed Parity & Statutory Tariff Index',
           'JFK, DE & LAX Direct Freight Corridors',
         ]}
-        primaryLabel="Arbitrage Globe"
-        secondaryLabel="Parity Comparison"
-        primaryView={<GlobalArbitrageGlobe />}
-        secondaryView={<LandedCostSpread />}
+        primaryLabel="Parity Comparison"
+        primaryView={<LandedCostSpread />}
       />
 
       {/* ── Engine 04: Flash Glitch & Anomaly Radar ── */}

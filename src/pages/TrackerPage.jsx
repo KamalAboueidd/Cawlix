@@ -6,10 +6,10 @@ import TelemetryConsole from '../components/TelemetryConsole';
 
 export default function TrackerPage() {
   return (
-    <div style={{ backgroundColor: '#0A0A0A', minHeight: '100vh', color: '#FFFFFF', overflowX: 'hidden' }}>
+    <div style={{ backgroundColor: '#000000', minHeight: '100vh', color: '#FFFFFF', overflowX: 'hidden' }}>
       <Navbar />
 
-      <main style={{ minHeight: '100vh', paddingTop: '130px', paddingBottom: '96px', overflowX: 'hidden' }}>
+      <main style={{ minHeight: '100vh', paddingTop: '145px', paddingBottom: '96px', overflowX: 'hidden' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           
           {/* Terminal Header */}
@@ -22,7 +22,7 @@ export default function TrackerPage() {
               textTransform: 'uppercase',
               marginBottom: '12px',
             }}>
-              TELEMETRY UTILITY // LIVE SCANNER
+              TELEMETRY UTILITY · LIVE SCANNER
             </div>
 
             <h1 style={{

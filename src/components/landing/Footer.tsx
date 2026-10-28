@@ -33,7 +33,7 @@ export default function Footer() {
   return (
     <footer className="cawlix-global-footer">
       <div className="footer-inner">
-        {/* Top 4-Column Grid */}
+        {/* Main Grid: Platform Brand + 4 Nav Columns */}
         <div className="footer-columns-grid">
           
           {/* Column 1: Core Platform & Node Status */}
@@ -56,78 +56,98 @@ export default function Footer() {
             <p className="platform-tagline">
               Deterministic price telemetry, fake discount forensic auditing, and landed-cost arbitrage for consumer electronics.
             </p>
+          </div>
 
-            <div className="platform-copyright">
-              © 2026 Cawlix Inc. All rights reserved.
+          {/* Nav Columns: 2x2 on Mobile, 4 columns on Desktop */}
+          <div className="footer-nav-grid">
+            {/* 1. ENGINES */}
+            <div className="col-nav">
+              <div className="col-header">ENGINES</div>
+              <ul className="col-list">
+                {ENGINES_LINKS.map((link) => (
+                  <li key={link.label}>
+                    <a href={link.href} className="footer-link">
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
 
-          {/* Column 2: Engines */}
-          <div className="col-nav">
-            <div className="col-header">ENGINES</div>
-            <ul className="col-list">
-              {ENGINES_LINKS.map((link) => (
-                <li key={link.label}>
-                  <a href={link.href} className="footer-link">
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+            {/* 2. SOLUTIONS */}
+            <div className="col-nav">
+              <div className="col-header">SOLUTIONS</div>
+              <ul className="col-list">
+                {SOLUTIONS_LINKS.map((link) => (
+                  <li key={link.label}>
+                    <a href={link.href} className="footer-link">
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Column 3: Solutions & Use Cases */}
-          <div className="col-nav">
-            <div className="col-header">SOLUTIONS</div>
-            <ul className="col-list">
-              {SOLUTIONS_LINKS.map((link) => (
-                <li key={link.label}>
-                  <a href={link.href} className="footer-link">
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+            {/* 3. RESOURCES */}
+            <div className="col-nav">
+              <div className="col-header">RESOURCES</div>
+              <ul className="col-list">
+                {RESOURCES_LINKS.map((link) => (
+                  <li key={link.label}>
+                    <a href={link.href} className="footer-link">
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Column 4: Resources & Developers */}
-          <div className="col-nav">
-            <div className="col-header">RESOURCES</div>
-            <ul className="col-list">
-              {RESOURCES_LINKS.map((link) => (
-                <li key={link.label}>
-                  <a href={link.href} className="footer-link">
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            {/* 4. LEGAL & SECURITY */}
+            <div className="col-nav">
+              <div className="col-header">LEGAL &amp; SECURITY</div>
+              <ul className="col-list">
+                {LEGAL_LINKS.map((link) => (
+                  <li key={link.label}>
+                    <a href={link.href} className="footer-link">
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
         </div>
 
-        {/* Bottom Legal & Currency Matrix Strip */}
+        {/* Bottom Legal & Attribution Strip */}
         <div className="footer-bottom-strip">
-          <div className="strip-currency">
-            EGYPTIAN POUND (EGP) TELEMETRY · CENTRAL BANK OF EGYPT REFERENCE RATE ENFORCED
+          <div className="bottom-meta-group">
+            <span className="platform-copyright">
+              © 2026 Cawlix Inc. All rights reserved.
+            </span>
+            <span className="bottom-meta-sep">·</span>
+            <span className="powered-by-text">
+              Powered by{' '}
+              <a
+                href="https://kamalaboueidd.site"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="powered-by-link"
+              >
+                kamalaboueidd.site
+              </a>
+            </span>
           </div>
 
-          <div className="strip-links">
-            {LEGAL_LINKS.map((item, idx) => (
-              <React.Fragment key={item.label}>
-                <a href={item.href} className="legal-link">
-                  {item.label}
-                </a>
-                {idx < LEGAL_LINKS.length - 1 && <span className="legal-sep">·</span>}
-              </React.Fragment>
-            ))}
+          <div className="strip-currency">
+            EGYPTIAN POUND (EGP) TELEMETRY · CENTRAL BANK OF EGYPT REFERENCE RATE ENFORCED
           </div>
         </div>
       </div>
 
       <style>{`
         .cawlix-global-footer {
-          background-color: #0A0A0A;
+          background-color: #000000;
           border-top: 1px solid rgba(255, 255, 255, 0.06);
           width: 100%;
           position: relative;
@@ -137,19 +157,19 @@ export default function Footer() {
         .footer-inner {
           max-width: 1280px;
           margin: 0 auto;
-          padding: 64px 24px 48px 24px;
+          padding: 40px 24px 28px 24px;
           box-sizing: border-box;
         }
 
-        /* 4-Column Layout */
+        /* 5-Column Desktop Grid */
         .footer-columns-grid {
           display: grid;
-          grid-template-columns: 1.4fr 1fr 1fr 1fr;
-          gap: 48px;
+          grid-template-columns: 1.3fr 1fr 1fr 1fr 1fr;
+          gap: 36px;
           align-items: flex-start;
         }
 
-        /* Column 1 */
+        /* Platform Brand Block */
         .col-platform {
           display: flex;
           flex-direction: column;
@@ -188,12 +208,6 @@ export default function Footer() {
           gap: 6px;
         }
 
-        .status-dot {
-          font-size: 0.625rem;
-          line-height: 1;
-          color: #3ECF8E;
-        }
-
         .platform-tagline {
           font-family: var(--font-sans, system-ui, sans-serif);
           font-size: 0.75rem;
@@ -203,11 +217,9 @@ export default function Footer() {
           max-width: 320px;
         }
 
-        .platform-copyright {
-          font-family: var(--font-mono, monospace);
-          font-size: 0.75rem;
-          color: #525252;
-          margin-top: 4px;
+        /* Nav Container: Contents on Desktop */
+        .footer-nav-grid {
+          display: contents;
         }
 
         /* Nav Columns */
@@ -252,14 +264,57 @@ export default function Footer() {
 
         /* Bottom Strip */
         .footer-bottom-strip {
-          border-top: 1px solid rgba(255, 255, 255, 0.04);
-          margin-top: 56px;
-          padding-top: 24px;
+          border-top: 1px solid rgba(255, 255, 255, 0.05);
+          margin-top: 28px;
+          padding-top: 18px;
           display: flex;
-          flex-direction: row;
-          justify-content: space-between;
+          flex-direction: column;
           align-items: center;
-          gap: 16px;
+          justify-content: center;
+          text-align: center;
+          gap: 10px;
+          width: 100%;
+        }
+
+        .bottom-meta-group {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          flex-wrap: wrap;
+          text-align: center;
+        }
+
+        .platform-copyright {
+          font-family: var(--font-mono, monospace);
+          font-size: 0.75rem;
+          color: #737373;
+          text-align: center;
+        }
+
+        .bottom-meta-sep {
+          font-family: var(--font-mono, monospace);
+          font-size: 0.75rem;
+          color: #333333;
+        }
+
+        .powered-by-text {
+          font-family: var(--font-mono, monospace);
+          font-size: 0.75rem;
+          color: #737373;
+          text-align: center;
+        }
+
+        .powered-by-link {
+          color: #3ECF8E;
+          text-decoration: none;
+          font-weight: 500;
+          transition: color 150ms ease, text-decoration 150ms ease;
+        }
+
+        .powered-by-link:hover {
+          color: #FFFFFF;
+          text-decoration: underline;
         }
 
         .strip-currency {
@@ -267,70 +322,89 @@ export default function Footer() {
           font-size: 11px;
           color: #525252;
           letter-spacing: 0.04em;
+          text-align: center;
         }
 
-        .strip-links {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          flex-wrap: wrap;
-        }
-
-        .legal-link {
-          font-family: var(--font-mono, monospace);
-          font-size: 11px;
-          color: #525252;
-          text-decoration: none;
-          transition: color 150ms ease-in-out;
-          background: transparent;
-        }
-
-        .legal-link:hover {
-          color: #FFFFFF;
-          background: transparent;
-        }
-
-        .legal-sep {
-          font-family: var(--font-mono, monospace);
-          font-size: 11px;
-          color: rgba(255, 255, 255, 0.15);
-        }
-
-        /* Responsive Design */
+        /* Tablet Responsive */
         @media (max-width: 1024px) {
           .footer-columns-grid {
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
+            grid-template-columns: 1fr;
+            gap: 28px;
           }
-          .col-platform {
-            grid-column: span 2;
+
+          .footer-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
           }
         }
 
+        /* Mobile Responsive (< 768px): 2x2 Grid + Centered Compact Bottom */
         @media (max-width: 768px) {
           .footer-inner {
-            padding: 48px 16px 36px 16px;
+            padding: 24px 16px 24px 16px;
           }
 
           .footer-columns-grid {
-            grid-template-columns: 1fr;
-            gap: 36px;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
           }
 
           .col-platform {
-            grid-column: span 1;
+            width: 100%;
+          }
+
+          .platform-tagline {
+            max-width: 100%;
+          }
+
+          /* 2x2 Layout: Row 1 = Engines & Solutions, Row 2 = Resources & Legal */
+          .footer-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px 18px;
+            width: 100%;
+          }
+
+          .col-header {
+            font-size: 0.6875rem;
+            letter-spacing: 0.08em;
+          }
+
+          .footer-link {
+            font-size: 0.75rem;
+            line-height: 1.4;
           }
 
           .footer-bottom-strip {
             flex-direction: column;
-            align-items: flex-start;
-            gap: 14px;
-            margin-top: 40px;
-            padding-top: 20px;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+            gap: 8px;
+            margin-top: 18px !important;
+            padding-top: 14px !important;
           }
 
+          .bottom-meta-group {
+            flex-direction: column;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+            gap: 5px;
+          }
+
+          .bottom-meta-sep {
+            display: none;
+          }
+
+          .platform-copyright,
+          .powered-by-text,
           .strip-currency {
+            font-size: 0.6875rem;
             line-height: 1.5;
+            text-align: center !important;
           }
         }
       `}</style>

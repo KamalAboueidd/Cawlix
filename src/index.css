@@ -399,20 +399,30 @@ code, pre, kbd, samp {
 
 @media (max-width: 768px) {
   .ticker-wrapper {
-    padding: 6px 0 !important;
+    padding: 10px 0 !important;
     max-width: 100% !important;
+    width: 100% !important;
     margin-top: auto !important;
-    margin-bottom: 50px !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-    -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 1) 8%, rgba(0, 0, 0, 1) 92%, transparent 100%) !important;
-    mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 1) 8%, rgba(0, 0, 0, 1) 92%, transparent 100%) !important;
+    margin-bottom: 12px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+    overflow: hidden !important;
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 1) 10%, rgba(0, 0, 0, 1) 90%, transparent 100%) !important;
+    mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 1) 10%, rgba(0, 0, 0, 1) 90%, transparent 100%) !important;
   }
 
   .ticker-track {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
     justify-content: flex-start !important;
     width: max-content !important;
-    animation: cawlixTickerMarquee 16s linear infinite !important;
+    min-width: max-content !important;
+    animation: cawlixTickerMarquee 20s linear infinite !important;
     will-change: transform;
   }
 
@@ -422,10 +432,34 @@ code, pre, kbd, samp {
   }
 
   .ticker-group {
-    gap: 14px !important;
-    padding-right: 14px !important;
-    font-size: 9.5px !important;
-    letter-spacing: 0.05em !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 20px !important;
+    padding-right: 20px !important;
+    font-family: var(--font-mono, monospace) !important;
+    font-size: 0.70rem !important;
+    line-height: 1 !important;
+    letter-spacing: 0.04em !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .ticker-item {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 6px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    line-height: 1 !important;
+  }
+
+  .ticker-dot {
+    color: rgba(255, 255, 255, 0.2) !important;
+    user-select: none !important;
     flex-shrink: 0 !important;
   }
 

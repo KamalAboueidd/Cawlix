@@ -43,12 +43,12 @@ export default function NotFoundPage() {
   }, []);
 
   return (
-    <div style={{ backgroundColor: '#0A0A0A', minHeight: '100vh', color: '#FFFFFF', overflowX: 'hidden' }}>
+    <div style={{ backgroundColor: '#000000', minHeight: '100vh', color: '#FFFFFF', overflowX: 'hidden' }}>
       <Navbar />
 
       <main style={{
         minHeight: 'calc(100vh - 60px)',
-        backgroundColor: '#0A0A0A',
+        backgroundColor: '#000000',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -134,7 +134,7 @@ export default function NotFoundPage() {
                   width: '32%',
                   height: '32%',
                   borderRadius: '50%',
-                  backgroundColor: '#0A0A0A',
+                  backgroundColor: '#000000',
                 }} />
               </div>
             </div>

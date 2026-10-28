@@ -50,7 +50,7 @@ export default function ChangelogPage() {
   };
 
   return (
-    <div style={{ backgroundColor: '#0A0A0A', minHeight: '100vh', color: '#FFFFFF', overflowX: 'hidden' }}>
+    <div style={{ backgroundColor: '#000000', minHeight: '100vh', color: '#FFFFFF', overflowX: 'hidden' }}>
       <Navbar />
 
       <main style={{ minHeight: '100vh', paddingTop: '140px', paddingBottom: '120px' }}>
@@ -66,7 +66,7 @@ export default function ChangelogPage() {
               textTransform: 'uppercase',
               marginBottom: '14px',
             }}>
-              SYSTEM LOG // PRODUCTION RELEASES
+              SYSTEM LOG · PRODUCTION RELEASES
             </div>
 
             <h1 style={{

@@ -161,14 +161,14 @@ const MATRIX_SECTIONS = [
 
 export default function PricingPage() {
   return (
-    <div style={{ minHeight: '100vh', background: '#0A0A0A', color: '#FFFFFF', overflowX: 'hidden', width: '100%', maxWidth: '100vw' }}>
+    <div style={{ minHeight: '100vh', background: '#000000', color: '#FFFFFF', overflowX: 'hidden', width: '100%', maxWidth: '100vw' }}>
       <Navbar />
 
       <main className="pricing-main">
         <div className="pricing-container">
           {/* Institutional Page Header */}
           <header className="pricing-header">
-            <span className="pricing-kicker">// INSTITUTIONAL_PRICING_MATRIX</span>
+            <span className="pricing-kicker">PLANS &amp; TIERS</span>
             <h1 className="pricing-title">
               Deterministic Intelligence. <span className="pricing-title-muted">Transparent Access.</span>
             </h1>
@@ -237,7 +237,7 @@ export default function PricingPage() {
           {/* High-Density Feature Breakdown Matrix */}
           <section className="matrix-section">
             <header className="matrix-header">
-              <span className="pricing-kicker">// CAPABILITY_MATRIX</span>
+              <span className="pricing-kicker">FEATURE SPECIFICATIONS</span>
               <h2 className="matrix-title">Feature Breakdown &amp; Metric Verification</h2>
               <p className="matrix-subtitle">
                 Comprehensive tabular audit of telemetry cadences, scraping limits, and programmatic endpoints.
@@ -327,7 +327,7 @@ export default function PricingPage() {
       <style>{`
         .pricing-main {
           min-height: 100vh;
-          background-color: #0A0A0A;
+          background-color: #000000;
           padding-top: 130px;
           padding-bottom: 120px;
           width: 100%;
@@ -750,7 +750,7 @@ export default function PricingPage() {
 
         @media (max-width: 860px) {
           .pricing-main {
-            padding-top: 100px;
+            padding-top: 145px !important;
             padding-bottom: 80px;
           }
 

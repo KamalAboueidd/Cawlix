@@ -675,13 +675,13 @@ export default function DocsPage() {
         /* ── Canvas & Layout Architecture ────────────────────────────────────────── */
         .docs-wrapper {
           min-height: 100vh;
-          background-color: #0A0A0A;
+          background-color: #000000;
           color: #EDEDED;
         }
 
         .docs-main {
           min-height: 100vh;
-          background-color: #0A0A0A;
+          background-color: #000000;
           padding-top: 130px;
           padding-bottom: 96px;
         }
@@ -1230,11 +1230,12 @@ export default function DocsPage() {
             align-items: center;
             justify-content: space-between;
             position: sticky;
-            top: 56px;
+            top: 0;
+            margin-top: 56px;
             z-index: 45;
             height: 44px;
             padding: 0 16px;
-            background: rgba(10, 10, 10, 0.92);
+            background: rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -1306,7 +1307,7 @@ export default function DocsPage() {
             right: 0;
             bottom: 0;
             z-index: 44;
-            background: rgba(10, 10, 10, 0.98);
+            background: rgba(0, 0, 0, 0.98);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);

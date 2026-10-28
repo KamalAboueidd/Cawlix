@@ -20,6 +20,9 @@ import ConsolePage from './pages/console/ConsolePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import PrivacyPage from './pages/legal/PrivacyPage';
+import TermsPage from './pages/legal/TermsPage';
+import SecurityPage from './pages/legal/SecurityPage';
 
 function AppRoutes() {
   const [route, setRoute] = useState(window.location.pathname);
@@ -29,6 +32,10 @@ function AppRoutes() {
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [route]);
 
   const cleanRoute = (route.length > 1 ? route.replace(/\/+$/, '') : route) || '/';
 
@@ -82,6 +89,18 @@ function AppRoutes() {
 
   if (cleanRoute === '/tracker') {
     return <TrackerPage />;
+  }
+
+  if (cleanRoute === '/privacy') {
+    return <PrivacyPage />;
+  }
+
+  if (cleanRoute === '/terms') {
+    return <TermsPage />;
+  }
+
+  if (cleanRoute === '/security') {
+    return <SecurityPage />;
   }
 
   if (cleanRoute === '/console' || cleanRoute.startsWith('/console/') || cleanRoute === '/dashboard' || cleanRoute.startsWith('/dashboard/')) {

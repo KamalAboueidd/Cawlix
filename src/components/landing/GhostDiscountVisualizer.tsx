@@ -108,7 +108,7 @@ export default function GhostDiscountVisualizer() {
               flex: 1,
               minHeight: '220px',
               overflow: 'hidden',
-              background: '#0A0A0A',
+              background: '#000000',
               borderRadius: '4px',
               marginTop: '10px',
               marginBottom: '10px',
@@ -130,13 +130,13 @@ export default function GhostDiscountVisualizer() {
                 display: 'block',
               }}
             />
-            {/* Subtle Gradient Vignette into #0A0A0A */}
+            {/* Subtle Gradient Vignette into #000000 */}
             <div
               aria-hidden="true"
               style={{
                 position: 'absolute',
                 inset: 0,
-                background: 'linear-gradient(to top, rgba(10, 10, 10, 0.95) 0%, transparent 60%)',
+                background: 'linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, transparent 60%)',
                 pointerEvents: 'none',
               }}
             />
@@ -147,8 +147,8 @@ export default function GhostDiscountVisualizer() {
                 bottom: '8px',
                 left: '8px',
                 right: '8px',
-                background: 'rgba(10, 10, 10, 0.75)',
-                padding: '4px 8px',
+                background: 'transparent',
+                padding: '4px 0',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',

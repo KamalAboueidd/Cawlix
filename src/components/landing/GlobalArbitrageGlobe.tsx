@@ -153,7 +153,7 @@ export default function GlobalArbitrageGlobe() {
           <span
             style={{
               fontFamily: 'var(--font-mono)',
-              fontSize: '0.6875rem',
+              fontSize: '0.58rem',
               color: '#737373',
             }}
           >
