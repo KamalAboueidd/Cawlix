@@ -227,14 +227,13 @@ function AnomalyCurveModal({
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '5px',
-                  padding: '3px 8px',
-                  borderRadius: '4px',
+                  padding: 0,
                   fontSize: '0.6875rem',
                   fontWeight: 700,
                   letterSpacing: '0.04em',
                   color: '#FB7185',
-                  backgroundColor: 'rgba(251, 113, 133, 0.1)',
-                  border: '1px solid rgba(251, 113, 133, 0.25)',
+                  backgroundColor: 'transparent',
+                  border: 'none',
                   fontFamily: "'Geist Mono', monospace",
                 }}
               >
@@ -244,13 +243,12 @@ function AnomalyCurveModal({
 
               <span
                 style={{
-                  padding: '3px 8px',
-                  borderRadius: '4px',
+                  padding: 0,
                   fontSize: '0.6875rem',
                   fontWeight: 600,
-                  color: '#EDEDED',
-                  backgroundColor: '#161616',
-                  border: '1px solid #2A2A2A',
+                  color: '#10B981',
+                  backgroundColor: 'transparent',
+                  border: 'none',
                 }}
               >
                 {retailerLabel}
@@ -354,16 +352,15 @@ function AnomalyCurveModal({
               </div>
             </div>
 
-            {/* SVG Visual Canvas */}
+            {/* SVG Visual Canvas: Seamless without inner borders */}
             <div
               style={{
                 width: '100%',
                 position: 'relative',
                 overflow: 'hidden',
-                borderRadius: '6px',
-                backgroundColor: '#040404',
-                border: '1px solid #141414',
-                padding: '8px 0',
+                backgroundColor: 'transparent',
+                border: 'none',
+                padding: '4px 0',
               }}
             >
               <svg
@@ -469,14 +466,13 @@ function AnomalyCurveModal({
                 })}
               </svg>
 
-              {/* Active Point Floating Inspector Pill */}
+              {/* Active Point Callout: Seamless without background or borders */}
               <div
                 style={{
-                  margin: '8px 16px',
-                  padding: '10px 14px',
-                  backgroundColor: '#0C0C0C',
-                  border: '1px solid #262626',
-                  borderRadius: '6px',
+                  margin: '10px 0 2px',
+                  padding: '6px 0',
+                  backgroundColor: 'transparent',
+                  border: 'none',
                   display: 'flex',
                   flexWrap: 'wrap',
                   alignItems: 'center',
@@ -699,11 +695,12 @@ function AnomalyCurveModal({
                           {ret.isTarget && (
                             <span
                               style={{
-                                fontSize: '0.625rem',
+                                fontSize: '0.6875rem',
                                 color: '#FB7185',
-                                backgroundColor: 'rgba(251, 113, 133, 0.15)',
-                                padding: '2px 6px',
-                                borderRadius: '3px',
+                                backgroundColor: 'transparent',
+                                border: 'none',
+                                padding: 0,
+                                fontWeight: 600,
                                 fontFamily: "'Geist Mono', monospace",
                               }}
                             >
@@ -795,28 +792,23 @@ function AnomalyCurveModal({
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              padding: '8px 14px',
-              background: '#111111',
-              border: '1px solid #222222',
-              borderRadius: '4px',
+              padding: '6px 0',
+              background: 'transparent',
+              border: 'none',
               color: '#EDEDED',
               fontSize: '0.8125rem',
               cursor: isReVerifying ? 'not-allowed' : 'pointer',
               fontFamily: isRtl ? "'Cairo', sans-serif" : "'Geist', sans-serif",
-              transition: 'border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease',
+              transition: 'color 0.15s ease',
               boxSizing: 'border-box',
             }}
             onMouseEnter={(e) => {
               if (!isReVerifying) {
-                e.currentTarget.style.borderColor = '#10B981';
-                e.currentTarget.style.backgroundColor = '#161616';
-                e.currentTarget.style.color = '#FFFFFF';
+                e.currentTarget.style.color = '#10B981';
               }
             }}
             onMouseLeave={(e) => {
               if (!isReVerifying) {
-                e.currentTarget.style.borderColor = '#222222';
-                e.currentTarget.style.backgroundColor = '#111111';
                 e.currentTarget.style.color = '#EDEDED';
               }
             }}
