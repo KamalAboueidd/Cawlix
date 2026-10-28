@@ -232,8 +232,9 @@ graph TD
 
 ```
 cawlix-tracker/
-├── LICENSE                 # Official MIT License
+├── LICENSE                 # Proprietary License (All Rights Reserved)
 ├── README.md               # Master engineering documentation
+├── SECURITY.md             # Security policy, RLS boundaries & vulnerability disclosure
 ├── docs/                   # Architectural documentation & media
 │   ├── logo.png            # Official Cawlix brand insignia
 │   └── screenshots/        # High-resolution cropped MacBook Air mockups
@@ -291,6 +292,14 @@ Developed by **Kamal Abou Eid**
 * Portfolio: [kamalaboueidd.site](https://kamalaboueidd.site)
 * GitHub: [@KamalAboueidd](https://github.com/KamalAboueidd)
 * Philosophy: Clean Architecture · Deterministic Systems · Enterprise Standards
+
+---
+
+## Security Policy & Vulnerability Disclosure
+
+Security, cryptographic time-series integrity, and PostgreSQL Row-Level Security (RLS) tenant isolation are central to the Cawlix architecture.
+
+To report potential vulnerabilities or review our defense-in-depth protocols, SLA timelines, and safe harbor terms, refer directly to our full [SECURITY.md](SECURITY.md) policy.
 
 <div align="center">
   <sub>© 2026 Cawlix Inc. All rights reserved. Powered by <a href="https://kamalaboueidd.site">kamalaboueidd.site</a></sub>
