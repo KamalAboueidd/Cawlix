@@ -123,7 +123,7 @@ export default function LoginPage() {
             error.message?.toLowerCase().includes('invalid credentials')
           ) {
             setErrorMsg(
-              "Invalid credentials. If you previously registered using Google, please use 'Continue with Google' or use 'Forgot password' to set a local password."
+              "Invalid credentials. Try Google sign-in or reset password."
             );
             setHighlightGoogle(true);
             setTimeout(() => setHighlightGoogle(false), 6000);
@@ -464,18 +464,17 @@ export default function LoginPage() {
               style={{
                 fontSize: '0.8125rem',
                 color: highlightGoogle ? '#F59E0B' : '#EF4444',
-                backgroundColor: highlightGoogle ? 'rgba(245, 158, 11, 0.08)' : 'rgba(239, 68, 68, 0.08)',
-                border: highlightGoogle ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid rgba(239, 68, 68, 0.25)',
-                borderRadius: '6px',
-                padding: '12px 14px',
-                lineHeight: 1.5,
+                backgroundColor: 'transparent',
+                border: 'none',
+                padding: '2px 0',
+                lineHeight: 1.4,
                 display: 'flex',
-                alignItems: 'flex-start',
-                gap: '10px',
+                alignItems: 'center',
+                gap: '8px',
                 fontFamily: "'Geist', sans-serif",
               }}
             >
-              <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>
+              <span style={{ fontSize: '0.875rem', lineHeight: 1, flexShrink: 0 }}>
                 {highlightGoogle ? '⚠️' : '✕'}
               </span>
               <div style={{ wordBreak: 'break-word' }}>{errorMsg}</div>
@@ -487,18 +486,17 @@ export default function LoginPage() {
               style={{
                 fontSize: '0.8125rem',
                 color: '#10B981',
-                backgroundColor: 'rgba(16, 185, 129, 0.08)',
-                border: '1px solid rgba(16, 185, 129, 0.25)',
-                borderRadius: '6px',
-                padding: '12px 14px',
-                lineHeight: 1.5,
+                backgroundColor: 'transparent',
+                border: 'none',
+                padding: '2px 0',
+                lineHeight: 1.4,
                 display: 'flex',
-                alignItems: 'flex-start',
-                gap: '10px',
+                alignItems: 'center',
+                gap: '8px',
                 fontFamily: "'Geist', sans-serif",
               }}
             >
-              <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>✓</span>
+              <span style={{ fontSize: '0.875rem', lineHeight: 1, flexShrink: 0 }}>✓</span>
               <div style={{ wordBreak: 'break-word' }}>{successMsg}</div>
             </div>
           )}

@@ -476,6 +476,7 @@ export default function ExportsReports({ onShowToast = null }) {
 
         {/* Filter Toolbar for Exports */}
         <div
+          className="export-scope-toolbar"
           style={{
             display: 'flex',
             flexWrap: 'wrap',
@@ -485,12 +486,12 @@ export default function ExportsReports({ onShowToast = null }) {
             borderTop: '1px solid #1F1F1F',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Filter size={13} color="#888888" />
+          <div className="export-scope-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Filter size={13} color="#888888" style={{ background: 'transparent' }} />
             <span style={{ fontSize: '0.75rem', color: '#888888' }}>{lang === 'ar' ? 'نطاق التصدير:' : 'Export Scope:'}</span>
           </div>
 
-          <div style={{ display: 'flex', gap: '6px' }}>
+          <div className="export-scope-buttons" style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
             {[
               { id: 'ALL', en: 'All Categories', ar: 'كل الأقسام' },
               { id: 'Smartphones', en: 'Smartphones', ar: 'الهواتف الذكية' },
@@ -501,6 +502,7 @@ export default function ExportsReports({ onShowToast = null }) {
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
+                className="export-scope-btn"
                 style={{
                   background: selectedCategory === cat.id ? '#1F1F1F' : 'transparent',
                   color: selectedCategory === cat.id ? '#EDEDED' : '#888888',
@@ -511,7 +513,8 @@ export default function ExportsReports({ onShowToast = null }) {
                   fontSize: '0.6875rem',
                   cursor: 'pointer',
                   fontFamily: "'Geist', sans-serif",
-                  transition: 'all 0.15s ease',
+                  transition: 'background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease',
+                  boxSizing: 'border-box',
                 }}
               >
                 {lang === 'ar' ? cat.ar : cat.en}
@@ -520,6 +523,7 @@ export default function ExportsReports({ onShowToast = null }) {
           </div>
 
           <label
+            className="export-scope-checkbox"
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -833,6 +837,39 @@ export default function ExportsReports({ onShowToast = null }) {
 
       {/* Embedded Print CSS Rules for True High-Contrast Monochrome PDF Export */}
       <style>{`
+        @media (max-width: 768px) {
+          .export-scope-toolbar {
+            gap: 8px !important;
+          }
+          .export-scope-label {
+            width: 100% !important;
+            margin-bottom: 2px !important;
+          }
+          .export-scope-buttons {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 5px !important;
+            width: 100% !important;
+          }
+          .export-scope-btn {
+            padding: 3px 6px !important;
+            font-size: 0.625rem !important; /* 10px */
+            letter-spacing: -0.015em !important;
+            line-height: 1.25 !important;
+            flex: 1 1 auto !important;
+            min-width: fit-content !important;
+            text-align: center !important;
+            white-space: nowrap !important;
+          }
+          .export-scope-checkbox {
+            width: 100% !important;
+            margin-top: 6px !important;
+            margin-inline-start: 0 !important;
+            font-size: 0.6875rem !important;
+            padding-top: 4px !important;
+          }
+        }
+
         @media print {
           body * {
             visibility: hidden;

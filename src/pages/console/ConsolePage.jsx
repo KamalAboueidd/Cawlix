@@ -876,8 +876,11 @@ export default function ConsolePage() {
 
   const handleInspectProduct = (product) => {
     if (!product) return;
-    setSelectedIntelligenceProduct(product);
-    setSelectedIntelligenceProductId(product.id);
+    const resolved = typeof product === 'string'
+      ? SEEDED_MASTER_PRODUCTS.find((p) => p.id === product) || { id: product, title: product }
+      : product;
+    setSelectedIntelligenceProduct(resolved);
+    setSelectedIntelligenceProductId(resolved.id || product);
     handleTabChange('intelligence');
     const mainEl = document.getElementById('cawlix-main-workspace');
     if (mainEl) mainEl.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1099,84 +1102,86 @@ export default function ConsolePage() {
             />
           </div>
 
-          {/* Topbar Right Controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
-            {/* Run Fleet Audit Manual Trigger Button */}
-            <button
-              type="button"
-              onClick={handleRunFleetAudit}
-              disabled={Boolean(fleetAuditProgress)}
-              style={{
-                backgroundColor: fleetAuditCompleted ? 'rgba(16, 185, 129, 0.15)' : '#0A0A0A',
-                color: fleetAuditCompleted ? '#10B981' : fleetAuditProgress ? '#F59E0B' : '#EDEDED',
-                fontSize: '0.75rem',
-                fontWeight: 500,
-                padding: '5px 10px',
-                borderRadius: '6px',
-                border: fleetAuditCompleted
-                  ? '1px solid #10B981'
-                  : fleetAuditProgress
-                  ? '1px solid rgba(245, 158, 11, 0.4)'
-                  : '1px solid #222222',
-                cursor: fleetAuditProgress ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '5px',
-                transition: 'all 150ms ease',
-                fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
-                whiteSpace: 'nowrap',
-              }}
-              title={isRtl ? 'فحص وتحديث جميع المتاجر فورياً' : 'Trigger background telemetry audit across all 12 Egyptian nodes'}
-            >
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke={fleetAuditCompleted ? '#10B981' : fleetAuditProgress ? '#F59E0B' : '#888888'}
-                strokeWidth="2"
-                style={{ animation: fleetAuditProgress ? 'spin 1s linear infinite' : 'none' }}
+          {/* Topbar Right Controls: Scoped specifically to catalog & surveillance views */}
+          {(activeTab === 'overview' || activeTab === 'tracker') && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+              {/* Run Fleet Audit Manual Trigger Button */}
+              <button
+                type="button"
+                onClick={handleRunFleetAudit}
+                disabled={Boolean(fleetAuditProgress)}
+                style={{
+                  backgroundColor: fleetAuditCompleted ? 'rgba(16, 185, 129, 0.15)' : '#0A0A0A',
+                  color: fleetAuditCompleted ? '#10B981' : fleetAuditProgress ? '#F59E0B' : '#EDEDED',
+                  fontSize: '0.75rem',
+                  fontWeight: 500,
+                  padding: '5px 10px',
+                  borderRadius: '6px',
+                  border: fleetAuditCompleted
+                    ? '1px solid #10B981'
+                    : fleetAuditProgress
+                    ? '1px solid rgba(245, 158, 11, 0.4)'
+                    : '1px solid #222222',
+                  cursor: fleetAuditProgress ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  transition: 'all 150ms ease',
+                  fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                  whiteSpace: 'nowrap',
+                }}
+                title={isRtl ? 'فحص وتحديث جميع المتاجر فورياً' : 'Trigger background telemetry audit across all 12 Egyptian nodes'}
               >
-                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
-              </svg>
-              <span style={{ fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace", fontSize: '0.6875rem' }}>
-                {fleetAuditCompleted
-                  ? (isRtl ? 'تم الفحص ✓' : 'Audited ✓')
-                  : fleetAuditProgress
-                  ? isRtl
-                    ? `فحص ${fleetAuditProgress.current}/${fleetAuditProgress.total}...`
-                    : `Auditing ${fleetAuditProgress.current}/${fleetAuditProgress.total}...`
-                  : (isRtl ? 'فحص المتاجر' : 'Audit Fleet')}
-              </span>
-            </button>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke={fleetAuditCompleted ? '#10B981' : fleetAuditProgress ? '#F59E0B' : '#888888'}
+                  strokeWidth="2"
+                  style={{ animation: fleetAuditProgress ? 'spin 1s linear infinite' : 'none' }}
+                >
+                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+                </svg>
+                <span style={{ fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace", fontSize: '0.6875rem' }}>
+                  {fleetAuditCompleted
+                    ? (isRtl ? 'تم الفحص ✓' : 'Audited ✓')
+                    : fleetAuditProgress
+                    ? isRtl
+                      ? `فحص ${fleetAuditProgress.current}/${fleetAuditProgress.total}...`
+                      : `Auditing ${fleetAuditProgress.current}/${fleetAuditProgress.total}...`
+                    : (isRtl ? 'فحص المتاجر' : 'Audit Fleet')}
+                </span>
+              </button>
 
-            {/* Add Target SKU Action Button */}
-            <button
-              type="button"
-              onClick={() => setModalOpen(true)}
-              style={{
-                backgroundColor: '#FFFFFF',
-                color: '#000000',
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                padding: '5px 12px',
-                borderRadius: '6px',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                transition: 'background-color 150ms ease',
-                fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
-                whiteSpace: 'nowrap',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#EAEAEA')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
-            >
-              <span style={{ fontSize: '13px', lineHeight: 1 }}>+</span>
-              <span>{isRtl ? 'إضافة منتج' : 'Add SKU'}</span>
-            </button>
-          </div>
+              {/* Add Target SKU Action Button */}
+              <button
+                type="button"
+                onClick={() => setModalOpen(true)}
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  color: '#000000',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  padding: '5px 12px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  transition: 'background-color 150ms ease',
+                  fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
+                  whiteSpace: 'nowrap',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#EAEAEA')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
+              >
+                <span style={{ fontSize: '13px', lineHeight: 1 }}>+</span>
+                <span>{isRtl ? 'إضافة منتج' : 'Add SKU'}</span>
+              </button>
+            </div>
+          )}
         </header>
 
         {/* ── 3. WORKSPACE CANVAS CONTENT ── */}
@@ -1947,61 +1952,78 @@ export default function ConsolePage() {
                         });
                       }}
                       style={{
-                        display: 'grid',
-                        gridTemplateColumns: '2.5fr 1fr 1.2fr 1fr 1fr',
+                        display: 'flex',
                         alignItems: 'center',
-                        padding: '13px 18px',
+                        justifyContent: 'space-between',
+                        gap: '12px',
+                        padding: '12px 18px',
                         borderBottom: idx < glitchRadarEvents.length - 1 ? '1px solid #1F1F1F' : 'none',
                         cursor: 'pointer',
                         transition: 'background-color 100ms ease',
+                        boxSizing: 'border-box',
                       }}
                       onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#0D0D0D')}
                       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                     >
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', paddingRight: '12px', minWidth: 0 }}>
+                      {/* Left: Product Info (Title & SKU + Retailer node) */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', minWidth: 0, flex: 1, paddingRight: '8px' }}>
                         <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#EDEDED', fontFamily: "'Geist', sans-serif", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                           {evt.title}
                         </span>
-                        <span style={{ fontSize: '0.6875rem', color: '#888888', fontFamily: "'Geist Mono', monospace" }}>
-                          {evt.sku}
-                        </span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                          <span style={{ fontSize: '0.6875rem', color: '#71717A', fontFamily: "'Geist Mono', monospace" }}>
+                            {evt.sku}
+                          </span>
+                          <span style={{ fontSize: '0.6875rem', color: '#3F3F46' }}>•</span>
+                          <span
+                            style={{
+                              fontSize: '0.6875rem',
+                              fontFamily: "'Geist Mono', monospace",
+                              color: '#A1A1AA',
+                              backgroundColor: 'transparent',
+                              border: 'none',
+                              padding: 0,
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {evt.retailer}
+                          </span>
+                        </div>
                       </div>
-                      <div>
+
+                      {/* Right: Price, Delta %, Time - Placed to the right with guaranteed spacing, no borders or background */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '16px',
+                          marginInlineStart: 'auto',
+                          flexShrink: 0,
+                          textAlign: 'right',
+                        }}
+                      >
+                        <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: '0.8125rem', fontWeight: 600, color: '#EDEDED', whiteSpace: 'nowrap' }}>
+                          EGP {evt.current_price_egp?.toLocaleString()}
+                        </span>
+
                         <span
                           style={{
-                            fontSize: '0.6875rem',
-                            fontFamily: "'Geist Mono', monospace",
-                            padding: '2px 8px',
-                            backgroundColor: '#0A0A0A',
-                            border: '1px solid #222222',
-                            borderRadius: '4px',
-                            color: '#888888',
-                          }}
-                        >
-                          {evt.retailer}
-                        </span>
-                      </div>
-                      <div style={{ fontFamily: "'Geist Mono', monospace", fontSize: '0.875rem', fontWeight: 500, color: '#EDEDED' }}>
-                        EGP {evt.current_price_egp?.toLocaleString()}
-                      </div>
-                      <div>
-                        <span
-                          style={{
-                            fontSize: '0.6875rem',
-                            fontWeight: 500,
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
                             fontFamily: "'Geist Mono', monospace",
                             color: '#FB7185',
-                            backgroundColor: '#0A0A0A',
-                            border: '1px solid #222222',
-                            padding: '2px 8px',
-                            borderRadius: '4px',
+                            backgroundColor: 'transparent',
+                            border: 'none',
+                            padding: 0,
+                            whiteSpace: 'nowrap',
                           }}
                         >
                           {evt.drop_pct}%
                         </span>
-                      </div>
-                      <div style={{ fontSize: '0.75rem', color: '#666666', fontFamily: "'Geist Mono', monospace", textAlign: 'right' }}>
-                        {evt.detected_at}
+
+                        <span style={{ fontSize: '0.6875rem', color: '#666666', fontFamily: "'Geist Mono', monospace", whiteSpace: 'nowrap', minWidth: '44px', textAlign: 'right' }}>
+                          {evt.detected_at}
+                        </span>
                       </div>
                     </div>
                   ))}

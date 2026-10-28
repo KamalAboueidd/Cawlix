@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <a href="https://cawlix.vercel.app">Live Production Deployment</a> · <a href="#core-platform-showcase">System Showcase</a> · <a href="#the-engineering-journey--real-world-constraints">Engineering Story</a> · <a href="LICENSE">All Rights Reserved</a>
+  <a href="https://cawlix.vercel.app">Live Production Deployment</a> · <a href="#core-platform-showcase">System Showcase</a> · <a href="#the-engineering-journey--real-world-constraints">Engineering Story</a> · <a href="SECURITY.md">Security Policy</a> · <a href="LICENSE">All Rights Reserved</a>
 </p>
 
 ---
@@ -33,6 +33,7 @@
 ![Architecture](https://img.shields.io/badge/Architecture-Resilient%20Adapter%20Pattern-8A2BE2)
 ![Telemetry](https://img.shields.io/badge/Telemetry-Time--Series%20Median%20Filter-E0234E)
 ![Styling](https://img.shields.io/badge/Styling-Pitch--Black%20CSS-000000)
+![Security](https://img.shields.io/badge/Security-AES--256%20%7C%20RLS-00DF8F)
 ![Deployment](https://img.shields.io/badge/Deployment-cawlix.vercel.app-00DF8F?logo=vercel&logoColor=white)
 ![License](https://img.shields.io/badge/License-All%20Rights%20Reserved-red)
 
@@ -65,6 +66,7 @@
 6. [Repository Structure](#repository-structure)
 7. [Local Setup & Development](#local-setup--development)
 8. [License & Engineering Accreditation](#license--engineering-accreditation)
+9. [Security Policy & Vulnerability Disclosure](#security-policy--vulnerability-disclosure)
 
 ---
 

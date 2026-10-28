@@ -462,18 +462,16 @@ export default function ForgotPasswordPage() {
                 style={{
                   fontSize: '0.8125rem',
                   color: '#F87171',
-                  backgroundColor: '#0A0A0A',
-                  border: '1px solid rgba(239, 68, 68, 0.35)',
-                  borderRadius: '8px',
-                  padding: '12px 14px',
-                  lineHeight: 1.5,
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  padding: '2px 0',
+                  lineHeight: 1.4,
                   display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '10px',
-                  boxShadow: '0 4px 14px rgba(239, 68, 68, 0.06)',
+                  alignItems: 'center',
+                  gap: '8px',
                 }}
               >
-                <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>✕</span>
+                <span style={{ fontSize: '0.875rem', lineHeight: 1, flexShrink: 0 }}>✕</span>
                 <div style={{ wordBreak: 'break-word' }}>{errorMsg}</div>
               </div>
             )}
@@ -483,18 +481,16 @@ export default function ForgotPasswordPage() {
                 style={{
                   fontSize: '0.8125rem',
                   color: '#34D399',
-                  backgroundColor: '#0A0A0A',
-                  border: '1px solid rgba(16, 185, 129, 0.35)',
-                  borderRadius: '8px',
-                  padding: '12px 14px',
-                  lineHeight: 1.5,
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  padding: '2px 0',
+                  lineHeight: 1.4,
                   display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '10px',
-                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.08)',
+                  alignItems: 'center',
+                  gap: '8px',
                 }}
               >
-                <span style={{ fontSize: '0.95rem', lineHeight: 1.2, flexShrink: 0 }}>✓</span>
+                <span style={{ fontSize: '0.875rem', lineHeight: 1, flexShrink: 0 }}>✓</span>
                 <div style={{ wordBreak: 'break-word' }}>{successMsg}</div>
               </div>
             )}
