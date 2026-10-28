@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   Loader2,
   Zap,
+  X,
 } from 'lucide-react';
 import { sanitizeRetailerUrl } from '../../utils/urlSanitizer';
 import { useLanguage } from '../../context/LanguageContext';
@@ -364,10 +365,10 @@ export default function TelemetryControlDashboard({
             style={{
               width: '100%',
               maxWidth: '640px',
-              backgroundColor: '#0A0A0A',
-              border: '1px solid rgba(255, 255, 255, 0.16)',
+              backgroundColor: '#000000',
+              border: '1px solid #1C1C1C',
               borderRadius: '12px',
-              boxShadow: '0 25px 65px -15px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.06)',
+              boxShadow: '0 25px 65px -15px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.05)',
               display: 'flex',
               flexDirection: 'column',
               overflow: 'hidden',
@@ -382,9 +383,9 @@ export default function TelemetryControlDashboard({
                 alignItems: 'center',
                 height: '52px',
                 padding: '0 16px',
-                borderBottom: '1px solid #1C1C1C',
+                borderBottom: '1px solid #1A1A1A',
                 gap: '12px',
-                backgroundColor: '#0E0E0E',
+                backgroundColor: '#000000',
               }}
             >
               {isLiveSearching ? (
@@ -429,6 +430,13 @@ export default function TelemetryControlDashboard({
                     padding: '2px 4px',
                     display: 'flex',
                     alignItems: 'center',
+                    transition: 'color 120ms ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = '#3ECF8E';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = '#71717A';
                   }}
                   aria-label="Clear query"
                 >
@@ -440,17 +448,26 @@ export default function TelemetryControlDashboard({
                 type="button"
                 onClick={() => setIsOpen(false)}
                 style={{
-                  fontSize: '0.6875rem',
-                  color: '#888888',
-                  backgroundColor: '#161616',
-                  border: '1px solid #262626',
-                  borderRadius: '4px',
-                  padding: '2px 6px',
+                  color: '#71717A',
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  padding: '4px',
                   cursor: 'pointer',
-                  fontFamily: "'Geist Mono', monospace",
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'color 120ms ease',
+                  lineHeight: 1,
                 }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#3ECF8E';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = '#71717A';
+                }}
+                aria-label="Close modal"
               >
-                ESC
+                <X size={17} />
               </button>
             </div>
 
@@ -488,7 +505,7 @@ export default function TelemetryControlDashboard({
                           type="button"
                           onClick={() => setQuery(tag)}
                           style={{
-                            backgroundColor: '#141414',
+                            backgroundColor: '#000000',
                             border: '1px solid #222222',
                             borderRadius: '6px',
                             padding: '4px 10px',
@@ -514,23 +531,20 @@ export default function TelemetryControlDashboard({
                   </div>
 
                   {/* Recommended Products in System */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        <Sparkles size={12} color="#10B981" />
-                        <span
-                          style={{
-                            fontSize: '0.6875rem',
-                            fontWeight: 600,
-                            color: '#A1A1AA',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.04em',
-                            fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace",
-                          }}
-                        >
-                          {isRtl ? 'المنتجات الأكثر رصداً في الرادار' : 'TRENDING IN CAWLIX RADAR'}
-                        </span>
-                      </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px 6px 4px' }}>
+                      <span
+                        style={{
+                          fontSize: '0.6875rem',
+                          fontWeight: 600,
+                          color: '#A1A1AA',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.04em',
+                          fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist Mono', monospace",
+                        }}
+                      >
+                        {isRtl ? 'المنتجات الأكثر رصداً في الرادار' : 'TRENDING IN CAWLIX RADAR'}
+                      </span>
                       <span style={{ fontSize: '0.625rem', color: '#71717A', fontFamily: "'Geist Mono', monospace" }}>
                         {isRtl ? '12 متجر نشط' : '12 Nodes Active'}
                       </span>
@@ -547,36 +561,34 @@ export default function TelemetryControlDashboard({
                           key={`rec-${recItem.id}`}
                           onClick={() => handleSelectLocalProduct(recItem)}
                           style={{
-                            backgroundColor: '#0E0E0E',
-                            border: '1px solid #1C1C1C',
-                            borderRadius: '8px',
-                            padding: '10px 12px',
+                            backgroundColor: 'transparent',
+                            border: 'none',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                            borderRadius: '0px',
+                            padding: '12px 6px',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             gap: '12px',
-                            transition: 'all 120ms ease',
+                            transition: 'background-color 120ms ease',
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.borderColor = '#333333';
-                            e.currentTarget.style.backgroundColor = '#141414';
+                            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.03)';
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.borderColor = '#1C1C1C';
-                            e.currentTarget.style.backgroundColor = '#0E0E0E';
+                            e.currentTarget.style.backgroundColor = 'transparent';
                           }}
                         >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
                             <span
                               style={{
-                                fontSize: '0.625rem',
+                                fontSize: '0.6875rem',
                                 fontWeight: 600,
-                                color: '#888888',
-                                backgroundColor: '#161616',
-                                border: '1px solid #262626',
-                                borderRadius: '4px',
-                                padding: '2px 6px',
+                                color: '#71717A',
+                                backgroundColor: 'transparent',
+                                border: 'none',
+                                padding: '0',
                                 fontFamily: "'Geist Mono', monospace",
                                 flexShrink: 0,
                               }}
@@ -671,8 +683,8 @@ export default function TelemetryControlDashboard({
             {/* Glitch Radar Card */}
             <div
               style={{
-                backgroundColor: '#0A0A0A',
-                border: '1px solid #1C1C1C',
+                backgroundColor: '#000000',
+                border: '1px solid #1A1A1A',
                 borderRadius: '5px',
                 padding: '6px 10px',
                 display: 'flex',
@@ -713,8 +725,8 @@ export default function TelemetryControlDashboard({
             {/* Estimated Arbitrage Savings Card */}
             <div
               style={{
-                backgroundColor: '#0A0A0A',
-                border: '1px solid #1C1C1C',
+                backgroundColor: '#000000',
+                border: '1px solid #1A1A1A',
                 borderRadius: '5px',
                 padding: '6px 10px',
                 display: 'flex',
@@ -786,30 +798,28 @@ export default function TelemetryControlDashboard({
                     key={item.id}
                     onClick={() => handleSelectLocalProduct(item)}
                     style={{
-                      backgroundColor: isSelected ? '#121212' : '#0A0A0A',
-                      border: isSelected
-                        ? '1px solid rgba(255, 255, 255, 0.2)'
-                        : '1px solid #1A1A1A',
-                      borderRadius: '6px',
-                      padding: '10px 12px',
+                      backgroundColor: isSelected ? 'rgba(255, 255, 255, 0.04)' : 'transparent',
+                      border: 'none',
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+                      borderRadius: 0,
+                      padding: '10px 6px',
                       cursor: 'pointer',
                       display: 'flex',
                       flexDirection: 'column',
                       gap: '6px',
-                      transition: 'all 120ms ease',
+                      transition: 'background-color 120ms ease',
                     }}
                     onMouseEnter={() => setSelectedIndex(idx)}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden' }}>
                         <span
                           style={{
-                            fontSize: '0.625rem',
-                            color: '#888888',
-                            backgroundColor: '#161616',
-                            border: '1px solid #262626',
-                            borderRadius: '3px',
-                            padding: '1px 5px',
+                            fontSize: '0.6875rem',
+                            color: '#71717A',
+                            backgroundColor: 'transparent',
+                            border: 'none',
+                            padding: '0',
                             fontFamily: "'Geist Mono', monospace",
                             flexShrink: 0,
                           }}
@@ -896,8 +906,8 @@ export default function TelemetryControlDashboard({
               <div
                 onClick={() => handleSelectResolvedProduct(resolvedResult)}
                 style={{
-                  backgroundColor: '#0A0A0A',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  backgroundColor: '#000000',
+                  border: '1px solid #1C1C1C',
                   borderRadius: '6px',
                   padding: '12px',
                   cursor: 'pointer',
@@ -1225,7 +1235,7 @@ export default function TelemetryControlDashboard({
                 justifyContent: 'center',
                 gap: '10px',
                 color: '#10B981',
-                backgroundColor: '#0A0A0A',
+                backgroundColor: '#000000',
                 borderRadius: '6px',
                 border: '1px solid rgba(16, 185, 129, 0.3)',
                 fontFamily: isRtl ? "'Alexandria', sans-serif" : "'Geist', sans-serif",
@@ -1249,8 +1259,8 @@ export default function TelemetryControlDashboard({
                 textAlign: 'center',
                 color: '#888888',
                 fontSize: '0.8125rem',
-                backgroundColor: '#0A0A0A',
-                border: '1px solid #222222',
+                backgroundColor: '#000000',
+                border: '1px solid #1C1C1C',
                 borderRadius: '6px',
                 display: 'flex',
                 flexDirection: 'column',
@@ -1299,8 +1309,8 @@ export default function TelemetryControlDashboard({
               }}
               style={{
                 width: '100%',
-                backgroundColor: '#0A0A0A',
-                border: '1px solid #222222',
+                backgroundColor: '#000000',
+                border: '1px solid #1C1C1C',
                 borderRadius: '6px',
                 padding: '9px 12px',
                 cursor: 'pointer',
@@ -1313,11 +1323,11 @@ export default function TelemetryControlDashboard({
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = '#10B981';
-                e.currentTarget.style.backgroundColor = '#111111';
+                e.currentTarget.style.backgroundColor = '#0A0A0A';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = '#222222';
-                e.currentTarget.style.backgroundColor = '#0A0A0A';
+                e.currentTarget.style.borderColor = '#1C1C1C';
+                e.currentTarget.style.backgroundColor = '#000000';
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden' }}>

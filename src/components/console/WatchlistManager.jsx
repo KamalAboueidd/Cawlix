@@ -314,22 +314,22 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
                             type="button"
                             onClick={() => handleToggleRule(item.id, 'emailDispatch')}
                             style={{
-                              backgroundColor: item.emailDispatch ? 'rgba(16, 185, 129, 0.12)' : 'rgba(255, 255, 255, 0.03)',
-                              border: '1px solid #222222',
+                              backgroundColor: 'transparent',
+                              border: 'none',
                               color: item.emailDispatch ? '#10B981' : '#71717A',
-                              padding: '3px 7px',
-                              borderRadius: '4px',
+                              padding: '2px 4px',
                               cursor: 'pointer',
                               display: 'flex',
                               alignItems: 'center',
                               gap: '4px',
                               fontSize: '0.6875rem',
                               fontFamily: "'Geist Mono', monospace",
-                              transition: 'all 120ms ease',
+                              transition: 'color 120ms ease, opacity 120ms ease',
+                              opacity: item.emailDispatch ? 1 : 0.6,
                             }}
                             title="Brevo Email Webhook Dispatch"
                           >
-                            <Mail size={11} />
+                            <Mail size={12} />
                             <span>Email</span>
                           </button>
 
@@ -338,22 +338,22 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
                             type="button"
                             onClick={() => handleToggleRule(item.id, 'inAppAlert')}
                             style={{
-                              backgroundColor: item.inAppAlert ? 'rgba(16, 185, 129, 0.12)' : 'rgba(255, 255, 255, 0.03)',
-                              border: '1px solid #222222',
+                              backgroundColor: 'transparent',
+                              border: 'none',
                               color: item.inAppAlert ? '#10B981' : '#71717A',
-                              padding: '3px 7px',
-                              borderRadius: '4px',
+                              padding: '2px 4px',
                               cursor: 'pointer',
                               display: 'flex',
                               alignItems: 'center',
                               gap: '4px',
                               fontSize: '0.6875rem',
                               fontFamily: "'Geist Mono', monospace",
-                              transition: 'all 120ms ease',
+                              transition: 'color 120ms ease, opacity 120ms ease',
+                              opacity: item.inAppAlert ? 1 : 0.6,
                             }}
                             title="Console Bell Notification"
                           >
-                            <Bell size={11} />
+                            <Bell size={12} />
                             <span>In-App</span>
                           </button>
 
@@ -362,22 +362,22 @@ export default function WatchlistManager({ onInspectProduct = null, onShowToast 
                             type="button"
                             onClick={() => handleToggleRule(item.id, 'flashCrashAlert')}
                             style={{
-                              backgroundColor: item.flashCrashAlert ? 'rgba(251, 113, 133, 0.12)' : 'rgba(255, 255, 255, 0.03)',
-                              border: '1px solid #222222',
+                              backgroundColor: 'transparent',
+                              border: 'none',
                               color: item.flashCrashAlert ? '#FB7185' : '#71717A',
-                              padding: '3px 7px',
-                              borderRadius: '4px',
+                              padding: '2px 4px',
                               cursor: 'pointer',
                               display: 'flex',
                               alignItems: 'center',
                               gap: '4px',
                               fontSize: '0.6875rem',
                               fontFamily: "'Geist Mono', monospace",
-                              transition: 'all 120ms ease',
+                              transition: 'color 120ms ease, opacity 120ms ease',
+                              opacity: item.flashCrashAlert ? 1 : 0.6,
                             }}
                             title="Flash Crash (>15%) Emergency Intercept"
                           >
-                            <Zap size={11} />
+                            <Zap size={12} />
                             <span>Crash Alert</span>
                           </button>
                         </div>
