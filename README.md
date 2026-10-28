@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <a href="https://cawlix-tracker.vercel.app">Live Production Deployment</a> · <a href="#core-platform-showcase">System Showcase</a> · <a href="#the-engineering-journey--real-world-constraints">Engineering Story</a> · <a href="LICENSE">MIT License</a>
+  <a href="https://cawlix.vercel.app">Live Production Deployment</a> · <a href="#core-platform-showcase">System Showcase</a> · <a href="#the-engineering-journey--real-world-constraints">Engineering Story</a> · <a href="LICENSE">All Rights Reserved</a>
 </p>
 
 ---
@@ -27,14 +27,22 @@
 
 ## Technical Stack & Foundation
 
-| Layer | Technology | Architectural Role |
-| :--- | :--- | :--- |
-| **Frontend Framework** | React 18 & Vite | Reactive client application with sub-second HMR |
-| **Database & Realtime** | Supabase (PostgreSQL) | Catalog storage, row-level security, and realtime WebSocket event broadcast |
-| **Ingestion Pipeline** | Resilient Adapter Pattern | Decoupled platform parsers for Amazon EG, Noon, B.TECH, 2B, TradeLine |
-| **Mathematical Telemetry** | Time-Series Median Filter | 90-day rolling baseline calculation and pre-sale volatility detection |
-| **Styling & Aesthetics** | Pure Institutional CSS | Strict pitch-black (#000000) token architecture without CSS framework bloat |
-| **Language Support** | Bilingual Context Engine | Full RTL / LTR layout switching (Geist Mono for Latin, Alexandria for Arabic) |
+![Language](https://img.shields.io/badge/Language-JavaScript%20%7C%20JSX-F7DF1E?logo=javascript&logoColor=black)
+![Framework](https://img.shields.io/badge/Framework-React%2018%20%7C%20Vite-61DAFB?logo=react&logoColor=black)
+![Database](https://img.shields.io/badge/Database-Supabase%20%7C%20PostgreSQL-3ECF8E?logo=supabase&logoColor=white)
+![Architecture](https://img.shields.io/badge/Architecture-Resilient%20Adapter%20Pattern-8A2BE2)
+![Telemetry](https://img.shields.io/badge/Telemetry-Time--Series%20Median%20Filter-E0234E)
+![Styling](https://img.shields.io/badge/Styling-Pitch--Black%20CSS-000000)
+![Deployment](https://img.shields.io/badge/Deployment-cawlix.vercel.app-00DF8F?logo=vercel&logoColor=white)
+![License](https://img.shields.io/badge/License-All%20Rights%20Reserved-red)
+
+> **Platform:** Cawlix Institutional Price Intelligence & Forensic Telemetry  
+> **Frontend:** React 18 • Vite • Pure Institutional CSS (Pitch-Black `#000000`)  
+> **Backend & Realtime:** Supabase (PostgreSQL) • Row-Level Security • Realtime WebSockets  
+> **Ingestion Pipeline:** Resilient Scraper Adapters (Amazon EG, Noon, B.TECH, 2B, TradeLine)  
+> **Mathematical Telemetry:** 90-Day Rolling Time-Series Median Filter & Ghost-Discount Auditor  
+> **Live Production:** [cawlix.vercel.app](https://cawlix.vercel.app)  
+
 
 ---
 
@@ -265,13 +273,15 @@ npm install
 npm run dev
 ```
 
-Visit `http://localhost:5173` in your browser.
+Visit [http://localhost:5173](http://localhost:5173) in your browser or explore the live production deployment at [cawlix.vercel.app](https://cawlix.vercel.app).
 
 ---
 
 ## License & Engineering Accreditation
 
-This project is open-source and available under the [MIT License](LICENSE).
+Copyright (c) 2026 Kamal Abou Eid. All Rights Reserved.
+
+This software and architecture are proprietary. Viewing and technical auditing are permitted solely for portfolio demonstration; copying, redistribution, modification, hosting, or unauthorized use is strictly prohibited. See [LICENSE](LICENSE) for full legal terms.
 
 Developed by **Kamal Abou Eid**  
 *Software Engineer (Alexandria, Egypt)*
